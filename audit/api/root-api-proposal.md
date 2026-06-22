@@ -138,8 +138,27 @@ createTheme
 
 HUMAN REVIEW REQUIRED:
 
-- `auraTokens` and `getAuraTokens` have legacy naming. Keep as deprecated aliases, rename in a major release, or move to a legacy compatibility entrypoint.
+- `auraTokens` and `getAuraTokens` have legacy naming and are removed from the future API contract. Do not keep or introduce AURA compatibility aliases.
 - `GlassMaterialTokens` currently exposes experimental liquid/glass theme internals.
+
+## Token Export Naming
+
+Canonical public token exports should use neutral theme-oriented names.
+
+Stable target:
+
+- `themeTokens`
+
+Conditional target:
+
+- `getThemeTokens`, only if a function accessor remains necessary.
+
+Legacy AURA-branded exports are deprecated and removed from the future API contract:
+
+- `auraTokens`
+- `getAuraTokens`
+
+No compatibility aliases should be introduced for AURA-branded token names.
 
 ## Explicit exclusions
 

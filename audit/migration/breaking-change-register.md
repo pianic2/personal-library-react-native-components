@@ -59,6 +59,20 @@ Allowed statuses:
 | PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; clean Expo consumer install fails on React peer mismatch; verdict NOT READY. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
+| PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
+
+### PLRNUI-16 - Token export naming
+
+Legacy token exports `auraTokens` and `getAuraTokens` are deprecated legacy names and are removed from the future API contract.
+
+Replacement target:
+
+- `themeTokens`
+- `getThemeTokens`, if accessor semantics are required.
+
+No compatibility aliases will be introduced for AURA-branded token names.
+
+If these symbols existed in previous public package states, removal must be treated as intentional breaking cleanup.
 
 ## Entries
 
@@ -89,9 +103,9 @@ Allowed statuses:
 - Related ADR / Risk Assessment: ADR 0001, ADR 0008, Risk Assessment 0008
 - Decision: AURA and UI Experience are historical/deprecated names; new governance artifacts should use `personal-library-react-native-components` for repo/project identity and `@personal-library/react-native-components` for package target.
 - Motivation: Legacy naming in docs, imports and token names creates ambiguity about the supported package identity and API contract.
-- Consumer impact: Consumers using `from "AURA"`, `@aura/ui`, `auraTokens` or `getAuraTokens` need updated imports/symbols or a documented deprecated alias path.
-- Migration path: Maintain `audit/migration/legacy-naming-map.md`; update docs/demo in a dedicated task; publish alias/removal notes in changelog.
-- Legacy alias policy: Public legacy aliases must be explicitly marked deprecated and mapped to replacement symbols or import paths.
+- Consumer impact: Consumers using `auraTokens` or `getAuraTokens` must migrate to neutral token names with no AURA token compatibility alias. Consumers using `from "AURA"` or `@aura/ui` need updated imports or a separately approved package/import alias path.
+- Migration path: Maintain `audit/migration/legacy-naming-map.md`; update docs/demo in a dedicated task; publish removal notes in changelog.
+- Legacy alias policy: AURA token aliases are not allowed by PLRNUI-16. Any package/import legacy alias must be explicitly marked deprecated and mapped to replacement import paths.
 - Deprecation window: HUMAN REVIEW REQUIRED; no silent removal.
 - Removal target: Before stable release unless a compatibility window is approved.
 - Verification required: Repository grep for `@aura/ui`, `from "AURA"`, `from 'AURA'`, `auraTokens`, `getAuraTokens` and docs/demo import review.
@@ -109,7 +123,7 @@ Allowed statuses:
 - Motivation: Current broad barrel exports make internal or experimental modules appear public, which turns normal refactors into consumer breaking changes.
 - Consumer impact: Consumers importing internal/experimental symbols from root may need to move to documented public APIs, explicit experimental paths or remove usage.
 - Migration path: Approve export matrix, publish root API proposal, document any removed/moved root exports and provide explicit experimental or legacy paths only if approved.
-- Legacy alias policy: Existing root-reachable deprecated symbols such as `auraTokens` and `getAuraTokens` require explicit deprecation labels and replacement notes.
+- Legacy alias policy: Existing root-reachable deprecated symbols such as `auraTokens` and `getAuraTokens` require replacement notes; PLRNUI-16 rejects AURA token compatibility aliases.
 - Deprecation window: HUMAN REVIEW REQUIRED per export group.
 - Removal target: Before stable public API release; beta/experimental exports may remain only with clear labels.
 - Verification required: Recount export matrix, review root API proposal, verify docs/demo imports use only approved entrypoints, typecheck consumer imports.

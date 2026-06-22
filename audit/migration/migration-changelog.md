@@ -28,10 +28,27 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that no current subpath exports are implemented and any future subpath policy must be verified through package metadata and consumer smoke tests.
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
 
+### PLRNUI-16 - Token export naming decision
+
+Defined canonical token export naming policy.
+
+AURA-branded token names are deprecated legacy names and are removed from the future API contract.
+
+Replacement target:
+
+- `themeTokens`
+- `getThemeTokens`, only if accessor semantics are required.
+
+No AURA compatibility aliases will be introduced.
+
+Implementation cleanup and breaking-change tracking are deferred to PLRNUI-29.
+Consumer-facing documentation policy is deferred to PLRNUI-53.
+
 ### Deprecated
 
 - Deprecated AURA / UI Experience as canonical project or package identity for new technical artifacts.
-- Deprecated legacy public naming such as `@aura/ui`, `from "AURA"`, `auraTokens` and `getAuraTokens` unless retained under an explicit alias policy.
+- Deprecated legacy package/import naming such as `@aura/ui` and `from "AURA"` unless retained under an explicit alias policy.
+- Deprecated AURA token names `auraTokens` and `getAuraTokens` with no compatibility aliases.
 - Deprecated unsupported consumer guidance based on deep imports, repo-relative imports or internal source/build paths.
 - Deprecated treating beta, experimental or internal API as stable without promotion evidence.
 
