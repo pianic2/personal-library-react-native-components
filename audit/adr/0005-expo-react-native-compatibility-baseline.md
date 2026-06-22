@@ -20,6 +20,15 @@ Le dipendenze host devono essere modellate come peer dependencies quando apparte
 
 Expo Go deve essere supportato quando possibile. Il prebuild e ammesso solo quando una funzionalita richiede moduli nativi non disponibili in Expo Go e la scelta e stata approvata.
 
+Baseline latest-stable selezionata per PLRNUI-42:
+
+- Expo SDK: `56.0.0`
+- React Native: `0.85`
+- React: `19.2.3`
+- Node minimo: `22.13.x`
+
+Questa baseline deriva dalla latest stable Expo SDK baseline. Versioni beta, canary, RC o preview non sono ammesse come fonte di compatibilita.
+
 ## Garanzie
 
 La libreria deve evitare:
@@ -67,4 +76,3 @@ Prima della release candidate:
 - TypeScript consumer vede i tipi;
 - nessuna dipendenza nativa nuova senza decisione;
 - peer dependencies documentate.
-

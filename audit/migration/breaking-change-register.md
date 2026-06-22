@@ -14,7 +14,7 @@ No entry in this file changes source code, package metadata, public exports or d
 - Every confirmed breaking change must have a Jira source issue, motivation, consumer impact, migration path, verification requirement and changelog note.
 - Legacy aliases may remain only with an explicit deprecation window and removal target.
 - `npm run typecheck`, `npm run build`, `npm pack --dry-run` and a clean Expo consumer install/import smoke test are required before release readiness can be marked ready.
-- PLRNUI-8 currently keeps release readiness blocked because clean Expo consumer install fails with `ERESOLVE`: the consumer has `react@19.2.3`, while `@aura/ui@1.0.0` requires peer `react@^19.2.4`.
+- PLRNUI-8 historical clean Expo consumer install failed with `ERESOLVE`: the consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the current React peer range; release readiness still requires regenerated consumer evidence.
 
 ## Breaking Change Template
 
@@ -56,7 +56,7 @@ Allowed statuses:
 | PLRNUI-4 | Public API, root exports and deep imports | 92 exports analyzed: 40 public, 32 experimental, 18 internal, 2 deprecated; root API must be governed; no current subpath exports. | Export matrix approval, root API proposal approval, deep import audit closure. | Blocks RC if root API exposes unapproved internal/experimental contract. |
 | PLRNUI-5 | Stability classification | No stable components; beta/experimental/internal labeling must not imply stable support. | Component maturity matrix and docs/demo stability labels. | Blocks RC if docs/demo present unstable APIs as stable. |
 | PLRNUI-7 | Peer/native dependency policy | Host runtimes and native/native-adjacent packages require explicit peer/optional peer/native gate decisions. | Dependency classification, native dependency gate checklist and PLRNUI-8 smoke scenarios. | Blocks RC if dependency policy changes are not verified in consumer. |
-| PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; clean Expo consumer install fails on React peer mismatch; verdict NOT READY. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
+| PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; historical clean Expo consumer install failed on React peer mismatch; verdict NOT READY until consumer evidence is regenerated. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
 | PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
@@ -165,7 +165,7 @@ If these symbols existed in previous public package states, removal must be trea
 - Removal target: Before release candidate.
 - Verification required: Clean Expo app install without `--force` or `--legacy-peer-deps`, root import, TypeScript resolution, Metro startup and `npm ls react react-native` duplicate check.
 - Release blocking: Yes. PLRNUI-8 verdict is NOT READY until this passes.
-- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`.
+- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the React peer range to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`. React Native peer range changes remain out of scope and are tracked by PLRNUI-43.
 
 ### BC-006 - Native dependency gate
 

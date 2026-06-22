@@ -24,6 +24,8 @@ It is governance evidence only. It does not imply that package metadata, source 
 ### Changed
 
 - Clarified that current migration state remains governance/proposed until implementation tickets update source, package metadata, docs and build configuration.
+- PLRNUI-42 aligned `peerDependencies.react` to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`.
+- PLRNUI-42 left `peerDependencies.react-native` unchanged; React Native peer alignment is deferred to PLRNUI-43.
 - Clarified that AURA / UI Experience are historical or deprecated names, while `personal-library-react-native-components` is the recommended project identity.
 - Clarified that `@aura/ui` is current package metadata and `@personal-library/react-native-components` is the recommended target package, not yet proven as applied.
 - Clarified that root public API governance is based on PLRNUI-4 export analysis: 92 exports analyzed, with 40 public, 32 experimental, 18 internal and 2 deprecated.
@@ -64,9 +66,9 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 ### Blockers
 
 - PLRNUI-8 verdict remains **NOT READY**.
-- Clean Expo consumer install fails with `ERESOLVE` because the consumer uses `react@19.2.3`, while `@aura/ui@1.0.0` requires peer `react@^19.2.4`.
+- Historical PLRNUI-8 clean Expo consumer install failed with `ERESOLVE` because the consumer used `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`; PLRNUI-42 updates current package metadata to accept React `19.2.3`.
 - Root import, TypeScript consumer import, Metro resolution and native runtime smoke could not proceed after the PLRNUI-8 install failure.
-- `react-native` remains a package dependency in current metadata, creating unresolved duplicate React Native risk.
+- React Native peer policy remains a separate PLRNUI-43 scope and is not changed by PLRNUI-42.
 - Native/native-adjacent dependency policy remains unimplemented in package metadata.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.
@@ -103,13 +105,13 @@ PLRNUI-8 evidence already shows:
 | PLRNUI-4 | Public API | 92 exports analyzed; root API must be governed and no current subpath exports are implemented. | Export matrix approval, deep import audit, root API proposal. |
 | PLRNUI-5 | Stability | Current API must not imply stable support; 0 stable context remains a release communication risk. | Component maturity matrix and docs/demo stability labels. |
 | PLRNUI-7 | Dependencies | Peer dependency and native dependency gates are defined as governance requirements. | Peer policy review, native gate checklist, PLRNUI-8 smoke coverage. |
-| PLRNUI-8 | Release smoke | Build/typecheck/pack pass; clean Expo install fails on React peer mismatch. | Clean Expo install/import/runtime smoke must pass before RC readiness. |
+| PLRNUI-8 | Release smoke | Build/typecheck/pack pass; historical clean Expo install failed on React peer mismatch; PLRNUI-42 aligns current React peer metadata. | Clean Expo install/import/runtime smoke must pass before RC readiness. |
 | PLRNUI-9 | Docs/demo | Docs/demo still use legacy naming/imports and preview web is not real Expo/RN runtime proof. | Docs/demo import cleanup and consumer-facing examples using public API. |
 | PLRNUI-10 | Governance | Register and changelog updated as release gates. | Pre-RC register/changelog review required. |
 
 ### Release Readiness Notes
 
-- Current release readiness remains **NOT READY** because PLRNUI-8 consumer validation is blocked by React peer mismatch.
+- Current release readiness remains **NOT READY** because clean Expo consumer validation must be regenerated after PLRNUI-42 and other release gates remain open.
 - A release candidate must not proceed until this changelog and `audit/migration/breaking-change-register.md` reflect all known breaking changes.
 - The recommended package target is `@personal-library/react-native-components`, but current repository evidence still includes `@aura/ui` metadata and legacy docs imports.
 - Clean Expo consumer install is mandatory release evidence, not optional follow-up.

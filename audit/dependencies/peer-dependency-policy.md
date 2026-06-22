@@ -2,14 +2,25 @@
 
 ## Evidence base
 
-- `package.json` currently declares `react` as the only peer dependency.
-- `package.json` currently declares `react-native`, `react-dom`, `react-native-web`, native modules, build tools, and `ui` in `dependencies`.
+- `package.json` currently declares `react` and `react-native` as peer dependencies.
+- Current package metadata keeps only `typescript` in `devDependencies`.
 - ADR 0005 says React and React Native host dependencies should be modeled as peers, native dependencies must be controlled, and Expo-specific dependencies must be documented/isolated.
 - ADR 0006 requires peer dependencies to be coherent and duplicate React/RN to be avoided before release.
 - Risk Assessment 0005 flags native dependency governance and Expo Go/prebuild risk.
 - Risk Assessment 0006 flags packaging and consumer install risk.
 - `audit/05-dependencies.md` already records DEP-01 through DEP-06.
 - `audit/migration/breaking-change-register.md` includes BC-010 for dependency policy and BC-011 for native dependency requirements.
+
+## Latest stable Expo baseline
+
+PLRNUI-42 aligns React peer compatibility to the latest stable Expo SDK baseline selected for this repository:
+
+- Expo SDK: `56.0.0`
+- React Native: `0.85`
+- React: `19.2.3`
+- Minimum Node: `22.13.x`
+
+The Expo SDK stable baseline is the source of truth for Expo/React Native compatibility. Beta, canary, RC and preview baselines are out of scope for this policy.
 
 ## Policy: React
 
@@ -26,12 +37,12 @@ Proposed package policy:
 ```json
 {
   "peerDependencies": {
-    "react": "^19.2.4"
+    "react": ">=19.2.3 <20.0.0"
   }
 }
 ```
 
-Version range is a candidate only. PLRNUI-8 must verify it against the chosen Expo SDK and React Native baseline.
+This range is aligned by PLRNUI-42 to Expo SDK `56.0.0`, React Native `0.85` and React `19.2.3`. It keeps React 19 compatibility open within the current major while preventing React 20 from being accepted without a new baseline decision.
 
 ## Policy: React Native
 
@@ -48,12 +59,12 @@ Proposed package policy:
 ```json
 {
   "peerDependencies": {
-    "react-native": "^0.84.0"
+    "react-native": ">=0.85.0 <0.86.0"
   }
 }
 ```
 
-The exact range requires PLRNUI-8 validation in a clean Expo/RN app.
+The React Native peer range is not changed by PLRNUI-42. React Native peer alignment is tracked separately by PLRNUI-43.
 
 ## Policy: Expo
 
@@ -185,8 +196,8 @@ Candidate proposal, not applied in PLRNUI-7:
 ```json
 {
   "peerDependencies": {
-    "react": "^19.2.4",
-    "react-native": "^0.84.0",
+    "react": ">=19.2.3 <20.0.0",
+    "react-native": ">=0.85.0 <0.86.0",
     "react-native-safe-area-context": "^5.6.2",
     "lucide-react-native": "^0.574.0",
     "react-native-svg": "^15.15.3",

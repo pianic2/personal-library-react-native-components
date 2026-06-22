@@ -45,7 +45,7 @@ Verification used a temporary Node 22 runtime from npm because the host shell st
 
 | Package | Range | Reason |
 | --- | --- | --- |
-| `react` | `>=19.2.0 <20.0.0` | Host React runtime owned by the consumer. Range includes the clean Expo consumer baseline observed during smoke validation: `react@19.2.3`. |
+| `react` | `>=19.2.3 <20.0.0` | Host React runtime owned by the consumer. Range is aligned by PLRNUI-42 to the selected latest stable Expo baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`. |
 | `react-native` | `>=0.85.0 <0.86.0` | Host React Native runtime owned by the consumer. Range includes the clean Expo consumer baseline observed during smoke validation: `react-native@0.85.3`. |
 
 ### Moved to `devDependencies`
