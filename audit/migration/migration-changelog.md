@@ -18,6 +18,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added explicit reference to the recommended package target `@personal-library/react-native-components`.
 - Added explicit reference to the recommended repo/project identity `personal-library-react-native-components`.
 - Added clean Expo consumer install as mandatory verification before release readiness.
+- Added PLRNUI-37 safe-area provider dependency contract documentation: `ThemeProvider` consumers must install `react-native-safe-area-context` as a required peer while safe-area behavior remains enabled by default.
 
 ### Changed
 
@@ -27,6 +28,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that root public API governance is based on PLRNUI-4 export analysis: 92 exports analyzed, with 40 public, 32 experimental, 18 internal and 2 deprecated.
 - Clarified that no current subpath exports are implemented and any future subpath policy must be verified through package metadata and consumer smoke tests.
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
+- Clarified that `react-native-safe-area-context` is not optional under the current `ThemeProvider` contract and must be validated against the selected Expo/RN baseline.
 
 ### PLRNUI-16 - Token export naming decision
 

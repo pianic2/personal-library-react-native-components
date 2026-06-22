@@ -173,16 +173,16 @@ If these symbols existed in previous public package states, removal must be trea
 - Category: native dependency / runtime compatibility
 - Source issue: PLRNUI-7, PLRNUI-8, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-8 smoke coverage before release.
+- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-8 smoke coverage before release. PLRNUI-37 confirms `react-native-safe-area-context` as a required peer while `ThemeProvider` keeps safe-area behavior enabled by default.
 - Motivation: Hard native dependencies can change install/runtime requirements for Expo and React Native consumers.
-- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs.
-- Migration path: Classify each native dependency as required peer, optional peer, dev-only or isolated feature; update docs and smoke tests after package metadata changes.
+- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs. Consumers using `ThemeProvider` must explicitly install `react-native-safe-area-context` as a peer dependency.
+- Migration path: Classify each native dependency as required peer, optional peer, dev-only or isolated feature; update docs and smoke tests after package metadata changes. For `ThemeProvider`, document `react-native-safe-area-context` as a required peer and validate install/import/render in a clean consumer.
 - Legacy alias policy: Not applicable.
 - Deprecation window: HUMAN REVIEW REQUIRED if public APIs lose native-backed behavior.
 - Removal target: Before release candidate for uncontrolled hard native dependencies.
-- Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs.
+- Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs, including `ThemeProvider` render with safe-area behavior enabled.
 - Release blocking: Yes. RC is blocked if native dependency requirements are not classified and tested.
-- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN.
+- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37 is a contract decision only; no runtime or package metadata change is made by this register update.
 
 ### BC-007 - Stability contract: 0 stable, beta/experimental/internal labeling
 

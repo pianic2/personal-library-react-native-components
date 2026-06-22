@@ -72,6 +72,14 @@ Evidence sources:
 - Prebuild/dev client: possible if version unsupported.
 - Gate: Jira ticket required for policy change; ADR if provider ownership/default behavior changes.
 
+PLRNUI-37 final status:
+
+- Contract decided: `react-native-safe-area-context` is a required peer under the current `ThemeProvider` behavior.
+- Consumer owns native installation, autolinking/setup and Expo/RN version compatibility.
+- The package must not hide this dependency as a bundled runtime dependency while the consumer owns the native runtime.
+- The package must not mark this dependency optional in `peerDependenciesMeta` while `ThemeProvider` keeps safe-area behavior enabled by default.
+- Clean consumer smoke must validate install, import and render with the selected Expo/RN baseline.
+
 ### `react-native-svg` and `lucide-react-native`
 
 - Current declarations: both in `package.json` `dependencies`.
