@@ -60,6 +60,7 @@ Allowed statuses:
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
 | PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
+| PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
 
 ### PLRNUI-16 - Token export naming
 
@@ -173,16 +174,16 @@ If these symbols existed in previous public package states, removal must be trea
 - Category: native dependency / runtime compatibility
 - Source issue: PLRNUI-7, PLRNUI-8, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-8 smoke coverage before release. PLRNUI-37 confirms `react-native-safe-area-context` as a required peer while `ThemeProvider` keeps safe-area behavior enabled by default.
+- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-8 smoke coverage before release. PLRNUI-37 confirms `react-native-safe-area-context` as a required peer while `ThemeProvider` keeps safe-area behavior enabled by default. PLRNUI-39 confirms `expo-clipboard` must remain consumer-owned and adapter-based, not a core dependency or root peer.
 - Motivation: Hard native dependencies can change install/runtime requirements for Expo and React Native consumers.
-- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs. Consumers using `ThemeProvider` must explicitly install `react-native-safe-area-context` as a peer dependency.
-- Migration path: Classify each native dependency as required peer, optional peer, dev-only or isolated feature; update docs and smoke tests after package metadata changes. For `ThemeProvider`, document `react-native-safe-area-context` as a required peer and validate install/import/render in a clean consumer.
+- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs. Consumers using `ThemeProvider` must explicitly install `react-native-safe-area-context` as a peer dependency. Consumers using future clipboard support must provide and validate their own `ClipboardAdapter`; Expo consumers may implement it with `expo-clipboard`.
+- Migration path: Classify each native dependency as required peer, optional consumer-owned adapter, dev-only or isolated feature; update docs and smoke tests after package metadata changes. For `ThemeProvider`, document `react-native-safe-area-context` as a required peer and validate install/import/render in a clean consumer. For clipboard, document `ClipboardAdapter` as opt-in if implemented and keep `expo-clipboard` outside the core package metadata.
 - Legacy alias policy: Not applicable.
 - Deprecation window: HUMAN REVIEW REQUIRED if public APIs lose native-backed behavior.
 - Removal target: Before release candidate for uncontrolled hard native dependencies.
 - Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs, including `ThemeProvider` render with safe-area behavior enabled.
 - Release blocking: Yes. RC is blocked if native dependency requirements are not classified and tested.
-- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37 is a contract decision only; no runtime or package metadata change is made by this register update.
+- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37 and PLRNUI-39 are contract decisions only; no runtime or package metadata change is made by these register updates. PLRNUI-39 does not introduce a breaking change while it remains opt-in/documental and does not replace existing public clipboard APIs.
 
 ### BC-007 - Stability contract: 0 stable, beta/experimental/internal labeling
 

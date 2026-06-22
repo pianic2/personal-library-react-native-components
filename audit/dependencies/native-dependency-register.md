@@ -24,7 +24,7 @@ Evidence sources:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `react-native` | Host native runtime for all RN components. Imported across library source. | App-owned runtime, not library-owned autolinking. | Must match Expo SDK bundled RN. | Must match Expo/RN baseline. | App-specific. | No library config plugin. | Duplicate/incompatible RN if bundled. | Must be peer; PLRNUI-8 clean Expo/RN smoke. |
 | `@react-native-async-storage/async-storage` | RN native storage module. Used by `theme/themeStorage.ts` and `storage/tokenStorage.native.ts`. Lockfile peers on `react-native`. | Yes, in native RN apps. | Unknown until PLRNUI-8 validates selected version against Expo SDK. | Likely compatible when SDK/version aligned, but must be tested. | Possible if not supported by Expo Go baseline. | Usually no custom plugin, but version support must be checked. | Clean consumer can fail with missing native module; core UI gets storage requirement indirectly. | Jira required; ADR if kept core; Risk Assessment if Expo Go behavior uncertain. |
-| `expo-clipboard` | Expo native module used by dynamic import in `utils/clipboard.ts`. Lockfile peers on `expo`, `react`, `react-native`. | Expo modules autolinking in app. | Unknown until PLRNUI-8 validates SDK support. | Compatible only with Expo SDK-aligned version. | Required if not available in Expo Go baseline or if custom dev client is needed. | Expo module may not need custom plugin, but must be checked. | Makes clipboard utility Expo-specific; non-Expo RN may lack module. | Jira required; ADR if core API requires Expo; Risk Assessment for Expo Go/prebuild uncertainty. |
+| `expo-clipboard` | Optional Expo native/runtime integration for clipboard behavior. PLRNUI-39 classifies it as consumer-owned adapter implementation, not core package dependency. Lockfile/audit evidence shows peers on `expo`, `react`, `react-native` when used. | Consumer app owned; core package must not own autolinking. | Consumer must validate against selected Expo SDK if they choose the Expo adapter. | Compatible only when consumer installs an SDK-aligned version. | Consumer-owned if Expo Go does not support the selected module/version. | Consumer-owned; usually no custom plugin, but must be checked by the app. | A hard core dependency would make clipboard Expo-specific; adapter ownership keeps non-clipboard and non-Expo consumers unaffected. | PLRNUI-39 strategy; future adapter ticket required before official adapter/subpath. |
 | `react-native-safe-area-context` | RN native safe-area module. Used by `ThemeProvider` default wrapper. Lockfile peers on `react` and `react-native`. | Yes. | Common in Expo, but selected version must be validated. | Compatible when aligned with Expo SDK. | Possible outside Expo Go or with unsupported version. | Usually no custom plugin, but must be verified. | `ThemeProvider` default makes native dep effectively required. | Jira required for policy change; ADR if provider contract changes. |
 | `react-native-svg` | RN native SVG module. Declared directly and required as peer by `lucide-react-native`. | Yes. | Expo Go support/version must be validated. | Compatible when aligned with Expo SDK. | Possible if unsupported version or custom native setup needed. | Usually no custom plugin, but must be checked. | Icon components can fail at runtime if SVG is missing. | Jira required; Risk Assessment if version is not Expo Go compatible. |
 
@@ -52,14 +52,15 @@ Evidence sources:
 
 ### `expo-clipboard`
 
-- Current declaration: `package.json` `dependencies`.
-- Lockfile: `package-lock.json` package version `8.0.8`, peers `expo`, `react`, `react-native`.
-- Source import: dynamic import in `utils/clipboard.ts`.
-- API surface: `copyToClipboard` is root-reachable through `utils/index.ts` and `index.ts`.
-- Expo Go: blocker until PLRNUI-8 validates module availability.
-- Managed workflow: must use Expo SDK-compatible version.
-- Prebuild/dev client: required if Expo Go does not include/support the needed module.
-- Gate: Jira ticket required; ADR required if Expo becomes a hard package requirement.
+- PLRNUI-39 classification: optional native/runtime integration owned by the consumer application.
+- Package metadata policy: must not be declared in core package `dependencies`, `peerDependencies`, `peerDependenciesMeta`, `optionalDependencies`, or `devDependencies`.
+- Import policy: must not be imported directly by the root package or root-reachable core runtime code.
+- Adapter policy: Expo consumers may implement a future `ClipboardAdapter` using `expo-clipboard`.
+- Current checkout note: `package.json` does not declare `expo-clipboard`; prior audit evidence recorded `utils/clipboard.ts` / `copyToClipboard` and lockfile peer implications.
+- Expo Go: consumer-owned validation when the app chooses `expo-clipboard`.
+- Managed workflow: consumer must use an Expo SDK-compatible version.
+- Prebuild/dev client: consumer-owned if Expo Go does not include/support the needed module/version.
+- Gate: future official Expo adapter or subpath requires a separate Jira ticket; ADR/Risk Assessment required if Expo becomes a hard package requirement.
 
 ### `react-native-safe-area-context`
 
@@ -96,7 +97,7 @@ PLRNUI-37 final status:
 | --- | --- |
 | `react-native` | Blocker until matched to Expo SDK baseline. |
 | `@react-native-async-storage/async-storage` | Unknown; requires PLRNUI-8 clean Expo validation. |
-| `expo-clipboard` | Unknown; requires PLRNUI-8 Expo Go validation. |
+| `expo-clipboard` | Consumer-owned if clipboard adapter uses Expo; core package must not require it. |
 | `react-native-safe-area-context` | Unknown for selected version; requires PLRNUI-8 validation. |
 | `react-native-svg` | Unknown for selected version; requires PLRNUI-8 validation. |
 | `lucide-react-native` | Depends on `react-native-svg`; requires icon smoke. |
@@ -121,6 +122,8 @@ Prebuild or custom dev client becomes required when:
 | --- | --- |
 | Duplicate React Native | `react-native` in `dependencies`; ADR 0005 peer rule; `audit/05-dependencies.md` DEP-01 |
 | Hidden native setup | Native modules in `dependencies`; Risk Assessment 0005 |
-| Expo hard requirement | `expo-clipboard` in `dependencies`; lockfile peer on `expo` |
+| Expo hard requirement | Prior audit evidence recorded `expo-clipboard` in `dependencies` and lockfile peer on `expo`; PLRNUI-39 forbids this as a core package requirement |
 | Preview masks real install | `preview-web/vite.config.ts` shims native modules; `audit/06-build-and-packaging.md` BLD-06 |
 | Public API forces native deps | `ThemeProvider` default safe-area, storage exports, clipboard utility exports |
+
+PLRNUI-39 resolution for clipboard: `expo-clipboard` must not be a hard core requirement. Clipboard support must be optional and adapter-based, with any Expo implementation installed and validated by the consumer app.

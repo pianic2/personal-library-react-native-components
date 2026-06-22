@@ -19,6 +19,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added explicit reference to the recommended repo/project identity `personal-library-react-native-components`.
 - Added clean Expo consumer install as mandatory verification before release readiness.
 - Added PLRNUI-37 safe-area provider dependency contract documentation: `ThemeProvider` consumers must install `react-native-safe-area-context` as a required peer while safe-area behavior remains enabled by default.
+- Added PLRNUI-39 clipboard dependency strategy: clipboard support is optional, adapter-based and consumer-owned; `expo-clipboard` is not a core package runtime dependency or root peer dependency.
 
 ### Changed
 
@@ -29,6 +30,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that no current subpath exports are implemented and any future subpath policy must be verified through package metadata and consumer smoke tests.
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
 - Clarified that `react-native-safe-area-context` is not optional under the current `ThemeProvider` contract and must be validated against the selected Expo/RN baseline.
+- Clarified that PLRNUI-39 is a governance/dependency decision only and does not declare a breaking change while clipboard remains opt-in and package metadata is unchanged.
 
 ### PLRNUI-16 - Token export naming decision
 

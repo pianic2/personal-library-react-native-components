@@ -62,32 +62,24 @@ The exact range requires PLRNUI-8 validation in a clean Expo/RN app.
 Current evidence:
 
 - `expo` is not declared in `package.json`.
-- `expo-clipboard` is declared in `dependencies`.
-- `package-lock.json` shows `expo-clipboard` peers on `expo`, `react`, and `react-native`.
+- Prior audit evidence recorded `expo-clipboard` in `dependencies`.
+- Prior audit evidence recorded `expo-clipboard` peers on `expo`, `react`, and `react-native`.
+- Current checkout `package.json` does not declare `expo-clipboard`.
 - ADR 0005 says Expo is the primary compatibility baseline, but React Native is the runtime target.
 
 Policy:
 
-- Expo-specific packages should be optional peers or isolated behind optional APIs.
+- Expo-specific packages should be isolated behind optional APIs or consumer-provided adapters.
 - A dependency on `expo` itself should be avoided for the core package.
 - Any Expo module added to runtime requires a Jira ticket and may require ADR/Risk Assessment depending on impact.
 
-Candidate optional peer:
+PLRNUI-39 decision:
 
-```json
-{
-  "peerDependencies": {
-    "expo-clipboard": "^8.0.8"
-  },
-  "peerDependenciesMeta": {
-    "expo-clipboard": {
-      "optional": true
-    }
-  }
-}
-```
-
-This is a proposal only. PLRNUI-7 does not change `package.json`.
+- `expo-clipboard` must not become a root `peerDependency` of the core package.
+- `expo-clipboard` must not be added to root `peerDependenciesMeta` for the core package.
+- Clipboard support must be adapter-based and owned by the consumer application.
+- Expo consumers may use `expo-clipboard` only as their implementation of a `ClipboardAdapter`.
+- An official Expo adapter requires a separate future ticket and must not be introduced by the core package policy.
 
 ## Policy: Expo modules
 
@@ -103,7 +95,7 @@ Current Expo-specific package:
 
 | Package | Current section | Proposed policy | Evidence |
 | --- | --- | --- | --- |
-| `expo-clipboard` | `dependencies` | Optional peer or adapter-backed optional feature | `utils/clipboard.ts`; `package-lock.json` peers; `audit/05-dependencies.md` DEP-06 |
+| `expo-clipboard` | Historical audit evidence: `dependencies`; current checkout package metadata does not declare it | Consumer-owned adapter implementation; not a root peer of the core package | PLRNUI-39; `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers in prior audit evidence; `audit/05-dependencies.md` DEP-06 |
 
 ## Policy: React Native native modules
 
@@ -125,7 +117,7 @@ Current native/native-adjacent packages:
 | `@react-native-async-storage/async-storage` | Optional peer or move behind storage adapter | `theme/themeStorage.ts`; `storage/tokenStorage.native.ts`; `audit/05-dependencies.md` DEP-05 |
 | `react-native-svg` | Optional peer tied to icon usage | `lucide-react-native` peer in `package-lock.json` |
 | `lucide-react-native` | Optional peer or dependency only if icons are part of core contract | component imports; `package-lock.json` peers |
-| `expo-clipboard` | Optional peer | `utils/clipboard.ts`; `package-lock.json` peers |
+| `expo-clipboard` | Not a core peer; optional consumer-owned adapter implementation | PLRNUI-39; `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers |
 
 ### PLRNUI-37 - Safe Area provider dependency contract
 
@@ -139,6 +131,20 @@ Policy:
 - Reconsider optional peer status only in a future task if `ThemeProvider` changes contract, safe-area behavior becomes opt-in, or safe-area ownership moves to a separate provider/app-shell component.
 
 Rationale: `ThemeProvider` safe-area behavior is part of the public/runtime provider contract. A required peer keeps native runtime ownership with the consumer app while making the dependency explicit.
+
+### PLRNUI-39 - Clipboard dependency strategy
+
+`expo-clipboard` is not a peer dependency of the core package.
+
+Policy:
+
+- Keep `expo-clipboard` out of root `dependencies`, `peerDependencies`, `peerDependenciesMeta`, `optionalDependencies`, and `devDependencies`.
+- Do not import `expo-clipboard` directly from the package root or root-reachable core runtime code.
+- Model clipboard support as an optional `ClipboardAdapter` contract when implemented.
+- Document `expo-clipboard` only as one possible Expo consumer implementation.
+- Reconsider an official Expo adapter only in a separate future ticket, and keep it separated from the core package contract.
+
+Rationale: clipboard is a feature-specific native/runtime integration. A root peer dependency would make all consumers see an Expo-specific requirement even when they do not use clipboard behavior.
 
 ## Policy: JS-only dependencies
 
@@ -185,7 +191,6 @@ Candidate proposal, not applied in PLRNUI-7:
     "lucide-react-native": "^0.574.0",
     "react-native-svg": "^15.15.3",
     "@react-native-async-storage/async-storage": "^1.23.1",
-    "expo-clipboard": "^8.0.8",
     "react-dom": "^19.2.4",
     "react-native-web": "^0.21.2"
   }
@@ -206,9 +211,6 @@ Candidate proposal, not applied in PLRNUI-7:
 {
   "peerDependenciesMeta": {
     "@react-native-async-storage/async-storage": {
-      "optional": true
-    },
-    "expo-clipboard": {
       "optional": true
     },
     "lucide-react-native": {
@@ -263,6 +265,7 @@ These are conceptually dev/build/test/docs dependencies:
 | `react-native` | Host native runtime; duplicate RN risk | ADR 0005, `audit/05-dependencies.md` DEP-01 |
 | `react-dom` | Web host runtime | `react-native-web` peer in `package-lock.json`; preview-only usage |
 | `react-native-web` | Web host/runtime adapter | `preview-web/vite.config.ts`; `audit/06-build-and-packaging.md` |
+| `expo-clipboard` | Expo native/runtime module; PLRNUI-39 assigns ownership to consumer adapter, not core package metadata | `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers in prior audit evidence |
 | `tsup` | Build tool | `tsup.config.ts` |
 | `typescript` | Compiler/type tool | `tsconfig*.json` |
 | `ui` | No source import evidence | `audit/05-dependencies.md` DEP-03; import search |
