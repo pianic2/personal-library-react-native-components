@@ -6,6 +6,8 @@ File-based validation of native dependency readiness for Expo Go, managed workfl
 
 Runtime validation in Expo Go or Metro could not proceed because clean consumer installation failed.
 
+Current-state note: this PLRNUI-8 report is historical evidence for the failed consumer validation run. PLRNUI-44 supersedes the package dependency classification for the current checkout: current `package.json` has no runtime `dependencies`, keeps `react` / `react-native` as peers, and keeps AsyncStorage / Clipboard consumer-owned.
+
 ## Evidence
 
 Inputs reviewed:
@@ -21,18 +23,18 @@ Inputs reviewed:
 - `storage/tokenStorage.native.ts` evidence from dependency audit
 - `utils/clipboard.ts` evidence from dependency audit
 
-Native or native-adjacent packages currently declared:
+Native or native-adjacent packages declared in the historical PLRNUI-8 package artifact:
 
 | Package | Current package section | Native/runtime role |
 | --- | --- | --- |
-| `react-native` | `dependencies` | Host native runtime; should be app-owned. |
-| `@react-native-async-storage/async-storage` | `dependencies` | Native storage module used by theme/storage paths. |
-| `expo-clipboard` | `dependencies` | Expo native module used by clipboard utility path. |
-| `react-native-safe-area-context` | `dependencies` | Native safe-area module used by default `ThemeProvider`. |
-| `react-native-svg` | `dependencies` | Native SVG module required by icon path. |
-| `lucide-react-native` | `dependencies` | Native-adjacent icon wrapper relying on SVG. |
-| `react-native-web` | `dependencies` | Web runtime adapter, not native, but consumer platform dependency. |
-| `react-dom` | `dependencies` | Web host runtime, not native, but consumer platform dependency. |
+| `react-native` | Historical `dependencies` | Host native runtime; current package metadata keeps it as a peer. |
+| `@react-native-async-storage/async-storage` | Historical `dependencies` | Native storage module; current PLRNUI-44 policy keeps it consumer-owned. |
+| `expo-clipboard` | Historical `dependencies` | Expo native module; current PLRNUI-44 policy keeps it consumer-owned and excluded from core metadata. |
+| `react-native-safe-area-context` | Historical `dependencies` | Native safe-area module; current policy is governed by PLRNUI-37. |
+| `react-native-svg` | Historical `dependencies` | Native SVG module; not declared in current package metadata. |
+| `lucide-react-native` | Historical `dependencies` | Native-adjacent icon wrapper; not declared in current package metadata. |
+| `react-native-web` | Historical `dependencies` | Web runtime adapter; not declared in current package metadata. |
+| `react-dom` | Historical `dependencies` | Web host runtime; not declared in current package metadata. |
 
 Build external evidence:
 
@@ -59,17 +61,17 @@ rg -n "from ['\"](react|react-native|react-dom|react-native-web|@react-native-as
 - Expo Go compatibility is unknown for the selected package dependency set because the clean consumer cannot install the package.
 - Managed workflow compatibility is unknown for the same reason.
 - Prebuild/custom dev client requirement is unknown and must remain blocked until native dependencies are installed and run in a clean consumer.
-- AsyncStorage strategy is not release-ready: AsyncStorage is a hard dependency and is used by theme/storage paths.
-- Safe Area strategy is not release-ready: `ThemeProvider` default behavior makes `react-native-safe-area-context` effectively required.
-- Clipboard strategy is not release-ready: `expo-clipboard` makes clipboard behavior Expo-specific while the package is not explicitly Expo-only.
-- SVG/icon strategy is not release-ready: icon components depend on `lucide-react-native` and `react-native-svg`, with SVG native compatibility still unverified.
+- AsyncStorage strategy in current governance is consumer-owned and adapter-based; executable consumer validation remains deferred.
+- Safe Area strategy remains governed by PLRNUI-37 and must be validated if/when package metadata exposes that contract.
+- Clipboard strategy in current governance is consumer-owned and adapter-based; `expo-clipboard` is excluded from core package metadata.
+- SVG/icon strategy is not declared in current package metadata; future introduction requires the native dependency gate.
 - Preview web shims cannot be used as evidence for Expo Go or managed workflow compatibility.
 
 ## Risks
 
 - Native dependencies can force prebuild or custom dev client if versions are not supported by the selected Expo SDK.
-- Hard native dependencies can make root package install fail or runtime crash for consumers that do not use the related feature.
-- Expo-specific clipboard can make the package effectively Expo-only unless isolated or documented.
+- Future native dependencies can make root package install fail or runtime crash if introduced without the PLRNUI-44 gate.
+- Expo-specific clipboard would make the package effectively Expo-only if it were added to core metadata; PLRNUI-39 and PLRNUI-44 forbid that for the core package.
 - Safe area and storage behavior are tied to root-reachable APIs, so optional peer treatment would require runtime guards or API isolation.
 - Build externalization is not aligned with package dependency policy, increasing bundling and Metro resolution risk.
 
@@ -79,8 +81,8 @@ rg -n "from ['\"](react|react-native|react-dom|react-native-web|@react-native-as
 - Expo Go compatibility has not been proven.
 - Managed workflow compatibility has not been proven.
 - Prebuild/custom dev client requirement has not been proven or ruled out.
-- Native dependency gate decisions are not implemented in package metadata.
+- Native dependency gate decisions are documented by PLRNUI-44 for the current package state; executable consumer validation remains deferred to PLRNUI-46.
 
 ## Conclusion
 
-Native runtime readiness is not validated. Current evidence supports only a risk classification: the package has multiple hard native or native-adjacent dependencies, and the clean Expo consumer cannot install the package far enough to run Metro or Expo Go checks.
+Native runtime readiness is not validated. Historical PLRNUI-8 evidence supports only a risk classification for that artifact. Current PLRNUI-44 package governance has no bundled native runtime dependency, but clean Expo/RN consumer validation still remains required before release readiness.

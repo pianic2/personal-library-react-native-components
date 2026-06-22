@@ -99,14 +99,13 @@ Update `audit/migration/breaking-change-register.md` when:
 
 Existing register links:
 
-- BC-010: dependency policy.
-- BC-011: native dependency requirements.
-- BC-012: package exports.
-- BC-013: platform-specific modules.
+- BC-005: peer dependency compatibility policy.
+- BC-006: native dependency gate.
+- BC-008: register/changelog freshness gate.
 
-## When PLRNUI-8 smoke test is required
+## When PLRNUI-46 smoke test is required
 
-PLRNUI-8 smoke test is required for:
+PLRNUI-46 smoke test is required for:
 
 - every native dependency currently declared;
 - every optional peer candidate that affects runtime code;
@@ -118,7 +117,7 @@ PLRNUI-8 smoke test is required for:
 - prebuild/dev client requirement validation;
 - duplicate React/RN checks.
 
-PLRNUI-8 must be a release blocker for PLRNUI-7 policy acceptance because ADR 0005 and ADR 0006 require clean consumer verification before release candidate.
+PLRNUI-46 must remain a release blocker for current package readiness because ADR 0005 and ADR 0006 require clean consumer verification before release candidate.
 
 ## Approval checklist
 
@@ -140,19 +139,21 @@ Before approving a native dependency:
 | ADR decision made | Required/not required with rationale |
 | Risk Assessment decision made | Required/not required with rationale |
 | Breaking-change register decision made | Updated/not required with rationale |
-| PLRNUI-8 scenario added | Smoke test case named |
+| PLRNUI-46 scenario added | Smoke test case named |
 | Release blocker status set | Blocker until smoke passes or limitation accepted |
 
-## Current dependencies requiring gate tracking
+## Current native dependency state after PLRNUI-44
 
-| Package | Current issue |
+Current `package.json` does not declare native runtime packages in `dependencies`. Gate tracking remains required for approved contracts and future introductions.
+
+| Package | Current package state | Gate status |
 | --- | --- |
-| `react-native` | Must become peer policy candidate; host runtime cannot be bundled. |
-| `react-native-safe-area-context` | Native module required by default `ThemeProvider` behavior. |
-| `@react-native-async-storage/async-storage` | Native storage used by theme/storage APIs. |
-| `expo-clipboard` | Expo-specific optional feature currently hard dependency. |
-| `react-native-svg` | Native SVG module required by icon stack. |
-| `lucide-react-native` | Icon package with native SVG peer. |
+| `react-native` | `peerDependencies` | Host runtime peer; consumer-owned; must not be bundled. |
+| `react-native-safe-area-context` | Not declared | Governed by PLRNUI-37 required peer contract while `ThemeProvider` safe-area behavior remains default. Future metadata change must pass this gate. |
+| `@react-native-async-storage/async-storage` | Not declared | Consumer-owned adapter backend under PLRNUI-38; must not be added as required core runtime dependency. |
+| `expo-clipboard` | Not declared | Consumer-owned adapter backend under PLRNUI-39; must not be added to core package metadata or imported by core runtime. |
+| `react-native-svg` | Not declared | Future native dependency candidate only; gate required before package metadata or runtime introduction. |
+| `lucide-react-native` | Not declared | Future native-adjacent dependency candidate only; gate required before package metadata or runtime introduction. |
 
 ## Non-compliant patterns
 

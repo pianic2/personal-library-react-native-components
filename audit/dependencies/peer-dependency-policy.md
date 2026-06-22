@@ -1,38 +1,62 @@
-# PLRNUI-7 - Peer Dependency Policy
+# PLRNUI-44 - Peer Dependency Policy
 
 ## Evidence base
 
 - `package.json` currently declares `react` and `react-native` as peer dependencies.
-- Current package metadata keeps only `typescript` in `devDependencies`.
+- `package.json` currently declares only `typescript` as a dev dependency.
+- `package.json` currently declares no runtime `dependencies`.
+- `package-lock.json` root package repeats the same root `devDependencies` and `peerDependencies`.
 - ADR 0005 says React and React Native host dependencies should be modeled as peers, native dependencies must be controlled, and Expo-specific dependencies must be documented/isolated.
 - ADR 0006 requires peer dependencies to be coherent and duplicate React/RN to be avoided before release.
-- Risk Assessment 0005 flags native dependency governance and Expo Go/prebuild risk.
-- Risk Assessment 0006 flags packaging and consumer install risk.
-- `audit/05-dependencies.md` already records DEP-01 through DEP-06.
-- `audit/migration/breaking-change-register.md` includes BC-010 for dependency policy and BC-011 for native dependency requirements.
+- PLRNUI-37 governs `react-native-safe-area-context`.
+- PLRNUI-38 governs theme persistence and AsyncStorage ownership.
+- PLRNUI-39 governs clipboard and `expo-clipboard` ownership.
 
-## Latest stable Expo baseline
+## Approved baseline
 
-PLRNUI-42 aligns React peer compatibility to the latest stable Expo SDK baseline selected for this repository:
+The package remains aligned to the approved baseline:
 
 - Expo SDK: `56.0.0`
-- React Native: `0.85`
+- React Native: `0.85.x`
 - React: `19.2.3`
 - Minimum Node: `22.13.x`
 
-The Expo SDK stable baseline is the source of truth for Expo/React Native compatibility. Beta, canary, RC and preview baselines are out of scope for this policy.
+PLRNUI-44 does not change the baseline or widen compatibility.
 
-## Policy: React
+## Current peer policy
 
-`react` must be a `peerDependency`.
+```json
+{
+  "peerDependencies": {
+    "react": ">=19.2.3 <20.0.0",
+    "react-native": ">=0.85.0 <0.86.0"
+  }
+}
+```
+
+`react` and `react-native` are host runtimes. They are owned by the consuming app and must not be bundled by the library.
+
+## Package section policy
+
+| Section | Allowed content | Current state |
+| --- | --- | --- |
+| `dependencies` | JS-only packages required by published runtime code and not owned by the host app, after dependency gate review. | None. |
+| `peerDependencies` | Host runtimes and approved required consumer-owned runtime contracts. | `react`, `react-native`. |
+| `peerDependenciesMeta` | Optional peer flags only after an approved optional-peer decision. | None. |
+| `optionalDependencies` | Avoid for core package native features unless separately approved. | None. |
+| `devDependencies` | Build/typecheck/test/docs/preview tooling. | `typescript`. |
+
+## React
+
+`react` must remain a `peerDependency`.
 
 Rationale:
 
-- React is the host renderer runtime for both RN and web consumers.
-- The package imports React throughout component/provider/hook code.
-- ADR 0005 and ADR 0006 require avoiding duplicate React.
+- React is the host renderer runtime.
+- Bundling React risks duplicate React instances.
+- The approved Expo SDK baseline uses React `19.2.3`.
 
-Proposed package policy:
+Current policy:
 
 ```json
 {
@@ -42,19 +66,17 @@ Proposed package policy:
 }
 ```
 
-This range is aligned by PLRNUI-42 to Expo SDK `56.0.0`, React Native `0.85` and React `19.2.3`. It keeps React 19 compatibility open within the current major while preventing React 20 from being accepted without a new baseline decision.
+## React Native
 
-## Policy: React Native
-
-`react-native` must not be bundled as a runtime dependency of the library. It should be a `peerDependency`.
+`react-native` must remain a `peerDependency`.
 
 Rationale:
 
-- Source imports `react-native` across `components/**`, `hooks/**`, `theme/**`, and `utils/**`.
-- ADR 0005 says React Native is the runtime target and host dependencies should be peers.
-- `audit/05-dependencies.md` DEP-01 and `audit/07-risks.md` RSK-05 flagged the historical placement as high risk.
+- React Native is the host native runtime.
+- Consumer applications own native runtime installation, Metro integration and platform setup.
+- Bundling React Native risks duplicate/incompatible native runtime versions.
 
-Proposed package policy:
+Current policy:
 
 ```json
 {
@@ -64,238 +86,97 @@ Proposed package policy:
 }
 ```
 
-PLRNUI-43 confirms the current React Native peer range as aligned to the approved Expo/RN baseline. The upper bound prevents accepting React Native `0.86.x` without a new baseline decision.
+## Safe Area
 
-## Policy: Expo
-
-`expo` should not become a hard dependency unless the package owner explicitly decides the library is Expo-only.
-
-Current evidence:
-
-- `expo` is not declared in `package.json`.
-- Prior audit evidence recorded `expo-clipboard` in `dependencies`.
-- Prior audit evidence recorded `expo-clipboard` peers on `expo`, `react`, and `react-native`.
-- Current checkout `package.json` does not declare `expo-clipboard`.
-- ADR 0005 says Expo is the primary compatibility baseline, but React Native is the runtime target.
+`react-native-safe-area-context` remains governed by the PLRNUI-37 safe-area provider dependency contract.
 
 Policy:
 
-- Expo-specific packages should be isolated behind optional APIs or consumer-provided adapters.
-- A dependency on `expo` itself should be avoided for the core package.
-- Any Expo module added to runtime requires a Jira ticket and may require ADR/Risk Assessment depending on impact.
+- If `ThemeProvider` keeps default safe-area behavior, Safe Area is a required peer contract.
+- The consumer owns installation and Expo/RN compatibility.
+- Do not place Safe Area in `dependencies`.
+- Do not mark Safe Area optional while default provider behavior requires it.
+- PLRNUI-44 does not modify package metadata for Safe Area and does not reopen the PLRNUI-37 decision.
 
-PLRNUI-39 decision:
+## AsyncStorage
 
-- `expo-clipboard` must not become a root `peerDependency` of the core package.
-- `expo-clipboard` must not be added to root `peerDependenciesMeta` for the core package.
-- Clipboard support must be adapter-based and owned by the consumer application.
-- Expo consumers may use `expo-clipboard` only as their implementation of a `ClipboardAdapter`.
-- An official Expo adapter requires a separate future ticket and must not be introduced by the core package policy.
+`@react-native-async-storage/async-storage` must not become a required runtime dependency of the core package.
 
-## Policy: Expo modules
+Policy:
 
-Expo modules must be classified before introduction:
+- Theme persistence is adapter-based and consumer-owned.
+- AsyncStorage may be documented only as a consumer-provided implementation after the relevant API exists.
+- The core package must not import AsyncStorage directly from root package or root-reachable theme runtime code.
+- AsyncStorage must not be added to core `dependencies` by PLRNUI-44.
+- `ThemeStorageAdapter` is not implemented in PLRNUI-44.
 
-| Class | Policy | Evidence requirement |
+## Clipboard
+
+`expo-clipboard` must not become a root peer dependency or runtime dependency of the core package.
+
+Policy:
+
+- Clipboard support is optional, adapter-based and consumer-owned.
+- Expo consumers may implement a clipboard adapter using `expo-clipboard`.
+- The core package must not import `expo-clipboard` directly.
+- The core package must not add `expo-clipboard` to `dependencies`, `peerDependencies`, `peerDependenciesMeta`, `optionalDependencies`, or `devDependencies`.
+- An official Expo adapter requires a separate future ticket and package/entrypoint decision.
+
+## Expo modules
+
+Expo-specific packages must be classified before introduction:
+
+| Class | Policy | Required evidence |
 | --- | --- | --- |
-| Core required Expo module | Avoid unless product decision makes package Expo-only | ADR or owner approval |
-| Optional feature module | Optional peer candidate | API path, fallback behavior, docs, PLRNUI-8 smoke |
-| Preview/demo-only Expo module | Dev dependency only | Must not be required by package root import |
+| Core required Expo module | Avoid unless owner explicitly makes package Expo-only. | ADR and release risk review. |
+| Optional feature module | Prefer consumer-owned adapter or optional peer only after approval. | API boundary, fallback behavior, docs and consumer smoke. |
+| Preview/demo-only Expo module | Dev-only and excluded from core package contract. | Proof it is not root-reachable runtime code. |
 
-Current Expo-specific package:
+`expo-clipboard` is currently excluded from the core package under PLRNUI-39.
 
-| Package | Current section | Proposed policy | Evidence |
-| --- | --- | --- | --- |
-| `expo-clipboard` | Historical audit evidence: `dependencies`; current checkout package metadata does not declare it | Consumer-owned adapter implementation; not a root peer of the core package | PLRNUI-39; `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers in prior audit evidence; `audit/05-dependencies.md` DEP-06 |
-
-## Policy: React Native native modules
+## Native dependency gate
 
 Native modules must not be introduced silently as hard runtime dependencies.
 
-Policy:
+Every new native or native-adjacent dependency requires:
 
-- Required native modules must be documented as peers.
-- Feature-specific native modules should be optional peers where possible.
-- Every new native dependency requires a Jira ticket.
-- ADR required when the dependency changes the package baseline, forces Expo/prebuild behavior, affects public API, or creates a likely breaking change.
-- Risk Assessment required for Expo Go uncertainty, managed workflow impact, native config, or consumer install risk.
+- Jira ticket;
+- package section decision;
+- source/API import evidence;
+- Expo Go, managed workflow, prebuild/custom dev client and bare RN impact;
+- ADR decision if baseline, architecture, public API or default behavior changes;
+- Risk Assessment decision for unresolved native/runtime uncertainty;
+- breaking-change register update when consumers must install new peers or behavior changes;
+- PLRNUI-46 consumer smoke coverage when install/import/runtime behavior is affected.
 
-Current native/native-adjacent packages:
+## What must not become a core runtime dependency without a new decision
 
-| Package | Proposed policy | Evidence |
-| --- | --- | --- |
-| `react-native-safe-area-context` | Peer if `ThemeProvider` keeps default safe-area behavior; optional peer if safe-area becomes opt-in | `theme/ThemeProvider.tsx`; `audit/theme/theme-provider-responsibility.md` |
-| `@react-native-async-storage/async-storage` | Optional peer or move behind storage adapter | `theme/themeStorage.ts`; `storage/tokenStorage.native.ts`; `audit/05-dependencies.md` DEP-05 |
-| `react-native-svg` | Optional peer tied to icon usage | `lucide-react-native` peer in `package-lock.json` |
-| `lucide-react-native` | Optional peer or dependency only if icons are part of core contract | component imports; `package-lock.json` peers |
-| `expo-clipboard` | Not a core peer; optional consumer-owned adapter implementation | PLRNUI-39; `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers |
+| Package | Reason |
+| --- | --- |
+| `react` | Host runtime peer. |
+| `react-native` | Host native runtime peer. |
+| `react-native-safe-area-context` | Consumer-owned native peer under PLRNUI-37 when required. |
+| `@react-native-async-storage/async-storage` | Consumer-owned storage adapter backend under PLRNUI-38. |
+| `expo-clipboard` | Consumer-owned optional clipboard adapter backend under PLRNUI-39. |
+| `react-native-svg` | Native module requiring future gate before introduction. |
+| `lucide-react-native` | Native-adjacent icon package requiring future gate before introduction. |
+| `react-dom` | Web host runtime, not native core runtime. |
+| `react-native-web` | Web runtime adapter, not native core runtime. |
 
-### PLRNUI-37 - Safe Area provider dependency contract
+## Relationship to PLRNUI-45 and PLRNUI-46
 
-`react-native-safe-area-context` is a required peer dependency while `ThemeProvider` keeps safe-area behavior enabled by default.
+PLRNUI-44 formalizes governance policy and current package classification.
 
-Policy:
+It does not implement runtime/API behavior, adapter code, package metadata changes for new native peers, or clean Expo consumer smoke coverage. Consumer smoke validation remains PLRNUI-46. Any separate implementation work remains outside PLRNUI-44.
 
-- Keep `react-native-safe-area-context` in `peerDependencies`.
-- Do not place `react-native-safe-area-context` in `dependencies`.
-- Do not mark `react-native-safe-area-context` optional in `peerDependenciesMeta` under the current `ThemeProvider` contract.
-- Reconsider optional peer status only in a future task if `ThemeProvider` changes contract, safe-area behavior becomes opt-in, or safe-area ownership moves to a separate provider/app-shell component.
+## Final decision
 
-Rationale: `ThemeProvider` safe-area behavior is part of the public/runtime provider contract. A required peer keeps native runtime ownership with the consumer app while making the dependency explicit.
+The current core package peer policy is:
 
-### PLRNUI-39 - Clipboard dependency strategy
-
-`expo-clipboard` is not a peer dependency of the core package.
-
-Policy:
-
-- Keep `expo-clipboard` out of root `dependencies`, `peerDependencies`, `peerDependenciesMeta`, `optionalDependencies`, and `devDependencies`.
-- Do not import `expo-clipboard` directly from the package root or root-reachable core runtime code.
-- Model clipboard support as an optional `ClipboardAdapter` contract when implemented.
-- Document `expo-clipboard` only as one possible Expo consumer implementation.
-- Reconsider an official Expo adapter only in a separate future ticket, and keep it separated from the core package contract.
-
-Rationale: clipboard is a feature-specific native/runtime integration. A root peer dependency would make all consumers see an Expo-specific requirement even when they do not use clipboard behavior.
-
-## Policy: JS-only dependencies
-
-JS-only dependencies may remain in `dependencies` only when:
-
-- they are imported by published runtime code;
-- they are not host runtimes owned by the consumer;
-- they do not pull native modules;
-- they do not belong only to preview/build/test tooling.
-
-Current finding:
-
-- No declared runtime dependency is clearly proven to be a JS-only core runtime dependency.
-- `ui` has no static imports in audited source and should not remain runtime without proof.
-
-## Policy: build/test/docs dependencies
-
-Build, test, docs and preview dependencies must stay in `devDependencies`.
-
-Current evidence:
-
-| Package | Current section | Proposed section | Evidence |
-| --- | --- | --- | --- |
-| `tsup` | `dependencies` | `devDependencies` | `tsup.config.ts`; `package.json` scripts; `audit/05-dependencies.md` DEP-02 |
-| `typescript` | `dependencies` | `devDependencies` | `tsconfig*.json`; `package.json` scripts; `audit/05-dependencies.md` DEP-02 |
-| `vite` | `devDependencies` | `devDependencies` | `preview-web/vite.config.ts`; `package.json` `preview` script |
-| `@vitejs/plugin-react` | `devDependencies` | `devDependencies` | `preview-web/vite.config.ts` |
-| `@types/react` | `devDependencies` | `devDependencies` | `tsconfig.ui.json`; `preview-web/tsconfig.json` |
-| `@types/react-dom` | `devDependencies` | `devDependencies` | `preview-web/tsconfig.json` |
-| `lucide-react` | `dependencies` | `devDependency` or optional web peer | `tsconfig.ui.json` and `preview-web/vite.config.ts` alias `lucide-react-native` to `lucide-react` |
-| `react-dom` | `dependencies` | optional web peer/devDependency | `react-native-web` peer in lockfile; preview web TS config |
-| `react-native-web` | `dependencies` | optional web peer/devDependency | `preview-web/vite.config.ts` |
-
-## Proposed peerDependencies
-
-Candidate proposal, not applied in PLRNUI-7:
-
-```json
-{
-  "peerDependencies": {
-    "react": ">=19.2.3 <20.0.0",
-    "react-native": ">=0.85.0 <0.86.0",
-    "react-native-safe-area-context": "^5.6.2",
-    "lucide-react-native": "^0.574.0",
-    "react-native-svg": "^15.15.3",
-    "@react-native-async-storage/async-storage": "^1.23.1",
-    "react-dom": "^19.2.4",
-    "react-native-web": "^0.21.2"
-  }
-}
-```
-
-Owner decision required:
-
-- Keep only required core dependencies in `peerDependencies`.
-- Move feature-specific packages to optional peers through `peerDependenciesMeta`.
-- Decide if web packages belong to the core package or only to docs/preview.
-
-## Proposed peerDependenciesMeta
-
-Candidate proposal, not applied in PLRNUI-7:
-
-```json
-{
-  "peerDependenciesMeta": {
-    "@react-native-async-storage/async-storage": {
-      "optional": true
-    },
-    "lucide-react-native": {
-      "optional": true
-    },
-    "react-native-svg": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
-    "react-native-web": {
-      "optional": true
-    }
-  }
-}
-```
-
-Open policy decision:
-
-- `react-native-safe-area-context` is optional only if safe-area behavior becomes opt-in or isolated from the core provider. Current `ThemeProvider` default makes it effectively required.
-
-## What should remain in dependencies
-
-At the current audit state, no declared package is clearly proven as a required JS-only runtime dependency for all consumers.
-
-Any future `dependencies` entry must have:
-
-- source import evidence from published runtime code;
-- reason it is not a host runtime;
-- evidence it is JS-only or native impact has passed the gate;
-- PLRNUI-8 consumer smoke coverage if it affects app resolution.
-
-## What should remain in devDependencies
-
-These are conceptually dev/build/test/docs dependencies:
-
-- `tsup`
-- `typescript`
-- `vite`
-- `@vitejs/plugin-react`
-- `@types/react`
-- `@types/react-dom`
-- preview-only web shims and tooling
-- potentially `lucide-react`, `react-dom`, `react-native-web` if used only by preview/docs and not supported package web runtime
-
-## What must not become runtime dependency
-
-| Package | Reason | Evidence |
-| --- | --- | --- |
-| `react` | Host runtime; duplicate React risk | ADR 0005, ADR 0006, `package.json` current peer |
-| `react-native` | Host native runtime; duplicate RN risk | ADR 0005, `audit/05-dependencies.md` DEP-01 |
-| `react-dom` | Web host runtime | `react-native-web` peer in `package-lock.json`; preview-only usage |
-| `react-native-web` | Web host/runtime adapter | `preview-web/vite.config.ts`; `audit/06-build-and-packaging.md` |
-| `expo-clipboard` | Expo native/runtime module; PLRNUI-39 assigns ownership to consumer adapter, not core package metadata | `audit/dependencies/clipboard-dependency-strategy.md`; `package-lock.json` peers in prior audit evidence |
-| `tsup` | Build tool | `tsup.config.ts` |
-| `typescript` | Compiler/type tool | `tsconfig*.json` |
-| `ui` | No source import evidence | `audit/05-dependencies.md` DEP-03; import search |
-
-## Breaking change impact
-
-Changing dependency placement is a candidate breaking change.
-
-Evidence:
-
-- `audit/migration/breaking-change-register.md` BC-010: dependency policy can require consumers to install peers explicitly.
-- `audit/migration/breaking-change-register.md` BC-011: native dependency requirements can change Expo Go/prebuild setup.
-- ADR 0006 requires install/import verification in a clean consumer before release.
-
-Required release note topics:
-
-- Required peers and optional peers.
-- Expo SDK / RN baseline.
-- Native module setup notes.
-- Expo Go limitations.
-- Managed workflow and prebuild/dev client notes.
-- Migration from bundled dependencies to explicit consumer installs.
+- `react` required peer;
+- `react-native` required peer;
+- no core runtime `dependencies`;
+- `typescript` dev-only;
+- AsyncStorage and Clipboard consumer-owned;
+- Safe Area governed by the approved PLRNUI-37 contract;
+- new native dependencies blocked until the native dependency gate is satisfied.

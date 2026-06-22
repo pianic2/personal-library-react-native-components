@@ -20,6 +20,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added clean Expo consumer install as mandatory verification before release readiness.
 - Added PLRNUI-37 safe-area provider dependency contract documentation: `ThemeProvider` consumers must install `react-native-safe-area-context` as a required peer while safe-area behavior remains enabled by default.
 - Added PLRNUI-39 clipboard dependency strategy: clipboard support is optional, adapter-based and consumer-owned; `expo-clipboard` is not a core package runtime dependency or root peer dependency.
+- Added PLRNUI-44 native dependency governance consolidation: current package metadata has no runtime `dependencies`, keeps `react` / `react-native` as peers, keeps `typescript` dev-only, keeps AsyncStorage and Clipboard consumer-owned, and leaves Safe Area under the approved PLRNUI-37 contract.
 
 ### Changed
 
@@ -33,6 +34,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
 - Clarified that `react-native-safe-area-context` is not optional under the current `ThemeProvider` contract and must be validated against the selected Expo/RN baseline.
 - Clarified that PLRNUI-39 is a governance/dependency decision only and does not declare a breaking change while clipboard remains opt-in and package metadata is unchanged.
+- Clarified that PLRNUI-44 does not implement `ThemeStorageAdapter`, does not add native dependencies, does not change the approved Expo/RN baseline, and does not create the PLRNUI-46 Expo consumer smoke test.
 
 ### PLRNUI-16 - Token export naming decision
 
@@ -69,7 +71,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - Historical PLRNUI-8 clean Expo consumer install failed with `ERESOLVE` because the consumer used `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`; PLRNUI-42 updates current package metadata to accept React `19.2.3`.
 - Root import, TypeScript consumer import, Metro resolution and native runtime smoke could not proceed after the PLRNUI-8 install failure.
 - React Native peer package metadata is aligned by PLRNUI-43; clean consumer duplicate React/RN proof remains deferred to PLRNUI-46.
-- Native/native-adjacent dependency policy remains unimplemented in package metadata.
+- Native/native-adjacent dependency policy is consolidated by PLRNUI-44 for the current package state; any future native dependency introduction remains blocked by the native dependency gate and PLRNUI-46 consumer validation.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.
 
@@ -104,7 +106,7 @@ PLRNUI-8 evidence already shows:
 | PLRNUI-3 | Package/repo identity | Migrate from AURA / `@aura/ui` toward `personal-library-react-native-components` and `@personal-library/react-native-components`. | Legacy naming grep, package metadata audit, migration map update. |
 | PLRNUI-4 | Public API | 92 exports analyzed; root API must be governed and no current subpath exports are implemented. | Export matrix approval, deep import audit, root API proposal. |
 | PLRNUI-5 | Stability | Current API must not imply stable support; 0 stable context remains a release communication risk. | Component maturity matrix and docs/demo stability labels. |
-| PLRNUI-7 | Dependencies | Peer dependency and native dependency gates are defined as governance requirements. | Peer policy review, native gate checklist, PLRNUI-8 smoke coverage. |
+| PLRNUI-7 | Dependencies | Peer dependency and native dependency gates are defined as governance requirements; PLRNUI-44 consolidates the current package state. | Peer policy review, native gate checklist, PLRNUI-46 smoke coverage. |
 | PLRNUI-8 | Release smoke | Build/typecheck/pack pass; historical clean Expo install failed on React peer mismatch; PLRNUI-42 aligns current React peer metadata. | Clean Expo install/import/runtime smoke must pass before RC readiness. |
 | PLRNUI-9 | Docs/demo | Docs/demo still use legacy naming/imports and preview web is not real Expo/RN runtime proof. | Docs/demo import cleanup and consumer-facing examples using public API. |
 | PLRNUI-10 | Governance | Register and changelog updated as release gates. | Pre-RC register/changelog review required. |
