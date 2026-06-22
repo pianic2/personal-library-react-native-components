@@ -1,0 +1,26 @@
+{
+  "name": "@personal-library/react-native-components",
+  "version": "0.0.0",
+  "description": "React Native component library baseline.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "tsc -p tsconfig.json --watch --noEmit",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "build:prod": "npm run clean && npm run typecheck && npm run build",
+    "package:dry-run": "npm pack --dry-run",
+    "clean": "rm -rf dist *.tgz",
+    "prepack:check": "npm run build:prod && npm run package:dry-run",
+    "release:check": "npm run clean && npm ci && npm run typecheck && npm run build && npm run package:dry-run"
+ },
+  "devDependencies": {
+    "typescript": "^5.8.0"
+  }
+}

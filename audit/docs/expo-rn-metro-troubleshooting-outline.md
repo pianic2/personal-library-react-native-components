@@ -1,0 +1,89 @@
+# PLRNUI-9 - Expo/RN/Metro Troubleshooting Outline
+
+## Scopo
+
+Outline minimo per una futura guida troubleshooting. Non e una guida completa e non applica fix. Deve restare coerente con PLRNUI-8, dove il clean Expo consumer install falliva per mismatch del peer React.
+
+## 1. Clean Expo consumer install
+
+- Creare una app Expo pulita fuori dal repository.
+- Installare il package/tarball pubblicabile, non importare da path repo-local.
+- Verificare che l'installazione npm passi senza `--force` o `--legacy-peer-deps`.
+- Verificare root import da entrypoint pubblico approvato.
+- Registrare versione Expo, React, React Native, Node e npm.
+
+Nota PLRNUI-8: il consumer Expo pulito usava `react@19.2.3`, mentre `@aura/ui@1.0.0` richiedeva peer `react@^19.2.4`; l'installazione falliva con `ERESOLVE`.
+
+## 2. Peer dependency React/Expo/RN
+
+- Controllare `react` richiesto dal package.
+- Controllare React installato dal template Expo.
+- Controllare React Native installato dal template Expo.
+- Verificare che React Native sia app-owned e non duplicato.
+- Usare `npm ls react react-native` nel consumer.
+- Aprire gap packaging se npm rileva peer mismatch o duplicati.
+
+## 3. Metro resolver
+
+- Validare import dal package root.
+- Non usare alias Vite come prova Metro.
+- Non usare `../../index`, `src/*`, `dist/*`, `packages/ui/src/*`.
+- Verificare export map e subpath realmente dichiarati in `package.json`.
+- Registrare errori Metro come blocker packaging/API quando impediscono root import.
+
+## 4. TypeScript module resolution
+
+- Verificare che `exports["."].types` punti a declaration generata.
+- Verificare che top-level `types` non confonda toolchain consumer.
+- Non documentare subpath se non esistono in package exports.
+- Registrare errori `Cannot find module` o missing declarations.
+
+## 5. Native runtime limitations
+
+- Safe Area: `react-native-safe-area-context` deve essere presente e compatibile.
+- AsyncStorage: `@react-native-async-storage/async-storage` deve essere presente se API/theme path lo richiede.
+- Clipboard: `expo-clipboard` richiede compatibilita Expo SDK.
+- Icons/SVG: `lucide-react-native` richiede `react-native-svg`.
+- Se Expo Go non supporta una dependency/versione, documentare prebuild/custom dev client.
+
+## 6. Deep import vietati
+
+Esempi da vietare nei consumer examples:
+
+- `../../index`
+- `../../theme/types`
+- `src/*`
+- `dist/*`
+- `packages/ui/src/*`
+- subpath non dichiarati nel package export map
+
+Consentire solo entrypoint pubblici approvati e documentati.
+
+## 7. Preview/demo shim
+
+- Documentare che `preview-web/vite.config.ts` usa alias e shim.
+- Separare preview web da consumer Expo/RN.
+- Non usare preview success come prova di package install, Metro, Expo Go o native runtime.
+- Elencare shim Safe Area, AsyncStorage, Clipboard, Lucide/SVG.
+
+## 8. Errori noti
+
+- `npm ERR! ERESOLVE unable to resolve dependency tree`: possibile mismatch peer React/Expo/RN.
+- Metro cannot resolve package root: export map/package artifact issue.
+- TypeScript cannot find declarations: `types`/declaration artifact issue.
+- Missing native module: native dependency non installata o non compatibile.
+- Works in preview, fails in Expo: probabile shim/alias preview che maschera runtime reale.
+
+## 9. Quando aprire ticket packaging/API
+
+Aprire ticket quando:
+
+- clean install fallisce;
+- `npm ls react react-native` mostra duplicati o incompatibilita;
+- root import fallisce;
+- TypeScript declarations non risolvono;
+- Metro non risolve package/export;
+- docs richiedono import non pubblici;
+- native dependency e richiesta da API root senza policy;
+- demo usa internals come consumer examples;
+- shim preview sono necessari ma non documentati.
