@@ -6,10 +6,12 @@ Validation of build, typecheck and package dry-run for the React Native UI libra
 
 Repository sources, package metadata, lockfile, TypeScript config and build config were not modified. Commands that can write generated output were executed in a temporary copy at `/tmp/plrnui8-validation.SC3SJW/repo`.
 
+Current-state note for PLRNUI-45: this PLRNUI-8 report is historical evidence for an older package artifact. Current package metadata is reconciled by PLRNUI-45: `name` is `@personal-library/react-native-components`, `main` / `module` point to `./dist/index.js`, `types` points to `./dist/index.d.ts`, and root `exports["."]` points to the same emitted files.
+
 ## Evidence
 
 - Repository state before report creation: branch `main` tracking `origin/main`; pre-existing dirty state `M package-lock.json` and `?? audit/`.
-- `package.json` declares package name `@aura/ui`, version `1.0.0`, root-only `exports["."]`, `main: "index.ts"`, `types: "index.ts"`, and package files limited to `dist`.
+- Historical PLRNUI-8 artifact `package.json` declared package name `@aura/ui`, version `1.0.0`, root-only `exports["."]`, `main: "index.ts"`, `types: "index.ts"`, and package files limited to `dist`.
 - `tsup.config.ts` builds `index.ts` to `dist`, ESM only, with declarations enabled.
 - `npm run typecheck` completed successfully in the temporary copy.
 - `npm run build` completed successfully in the temporary copy.
@@ -67,19 +69,19 @@ find dist -maxdepth 2 -type f -printf '%p %s bytes\n' | sort
 - `npm run build` passed and emitted ESM plus declaration output.
 - `npm pack --dry-run` passed only after setting npm cache to `/tmp`.
 - The tarball includes `dist` artifacts, but also includes root `index.ts` because it is referenced by package metadata.
-- `package.json` has a metadata mismatch: `exports["."].import` and `exports["."].types` point to `dist`, while `main` and `types` point to source `index.ts`.
+- Historical PLRNUI-8 artifact had a metadata mismatch: `exports["."].import` and `exports["."].types` pointed to `dist`, while `main` and `types` pointed to source `index.ts`. Current package metadata is aligned by PLRNUI-45.
 
 ## Risks
 
 - npm commands may fail in this managed environment unless npm cache is redirected away from read-only `/home/optimus/.npm`.
-- Including `index.ts` in the published tarball is unexpected when `files` is limited to `dist`; it is pulled in because package metadata references it.
-- Source-facing `main` and `types` fields can confuse tools that ignore or partially support `exports`.
+- In the historical PLRNUI-8 artifact, including `index.ts` in the published tarball was unexpected when `files` was limited to `dist`; it was pulled in because package metadata referenced it.
+- Current `main` and `types` fields point to `dist`; consumer resolver proof remains deferred to PLRNUI-46.
 
 ## Blockers
 
 - No build/typecheck/package command blocker was observed after using `/tmp` npm cache.
-- Packaging metadata remains a release blocker because root `main`/`types` are not aligned with the built artifacts.
+- Historical PLRNUI-8 packaging metadata was a release blocker because root `main`/`types` were not aligned with the built artifacts. Current package metadata is aligned; release remains blocked on PLRNUI-46 consumer evidence.
 
 ## Conclusion
 
-Build and typecheck are executable, and dry-run packaging succeeds with a writable npm cache. The package artifact is not release-clean because package metadata still exposes source entry metadata alongside `dist` exports.
+Build and typecheck were executable in the historical PLRNUI-8 validation, and dry-run packaging succeeded with a writable npm cache. Current package metadata no longer exposes source entry metadata alongside `dist` exports, but clean consumer validation remains required before release readiness.

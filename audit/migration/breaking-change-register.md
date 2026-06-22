@@ -2,7 +2,7 @@
 
 ## Scope
 
-This register is the source of truth for migration breaking changes from the legacy AURA / UI Experience identity and current `@aura/ui` package metadata toward the recommended project identity `personal-library-react-native-components` and package target `@personal-library/react-native-components`.
+This register is the source of truth for migration breaking changes from the legacy AURA / UI Experience identity and historical `@aura/ui` package metadata toward the recommended project identity `personal-library-react-native-components` and package target `@personal-library/react-native-components`.
 
 It covers rename/package/API/dependency changes identified by ADR 0001, ADR 0002, ADR 0006, ADR 0008, Risk Assessment 0008, PLRNUI-3, PLRNUI-4, PLRNUI-7, PLRNUI-8 and existing audit artifacts.
 
@@ -62,6 +62,7 @@ Allowed statuses:
 | PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
 | PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area remains governed by PLRNUI-37. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
+| PLRNUI-45 | Package entrypoint reconciliation | Current package metadata uses canonical package name, root-only exports, `dist/index.js`, `dist/index.d.ts`, and a minimal `files` whitelist. | Typecheck, build, pack dry-run, tarball file-list check and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because no runtime/API/metadata change is made by PLRNUI-45. |
 
 ### PLRNUI-16 - Token export naming
 
@@ -85,16 +86,16 @@ If these symbols existed in previous public package states, removal must be trea
 - Category: package rename
 - Source issue: PLRNUI-3, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0001, ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: Recommended package target is `@personal-library/react-native-components`; current `package.json` still declares `@aura/ui`.
+- Decision: Current `package.json` declares `@personal-library/react-native-components`; `@aura/ui` remains historical audit and PLRNUI-8 package-artifact evidence only.
 - Motivation: Package identity must align with the reusable React Native component library identity and avoid publishing the legacy AURA name as the canonical contract.
 - Consumer impact: Consumers importing or installing `@aura/ui` must update install commands, import paths and package references once the rename is implemented.
-- Migration path: Publish migration notes mapping `@aura/ui` to `@personal-library/react-native-components`; update consumer install docs and root imports after package metadata is changed in a dedicated ticket.
+- Migration path: Publish migration notes mapping historical `@aura/ui` references to `@personal-library/react-native-components`; update consumer install docs and root imports where legacy docs still exist.
 - Legacy alias policy: Optional compatibility alias may be kept only if explicitly approved; otherwise `@aura/ui` remains historical documentation only.
 - Deprecation window: HUMAN REVIEW REQUIRED before implementation.
 - Removal target: Before first release candidate under the new package identity, unless owner approves a documented compatibility release.
 - Verification required: Package metadata audit, `npm pack --dry-run`, clean Expo consumer install of the packed artifact, root import smoke and docs import audit.
 - Release blocking: Yes. RC is blocked if package identity is unresolved or register/changelog omit the rename.
-- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is not evidence that the target package name has been applied.
+- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is historical artifact evidence. PLRNUI-45 verifies current package metadata uses `@personal-library/react-native-components`.
 
 ### BC-002 - Legacy AURA naming deprecation/removal
 
@@ -112,7 +113,7 @@ If these symbols existed in previous public package states, removal must be trea
 - Removal target: Before stable release unless a compatibility window is approved.
 - Verification required: Repository grep for `@aura/ui`, `from "AURA"`, `from 'AURA'`, `auraTokens`, `getAuraTokens` and docs/demo import review.
 - Release blocking: Yes. RC is blocked if legacy public aliases remain without deprecation/removal policy.
-- Notes: Existing grep shows `package.json` still declares `@aura/ui` and docs still contain many `from "AURA"` snippets.
+- Notes: Current `package.json` no longer declares `@aura/ui`; remaining `@aura/ui` and `AURA` references are historical audit/smoke evidence or docs/demo migration findings.
 
 ### BC-003 - Root public API governance
 

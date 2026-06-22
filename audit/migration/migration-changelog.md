@@ -1,6 +1,6 @@
 # Migration Changelog - PLRNUI-10
 
-This changelog tracks migration governance from AURA / UI Experience and current `@aura/ui` package metadata toward:
+This changelog tracks migration governance from AURA / UI Experience and historical `@aura/ui` package metadata toward:
 
 - repo/project identity: `personal-library-react-native-components`
 - recommended package target: `@personal-library/react-native-components`
@@ -21,20 +21,22 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-37 safe-area provider dependency contract documentation: `ThemeProvider` consumers must install `react-native-safe-area-context` as a required peer while safe-area behavior remains enabled by default.
 - Added PLRNUI-39 clipboard dependency strategy: clipboard support is optional, adapter-based and consumer-owned; `expo-clipboard` is not a core package runtime dependency or root peer dependency.
 - Added PLRNUI-44 native dependency governance consolidation: current package metadata has no runtime `dependencies`, keeps `react` / `react-native` as peers, keeps `typescript` dev-only, keeps AsyncStorage and Clipboard consumer-owned, and leaves Safe Area under the approved PLRNUI-37 contract.
+- Added PLRNUI-45 package entrypoint reconciliation: canonical package name, `main`, `module`, `types`, root `exports`, `files`, current `dist` output and root import are aligned for the current package surface.
 
 ### Changed
 
-- Clarified that current migration state remains governance/proposed until implementation tickets update source, package metadata, docs and build configuration.
+- Clarified that current migration state remains governance/proposed for broader API/docs work, while current package metadata is canonical and aligned to `dist`.
 - PLRNUI-42 aligned `peerDependencies.react` to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`.
 - PLRNUI-43 confirmed `peerDependencies.react-native` as `>=0.85.0 <0.86.0`, aligned to the approved Expo SDK `56.0.0` / React Native `0.85.x` baseline.
 - Clarified that AURA / UI Experience are historical or deprecated names, while `personal-library-react-native-components` is the recommended project identity.
-- Clarified that `@aura/ui` is current package metadata and `@personal-library/react-native-components` is the recommended target package, not yet proven as applied.
+- Clarified that `@personal-library/react-native-components` is current package metadata; `@aura/ui` remains historical audit/consumer-smoke evidence and must not be reintroduced as a legacy alias.
 - Clarified that root public API governance is based on PLRNUI-4 export analysis: 92 exports analyzed, with 40 public, 32 experimental, 18 internal and 2 deprecated.
 - Clarified that no current subpath exports are implemented and any future subpath policy must be verified through package metadata and consumer smoke tests.
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
 - Clarified that `react-native-safe-area-context` is not optional under the current `ThemeProvider` contract and must be validated against the selected Expo/RN baseline.
 - Clarified that PLRNUI-39 is a governance/dependency decision only and does not declare a breaking change while clipboard remains opt-in and package metadata is unchanged.
 - Clarified that PLRNUI-44 does not implement `ThemeStorageAdapter`, does not add native dependencies, does not change the approved Expo/RN baseline, and does not create the PLRNUI-46 Expo consumer smoke test.
+- Clarified that PLRNUI-45 does not add subpath exports, does not broaden the public API, and does not create the PLRNUI-46 Expo consumer smoke test.
 
 ### PLRNUI-16 - Token export naming decision
 
@@ -72,6 +74,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - Root import, TypeScript consumer import, Metro resolution and native runtime smoke could not proceed after the PLRNUI-8 install failure.
 - React Native peer package metadata is aligned by PLRNUI-43; clean consumer duplicate React/RN proof remains deferred to PLRNUI-46.
 - Native/native-adjacent dependency policy is consolidated by PLRNUI-44 for the current package state; any future native dependency introduction remains blocked by the native dependency gate and PLRNUI-46 consumer validation.
+- Package entrypoint metadata is aligned by PLRNUI-45; clean consumer resolver/import proof remains deferred to PLRNUI-46.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.
 
@@ -115,7 +118,7 @@ PLRNUI-8 evidence already shows:
 
 - Current release readiness remains **NOT READY** because clean Expo consumer validation must be regenerated after PLRNUI-42 and other release gates remain open.
 - A release candidate must not proceed until this changelog and `audit/migration/breaking-change-register.md` reflect all known breaking changes.
-- The recommended package target is `@personal-library/react-native-components`, but current repository evidence still includes `@aura/ui` metadata and legacy docs imports.
+- The current package target is `@personal-library/react-native-components`; current repository evidence still includes historical `@aura/ui` audit/smoke references and legacy docs imports.
 - Clean Expo consumer install is mandatory release evidence, not optional follow-up.
 - Preview web validation is not sufficient proof for Expo/RN consumer runtime readiness.
 

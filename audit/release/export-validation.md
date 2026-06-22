@@ -4,12 +4,13 @@
 
 File-based validation of root exports, subpath exports, deep imports, public types and package metadata coherence.
 
-No source exports, package metadata or API files were changed.
+Current-state note for PLRNUI-45: this PLRNUI-8 report is historical evidence for an older package artifact. PLRNUI-45 supersedes the current package metadata assessment with `@personal-library/react-native-components`, `dist/index.js`, `dist/index.d.ts`, and root-only package exports.
 
 ## Evidence
 
-- `index.ts` exports broad barrels from `components/navigation`, `components/layout`, `components/typography`, `components/feedback`, `components/overlay`, `components/surfaces`, `components/form`, `hooks`, `utils`, `storage`, `tokens`, `theme`, and `themes`, plus `Button`.
-- `package.json` exposes only root `exports["."]` with `types: "./dist/index.d.mts"` and `import: "./dist/index.mjs"`.
+- Historical PLRNUI-8 artifact: `index.ts` exported broad barrels from components, hooks, utils, storage, tokens, theme and themes.
+- Current PLRNUI-45 checkout: `src/index.ts` exports only `PACKAGE_NAME`.
+- Current `package.json` exposes only root `exports["."]` with `types: "./dist/index.d.ts"` and `import: "./dist/index.js"`, plus `./package.json`.
 - `package.json` does not expose subpaths.
 - `audit/api/export-matrix.md` analyzes 92 exports: 40 public, 32 experimental, 18 internal and 2 deprecated.
 - `audit/api/root-api-proposal.md` proposes a smaller stable root API and marks multiple decisions as `HUMAN REVIEW REQUIRED`.
@@ -21,11 +22,13 @@ Current package export metadata:
 
 | Metadata | Current value | Validation result |
 | --- | --- | --- |
-| `name` | `@aura/ui` | Legacy identity; not aligned with proposed `@personal-library/react-native-components`. |
-| `main` | `index.ts` | Source entry, not aligned with built artifact. |
-| `types` | `index.ts` | Source declaration entry, not aligned with built artifact. |
-| `exports["."].import` | `./dist/index.mjs` | Aligned with build output. |
-| `exports["."].types` | `./dist/index.d.mts` | Aligned with build output. |
+| `name` | `@personal-library/react-native-components` | Canonical package identity is applied. |
+| `main` | `./dist/index.js` | Aligned with current build output. |
+| `module` | `./dist/index.js` | Aligned with current build output. |
+| `types` | `./dist/index.d.ts` | Aligned with current declaration output. |
+| `exports["."].import` | `./dist/index.js` | Aligned with current build output. |
+| `exports["."].types` | `./dist/index.d.ts` | Aligned with current declaration output. |
+| `exports["./package.json"]` | `./package.json` | Intentional package metadata exposure. |
 | Subpath exports | None | Aligned with current metadata, not aligned with proposed future subpaths. |
 
 ## Commands Executed
@@ -37,14 +40,14 @@ sed -n '1,260p' audit/api/subpath-exports.md
 sed -n '1,260p' audit/api/deep-import-audit.md
 sed -n '1,260p' audit/api/public-types.md
 sed -n '1,260p' package.json
-sed -n '1,260p' index.ts
+sed -n '1,260p' src/index.ts
 rg -n "from ['\"](src|dist|@aura/ui|AURA|\.\./\.\./|\.\./\.\./theme|\.\./\.\./index)|from ['\"]\.\./demo|from ['\"]\.\./\.\./" docs demo preview-web -g '*.ts' -g '*.tsx' -g '*.md'
 ```
 
 ## Findings
 
 - The built root export exists and matches `exports["."]`.
-- The source root barrel is broader than the proposed public root API and includes internal, experimental and deprecated symbols already identified by PLRNUI-4.
+- Current `src/index.ts` exports only `PACKAGE_NAME`; the broader 92-export matrix is historical API governance evidence, not the current package entrypoint.
 - No supported package subpaths exist today.
 - Deep imports remain in demo files through repo-relative imports such as `../../index` and `../../theme/types`.
 - Documentation snippets still import from legacy placeholder `"AURA"`.
@@ -53,17 +56,16 @@ rg -n "from ['\"](src|dist|@aura/ui|AURA|\.\./\.\./|\.\./\.\./theme|\.\./\.\./in
 ## Risks
 
 - Consumers can only use the root package export; proposed subpath imports are not valid with current metadata.
-- Tools that prefer `main` or top-level `types` over `exports` may resolve source `index.ts`.
-- The root barrel exposes APIs whose stability status is not approved.
+- Tools that prefer `main` or top-level `types` over `exports` resolve `dist/index.js` and `dist/index.d.ts` in the current checkout.
+- The current root API is intentionally minimal; proposed broader API stability remains unresolved until future implementation.
 - TypeScript consumer experience can be incomplete because props/types for many public candidates are not exported.
 
 ## Blockers
 
-- Package identity is unresolved: metadata is `@aura/ui`, while audit proposals target `@personal-library/react-native-components`.
-- Root API is not stability-filtered.
-- `main` and `types` point to source while export map points to `dist`.
+- Clean consumer validation is still required under PLRNUI-46.
+- Proposed broader root API is not implemented.
 - Public props/types policy is not implemented.
 
 ## Conclusion
 
-Root package export metadata is present and build output exists, but export readiness is not complete. The package is root-only, API stability is not enforced in metadata or barrels, and source-oriented metadata remains inconsistent with the packaged `dist` entrypoint.
+Root package export metadata is present and points to current build output. The package is root-only and does not expose unapproved subpaths. Release readiness is still not complete because PLRNUI-46 clean consumer validation and future broader API decisions remain open.

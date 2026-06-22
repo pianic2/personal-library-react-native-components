@@ -2,18 +2,20 @@
 
 ## Scope
 
-Audit read-only based on `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
+Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current root export path is the package root. The recommended future package name is `@personal-library/react-native-components`, while the current `package.json` still declares `@aura/ui` and only exposes `"."` through `dist`.
+Current-state note for PLRNUI-45: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports only `PACKAGE_NAME`.
 
 ## Package export map
 
 | Entry | Current value | Assessment | Human review |
 | --- | --- | --- | --- |
-| `package.json:name` | `@aura/ui` | Legacy package identity; proposed package is `@personal-library/react-native-components`. | HUMAN REVIEW REQUIRED |
-| `package.json:main` | `index.ts` | Points to source while `exports` points to `dist`; should be reconciled by packaging task. | HUMAN REVIEW REQUIRED |
-| `package.json:types` | `index.ts` | Points to source while `exports["."].types` points to `dist/index.d.mts`. | HUMAN REVIEW REQUIRED |
-| `package.json:exports["."]` | `./dist/index.mjs`, `./dist/index.d.mts` | Root only; no supported subpath exports currently declared. | HUMAN REVIEW REQUIRED |
+| `package.json:name` | `@personal-library/react-native-components` | Canonical package identity is applied in the current checkout. |  |
+| `package.json:main` | `./dist/index.js` | Points to real TypeScript build output. |  |
+| `package.json:module` | `./dist/index.js` | Points to real TypeScript build output. |  |
+| `package.json:types` | `./dist/index.d.ts` | Points to real declaration output. |  |
+| `package.json:exports["."]` | `import: ./dist/index.js`; `types: ./dist/index.d.ts` | Root only; no supported functional subpath exports currently declared. |  |
+| `package.json:exports["./package.json"]` | `./package.json` | Package metadata is intentionally exposed. |  |
 
 ## Export matrix
 
