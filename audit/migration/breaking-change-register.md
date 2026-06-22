@@ -165,7 +165,7 @@ If these symbols existed in previous public package states, removal must be trea
 - Removal target: Before release candidate.
 - Verification required: Clean Expo app install without `--force` or `--legacy-peer-deps`, root import, TypeScript resolution, Metro startup and `npm ls react react-native` duplicate check.
 - Release blocking: Yes. PLRNUI-8 verdict is NOT READY until this passes.
-- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the React peer range to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`. React Native peer range changes remain out of scope and are tracked by PLRNUI-43.
+- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the React peer range to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`. PLRNUI-43 confirms the React Native peer range as `>=0.85.0 <0.86.0`; clean consumer smoke proof remains PLRNUI-46.
 
 ### BC-006 - Native dependency gate
 

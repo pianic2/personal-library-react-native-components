@@ -25,7 +25,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 
 - Clarified that current migration state remains governance/proposed until implementation tickets update source, package metadata, docs and build configuration.
 - PLRNUI-42 aligned `peerDependencies.react` to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`.
-- PLRNUI-42 left `peerDependencies.react-native` unchanged; React Native peer alignment is deferred to PLRNUI-43.
+- PLRNUI-43 confirmed `peerDependencies.react-native` as `>=0.85.0 <0.86.0`, aligned to the approved Expo SDK `56.0.0` / React Native `0.85.x` baseline.
 - Clarified that AURA / UI Experience are historical or deprecated names, while `personal-library-react-native-components` is the recommended project identity.
 - Clarified that `@aura/ui` is current package metadata and `@personal-library/react-native-components` is the recommended target package, not yet proven as applied.
 - Clarified that root public API governance is based on PLRNUI-4 export analysis: 92 exports analyzed, with 40 public, 32 experimental, 18 internal and 2 deprecated.
@@ -68,7 +68,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - PLRNUI-8 verdict remains **NOT READY**.
 - Historical PLRNUI-8 clean Expo consumer install failed with `ERESOLVE` because the consumer used `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`; PLRNUI-42 updates current package metadata to accept React `19.2.3`.
 - Root import, TypeScript consumer import, Metro resolution and native runtime smoke could not proceed after the PLRNUI-8 install failure.
-- React Native peer policy remains a separate PLRNUI-43 scope and is not changed by PLRNUI-42.
+- React Native peer package metadata is aligned by PLRNUI-43; clean consumer duplicate React/RN proof remains deferred to PLRNUI-46.
 - Native/native-adjacent dependency policy remains unimplemented in package metadata.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.

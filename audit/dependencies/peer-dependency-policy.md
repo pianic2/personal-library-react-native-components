@@ -52,7 +52,7 @@ Rationale:
 
 - Source imports `react-native` across `components/**`, `hooks/**`, `theme/**`, and `utils/**`.
 - ADR 0005 says React Native is the runtime target and host dependencies should be peers.
-- `audit/05-dependencies.md` DEP-01 and `audit/07-risks.md` RSK-05 flag the current placement as high risk.
+- `audit/05-dependencies.md` DEP-01 and `audit/07-risks.md` RSK-05 flagged the historical placement as high risk.
 
 Proposed package policy:
 
@@ -64,7 +64,7 @@ Proposed package policy:
 }
 ```
 
-The React Native peer range is not changed by PLRNUI-42. React Native peer alignment is tracked separately by PLRNUI-43.
+PLRNUI-43 confirms the current React Native peer range as aligned to the approved Expo/RN baseline. The upper bound prevents accepting React Native `0.86.x` without a new baseline decision.
 
 ## Policy: Expo
 

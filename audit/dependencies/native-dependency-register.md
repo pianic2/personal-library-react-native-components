@@ -95,7 +95,7 @@ PLRNUI-37 final status:
 
 | Package | Status |
 | --- | --- |
-| `react-native` | Blocker until matched to Expo SDK baseline. |
+| `react-native` | Matched to Expo SDK baseline by PLRNUI-43 package metadata review: peer range `>=0.85.0 <0.86.0`; consumer smoke remains PLRNUI-46. |
 | `@react-native-async-storage/async-storage` | Unknown; requires PLRNUI-8 clean Expo validation. |
 | `expo-clipboard` | Consumer-owned if clipboard adapter uses Expo; core package must not require it. |
 | `react-native-safe-area-context` | Unknown for selected version; requires PLRNUI-8 validation. |
@@ -120,7 +120,7 @@ Prebuild or custom dev client becomes required when:
 
 | Risk | Evidence |
 | --- | --- |
-| Duplicate React Native | `react-native` in `dependencies`; ADR 0005 peer rule; `audit/05-dependencies.md` DEP-01 |
+| Duplicate React Native | Historical `react-native` dependency placement; current package metadata keeps `react-native` as a peer dependency with range `>=0.85.0 <0.86.0`; ADR 0005 peer rule; `audit/05-dependencies.md` DEP-01 |
 | Hidden native setup | Native modules in `dependencies`; Risk Assessment 0005 |
 | Expo hard requirement | Prior audit evidence recorded `expo-clipboard` in `dependencies` and lockfile peer on `expo`; PLRNUI-39 forbids this as a core package requirement |
 | Preview masks real install | `preview-web/vite.config.ts` shims native modules; `audit/06-build-and-packaging.md` BLD-06 |
