@@ -1,10 +1,19 @@
 {
   "name": "@personal-library/react-native-components",
   "version": "0.0.0",
-  "description": "React Native component library baseline.",
+  "description": "Personal Library React Native Components.",
+  "private": false,
   "type": "module",
   "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist",
     "README.md",
@@ -19,7 +28,7 @@
     "clean": "rm -rf dist *.tgz",
     "prepack:check": "npm run build:prod && npm run package:dry-run",
     "release:check": "npm run clean && npm ci && npm run typecheck && npm run build && npm run package:dry-run"
- },
+  },
   "devDependencies": {
     "typescript": "^5.8.0"
   }
