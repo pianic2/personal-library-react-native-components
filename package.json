@@ -29,6 +29,13 @@
     "prepack:check": "npm run build:prod && npm run package:dry-run",
     "release:check": "npm run clean && npm ci && npm run typecheck && npm run build && npm run package:dry-run"
   },
+  "engines": {
+    "node": ">=22"
+  },
+  "peerDependencies": {
+    "react": ">=19.2.0 <20.0.0",
+    "react-native": ">=0.85.0 <0.86.0"
+  },
   "devDependencies": {
     "typescript": "^5.8.0"
   }

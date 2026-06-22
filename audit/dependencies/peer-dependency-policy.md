@@ -127,6 +127,19 @@ Current native/native-adjacent packages:
 | `lucide-react-native` | Optional peer or dependency only if icons are part of core contract | component imports; `package-lock.json` peers |
 | `expo-clipboard` | Optional peer | `utils/clipboard.ts`; `package-lock.json` peers |
 
+### PLRNUI-37 - Safe Area provider dependency contract
+
+`react-native-safe-area-context` is a required peer dependency while `ThemeProvider` keeps safe-area behavior enabled by default.
+
+Policy:
+
+- Keep `react-native-safe-area-context` in `peerDependencies`.
+- Do not place `react-native-safe-area-context` in `dependencies`.
+- Do not mark `react-native-safe-area-context` optional in `peerDependenciesMeta` under the current `ThemeProvider` contract.
+- Reconsider optional peer status only in a future task if `ThemeProvider` changes contract, safe-area behavior becomes opt-in, or safe-area ownership moves to a separate provider/app-shell component.
+
+Rationale: `ThemeProvider` safe-area behavior is part of the public/runtime provider contract. A required peer keeps native runtime ownership with the consumer app while making the dependency explicit.
+
 ## Policy: JS-only dependencies
 
 JS-only dependencies may remain in `dependencies` only when:
