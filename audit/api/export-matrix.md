@@ -4,7 +4,7 @@
 
 Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current-state note for PLRNUI-21: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-21 updates only the five remediated component classifications below; it does not add subpath exports or promote anything to `stable`.
+Current-state note for PLRNUI-22: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-22 adds root exports for approved navigation components and public navigation types through local component barrels; the root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports or promote anything to `stable`.
 
 ## Package export map
 
@@ -32,15 +32,17 @@ Current-state note for PLRNUI-21: this PLRNUI-4 matrix remains historical API go
 | `useNavigate` | root | `components/navigation/NavContext.tsx` | hook | internal | internal | Narrow helper for internal navigation rendering. | HUMAN REVIEW REQUIRED |
 | `useOptionalNav` | root | `components/navigation/NavContext.tsx` | hook | internal-helper | internal | Optional context fallback is an implementation helper. | HUMAN REVIEW REQUIRED |
 | `LinkProps` | root | `components/navigation/Link.tsx` | type | public | beta | Props type for public `Link`. |  |
-| `Link` | root | `components/navigation/Link.tsx` | component | public | beta | Documented navigation component, but router behavior is still partial. | HUMAN REVIEW REQUIRED |
+| `LinkRouterAdapter` | root | `src/components/Link/Link.tsx` | type | public | beta | Router-agnostic per-link navigation adapter added by PLRNUI-22. |  |
+| `Link` | root | `src/components/Link/Link.tsx` | component | public | beta | PLRNUI-22 adds router adapter support, guarded web fallback and safe native no-op; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `NavBarProps` | root | `components/navigation/NavBar.tsx` | type | public | beta | Props type for public `NavBar`. |  |
-| `NavBar` | root | `components/navigation/NavBar.tsx` | component | public | beta | Documented component, but `bottomMaxItems` behavior needs hardening. | HUMAN REVIEW REQUIRED |
+| `NavBar` | root | `src/components/NavBar/NavBar.tsx` | component | public | beta | PLRNUI-22 wires `bottomMaxItems` to `BottomBar` as a visible item limit. | HUMAN REVIEW REQUIRED |
 | `TopBarProps` | root | `components/navigation/TopBar.tsx` | type | public | beta | Props type for public `TopBar`. |  |
-| `TopBar` | root | `components/navigation/TopBar.tsx` | component | experimental | experimental | Placeholder/fallback behavior is not stable enough for root stable API. | HUMAN REVIEW REQUIRED |
-| `BottomBar` | root | `components/navigation/BottomBar.tsx` | component | experimental | experimental | Hardcoded layout and limited props; props type is inline. | HUMAN REVIEW REQUIRED |
+| `TopBar` | root | `src/components/TopBar/TopBar.tsx` | component | public | beta | PLRNUI-22 removes placeholder fallback behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
+| `BottomBarProps` | root | `src/components/BottomBar/BottomBar.tsx` | type | public | beta | Props type for public `BottomBar`; `maxItems` is a visible item limit. |  |
+| `BottomBar` | root | `src/components/BottomBar/BottomBar.tsx` | component | experimental | experimental | Visible item limit documented by PLRNUI-22; app-shell layout remains experimental. | HUMAN REVIEW REQUIRED |
 | `SideBarVariant` | root | `components/navigation/SideBar.tsx` | type | experimental | experimental | Platform-sensitive sidebar contract. | HUMAN REVIEW REQUIRED |
 | `SideBarProps` | root | `components/navigation/SideBar.tsx` | type | experimental | experimental | Platform-sensitive sidebar props. | HUMAN REVIEW REQUIRED |
-| `SideBar` | root | `components/navigation/SideBar.tsx` | component | experimental | experimental | Native implementation is null-like and web behavior depends on platform resolution. | HUMAN REVIEW REQUIRED |
+| `SideBar` | root | `src/components/SideBar/SideBar.tsx` | component | experimental | experimental | PLRNUI-22 adds minimal native-safe vertical list; richer sidebar contract remains experimental. | HUMAN REVIEW REQUIRED |
 | `Box` | root | `components/layout/Box.tsx` | component | public | beta | Foundational layout primitive. |  |
 | `Column` | root | `components/layout/Column.tsx` | component | public | beta | Foundational layout primitive. |  |
 | `Stack` | root | `components/layout/Column.tsx` | component | public | beta | Alias for `Column`; could be public if intentionally documented. | HUMAN REVIEW REQUIRED |

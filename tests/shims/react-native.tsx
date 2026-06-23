@@ -36,6 +36,12 @@ export const Platform = {
   },
 };
 
+export const Linking = {
+  async openURL(_url: string): Promise<void> {
+    return undefined;
+  },
+};
+
 export function useWindowDimensions() {
   return {
     fontScale: 1,

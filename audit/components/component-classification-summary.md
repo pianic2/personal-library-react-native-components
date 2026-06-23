@@ -29,6 +29,8 @@ Non sono state classificate come componenti le API type-only, utility, token, st
 
 PLRNUI-21 remediated the known blocker set for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`; they are now classified as `beta`, not `stable`.
 
+PLRNUI-22 remediated the targeted navigation blocker set for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`; they remain below `stable` until docs/platform/support and any required accessibility evidence are complete.
+
 ## Components blocked by absence of tests
 
 All 41 analyzed component-like exports remain blocked from `stable` by incomplete stable-gate evidence.
@@ -43,7 +45,7 @@ Highest-priority beta candidates needing first smoke coverage:
 
 | Component | Maturity | Evidence | Limitation |
 | --- | --- | --- | --- |
-| `SideBar` | experimental | `components/navigation/SideBar.tsx`, `components/navigation/SideBar.web.tsx` | Web sidebar exists; native returns `null`. |
+| `SideBar` | experimental | `src/components/SideBar/SideBar.tsx`, `src/components/SideBar/SideBar.web.tsx`, `audit/components/navigation-platform-contract-plrnui-22.md` | Minimal native vertical list exists; richer sidebar behavior remains experimental. |
 | `Tooltip` | experimental | `components/overlay/Tooltip.tsx` | Native returns children only; tooltip content is web-only. |
 | `Popover` | experimental | `components/overlay/Popover.tsx` | Native returns trigger only; popover content is web-only. |
 
@@ -57,7 +59,7 @@ Related platform-risk components without proven cross-platform behavior:
 | --- | --- | --- | --- |
 | PLRNUI5-TEST-001 | In progress | Extend component smoke/render coverage beyond the PLRNUI-20/PLRNUI-21 harness. | ADR 0003 stable criteria; PLRNUI-21 coverage is not full stable-gate evidence. |
 | PLRNUI5-BUG-001 | Closed by PLRNUI-21 | Fix `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`. | Remediation evidence in `audit/components/component-blocker-remediation-plrnui-21.md`. |
-| PLRNUI5-NAV-001 | High | Fix `TopBar`, `NavBar`, `Link`, `SideBar` behavior and platform contracts. | `audit/02-component-inventory.md` findings `CMP-05`, `CMP-06`; `components/navigation/*`. |
+| PLRNUI5-NAV-001 | Closed by PLRNUI-22 for targeted blockers | Fix `TopBar`, `NavBar`, `Link`, `SideBar` behavior and platform contracts. | `audit/components/navigation-platform-contract-plrnui-22.md`; `tests/components/component-smoke.test.tsx`. |
 | PLRNUI5-OVERLAY-001 | High | Define and test overlay/platform behavior for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select`. | `audit/02-component-inventory.md`; `audit/risk-assessment/0003-component-stability-misclassification-risk.md`. |
 | PLRNUI5-TYPES-001 | High | Export named props types for approved public components. | `audit/api/public-types.md`. |
 | PLRNUI5-DOCS-001 | Medium | Add support matrix to component docs and align examples with approved package import. | ADR 0007; `audit/api/deep-import-audit.md`. |

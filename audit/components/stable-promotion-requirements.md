@@ -12,7 +12,7 @@ A component can move to `stable` only after satisfying ADR 0003 and ADR 0007:
 - no known blocking runtime bug remains;
 - semver and migration impact are tracked.
 
-Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20 and PLRNUI-21 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
+Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20, PLRNUI-21 and PLRNUI-22 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
 
 ## Promotion groups
 
@@ -28,7 +28,7 @@ Required work for every beta candidate:
 
 | Requirement | Evidence for gap | Minimum completion |
 | --- | --- | --- |
-| Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
+| Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; PLRNUI-22 adds coverage for `TopBar`, `BottomBar`, `NavBar`, `Link`, `SideBar`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
 | Named props export | `audit/api/public-types.md` lists many `Not exported` props | Export named props for approved public components. |
 | Platform support line | ADR 0003 and ADR 0007 stable criteria | Add support matrix to component docs. |
 | Example aligned to public API | `audit/api/deep-import-audit.md` finds demo relative imports and docs `"AURA"` snippets | Update examples after package identity/API decision. |
@@ -49,6 +49,8 @@ Required work:
 | App-shell-like components | `Page`, `Hero`, `BottomBar`, `TopBar` source and inventory notes | Decide whether they belong in root API or experimental subpath. |
 | Clipboard/timer components | `Code`, `ToastProvider` source and inventory notes | Add lifecycle cleanup, dependency/platform documentation and tests. |
 
+PLRNUI-22 note: `SideBar` no longer has a native `null` implementation; it remains experimental because the minimal native list is only a safe fallback and not a full drawer, gesture, overlay, or accessibility contract.
+
 ### Remediated internal to beta candidates
 
 These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`:
@@ -68,7 +70,7 @@ These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`
 | PLRNUI5-TEST-001 | Add component smoke test harness and first coverage for beta candidates | Stable promotion for all components |
 | PLRNUI5-TYPES-001 | Export named props for approved public components | Stable promotion for public root API |
 | PLRNUI5-BUG-001 | Closed by PLRNUI-21 for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput` blockers | These components can be `beta`, not `stable`; future work must satisfy the stable gate. |
-| PLRNUI5-NAV-001 | Fix `TopBar`, `NavBar`, `Link`, `SideBar` platform/router behavior | Navigation beta/stable readiness |
+| PLRNUI5-NAV-001 | Closed by PLRNUI-22 for targeted `TopBar`, `NavBar`, `Link`, `SideBar` platform/router blockers | These components are not `stable`; future work must satisfy docs/platform/support and accessibility gates. |
 | PLRNUI5-OVERLAY-001 | Define and test `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select` platform behavior | Overlay/form experimental promotion |
 | PLRNUI5-DOCS-001 | Add component support matrix and migrate examples away from legacy/deep imports | Docs gate for stable promotion |
 | PLRNUI5-API-001 | Fence internal/experimental exports or document root API maturity | Breaking change register `BC-004`, `BC-007` |

@@ -23,6 +23,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-44 native dependency governance consolidation: current package metadata has no runtime `dependencies`, keeps `react` / `react-native` as peers, keeps `typescript` dev-only, keeps AsyncStorage and Clipboard consumer-owned, and leaves Safe Area under the approved PLRNUI-37 contract.
 - Added PLRNUI-45 package entrypoint reconciliation: canonical package name, `main`, `module`, `types`, root `exports`, `files`, current `dist` output and root import are aligned for the current package surface.
 - Added PLRNUI-21 component blocker remediation evidence for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`, including smoke/render harness coverage.
+- Added PLRNUI-22 navigation component public API integration for `TopBar`, `BottomBar`, `NavBar`, `Link`, `NavContext` and `SideBar`, with local component barrels, root exports, smoke coverage and `audit/components/navigation-platform-contract-plrnui-22.md`.
 
 ### Changed
 
@@ -39,6 +40,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-44 does not implement `ThemeStorageAdapter`, does not add native dependencies, does not change the approved Expo/RN baseline, and does not create the PLRNUI-46 Expo consumer smoke test.
 - Clarified that PLRNUI-45 does not add subpath exports, does not broaden the public API, and does not create the PLRNUI-46 Expo consumer smoke test.
 - Clarified that PLRNUI-21 moves the five remediated components at most to `beta`; `stable` remains blocked by ADR 0003/0007 stable gates.
+- Clarified that PLRNUI-22 intentionally broadens the root API for the approved navigation components without adding package subpath exports, dependencies, drawer/gesture behavior, overflow menus or router-specific integrations.
 
 ### PLRNUI-16 - Token export naming decision
 
@@ -78,6 +80,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - Native/native-adjacent dependency policy is consolidated by PLRNUI-44 for the current package state; any future native dependency introduction remains blocked by the native dependency gate and PLRNUI-46 consumer validation.
 - Package entrypoint metadata is aligned by PLRNUI-45; clean consumer resolver/import proof remains deferred to PLRNUI-46.
 - PLRNUI-21 component blockers are remediated for the five targeted components, but stable promotion remains blocked by docs/platform/support and consumer evidence requirements.
+- PLRNUI-22 navigation blockers are remediated for the targeted components, but stable promotion remains blocked by docs/platform/support, accessibility and consumer evidence requirements.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.
 

@@ -2,7 +2,7 @@
 
 Rule: props for public components must be exportable. This file lists currently exported props/types and candidate props/types that should become public if the related module is public.
 
-Current-state note for PLRNUI-21: `CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps` and `PasswordInputProps` are explicit source types and are exported from the root API through `src/index.ts`.
+Current-state note for PLRNUI-22: `CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkProps`, `LinkRouterAdapter`, `NavBarProps`, `TopBarProps`, `SideBarProps`, `SideBarVariant` and `NavItem` are explicit source types and are exported from the root API through `src/index.ts`.
 
 ## Props/types matrix
 
@@ -44,10 +44,12 @@ Current-state note for PLRNUI-21: `CardProps`, `ProgressBarProps`, `CodeInlinePr
 | `FormFieldProps` | `FormField` | Not exported | Yes | Props for proposed public form composition primitive. | HUMAN REVIEW REQUIRED |
 | `TextareaProps` | `Textarea` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 replaced the alias with an explicit props interface and forced multiline behavior. | HUMAN REVIEW REQUIRED |
 | `NavItem` | Navigation | Exported through root | Yes | Consumer configuration type for navigation. |  |
-| `NavContextValue` | Navigation context | Exported through root | No | Exposes provider internals. | HUMAN REVIEW REQUIRED |
+| `NavContextValue` | Navigation context | Local source type, not root-exported by PLRNUI-22 | No | Exposes provider internals. | HUMAN REVIEW REQUIRED |
 | `LinkProps` | `Link` | Exported through root | Yes | Props for public navigation component. |  |
+| `LinkRouterAdapter` | `Link` | Exported through root | Yes | Router-agnostic adapter contract for consumer-owned navigation. |  |
 | `NavBarProps` | `NavBar` | Exported through root | Yes | Props for public navigation component. |  |
-| `TopBarProps` | `TopBar` | Exported through root | Maybe experimental | Depends on whether `TopBar` is public root, subpath, or internal. | HUMAN REVIEW REQUIRED |
+| `BottomBarProps` | `BottomBar` | Exported through root | Maybe experimental | Props for bottom navigation; app-shell layout remains experimental. | HUMAN REVIEW REQUIRED |
+| `TopBarProps` | `TopBar` | Exported through root | Maybe experimental | Depends on whether `TopBar` remains root public or later moves behind an experimental policy. | HUMAN REVIEW REQUIRED |
 | `SideBarVariant` | `SideBar` | Exported through root | Maybe experimental | Platform-specific sidebar contract. | HUMAN REVIEW REQUIRED |
 | `SideBarProps` | `SideBar` | Exported through root | Maybe experimental | Platform-specific sidebar contract. | HUMAN REVIEW REQUIRED |
 | `Breakpoint` | `useBreakpoint` | Exported through root | Yes | Return type for public hook. |  |

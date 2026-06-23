@@ -23,6 +23,11 @@ import {
   Text,
   Textarea,
   ThemeProvider,
+  BottomBar,
+  Link,
+  NavBar,
+  SideBar,
+  TopBar,
 } from "../../src";
 
 function renderWithTheme(element: React.ReactElement) {
@@ -276,5 +281,127 @@ describe("PLRNUI-21 component blocker remediation coverage", () => {
         .accessibilityRole,
       "button"
     );
+  });
+});
+
+describe("PLRNUI-22 navigation component coverage", () => {
+  const navItems = [
+    { label: "Home", href: "/home" },
+    { label: "Search", href: "/search" },
+    { label: "Library", href: "/library" },
+    { label: "Settings", href: "/settings" },
+  ];
+
+  it("renders TopBar without consumer-facing placeholder text when slots are missing", () => {
+    const renderer = renderWithTheme(<TopBar />);
+    const textNodes = renderer.root.findAllByType("Text");
+
+    assert.equal(
+      textNodes.some((node) => node.children.includes("a")),
+      false
+    );
+  });
+
+  it("limits BottomBar visible items without rendering overflow", () => {
+    const renderer = renderWithTheme(
+      <NavBar
+        items={navItems}
+        pathname="/home"
+        navigate={() => undefined}
+        layout="bottom"
+        bottomMaxItems={2}
+      />
+    );
+    const textNodes = renderer.root.findAllByType("Text");
+    const labels = textNodes.flatMap((node) => node.children);
+
+    assert.ok(labels.includes("Home"));
+    assert.ok(labels.includes("Search"));
+    assert.equal(labels.includes("Library"), false);
+    assert.equal(labels.includes("Settings"), false);
+    assert.equal(labels.includes("More"), false);
+  });
+
+  it("passes NavBar bottomMaxItems to BottomBar as a visible item limit", () => {
+    const renderer = renderWithTheme(
+      <NavBar
+        items={navItems}
+        pathname="/home"
+        navigate={() => undefined}
+        layout="bottom"
+        bottomMaxItems={3}
+      />
+    );
+    const bottomBar = renderer.root.findByType(BottomBar);
+
+    assert.equal(bottomBar.props.maxItems, 3);
+  });
+
+  it("does not crash Link without router adapter or onPress", () => {
+    const renderer = renderWithTheme(<Link href="/safe">Safe link</Link>);
+    const pressable = renderer.root.findByType("Pressable");
+
+    act(() => {
+      pressable.props.onPress();
+    });
+
+    assert.ok(renderer.toJSON());
+  });
+
+  it("uses Link onPress before navigation fallback", () => {
+    let pressed = false;
+    const renderer = renderWithTheme(
+      <Link href="/safe" onPress={() => {
+        pressed = true;
+      }}>
+        Safe link
+      </Link>
+    );
+    const pressable = renderer.root.findByType("Pressable");
+
+    act(() => {
+      pressable.props.onPress();
+    });
+
+    assert.equal(pressed, true);
+  });
+
+  it("uses Link routerAdapter navigation", () => {
+    let navigatedTo = "";
+    const renderer = renderWithTheme(
+      <Link
+        href="/adapter"
+        routerAdapter={{
+          navigate: (href) => {
+            navigatedTo = href;
+          },
+        }}
+      >
+        Adapter link
+      </Link>
+    );
+    const pressable = renderer.root.findByType("Pressable");
+
+    act(() => {
+      pressable.props.onPress();
+    });
+
+    assert.equal(navigatedTo, "/adapter");
+  });
+
+  it("renders SideBar as a non-null navigation list", () => {
+    const renderer = renderWithTheme(
+      <NavBar
+        items={navItems}
+        pathname="/home"
+        navigate={() => undefined}
+        layout="sidebar"
+      />
+    );
+    const textNodes = renderer.root.findAllByType("Text");
+    const labels = textNodes.flatMap((node) => node.children);
+
+    assert.ok(renderer.toJSON());
+    assert.ok(labels.includes("Home"));
   });
 });
