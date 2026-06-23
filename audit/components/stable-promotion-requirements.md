@@ -12,7 +12,7 @@ A component can move to `stable` only after satisfying ADR 0003 and ADR 0007:
 - no known blocking runtime bug remains;
 - semver and migration impact are tracked.
 
-Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20, PLRNUI-21, PLRNUI-22 and PLRNUI-23 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
+Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20, PLRNUI-21, PLRNUI-22 and PLRNUI-23 add Node smoke/render coverage for selected components. PLRNUI-25 adds the first dedicated component platform support matrix and docs import audit, but consumer proof and component-specific hardening remain incomplete for stable promotion.
 
 ## Promotion groups
 
@@ -30,8 +30,8 @@ Required work for every beta candidate:
 | --- | --- | --- |
 | Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; PLRNUI-22 adds coverage for `TopBar`, `BottomBar`, `NavBar`, `Link`, `SideBar`; PLRNUI-23 adds coverage for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
 | Named props export | `audit/api/public-types.md` lists many `Not exported` props | Export named props for approved public components. |
-| Platform support line | ADR 0003 and ADR 0007 stable criteria | Add support matrix to component docs. |
-| Example aligned to public API | `audit/api/deep-import-audit.md` finds demo relative imports and docs `"AURA"` snippets | Update examples after package identity/API decision. |
+| Platform support line | ADR 0003 and ADR 0007 stable criteria; PLRNUI-25 matrix | `audit/components/component-platform-support-matrix-plrnui-25.md` now records iOS, Android and Web posture for current public candidates; future component docs must keep this in sync. |
+| Example aligned to public API | `audit/docs/docs-import-audit-plrnui-25.md`; historical `audit/api/deep-import-audit.md` findings | README now shows the canonical root package import; no current `docs/`, `examples`, `demo` or `preview-web` files exist in this checkout to migrate. |
 | Known bug cleanup | `audit/02-component-inventory.md` findings `CMP-06` to `CMP-08` and component notes | Fix or document behavior before stable. |
 
 ### Experimental to beta candidates
@@ -74,3 +74,5 @@ These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`
 | PLRNUI5-OVERLAY-001 | Documented by PLRNUI-23 for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select` with render smoke coverage | These components remain experimental; future work must satisfy runtime platform, focus, keyboard and accessibility gates. |
 | PLRNUI5-DOCS-001 | Add component support matrix and migrate examples away from legacy/deep imports | Docs gate for stable promotion |
 | PLRNUI5-API-001 | Fence internal/experimental exports or document root API maturity | Breaking change register `BC-004`, `BC-007` |
+
+PLRNUI-25 note: PLRNUI5-DOCS-001 is partially satisfied for the current checkout by `audit/components/component-platform-support-matrix-plrnui-25.md`, `audit/docs/docs-import-audit-plrnui-25.md`, and the canonical README root import example. It is not fully closed for stable promotion because package consumer smoke, per-component docs pages and platform runtime proof are still open.

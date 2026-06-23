@@ -31,6 +31,8 @@ PLRNUI-21 remediated the known blocker set for `Card`, `ProgressBar`, `CodeInlin
 
 PLRNUI-22 remediated the targeted navigation blocker set for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`; they remain below `stable` until docs/platform/support and any required accessibility evidence are complete.
 
+PLRNUI-25 adds `audit/components/component-platform-support-matrix-plrnui-25.md` as the current iOS/Android/Web support evidence for public candidates. This does not change maturity counts or promote any component to `stable`.
+
 ## Components blocked by absence of tests
 
 All 41 analyzed component-like exports remain blocked from `stable` by incomplete stable-gate evidence.
@@ -41,7 +43,7 @@ Highest-priority beta candidates needing first smoke coverage:
 
 `Button`, `Box`, `Column`, `Row`, `Divider`, `Text`, `P`, `B`, `Small`, `CodeInline`, `Heading`, `Quote`, `TextGroup`, `Spinner`, `Alert`, `Badge`, `Card`, `Input`, `PasswordInput`, `ProgressBar`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `Textarea`, `NavProvider`, `Link`, `NavBar`.
 
-## Web-only or native-null components
+## Web-only or native-fallback components
 
 | Component | Maturity | Evidence | Limitation |
 | --- | --- | --- | --- |

@@ -4,7 +4,7 @@
 
 Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current-state note for PLRNUI-24: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-24 makes approved root-public component props explicit type-only root exports, including the newly named `RadioGroupOption`, and replaces broad root star exports for PLRNUI-23 experimental components with explicit runtime component exports only. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports, export experimental props types, or promote anything to `stable`.
+Current-state note for PLRNUI-25: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-24 makes approved root-public component props explicit type-only root exports, including the newly named `RadioGroupOption`, and replaces broad root star exports for PLRNUI-23 experimental components with explicit runtime component exports only. PLRNUI-25 adds docs evidence for platform support and canonical package imports without changing package metadata, runtime exports or subpath policy. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports, export experimental props types, or promote anything to `stable`.
 
 ## Package export map
 
@@ -123,6 +123,12 @@ Current-state note for PLRNUI-24: this PLRNUI-4 matrix remains historical API go
 - Proposed experimental: 32.
 - Proposed internal: 18.
 - Proposed deprecated: 2.
+
+PLRNUI-25 documentation evidence:
+
+- Component platform support matrix: `audit/components/component-platform-support-matrix-plrnui-25.md`.
+- Docs import audit: `audit/docs/docs-import-audit-plrnui-25.md`.
+- Consumer-facing README import example now uses `@personal-library/react-native-components`.
 
 ## Human Review Required
 

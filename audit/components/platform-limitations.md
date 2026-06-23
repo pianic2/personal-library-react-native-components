@@ -4,11 +4,13 @@
 
 Platform notes for exported component-like symbols, with emphasis on `experimental` components as required by ADR 0003 and Risk Assessment 0003.
 
-## Explicit web-only or native-null behavior
+PLRNUI-25 note: the current platform support matrix is `audit/components/component-platform-support-matrix-plrnui-25.md`. This file remains a limitations register and must not be read as a stable support claim.
+
+## Explicit web-only or native-fallback behavior
 
 | Component | Maturity | Evidence | Web behavior | Native behavior | Required documentation before promotion |
 | --- | --- | --- | --- | --- | --- |
-| `SideBar` | experimental | `components/navigation/SideBar.web.tsx`, `components/navigation/SideBar.tsx`, `docs/components/navigation/side-bar.md` | Web implementation renders collapsible sidebar. | Native implementation returns `null`. | State `web-only`; document native replacement (`BottomBar`, `BottomSheet` or app navigation). |
+| `SideBar` | experimental | `src/components/SideBar/SideBar.web.tsx`, `src/components/SideBar/SideBar.tsx`, `audit/components/navigation-platform-contract-plrnui-22.md` | Web implementation renders collapsible sidebar. | Native implementation renders a minimal vertical list; it is not a drawer, overlay or gesture surface. | State richer sidebar behavior as experimental; document native fallback limits. |
 | `Tooltip` | experimental | `components/overlay/Tooltip.tsx`, `docs/components/overlay/tooltip.md` | Renders hover/press tooltip content. | Returns only `children`; tooltip content is not rendered. | State `web-only content`; document native fallback or implement one. |
 | `Popover` | experimental | `components/overlay/Popover.tsx`, `docs/components/overlay/popover.md` | Renders positioned popover content. | Returns only trigger output; popover children are not rendered. | State `web-only content`; document native fallback through `Modal`/`BottomSheet`. |
 
@@ -39,6 +41,5 @@ Evidence:
 Stable promotion requirements:
 
 - Each promoted component must state supported platforms: iOS, Android, Web.
-- Components that render `null` or omit content on native must remain `experimental` unless the behavior is the documented contract.
+- Components that omit content or render a reduced fallback on native must remain `experimental` unless the behavior is the documented contract.
 - Components depending on web hover, fixed positioning, browser `window`, clipboard, native modal or gesture behavior need explicit support notes and smoke tests.
-

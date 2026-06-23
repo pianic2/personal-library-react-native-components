@@ -38,6 +38,8 @@ PLRNUI-22 current-state note: navigation sources now live under `src/components/
 
 PLRNUI-23 current-state note: overlay/form modal sources now live under `src/components/<ComponentName>/<ComponentName>.tsx` with local `index.ts` barrels and root exports from `src/index.ts`. PLRNUI-23 adds API visibility, smoke/render coverage and `audit/components/overlay-platform-contract-plrnui-23.md` for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`. The classification does not change: these components remain `experimental` and are not promoted to `stable`.
 
+PLRNUI-25 current-state note: `audit/components/component-platform-support-matrix-plrnui-25.md` now declares iOS, Android and Web support posture for current root-public component candidates and explicitly records web-only/native-fallback behavior for platform-risk components. This satisfies a documentation prerequisite for future stable promotion, but no component is promoted to `stable`.
+
 ## Matrix
 
 | Area | Export | Source/export evidence | Initial maturity | Stable blocker | Platform limit | Notes |
@@ -94,3 +96,9 @@ PLRNUI-23 current-state note: overlay/form modal sources now live under `src/com
 | internal | 1 |
 | deprecated | 0 |
 | total | 41 |
+
+## PLRNUI-25 platform support evidence
+
+The component platform support matrix for public candidates is now tracked in `audit/components/component-platform-support-matrix-plrnui-25.md`.
+
+Stable promotion remains blocked because the new matrix is documentation evidence only. The remaining gates include consumer runtime verification, richer interaction/accessibility coverage, and component-specific blocker cleanup recorded in `audit/components/component-blockers.md`.

@@ -23,9 +23,18 @@ verification material.
 not part of the published package API. Legacy references inside `audit/` are
 historical or governance evidence only.
 
-There is no active legacy alias for `@aura/ui`.
+There is no active legacy package alias.
 
 ## Development
+
+Consumer-facing examples should use the root package entrypoint:
+
+```ts
+import { Button, Text } from "@personal-library/react-native-components";
+```
+
+Deep imports from `src/`, `dist/`, component internals, or legacy package names
+are not supported consumer API.
 
 Source migration is ticket-driven. Do not migrate components, tokens, themes, or
 public APIs without the related PLRNUI issue and audit evidence.
