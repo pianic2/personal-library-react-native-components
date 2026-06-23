@@ -2,7 +2,7 @@
 
 Rule: props for public components must be exportable. This file lists currently exported props/types and candidate props/types that should become public if the related module is public.
 
-Current-state note for PLRNUI-22: `CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkProps`, `LinkRouterAdapter`, `NavBarProps`, `TopBarProps`, `SideBarProps`, `SideBarVariant` and `NavItem` are explicit source types and are exported from the root API through `src/index.ts`.
+Current-state note for PLRNUI-23: `CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkProps`, `LinkRouterAdapter`, `NavBarProps`, `TopBarProps`, `SideBarProps`, `SideBarVariant` and `NavItem` are explicit source types and are exported from the root API through `src/index.ts`. PLRNUI-23 exports `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` as components through local barrels, but their props/option interfaces remain non-exported because their platform contracts are still experimental.
 
 ## Props/types matrix
 

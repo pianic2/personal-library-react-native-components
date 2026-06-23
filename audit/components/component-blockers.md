@@ -40,24 +40,36 @@ Blocker operativi derivati da `audit/02-component-inventory.md`, `audit/api/expo
 | PLRNUI5-BLK-015 | `SideBar` | experimental | `src/components/SideBar/SideBar.tsx` now renders a minimal native-safe vertical list instead of `null`; `tests/components/component-smoke.test.tsx` asserts sidebar rendering through `NavBar`. | Still experimental pending richer accessibility/layout support evidence. |
 | PLRNUI5-BLK-019 | `Link` | beta | `src/components/Link/Link.tsx` exports `LinkRouterAdapter`, supports `routerAdapter`, keeps `onPress`, guards `window`, and no-ops safely on native without a navigation handler; smoke tests assert no-crash, `onPress`, and adapter navigation. | Not stable; stable gate still requires docs/platform/support review. |
 
+## Documented in PLRNUI-23
+
+| Blocker ID | Component | Current maturity | PLRNUI-23 evidence | Stable status |
+| --- | --- | --- | --- | --- |
+| PLRNUI5-BLK-013 | `Tooltip` | experimental | `audit/components/overlay-platform-contract-plrnui-23.md`; `tests/components/component-smoke.test.tsx` renders `Tooltip`; source explicitly returns children only when `Platform.OS !== "web"`. | Not stable; native fallback, keyboard/focus and screen reader behavior remain incomplete. |
+| PLRNUI5-BLK-014 | `Popover` | experimental | `audit/components/overlay-platform-contract-plrnui-23.md`; `tests/components/component-smoke.test.tsx` renders `Popover`; source explicitly returns trigger only when `Platform.OS !== "web"`. | Not stable; native fallback, keyboard/focus and screen reader behavior remain incomplete. |
+| PLRNUI5-BLK-016 | `BottomSheet` | experimental | `audit/components/overlay-platform-contract-plrnui-23.md`; `tests/components/component-smoke.test.tsx` renders `BottomSheet`. | Not stable; gesture, keyboard, safe area and richer snap behavior remain incomplete. |
+| PLRNUI5-BLK-017 | `Modal` | experimental | `audit/components/overlay-platform-contract-plrnui-23.md`; `tests/components/component-smoke.test.tsx` renders `Modal`. | Not stable; focus, accessibility, keyboard and runtime platform behavior remain incomplete. |
+| PLRNUI5-BLK-018 | `Select` | experimental | `audit/components/overlay-platform-contract-plrnui-23.md`; `tests/components/component-smoke.test.tsx` renders `Select`. | Not stable; keyboard, screen reader and focus behavior remain incomplete. |
+
 ## Platform or behavior blockers
 
 | Blocker ID | Component | Current maturity | Evidence | Impact | Recommended Jira ticket |
 | --- | --- | --- | --- | --- | --- |
-| PLRNUI5-BLK-013 | `Tooltip` | experimental | `components/overlay/Tooltip.tsx`; `audit/02-component-inventory.md` | Native renders only children and never renders tooltip content. | Document Tooltip as web-only or implement native fallback. |
-| PLRNUI5-BLK-014 | `Popover` | experimental | `components/overlay/Popover.tsx`; `audit/02-component-inventory.md` | Native renders only the trigger and never renders popover content. | Document Popover as web-only or implement native fallback. |
+| PLRNUI5-BLK-013 | `Tooltip` | experimental | `src/components/Tooltip/Tooltip.tsx`; `audit/components/overlay-platform-contract-plrnui-23.md` | Native renders only children and never renders tooltip content. | Implement native fallback or add explicit non-stable docs and accessibility coverage before promotion. |
+| PLRNUI5-BLK-014 | `Popover` | experimental | `src/components/Popover/Popover.tsx`; `audit/components/overlay-platform-contract-plrnui-23.md` | Native renders only the trigger and never renders popover content. | Implement native fallback or add explicit non-stable docs and accessibility coverage before promotion. |
 | PLRNUI5-BLK-015 | `SideBar` | experimental | `components/navigation/SideBar.tsx`; `components/navigation/SideBar.web.tsx`; `audit/02-component-inventory.md` | Native implementation returns `null`; web behavior depends on platform resolution. | Add SideBar platform support matrix and native fallback decision. |
-| PLRNUI5-BLK-016 | `BottomSheet` | experimental | `components/overlay/BottomSheet.tsx`; `audit/02-component-inventory.md`; docs `docs/components/overlay/bottom-sheet.md` | Gesture, keyboard and snap behavior are incomplete. | Define BottomSheet interaction contract and add platform tests. |
-| PLRNUI5-BLK-017 | `Modal` | experimental | `components/overlay/Modal.tsx`; `audit/02-component-inventory.md`; docs `docs/components/overlay/modal.md` | Modal platform semantics, dismiss behavior and styling are not verified. | Add Modal accessibility/platform smoke tests. |
-| PLRNUI5-BLK-018 | `Select` | experimental | `components/form/Select.tsx`; `audit/02-component-inventory.md`; docs `docs/components/form/select.md` | Modal select behavior lacks keyboard/accessibility contract. | Stabilize Select keyboard/accessibility behavior. |
+| PLRNUI5-BLK-016 | `BottomSheet` | experimental | `src/components/BottomSheet/BottomSheet.tsx`; `audit/components/overlay-platform-contract-plrnui-23.md` | Gesture, keyboard and snap behavior are incomplete. | Add runtime platform, keyboard, safe area and gesture tests before promotion. |
+| PLRNUI5-BLK-017 | `Modal` | experimental | `src/components/Modal/Modal.tsx`; `audit/components/overlay-platform-contract-plrnui-23.md` | Modal platform semantics, focus and accessibility behavior are not fully verified. | Add Modal focus/accessibility/platform interaction tests before promotion. |
+| PLRNUI5-BLK-018 | `Select` | experimental | `src/components/Select/Select.tsx`; `audit/components/overlay-platform-contract-plrnui-23.md` | Modal select behavior lacks keyboard/accessibility proof. | Stabilize Select keyboard/accessibility behavior before promotion. |
 | PLRNUI5-BLK-019 | `Link` | beta | `components/navigation/Link.tsx`; `audit/02-component-inventory.md` | Uses web navigation fallback and lacks router adapter contract. | Define Link router adapter strategy and platform behavior. |
 
 PLRNUI-22 note: PLRNUI5-BLK-015 and PLRNUI5-BLK-019 are retained above as historical blocker rows from the PLRNUI-5 audit baseline. Current remediation evidence is recorded in `audit/components/navigation-platform-contract-plrnui-22.md`.
+
+PLRNUI-23 note: PLRNUI5-BLK-013, PLRNUI5-BLK-014, PLRNUI5-BLK-016, PLRNUI5-BLK-017 and PLRNUI5-BLK-018 are now documented and smoke-rendered, but remain blockers for stable promotion.
 
 ## Cross-cutting blockers
 
 | Blocker ID | Scope | Evidence | Impact | Recommended Jira ticket |
 | --- | --- | --- | --- | --- |
-| PLRNUI5-BLK-020 | Component-like exports without smoke coverage | PLRNUI-20 added `tests/components/component-smoke.test.tsx`; PLRNUI-21 extends it for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`; PLRNUI-22 extends it for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`. | Components without smoke/render or equivalent tests remain blocked from `stable`; PLRNUI-22 coverage does not satisfy the full stable gate by itself. | Continue targeted smoke/interaction coverage for remaining beta/stable candidates. |
+| PLRNUI5-BLK-020 | Component-like exports without smoke coverage | PLRNUI-20 added `tests/components/component-smoke.test.tsx`; PLRNUI-21 extends it for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`; PLRNUI-22 extends it for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`; PLRNUI-23 extends it for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`. | Components without smoke/render or equivalent tests remain blocked from `stable`; PLRNUI-23 coverage does not satisfy the full stable gate by itself. | Continue targeted smoke/interaction coverage for remaining beta/stable candidates. |
 | PLRNUI5-BLK-021 | Public/beta component props | `audit/api/public-types.md` | Many public candidates do not export named props types, blocking stable consumer contracts. | Export named props types for approved public components. |
 | PLRNUI5-BLK-022 | Root API scope | `index.ts`; `audit/api/export-matrix.md`; `audit/migration/breaking-change-register.md` `BC-004`, `BC-007` | Root exports currently include internal/experimental components. | Move/fence internal and experimental components before stable release. |

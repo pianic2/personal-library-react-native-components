@@ -12,7 +12,7 @@ A component can move to `stable` only after satisfying ADR 0003 and ADR 0007:
 - no known blocking runtime bug remains;
 - semver and migration impact are tracked.
 
-Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20, PLRNUI-21 and PLRNUI-22 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
+Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20, PLRNUI-21, PLRNUI-22 and PLRNUI-23 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
 
 ## Promotion groups
 
@@ -28,7 +28,7 @@ Required work for every beta candidate:
 
 | Requirement | Evidence for gap | Minimum completion |
 | --- | --- | --- |
-| Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; PLRNUI-22 adds coverage for `TopBar`, `BottomBar`, `NavBar`, `Link`, `SideBar`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
+| Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; PLRNUI-22 adds coverage for `TopBar`, `BottomBar`, `NavBar`, `Link`, `SideBar`; PLRNUI-23 adds coverage for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
 | Named props export | `audit/api/public-types.md` lists many `Not exported` props | Export named props for approved public components. |
 | Platform support line | ADR 0003 and ADR 0007 stable criteria | Add support matrix to component docs. |
 | Example aligned to public API | `audit/api/deep-import-audit.md` finds demo relative imports and docs `"AURA"` snippets | Update examples after package identity/API decision. |
@@ -44,8 +44,8 @@ Required work:
 
 | Component group | Evidence | Promotion requirement |
 | --- | --- | --- |
-| Web-only/native-null overlays/navigation | `Tooltip`, `Popover`, `SideBar` source files | Document web-only/native-null behavior or implement native fallback. |
-| Overlay/modal components | `Modal`, `BottomSheet`, `Select` source and inventory notes | Define keyboard, focus, gesture, dismiss and accessibility behavior. |
+| Web-only/native-null overlays/navigation | `Tooltip`, `Popover`, `SideBar` source files; PLRNUI-23 overlay contract | Tooltip and Popover native fallback behavior is documented, but stable promotion still requires native fallback decisions and keyboard/focus/accessibility coverage. |
+| Overlay/modal components | `Modal`, `BottomSheet`, `Select` source and inventory notes; PLRNUI-23 overlay contract | PLRNUI-23 defines the current contract, but stable promotion still requires keyboard, focus, gesture, dismiss and accessibility validation. |
 | App-shell-like components | `Page`, `Hero`, `BottomBar`, `TopBar` source and inventory notes | Decide whether they belong in root API or experimental subpath. |
 | Clipboard/timer components | `Code`, `ToastProvider` source and inventory notes | Add lifecycle cleanup, dependency/platform documentation and tests. |
 
@@ -71,6 +71,6 @@ These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`
 | PLRNUI5-TYPES-001 | Export named props for approved public components | Stable promotion for public root API |
 | PLRNUI5-BUG-001 | Closed by PLRNUI-21 for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput` blockers | These components can be `beta`, not `stable`; future work must satisfy the stable gate. |
 | PLRNUI5-NAV-001 | Closed by PLRNUI-22 for targeted `TopBar`, `NavBar`, `Link`, `SideBar` platform/router blockers | These components are not `stable`; future work must satisfy docs/platform/support and accessibility gates. |
-| PLRNUI5-OVERLAY-001 | Define and test `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select` platform behavior | Overlay/form experimental promotion |
+| PLRNUI5-OVERLAY-001 | Documented by PLRNUI-23 for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select` with render smoke coverage | These components remain experimental; future work must satisfy runtime platform, focus, keyboard and accessibility gates. |
 | PLRNUI5-DOCS-001 | Add component support matrix and migrate examples away from legacy/deep imports | Docs gate for stable promotion |
 | PLRNUI5-API-001 | Fence internal/experimental exports or document root API maturity | Breaking change register `BC-004`, `BC-007` |

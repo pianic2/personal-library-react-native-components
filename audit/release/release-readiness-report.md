@@ -38,7 +38,7 @@ Export and metadata validation:
 - `package.json` exposes only root `exports["."]`.
 - `exports["."].import` and `exports["."].types` point to built `dist` files.
 - Current `main`, `module` and top-level `types` point to `./dist/index.js` and `./dist/index.d.ts`.
-- Current `src/index.ts` exports `PACKAGE_NAME` plus the governed root component, theme, hook, utility and token APIs; PLRNUI-22 adds approved navigation root exports for `TopBar`, `BottomBar`, `NavBar`, `Link`, `NavContext` and `SideBar` through local component barrels.
+- Current `src/index.ts` exports `PACKAGE_NAME` plus the governed root component, theme, hook, utility and token APIs; PLRNUI-22 adds approved navigation root exports for `TopBar`, `BottomBar`, `NavBar`, `Link`, `NavContext` and `SideBar` through local component barrels; PLRNUI-23 adds experimental overlay/form modal root exports for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` through local component barrels.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -100,6 +100,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - Package entrypoint metadata is aligned to current build output by PLRNUI-45; consumer resolver proof remains deferred to PLRNUI-46.
 - PLRNUI-21 remediates the known `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput` component blockers and adds Node smoke/render coverage for them, but does not promote any component to `stable`.
 - PLRNUI-22 remediates targeted navigation blockers for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`, adds Node smoke/render coverage, adds root API exports, and records the platform/router contract; it does not promote any component to `stable`.
+- PLRNUI-23 documents and smoke-renders `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`, adds root API visibility, and records the overlay platform contract; it does not promote any component to `stable`.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers
@@ -111,6 +112,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 5. Native dependency governance is consolidated by PLRNUI-44 for the current package state; executable consumer proof remains deferred to PLRNUI-46.
 6. Package entrypoint metadata is aligned to `dist`, but clean consumer root import and TypeScript declaration resolution remain unproven until PLRNUI-46.
 7. Component `stable` promotion remains blocked until docs/platform/support evidence and any required interaction/accessibility coverage are complete; PLRNUI-21 and PLRNUI-22 only remediate targeted blockers and do not promote components to `stable`.
+8. Overlay/form modal `stable` promotion remains blocked until iOS/Android/Web runtime behavior, focus, keyboard and accessibility behavior are validated beyond Node render smoke coverage.
 
 ## Conclusion
 

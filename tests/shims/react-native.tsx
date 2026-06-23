@@ -16,6 +16,7 @@ function createHostComponent(name: string) {
 export const View = createHostComponent("View");
 export const ScrollView = createHostComponent("ScrollView");
 export const Pressable = createHostComponent("Pressable");
+export const Modal = createHostComponent("Modal");
 export const Text = createHostComponent("Text");
 export const TextInput = createHostComponent("TextInput");
 export const ActivityIndicator = createHostComponent("ActivityIndicator");

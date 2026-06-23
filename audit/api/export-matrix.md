@@ -4,7 +4,7 @@
 
 Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current-state note for PLRNUI-22: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-22 adds root exports for approved navigation components and public navigation types through local component barrels; the root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports or promote anything to `stable`.
+Current-state note for PLRNUI-23: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-22 adds root exports for approved navigation components and public navigation types through local component barrels; PLRNUI-23 adds root API visibility for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` through local component barrels. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports or promote anything to `stable`.
 
 ## Package export map
 
@@ -64,10 +64,10 @@ Current-state note for PLRNUI-22: this PLRNUI-4 matrix remains historical API go
 | `useToastContext` | root | `components/feedback/ToastProvider.tsx` | hook | internal | internal | Provider implementation hook; `useToast` should be consumer API. | HUMAN REVIEW REQUIRED |
 | `useToast` | root | `components/feedback/useToast.tsx` | hook | experimental | experimental | Useful consumer hook but tied to experimental toast provider. | HUMAN REVIEW REQUIRED |
 | `ProgressBar` | root | `components/feedback/ProgressBar.tsx` | component | public | beta | PLRNUI-21 fixed clamped fill width behavior and added smoke coverage; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
-| `Modal` | root | `components/overlay/Modal.tsx` | component | experimental | experimental | Platform/behavior contract not stable. | HUMAN REVIEW REQUIRED |
-| `BottomSheet` | root | `components/overlay/BottomSheet.tsx` | component | experimental | experimental | Gesture, keyboard and snap behavior incomplete. | HUMAN REVIEW REQUIRED |
-| `Tooltip` | root | `components/overlay/Tooltip.tsx` | component | experimental | experimental | Native behavior does not render tooltip content. | HUMAN REVIEW REQUIRED |
-| `Popover` | root | `components/overlay/Popover.tsx` | component | experimental | experimental | Native behavior does not render popover content. | HUMAN REVIEW REQUIRED |
+| `Modal` | root | `src/components/Modal/Modal.tsx` | component | experimental | experimental | PLRNUI-23 adds root visibility and smoke coverage; focus/accessibility/keyboard behavior remains unverified. | HUMAN REVIEW REQUIRED |
+| `BottomSheet` | root | `src/components/BottomSheet/BottomSheet.tsx` | component | experimental | experimental | PLRNUI-23 adds root visibility and smoke coverage; gesture, keyboard, safe area and snap behavior remain incomplete. | HUMAN REVIEW REQUIRED |
+| `Tooltip` | root | `src/components/Tooltip/Tooltip.tsx` | component | experimental | experimental | PLRNUI-23 documents web behavior and native children-only fallback. | HUMAN REVIEW REQUIRED |
+| `Popover` | root | `src/components/Popover/Popover.tsx` | component | experimental | experimental | PLRNUI-23 documents web behavior and native trigger-only fallback. | HUMAN REVIEW REQUIRED |
 | `Badge` | root | `components/surfaces/Badge.tsx` | component | public | beta | Documented visual component with color review pending. | HUMAN REVIEW REQUIRED |
 | `Card` | root | `components/surfaces/Card.tsx` | component | public | beta | PLRNUI-21 removed the hook-rule blocker and added smoke coverage; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Hero` | root | `components/surfaces/Hero.tsx` | component | experimental | experimental | Hardcoded screen height; not clearly reusable library API. | HUMAN REVIEW REQUIRED |
@@ -76,7 +76,7 @@ Current-state note for PLRNUI-22: this PLRNUI-4 matrix remains historical API go
 | `Switch` | root | `components/form/Switch.tsx` | component | public | beta | Basic form component with accessibility/animation gaps. | HUMAN REVIEW REQUIRED |
 | `Checkbox` | root | `components/form/Checkbox.tsx` | component | public | beta | Basic form component with accessibility gaps. | HUMAN REVIEW REQUIRED |
 | `RadioGroup` | root | `components/form/RadioGroup.tsx` | component | public | beta | Basic form component; option type should be exported if public. | HUMAN REVIEW REQUIRED |
-| `Select` | root | `components/form/Select.tsx` | component | experimental | experimental | Modal/select behavior and accessibility not stable. | HUMAN REVIEW REQUIRED |
+| `Select` | root | `src/components/Select/Select.tsx` | component | experimental | experimental | PLRNUI-23 adds root visibility and smoke coverage; keyboard, focus and screen reader behavior remain unverified. | HUMAN REVIEW REQUIRED |
 | `FormField` | root | `components/form/FormField.tsx` | component | public | beta | Useful composition primitive but clone-props behavior needs review. | HUMAN REVIEW REQUIRED |
 | `Textarea` | root | `components/form/Textarea.tsx` | component | public | beta | PLRNUI-21 added explicit props, semantic spacing and forced multiline behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Breakpoint` | root | `hooks/useBreakpoint.ts` | type | public | beta | Useful with public `useBreakpoint`. |  |

@@ -25,7 +25,12 @@ import {
   ThemeProvider,
   BottomBar,
   Link,
+  Modal,
   NavBar,
+  BottomSheet,
+  Tooltip,
+  Popover,
+  Select,
   SideBar,
   TopBar,
 } from "../../src";
@@ -403,5 +408,61 @@ describe("PLRNUI-22 navigation component coverage", () => {
 
     assert.ok(renderer.toJSON());
     assert.ok(labels.includes("Home"));
+  });
+});
+
+describe("PLRNUI-23 overlay and modal form component coverage", () => {
+  it("renders Modal without throwing", () => {
+    const renderer = renderWithTheme(
+      <Modal visible={true} onClose={() => undefined}>
+        <Text>Modal content</Text>
+      </Modal>
+    );
+
+    assert.ok(renderer.toJSON());
+  });
+
+  it("renders BottomSheet without throwing", () => {
+    const renderer = renderWithTheme(
+      <BottomSheet visible={true} onClose={() => undefined}>
+        <Text>Sheet content</Text>
+      </BottomSheet>
+    );
+
+    assert.ok(renderer.toJSON());
+  });
+
+  it("renders Tooltip without throwing", () => {
+    const renderer = renderWithTheme(
+      <Tooltip content="Helpful detail">
+        <Text>Tooltip trigger</Text>
+      </Tooltip>
+    );
+
+    assert.ok(renderer.toJSON());
+  });
+
+  it("renders Popover without throwing", () => {
+    const renderer = renderWithTheme(
+      <Popover
+        renderTrigger={() => <Text>Popover trigger</Text>}
+      >
+        <Text>Popover content</Text>
+      </Popover>
+    );
+
+    assert.ok(renderer.toJSON());
+  });
+
+  it("renders Select without throwing", () => {
+    const renderer = renderWithTheme(
+      <Select
+        options={[{ label: "One", value: "one" }]}
+        value="one"
+        onChange={() => undefined}
+      />
+    );
+
+    assert.ok(renderer.toJSON());
   });
 });
