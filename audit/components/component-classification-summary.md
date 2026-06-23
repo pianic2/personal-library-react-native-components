@@ -11,36 +11,33 @@ Non sono state classificate come componenti le API type-only, utility, token, st
 | Maturity | Count |
 | --- | ---: |
 | stable | 0 |
-| beta | 23 |
+| beta | 28 |
 | experimental | 12 |
-| internal | 6 |
+| internal | 1 |
 | deprecated | 0 |
 | total | 41 |
 
-## Components blocked by known bugs
+## Components blocked by known bugs after PLRNUI-21
 
 | Component | Maturity | Evidence | Ticket candidate |
 | --- | --- | --- | --- |
-| `Card` | internal | `audit/02-component-inventory.md` `CMP-01`; `components/surfaces/Card.tsx` | PLRNUI5-BUG-001 |
-| `ProgressBar` | internal | `audit/02-component-inventory.md` `CMP-02`; `components/feedback/ProgressBar.tsx` | PLRNUI5-BUG-001 |
-| `CodeInline` | internal | `audit/02-component-inventory.md` `CMP-03`; `components/typography/CodeInline.tsx` | PLRNUI5-BUG-001 |
-| `Textarea` | internal | `audit/02-component-inventory.md` `CMP-04`; `components/form/Textarea.tsx` | PLRNUI5-BUG-001 |
 | `TopBar` | experimental | `audit/02-component-inventory.md` `CMP-05`; `components/navigation/TopBar.tsx` | PLRNUI5-NAV-001 |
 | `NavBar` | beta | `audit/02-component-inventory.md` `CMP-06`; `components/navigation/NavBar.tsx` | PLRNUI5-NAV-001 |
 | `Button` | beta | `audit/02-component-inventory.md` `CMP-07`; `components/Button.tsx` | PLRNUI5-BUG-002 |
 | `Input` | beta | `audit/02-component-inventory.md` `CMP-08`; `components/form/Input.tsx` | PLRNUI5-TYPES-001 / PLRNUI5-FORM-001 |
-| `PasswordInput` | internal | `audit/02-component-inventory.md`; `components/form/PasswordInput.tsx`; `audit/api/public-types.md` | PLRNUI5-BUG-001 |
 | `Row` | beta | `audit/02-component-inventory.md`; `components/layout/Row.tsx` | PLRNUI5-LAYOUT-001 |
+
+PLRNUI-21 remediated the known blocker set for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`; they are now classified as `beta`, not `stable`.
 
 ## Components blocked by absence of tests
 
-All 41 analyzed component-like exports are blocked from `stable` by test absence.
+All 41 analyzed component-like exports remain blocked from `stable` by incomplete stable-gate evidence.
 
-Evidence: `rg --files -g '*test*' -g '*spec*' -g '__tests__/**'` returned no files.
+Evidence: PLRNUI-20 introduced the Node smoke harness and PLRNUI-21 added coverage for the five remediated components, but ADR 0003 still requires complete docs/platform/support evidence and component-specific hardening before stable promotion.
 
 Highest-priority beta candidates needing first smoke coverage:
 
-`Button`, `Box`, `Column`, `Row`, `Divider`, `Text`, `P`, `B`, `Small`, `Heading`, `Quote`, `TextGroup`, `Spinner`, `Alert`, `Badge`, `Input`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `NavProvider`, `Link`, `NavBar`.
+`Button`, `Box`, `Column`, `Row`, `Divider`, `Text`, `P`, `B`, `Small`, `CodeInline`, `Heading`, `Quote`, `TextGroup`, `Spinner`, `Alert`, `Badge`, `Card`, `Input`, `PasswordInput`, `ProgressBar`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `Textarea`, `NavProvider`, `Link`, `NavBar`.
 
 ## Web-only or native-null components
 
@@ -58,8 +55,8 @@ Related platform-risk components without proven cross-platform behavior:
 
 | Ticket candidate | Priority | Scope | Source evidence |
 | --- | --- | --- | --- |
-| PLRNUI5-TEST-001 | High | Add component smoke/render test harness and first coverage for beta candidates. | ADR 0003 stable criteria; no test/spec files found. |
-| PLRNUI5-BUG-001 | High | Fix `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`. | `audit/02-component-inventory.md` findings `CMP-01` to `CMP-04`; `audit/api/public-types.md`. |
+| PLRNUI5-TEST-001 | In progress | Extend component smoke/render coverage beyond the PLRNUI-20/PLRNUI-21 harness. | ADR 0003 stable criteria; PLRNUI-21 coverage is not full stable-gate evidence. |
+| PLRNUI5-BUG-001 | Closed by PLRNUI-21 | Fix `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`. | Remediation evidence in `audit/components/component-blocker-remediation-plrnui-21.md`. |
 | PLRNUI5-NAV-001 | High | Fix `TopBar`, `NavBar`, `Link`, `SideBar` behavior and platform contracts. | `audit/02-component-inventory.md` findings `CMP-05`, `CMP-06`; `components/navigation/*`. |
 | PLRNUI5-OVERLAY-001 | High | Define and test overlay/platform behavior for `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select`. | `audit/02-component-inventory.md`; `audit/risk-assessment/0003-component-stability-misclassification-risk.md`. |
 | PLRNUI5-TYPES-001 | High | Export named props types for approved public components. | `audit/api/public-types.md`. |

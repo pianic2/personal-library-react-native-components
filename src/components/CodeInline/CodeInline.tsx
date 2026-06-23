@@ -9,11 +9,16 @@ export type CodeInlineProps = ComponentProps<typeof Text>;
 
 export function CodeInline(props: CodeInlineProps) {
   const { theme, colors } = useTheme();
-  const size = props.size ?? "sm";
+  const typographySizes = theme.typography.fontSize;
+  const resolvedSize: keyof typeof typographySizes =
+    props.size && Object.prototype.hasOwnProperty.call(typographySizes, props.size)
+      ? props.size
+      : "sm";
+  const resolvedFontSize = typographySizes[resolvedSize];
 
   return (
       <Text
-        size={size}
+        size={resolvedSize}
         style={[
           {
             fontFamily: theme.typography.fontFamily.mono,
@@ -24,7 +29,7 @@ export function CodeInline(props: CodeInlineProps) {
             paddingHorizontal: theme.space.sm,
             paddingVertical: 1,
             lineHeight:
-              theme.typography.fontSize[size] *
+              resolvedFontSize *
               theme.typography.lineHeight.normal,
             },
           props.style,

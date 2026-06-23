@@ -1,7 +1,7 @@
 // ui/components/feedback/ProgressBar.tsx
 
 import React from "react";
-import { View } from "react-native";
+import { View, type DimensionValue } from "react-native";
 import { useTheme } from "../../theme/useTheme";
 
 type Variant = "primary" | "info" | "success" | "warning" | "error";
@@ -14,10 +14,11 @@ export interface ProgressBarProps {
 export function ProgressBar({ progress, color }: ProgressBarProps) {
   const { theme, colors } = useTheme();
 
-  const width =
-    progress !== undefined
-      ? `${Math.min(Math.max(progress, 0), 100)}%`
-      : "30%";
+  const normalizedProgress =
+    progress === undefined || !Number.isFinite(progress)
+      ? 30
+      : Math.min(Math.max(progress, 0), 100);
+  const width: DimensionValue = `${normalizedProgress}%`;
 
   return (
     <View
@@ -30,7 +31,7 @@ export function ProgressBar({ progress, color }: ProgressBarProps) {
     >
       <View
         style={{
-          // width: width || "30%",
+          width,
           height: "100%",
           backgroundColor: color ? colors[color] : colors.primary,
         }}

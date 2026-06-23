@@ -4,16 +4,23 @@ import { Input } from "../Input/Input";
 import { useTheme } from "../../theme/useTheme";
 import type { InputProps } from "../Input/Input";
 
-export type TextareaProps = InputProps;
+export interface TextareaProps
+  extends Omit<InputProps, "multiline" | "textAlignVertical"> {}
 
-export function Textarea(props: TextareaProps) {
+export function Textarea({ style, ...props }: TextareaProps) {
   const { theme } = useTheme();
   return (
     <Input
       {...props}
       multiline
       textAlignVertical="top"
-      style={{ minHeight: 100, paddingVertical: theme.space.md, ...props.style }}
+      style={[
+        {
+          minHeight: 100,
+          paddingVertical: theme.space.md,
+        },
+        style,
+      ]}
     />
   );
 }

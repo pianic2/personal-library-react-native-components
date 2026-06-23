@@ -4,7 +4,7 @@
 
 Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current-state note for PLRNUI-45: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports only `PACKAGE_NAME`.
+Current-state note for PLRNUI-21: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-21 updates only the five remediated component classifications below; it does not add subpath exports or promote anything to `stable`.
 
 ## Package export map
 
@@ -50,7 +50,7 @@ Current-state note for PLRNUI-45: this PLRNUI-4 matrix remains historical API go
 | `B` | root | `components/typography/B.tsx` | component | public | beta | Documented typography shorthand. |  |
 | `Small` | root | `components/typography/Small.tsx` | component | public | beta | Documented typography shorthand. |  |
 | `Code` | root | `components/typography/Code.tsx` | component | experimental | experimental | Clipboard/timer behavior needs hardening before stable API. | HUMAN REVIEW REQUIRED |
-| `CodeInline` | root | `components/typography/CodeInline.tsx` | component | internal | internal | Audit flags broken size handling. | HUMAN REVIEW REQUIRED |
+| `CodeInline` | root | `components/typography/CodeInline.tsx` | component | public | beta | PLRNUI-21 fixed size/lineHeight handling and added smoke coverage; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Quote` | root | `components/typography/Quote.tsx` | component | public | beta | Simple documented typography component. |  |
 | `Text` | root | `components/typography/Text.tsx` | component | public | beta | Core typography primitive. |  |
 | `TextGroup` | root | `components/typography/TextGroup.tsx` | component | public | beta | Documented grouping primitive with minor implementation debt. | HUMAN REVIEW REQUIRED |
@@ -61,22 +61,22 @@ Current-state note for PLRNUI-45: this PLRNUI-4 matrix remains historical API go
 | `ToastProvider` | root | `components/feedback/ToastProvider.tsx` | provider | experimental | experimental | Uses web-specific markup and timer lifecycle needs review. | HUMAN REVIEW REQUIRED |
 | `useToastContext` | root | `components/feedback/ToastProvider.tsx` | hook | internal | internal | Provider implementation hook; `useToast` should be consumer API. | HUMAN REVIEW REQUIRED |
 | `useToast` | root | `components/feedback/useToast.tsx` | hook | experimental | experimental | Useful consumer hook but tied to experimental toast provider. | HUMAN REVIEW REQUIRED |
-| `ProgressBar` | root | `components/feedback/ProgressBar.tsx` | component | internal | internal | Audit flags functionally broken progress rendering. | HUMAN REVIEW REQUIRED |
+| `ProgressBar` | root | `components/feedback/ProgressBar.tsx` | component | public | beta | PLRNUI-21 fixed clamped fill width behavior and added smoke coverage; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Modal` | root | `components/overlay/Modal.tsx` | component | experimental | experimental | Platform/behavior contract not stable. | HUMAN REVIEW REQUIRED |
 | `BottomSheet` | root | `components/overlay/BottomSheet.tsx` | component | experimental | experimental | Gesture, keyboard and snap behavior incomplete. | HUMAN REVIEW REQUIRED |
 | `Tooltip` | root | `components/overlay/Tooltip.tsx` | component | experimental | experimental | Native behavior does not render tooltip content. | HUMAN REVIEW REQUIRED |
 | `Popover` | root | `components/overlay/Popover.tsx` | component | experimental | experimental | Native behavior does not render popover content. | HUMAN REVIEW REQUIRED |
 | `Badge` | root | `components/surfaces/Badge.tsx` | component | public | beta | Documented visual component with color review pending. | HUMAN REVIEW REQUIRED |
-| `Card` | root | `components/surfaces/Card.tsx` | component | internal | internal | Audit flags hook usage bug. | HUMAN REVIEW REQUIRED |
+| `Card` | root | `components/surfaces/Card.tsx` | component | public | beta | PLRNUI-21 removed the hook-rule blocker and added smoke coverage; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Hero` | root | `components/surfaces/Hero.tsx` | component | experimental | experimental | Hardcoded screen height; not clearly reusable library API. | HUMAN REVIEW REQUIRED |
 | `Input` | root | `components/form/Input.tsx` | component | public | beta | Important form primitive but props contract needs stabilization. | HUMAN REVIEW REQUIRED |
-| `PasswordInput` | root | `components/form/PasswordInput.tsx` | component | internal | internal | Props are `any` and behavior is incomplete. | HUMAN REVIEW REQUIRED |
+| `PasswordInput` | root | `components/form/PasswordInput.tsx` | component | public | beta | PLRNUI-21 added explicit props and accessible visibility toggle behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Switch` | root | `components/form/Switch.tsx` | component | public | beta | Basic form component with accessibility/animation gaps. | HUMAN REVIEW REQUIRED |
 | `Checkbox` | root | `components/form/Checkbox.tsx` | component | public | beta | Basic form component with accessibility gaps. | HUMAN REVIEW REQUIRED |
 | `RadioGroup` | root | `components/form/RadioGroup.tsx` | component | public | beta | Basic form component; option type should be exported if public. | HUMAN REVIEW REQUIRED |
 | `Select` | root | `components/form/Select.tsx` | component | experimental | experimental | Modal/select behavior and accessibility not stable. | HUMAN REVIEW REQUIRED |
 | `FormField` | root | `components/form/FormField.tsx` | component | public | beta | Useful composition primitive but clone-props behavior needs review. | HUMAN REVIEW REQUIRED |
-| `Textarea` | root | `components/form/Textarea.tsx` | component | internal | internal | Props are `any` and audit flags token bug. | HUMAN REVIEW REQUIRED |
+| `Textarea` | root | `components/form/Textarea.tsx` | component | public | beta | PLRNUI-21 added explicit props, semantic spacing and forced multiline behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Breakpoint` | root | `hooks/useBreakpoint.ts` | type | public | beta | Useful with public `useBreakpoint`. |  |
 | `useBreakpoint` | root | `hooks/useBreakpoint.ts` | hook | public | beta | Consumer layout hook. |  |
 | `useDebounce` | root | `hooks/useDebounce.ts` | hook | public | beta | Generic consumer hook with clear contract. | HUMAN REVIEW REQUIRED |

@@ -8,10 +8,6 @@ Blocker operativi derivati da `audit/02-component-inventory.md`, `audit/api/expo
 
 | Blocker ID | Component | Current maturity | Evidence | Impact | Recommended Jira ticket |
 | --- | --- | --- | --- | --- | --- |
-| PLRNUI5-BLK-001 | `Card` | internal | `components/surfaces/Card.tsx`; `audit/02-component-inventory.md` finding `CMP-01`; `audit/api/export-matrix.md` marks internal | Hook usage inside helper makes the component unsafe for stable API promotion. | Fix Card hook usage and add render smoke test. |
-| PLRNUI5-BLK-002 | `ProgressBar` | internal | `components/feedback/ProgressBar.tsx`; `audit/02-component-inventory.md` finding `CMP-02`; `audit/api/export-matrix.md` marks internal | Progress width is calculated but not applied, so the component is functionally broken. | Fix ProgressBar visual width behavior and add progress state test. |
-| PLRNUI5-BLK-003 | `CodeInline` | internal | `components/typography/CodeInline.tsx`; `audit/02-component-inventory.md` finding `CMP-03`; `audit/api/export-matrix.md` marks internal | Undefined `props.size` can produce invalid lineHeight behavior. | Fix CodeInline size resolution and add typography smoke test. |
-| PLRNUI5-BLK-004 | `Textarea` | internal | `components/form/Textarea.tsx`; `audit/02-component-inventory.md` finding `CMP-04`; `audit/api/public-types.md` flags `any` props | Uses wrong spacing token key and exposes `any` props. | Fix Textarea token usage, add named props and render test. |
 | PLRNUI5-BLK-005 | `TopBar` | experimental | `components/navigation/TopBar.tsx`; `audit/02-component-inventory.md` finding `CMP-05` | Fallback placeholder text can leak visibly into consumer UI. | Remove TopBar placeholder fallback and test slot rendering. |
 
 ## Medium blockers
@@ -22,9 +18,18 @@ Blocker operativi derivati da `audit/02-component-inventory.md`, `audit/api/expo
 | PLRNUI5-BLK-007 | `Button` | beta | `components/Button.tsx`; `audit/02-component-inventory.md` finding `CMP-07`; docs `docs/components/buttons/button.md` | `variant="info"` is declared but not handled consistently. | Complete Button variant map and export `ButtonProps`. |
 | PLRNUI5-BLK-008 | `Input` | beta | `components/form/Input.tsx`; `audit/02-component-inventory.md` finding `CMP-08`; docs `docs/components/form/input.md` | Required label and focus handler behavior make composition unstable. | Stabilize Input label/focus contract and export `InputProps`. |
 | PLRNUI5-BLK-009 | `Row` | beta | `components/layout/Row.tsx`; `audit/02-component-inventory.md` row note | Declared `flex` prop is not applied. | Apply or remove Row `flex` prop and add layout smoke test. |
-| PLRNUI5-BLK-010 | `PasswordInput` | internal | `components/form/PasswordInput.tsx`; `audit/02-component-inventory.md`; `audit/api/public-types.md` | Props are `any` and toggle behavior is incomplete. | Type PasswordInput props and implement accessible visibility toggle. |
 | PLRNUI5-BLK-011 | `Alert` | beta | `components/feedback/Alert.tsx`; `audit/02-component-inventory.md` | Ghost action on colored background can have contrast issues. | Verify Alert contrast states and action variants. |
 | PLRNUI5-BLK-012 | `ToastProvider` | experimental | `components/feedback/ToastProvider.tsx`; `audit/02-component-inventory.md`; `audit/api/export-matrix.md` | Web-specific markup and timer lifecycle make provider unsuitable for stable API. | Harden ToastProvider platform behavior and lifecycle cleanup. |
+
+## Resolved in PLRNUI-21
+
+| Blocker ID | Component | New maturity ceiling | Remediation evidence | Stable status |
+| --- | --- | --- | --- | --- |
+| PLRNUI5-BLK-001 | `Card` | beta | `src/components/Card/Card.tsx` no longer calls `useTheme()` from `applyShadow`; `tests/components/component-smoke.test.tsx` renders `Card`. | Not stable; stable gate still requires broader docs/platform/support review. |
+| PLRNUI5-BLK-002 | `ProgressBar` | beta | `src/components/ProgressBar/ProgressBar.tsx` clamps progress and applies calculated fill width; smoke test asserts `100%` clamp behavior. | Not stable; stable gate still requires documented progress contract/support review. |
+| PLRNUI5-BLK-003 | `CodeInline` | beta | `src/components/CodeInline/CodeInline.tsx` resolves size once and uses it for `lineHeight`; smoke test asserts default size/lineHeight. | Not stable; stable gate still requires typography docs/platform review. |
+| PLRNUI5-BLK-004 | `Textarea` | beta | `src/components/Textarea/Textarea.tsx` exposes explicit `TextareaProps`, uses semantic `theme.space.md`, and forces `multiline`; smoke test asserts multiline/top alignment. | Not stable; stable gate still requires form contract/docs review. |
+| PLRNUI5-BLK-010 | `PasswordInput` | beta | `src/components/PasswordInput/PasswordInput.tsx` exposes explicit `PasswordInputProps`, adds controlled/uncontrolled visibility state, and renders an accessible toggle; smoke test asserts toggle behavior. | Not stable; stable gate still requires fuller accessibility/platform validation. |
 
 ## Platform or behavior blockers
 
@@ -42,7 +47,6 @@ Blocker operativi derivati da `audit/02-component-inventory.md`, `audit/api/expo
 
 | Blocker ID | Scope | Evidence | Impact | Recommended Jira ticket |
 | --- | --- | --- | --- | --- |
-| PLRNUI5-BLK-020 | All 41 component-like exports | No files returned by `rg --files -g '*test*' -g '*spec*' -g '__tests__/**'`; ADR 0003 stable criteria | No component can be `stable` without at least smoke/render or equivalent tests. | Add component smoke test harness and first coverage pass. |
+| PLRNUI5-BLK-020 | Component-like exports without smoke coverage | PLRNUI-20 added `tests/components/component-smoke.test.tsx`; PLRNUI-21 extends it for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`. | Components without smoke/render or equivalent tests remain blocked from `stable`; PLRNUI-21 coverage does not satisfy the full stable gate by itself. | Continue targeted smoke/interaction coverage for remaining beta/stable candidates. |
 | PLRNUI5-BLK-021 | Public/beta component props | `audit/api/public-types.md` | Many public candidates do not export named props types, blocking stable consumer contracts. | Export named props types for approved public components. |
 | PLRNUI5-BLK-022 | Root API scope | `index.ts`; `audit/api/export-matrix.md`; `audit/migration/breaking-change-register.md` `BC-004`, `BC-007` | Root exports currently include internal/experimental components. | Move/fence internal and experimental components before stable release. |
-

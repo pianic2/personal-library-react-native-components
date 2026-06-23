@@ -12,7 +12,7 @@ A component can move to `stable` only after satisfying ADR 0003 and ADR 0007:
 - no known blocking runtime bug remains;
 - semver and migration impact are tracked.
 
-Current result: no exported component-like symbol satisfies the stable gate because the repository has no test/spec files and multiple components have unresolved docs/type/platform gaps.
+Current result: no exported component-like symbol satisfies the stable gate. PLRNUI-20 and PLRNUI-21 add Node smoke/render coverage for selected components, but docs, platform support, consumer proof and component-specific hardening remain incomplete for stable promotion.
 
 ## Promotion groups
 
@@ -20,7 +20,7 @@ Current result: no exported component-like symbol satisfies the stable gate beca
 
 These components are usable candidates after test/docs/type hardening:
 
-`Button`, `Box`, `Column`, `Row`, `Divider`, `P`, `B`, `Small`, `Quote`, `Text`, `TextGroup`, `Heading`, `Spinner`, `Alert`, `Badge`, `Input`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `NavProvider`, `Link`, `NavBar`.
+`Button`, `Box`, `Column`, `Row`, `Divider`, `P`, `B`, `Small`, `CodeInline`, `Quote`, `Text`, `TextGroup`, `Heading`, `Spinner`, `Alert`, `Badge`, `Card`, `Input`, `PasswordInput`, `ProgressBar`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `Textarea`, `NavProvider`, `Link`, `NavBar`.
 
 `Stack` is counted as an analyzed source export but not as a root-reachable component because `components/layout/index.tsx` does not export it. If the barrel is changed later, it needs an explicit decision: public alias, internal alias, or deprecated alias.
 
@@ -28,7 +28,7 @@ Required work for every beta candidate:
 
 | Requirement | Evidence for gap | Minimum completion |
 | --- | --- | --- |
-| Smoke/render test | `rg --files -g '*test*' -g '*spec*' -g '__tests__/**'` returns no files | Add component render smoke coverage for iOS/Android/Web-equivalent environment or documented equivalent. |
+| Smoke/render test | PLRNUI-20 added the Node harness; PLRNUI-21 adds coverage for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput`; remaining components and richer behavior coverage are incomplete. | Add component render smoke coverage for remaining candidates and interaction/platform coverage where behavior requires it. |
 | Named props export | `audit/api/public-types.md` lists many `Not exported` props | Export named props for approved public components. |
 | Platform support line | ADR 0003 and ADR 0007 stable criteria | Add support matrix to component docs. |
 | Example aligned to public API | `audit/api/deep-import-audit.md` finds demo relative imports and docs `"AURA"` snippets | Update examples after package identity/API decision. |
@@ -49,17 +49,17 @@ Required work:
 | App-shell-like components | `Page`, `Hero`, `BottomBar`, `TopBar` source and inventory notes | Decide whether they belong in root API or experimental subpath. |
 | Clipboard/timer components | `Code`, `ToastProvider` source and inventory notes | Add lifecycle cleanup, dependency/platform documentation and tests. |
 
-### Internal to beta candidates
+### Remediated internal to beta candidates
 
-These exports must be fixed before public promotion:
+These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`:
 
 | Component | Evidence | Required before beta |
 | --- | --- | --- |
-| `Card` | `audit/02-component-inventory.md` `CMP-01`; `components/surfaces/Card.tsx` | Remove hook usage bug, add props export and render test. |
-| `ProgressBar` | `audit/02-component-inventory.md` `CMP-02`; `components/feedback/ProgressBar.tsx` | Apply calculated width, add state test and docs note for accepted progress range. |
-| `CodeInline` | `audit/02-component-inventory.md` `CMP-03`; `components/typography/CodeInline.tsx` | Fix size fallback and lineHeight calculation; add typography smoke test. |
-| `PasswordInput` | `audit/02-component-inventory.md`; `audit/api/public-types.md` | Replace `any` props, implement explicit visibility toggle and accessibility label/state. |
-| `Textarea` | `audit/02-component-inventory.md` `CMP-04`; `audit/api/public-types.md` | Replace `any` props and fix spacing token usage. |
+| `Card` | `src/components/Card/Card.tsx`; `tests/components/component-smoke.test.tsx` | Completed in PLRNUI-21: hook usage bug removed and render smoke added. |
+| `ProgressBar` | `src/components/ProgressBar/ProgressBar.tsx`; `tests/components/component-smoke.test.tsx` | Completed in PLRNUI-21: calculated width applied, progress clamped and state assertion added. |
+| `CodeInline` | `src/components/CodeInline/CodeInline.tsx`; `tests/components/component-smoke.test.tsx` | Completed in PLRNUI-21: resolved size drives `lineHeight` and typography smoke assertion added. |
+| `PasswordInput` | `src/components/PasswordInput/PasswordInput.tsx`; `tests/components/component-smoke.test.tsx` | Completed in PLRNUI-21: explicit props and accessible controlled/uncontrolled visibility toggle added. |
+| `Textarea` | `src/components/Textarea/Textarea.tsx`; `tests/components/component-smoke.test.tsx` | Completed in PLRNUI-21: explicit props, semantic spacing token and multiline assertion added. |
 
 ## Minimum Jira ticket set
 
@@ -67,7 +67,7 @@ These exports must be fixed before public promotion:
 | --- | --- | --- |
 | PLRNUI5-TEST-001 | Add component smoke test harness and first coverage for beta candidates | Stable promotion for all components |
 | PLRNUI5-TYPES-001 | Export named props for approved public components | Stable promotion for public root API |
-| PLRNUI5-BUG-001 | Fix `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput` blockers | Internal components leaving internal status |
+| PLRNUI5-BUG-001 | Closed by PLRNUI-21 for `Card`, `ProgressBar`, `CodeInline`, `Textarea`, `PasswordInput` blockers | These components can be `beta`, not `stable`; future work must satisfy the stable gate. |
 | PLRNUI5-NAV-001 | Fix `TopBar`, `NavBar`, `Link`, `SideBar` platform/router behavior | Navigation beta/stable readiness |
 | PLRNUI5-OVERLAY-001 | Define and test `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select` platform behavior | Overlay/form experimental promotion |
 | PLRNUI5-DOCS-001 | Add component support matrix and migrate examples away from legacy/deep imports | Docs gate for stable promotion |

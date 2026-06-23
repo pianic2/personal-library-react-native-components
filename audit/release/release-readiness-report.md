@@ -38,7 +38,7 @@ Export and metadata validation:
 - `package.json` exposes only root `exports["."]`.
 - `exports["."].import` and `exports["."].types` point to built `dist` files.
 - Current `main`, `module` and top-level `types` point to `./dist/index.js` and `./dist/index.d.ts`.
-- Current `src/index.ts` exports only `PACKAGE_NAME`; PLRNUI-45 keeps the root package API explicit and minimal.
+- Current `src/index.ts` exports `PACKAGE_NAME` plus the governed root component, theme, hook, utility and token APIs; PLRNUI-21 keeps the existing root API shape and only remediates five already-exported components.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -98,6 +98,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - React Native peer alignment is completed for package metadata by PLRNUI-43 with range `>=0.85.0 <0.86.0`; consumer smoke proof remains deferred to PLRNUI-46.
 - Future native dependencies can make root install or runtime behavior fail if introduced without the PLRNUI-44 gate; current package metadata does not declare bundled native runtime dependencies.
 - Package entrypoint metadata is aligned to current build output by PLRNUI-45; consumer resolver proof remains deferred to PLRNUI-46.
+- PLRNUI-21 remediates the known `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput` component blockers and adds Node smoke/render coverage for them, but does not promote any component to `stable`.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers
@@ -108,6 +109,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 4. React Native package metadata alignment is completed by PLRNUI-43; consumer smoke proof remains deferred to PLRNUI-46.
 5. Native dependency governance is consolidated by PLRNUI-44 for the current package state; executable consumer proof remains deferred to PLRNUI-46.
 6. Package entrypoint metadata is aligned to `dist`, but clean consumer root import and TypeScript declaration resolution remain unproven until PLRNUI-46.
+7. Component `stable` promotion remains blocked until docs/platform/support evidence and any required interaction/accessibility coverage are complete; PLRNUI-21 only raises the remediated components to `beta`.
 
 ## Conclusion
 

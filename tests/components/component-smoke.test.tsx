@@ -9,14 +9,19 @@ import {
   Box,
   Button,
   Checkbox,
+  Card,
+  CodeInline,
   Column,
   Divider,
   Heading,
   Input,
+  PasswordInput,
+  ProgressBar,
   Row,
   Spinner,
   Switch,
   Text,
+  Textarea,
   ThemeProvider,
 } from "../../src";
 
@@ -31,6 +36,21 @@ function renderWithTheme(element: React.ReactElement) {
 
   assert.ok(renderer);
   return renderer;
+}
+
+function flattenStyle(style: unknown): Record<string, unknown> {
+  if (Array.isArray(style)) {
+    return style.reduce<Record<string, unknown>>(
+      (merged, item) => ({ ...merged, ...flattenStyle(item) }),
+      {}
+    );
+  }
+
+  if (style && typeof style === "object") {
+    return style as Record<string, unknown>;
+  }
+
+  return {};
 }
 
 describe("component smoke render baseline", () => {
@@ -108,6 +128,42 @@ describe("component smoke render baseline", () => {
         <Checkbox checked={true} onChange={() => undefined} label="Checked" />
       ),
     },
+    {
+      name: "Card",
+      element: (
+        <Card>
+          <Text>Card content</Text>
+        </Card>
+      ),
+    },
+    {
+      name: "ProgressBar",
+      element: <ProgressBar progress={50} />,
+    },
+    {
+      name: "CodeInline",
+      element: <CodeInline>const ok = true;</CodeInline>,
+    },
+    {
+      name: "Textarea",
+      element: (
+        <Textarea
+          label="Message"
+          value="Hello"
+          onChangeText={() => undefined}
+        />
+      ),
+    },
+    {
+      name: "PasswordInput",
+      element: (
+        <PasswordInput
+          label="Password"
+          value="secret"
+          onChangeText={() => undefined}
+        />
+      ),
+    },
   ];
 
   for (const { name, element } of priorityCases) {
@@ -133,11 +189,92 @@ describe("component smoke render baseline", () => {
         <Spinner />
         <Alert title="Heads up" message="Smoke message" />
         <Input label="Name" value="Ada" onChangeText={() => undefined} />
+        <Card>
+          <CodeInline>const grouped = true;</CodeInline>
+        </Card>
+        <ProgressBar progress={50} />
+        <Textarea
+          label="Message"
+          value="Hello"
+          onChangeText={() => undefined}
+        />
+        <PasswordInput
+          label="Password"
+          value="secret"
+          onChangeText={() => undefined}
+        />
         <Switch value={true} onChange={() => undefined} label="Enabled" />
         <Checkbox checked={true} onChange={() => undefined} label="Checked" />
       </Column>
     );
 
     assert.ok(renderer.toJSON());
+  });
+});
+
+describe("PLRNUI-21 component blocker remediation coverage", () => {
+  it("applies clamped ProgressBar fill width", () => {
+    const renderer = renderWithTheme(<ProgressBar progress={150} />);
+    const views = renderer.root.findAllByType("View");
+
+    const fill = views.find((node) => {
+      const style = flattenStyle(node.props.style);
+      return style.height === "100%";
+    });
+
+    assert.ok(fill);
+    assert.equal(flattenStyle(fill.props.style).width, "100%");
+  });
+
+  it("uses a resolved CodeInline size for lineHeight", () => {
+    const renderer = renderWithTheme(<CodeInline>inline code</CodeInline>);
+    const textNodes = renderer.root.findAllByType("Text");
+
+    const codeText = textNodes.find((node) => node.children.includes("inline code"));
+
+    assert.ok(codeText);
+    assert.equal(flattenStyle(codeText.props.style).fontSize, 12);
+    assert.equal(flattenStyle(codeText.props.style).lineHeight, 15.600000000000001);
+  });
+
+  it("forces Textarea multiline input with top alignment", () => {
+    const renderer = renderWithTheme(
+      <Textarea label="Message" value="Hello" onChangeText={() => undefined} />
+    );
+    const input = renderer.root.findByType("TextInput");
+
+    assert.equal(input.props.multiline, true);
+    assert.equal(input.props.textAlignVertical, "top");
+  });
+
+  it("renders an accessible PasswordInput visibility toggle", () => {
+    const renderer = renderWithTheme(
+      <PasswordInput
+        label="Password"
+        value="secret"
+        onChangeText={() => undefined}
+      />
+    );
+
+    const input = renderer.root.findByType("TextInput");
+    assert.equal(input.props.secureTextEntry, true);
+
+    const toggle = renderer.root.findByProps({
+      accessibilityLabel: "Show password",
+    });
+    assert.equal(toggle.props.accessibilityRole, "button");
+    assert.deepEqual(toggle.props.accessibilityState, { checked: false });
+
+    act(() => {
+      toggle.props.onPress();
+    });
+
+    const updatedInput = renderer.root.findByType("TextInput");
+    assert.equal(updatedInput.props.secureTextEntry, false);
+    assert.equal(
+      renderer.root.findByProps({ accessibilityLabel: "Hide password" }).props
+        .accessibilityRole,
+      "button"
+    );
   });
 });

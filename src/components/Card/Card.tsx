@@ -7,6 +7,7 @@ import {
   Platform,
 } from "react-native";
 import { useTheme } from "../../theme/useTheme";
+import type { Theme } from "../../theme";
 import { Shadow } from "../../tokens/shadows.base";
 
 export interface CardProps {
@@ -60,7 +61,7 @@ export function Card({
           borderColor: colors.border,
         },
 
-        applyShadow(resolvedShadow),
+        applyShadow(theme, resolvedShadow),
 
         style,
       ]}
@@ -73,8 +74,7 @@ export function Card({
 /**
  * Applica shadow token in modo cross-platform
  */
-function applyShadow(shadow: Shadow): ViewStyle {
-  const { theme } = useTheme();
+function applyShadow(theme: Theme, shadow: Shadow): ViewStyle {
   const s = theme.shadows[shadow];
 
   if (Platform.OS === "web") {
