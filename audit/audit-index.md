@@ -11,7 +11,7 @@ promotes or migrates the related code, package metadata, or public API.
 |---|---|---|
 | adr | Architecture decision records and ADR review evidence. | Imported ADRs can preserve legacy references for traceability. |
 | api | Export matrix, root API, subpath, public type, and deep-import analysis. | Does not stabilize API by itself. |
-| components | Component classification, blockers, maturity, and promotion requirements. | Does not migrate or promote components by itself. |
+| components | Component classification, blockers, maturity, promotion requirements, and PLRNUI-20 smoke harness evidence. | Does not migrate or promote components by itself. |
 | dependencies | Dependency classification, native dependency gates, peer policy, and workflow risks. | Used for package and consumer validation planning. |
 | docs | Documentation, demo, naming, and stability-label audit evidence. | Internal audit evidence, not consumer-facing docs. |
 | migration | Breaking-change register, legacy naming map, and migration changelog. | Migration execution requires later tickets. |

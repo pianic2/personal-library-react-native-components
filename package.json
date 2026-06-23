@@ -22,6 +22,7 @@
   "scripts": {
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/react-native-loader.mjs --test tests/**/*.test.tsx",
     "build": "tsc -p tsconfig.build.json",
     "build:prod": "npm run clean && npm run typecheck && npm run build",
     "package:dry-run": "npm pack --dry-run",
@@ -37,6 +38,10 @@
     "react-native": ">=0.85.0 <0.86.0"
   },
   "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^19.2.7",
+    "tsx": "^4.22.4",
     "typescript": "^5.8.0"
   }
 }
