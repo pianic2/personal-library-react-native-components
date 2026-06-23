@@ -2,27 +2,27 @@
 
 Rule: props for public components must be exportable. This file lists currently exported props/types and candidate props/types that should become public if the related module is public.
 
-Current-state note for PLRNUI-23: `CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkProps`, `LinkRouterAdapter`, `NavBarProps`, `TopBarProps`, `SideBarProps`, `SideBarVariant` and `NavItem` are explicit source types and are exported from the root API through `src/index.ts`. PLRNUI-23 exports `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` as components through local barrels, but their props/option interfaces remain non-exported because their platform contracts are still experimental.
+Current-state note for PLRNUI-24: `ButtonProps`, `BoxProps`, `ColumnProps`, `RowProps`, `DividerProps`, `PProps`, `BProps`, `SmallProps`, `QuoteProps`, `TextProps`, `TextGroupProps`, `HeadingProps`, `SpinnerProps`, `AlertProps`, `BadgeProps`, `InputProps`, `SwitchProps`, `CheckboxProps`, `RadioGroupProps`, `RadioGroupOption`, `FormFieldProps`, `NavItem`, `LinkProps` and `NavBarProps` are explicit source types and are exported from the root API through `src/index.ts`. `TextProps` is the approved typography component props name in this checkout and extends React Native `TextProps` internally as `RNTextProps`, so no `LibraryTextProps` alias is required. PLRNUI-21/22 type exports (`CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkRouterAdapter`, `TopBarProps`, `SideBarProps` and `SideBarVariant`) remain exported. PLRNUI-23 experimental components (`Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`) remain runtime-exported, but their props/option interfaces remain non-exported because their platform contracts are still experimental.
 
 ## Props/types matrix
 
 | Type | Component/module | Current export status | Proposed public? | Reason | Human review |
 | --- | --- | --- | --- | --- | --- |
-| `ButtonProps` | `Button` | Not exported | Yes | Props for proposed public root component. | HUMAN REVIEW REQUIRED |
-| `BoxProps` | `Box` | Not exported | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
-| `ColumnProps` | `Column` / `Stack` | Not exported | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
-| `RowProps` | `Row` | Not exported | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
-| `DividerProps` | `Divider` | Not exported | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
-| `PProps` | `P`, `B`, `Small` | Not exported; local alias only | Yes for `P`, `B`, `Small` | Typography shorthands need wrapper typing. | HUMAN REVIEW REQUIRED |
+| `ButtonProps` | `Button` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public root component. | HUMAN REVIEW REQUIRED |
+| `BoxProps` | `Box` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
+| `ColumnProps` | `Column` / `Stack` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
+| `RowProps` | `Row` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
+| `DividerProps` | `Divider` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public layout primitive. | HUMAN REVIEW REQUIRED |
+| `PProps` | `P`, `B`, `Small` | Exported from root; verified by PLRNUI-24 | Yes for `P`, `B`, `Small` | Typography shorthands need wrapper typing. | HUMAN REVIEW REQUIRED |
 | `CodeInlineProps` | `CodeInline` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 fixed size/lineHeight handling and keeps the props type explicit. | HUMAN REVIEW REQUIRED |
-| `TextProps` | `Text` | Not exported as component props; imported RN name conflicts | Yes, under explicit name such as `LibraryTextProps` or approved `TextProps` | Core typography props should be public; naming must avoid confusion with React Native `TextProps`. | HUMAN REVIEW REQUIRED |
-| `HeadingProps` | `Heading` | Not exported | Yes | Props for proposed public typography component. | HUMAN REVIEW REQUIRED |
-| `QuoteProps` | `Quote` | Inline only | Yes | Public component should not expose only inline anonymous props. | HUMAN REVIEW REQUIRED |
-| `TextGroupProps` | `TextGroup` | Not exported | Yes | Props for proposed public typography component. | HUMAN REVIEW REQUIRED |
+| `TextProps` | `Text` | Exported from root; verified by PLRNUI-24 | Yes, approved as `TextProps` in this checkout | Core typography props are public; source imports React Native props as `RNTextProps` to avoid implementation-name conflict. | HUMAN REVIEW REQUIRED |
+| `HeadingProps` | `Heading` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public typography component. | HUMAN REVIEW REQUIRED |
+| `QuoteProps` | `Quote` | Exported from root; verified by PLRNUI-24 | Yes | Public component should not expose only inline anonymous props. | HUMAN REVIEW REQUIRED |
+| `TextGroupProps` | `TextGroup` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public typography component. | HUMAN REVIEW REQUIRED |
 | `PageProps` | `Page` | Exported from source, not from barrel | No for root; maybe experimental | Page is app-layout-like and should not become stable root by accident. | HUMAN REVIEW REQUIRED |
 | `CodeProps` | `Code` | Not exported | Maybe | `Code` is experimental until timer/clipboard behavior is hardened. | HUMAN REVIEW REQUIRED |
-| `SpinnerProps` | `Spinner` | Not exported | Yes | Props for proposed public feedback component. | HUMAN REVIEW REQUIRED |
-| `AlertProps` | `Alert` | Not exported | Yes | Props for proposed public feedback component. | HUMAN REVIEW REQUIRED |
+| `SpinnerProps` | `Spinner` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public feedback component. | HUMAN REVIEW REQUIRED |
+| `AlertProps` | `Alert` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public feedback component. | HUMAN REVIEW REQUIRED |
 | `ToastProviderProps` | `ToastProvider` | Not exported | No for stable root; maybe experimental | Toast API is not stable and provider uses web-specific implementation details. | HUMAN REVIEW REQUIRED |
 | `HoverableProps` | `ToastProvider` internals | Not exported | No | Internal implementation helper. |  |
 | `ProgressBarProps` | `ProgressBar` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 fixed clamped width behavior and keeps the props type explicit. | HUMAN REVIEW REQUIRED |
@@ -30,18 +30,18 @@ Current-state note for PLRNUI-23: `CardProps`, `ProgressBarProps`, `CodeInlinePr
 | `BottomSheetProps` | `BottomSheet` | Not exported | Maybe experimental | Overlay API needs gesture/keyboard/snap contract decision. | HUMAN REVIEW REQUIRED |
 | `TooltipProps` | `Tooltip` | Not exported | Maybe experimental | Native behavior is not equivalent to web. | HUMAN REVIEW REQUIRED |
 | `PopoverProps` | `Popover` | Not exported | Maybe experimental | Native behavior is not equivalent to web. | HUMAN REVIEW REQUIRED |
-| `BadgeProps` | `Badge` | Not exported | Yes | Props for proposed public surface component. | HUMAN REVIEW REQUIRED |
+| `BadgeProps` | `Badge` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public surface component. | HUMAN REVIEW REQUIRED |
 | `CardProps` | `Card` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 removed the hook usage bug and keeps the props type explicit. | HUMAN REVIEW REQUIRED |
 | `HeroProps` | `Hero` | Not exported | Maybe experimental | App-layout behavior is not clearly stable library API. | HUMAN REVIEW REQUIRED |
-| `InputProps` | `Input` | Not exported | Yes | Props for proposed public form primitive. | HUMAN REVIEW REQUIRED |
+| `InputProps` | `Input` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public form primitive. | HUMAN REVIEW REQUIRED |
 | `PasswordInputProps` | `PasswordInput` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 replaced the alias with an explicit props interface and visibility-toggle contract. | HUMAN REVIEW REQUIRED |
-| `SwitchProps` | `Switch` | Not exported | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
-| `CheckboxProps` | `Checkbox` | Not exported | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
-| `RadioGroupProps` | `RadioGroup` | Not exported | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
-| `RadioGroupOption` | `RadioGroup` option shape | Inline object array | Yes | Public radio group needs reusable option type. | HUMAN REVIEW REQUIRED |
+| `SwitchProps` | `Switch` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
+| `CheckboxProps` | `Checkbox` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
+| `RadioGroupProps` | `RadioGroup` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public form component. | HUMAN REVIEW REQUIRED |
+| `RadioGroupOption` | `RadioGroup` option shape | Exported from source, local barrel and root by PLRNUI-24 | Yes | Public radio group needs reusable option type. | HUMAN REVIEW REQUIRED |
 | `SelectProps` | `Select` | Not exported | Maybe experimental | Select needs accessibility/platform review before stable API. | HUMAN REVIEW REQUIRED |
 | `SelectOption` | `Select` option shape | Inline object array | Maybe experimental | Required if `Select` is exported as public/experimental. | HUMAN REVIEW REQUIRED |
-| `FormFieldProps` | `FormField` | Not exported | Yes | Props for proposed public form composition primitive. | HUMAN REVIEW REQUIRED |
+| `FormFieldProps` | `FormField` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public form composition primitive. | HUMAN REVIEW REQUIRED |
 | `TextareaProps` | `Textarea` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 replaced the alias with an explicit props interface and forced multiline behavior. | HUMAN REVIEW REQUIRED |
 | `NavItem` | Navigation | Exported through root | Yes | Consumer configuration type for navigation. |  |
 | `NavContextValue` | Navigation context | Local source type, not root-exported by PLRNUI-22 | No | Exposes provider internals. | HUMAN REVIEW REQUIRED |

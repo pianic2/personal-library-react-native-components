@@ -4,7 +4,7 @@
 
 Audit read-only based on historical `index.ts`, internal barrel exports, `package.json`, ADR 0002, ADR 0003, ADR 0006 and Risk Assessment 0002.
 
-Current-state note for PLRNUI-23: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-22 adds root exports for approved navigation components and public navigation types through local component barrels; PLRNUI-23 adds root API visibility for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` through local component barrels. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports or promote anything to `stable`.
+Current-state note for PLRNUI-24: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-24 makes approved root-public component props explicit type-only root exports, including the newly named `RadioGroupOption`, and replaces broad root star exports for PLRNUI-23 experimental components with explicit runtime component exports only. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports, export experimental props types, or promote anything to `stable`.
 
 ## Package export map
 
@@ -75,7 +75,7 @@ Current-state note for PLRNUI-23: this PLRNUI-4 matrix remains historical API go
 | `PasswordInput` | root | `components/form/PasswordInput.tsx` | component | public | beta | PLRNUI-21 added explicit props and accessible visibility toggle behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |
 | `Switch` | root | `components/form/Switch.tsx` | component | public | beta | Basic form component with accessibility/animation gaps. | HUMAN REVIEW REQUIRED |
 | `Checkbox` | root | `components/form/Checkbox.tsx` | component | public | beta | Basic form component with accessibility gaps. | HUMAN REVIEW REQUIRED |
-| `RadioGroup` | root | `components/form/RadioGroup.tsx` | component | public | beta | Basic form component; option type should be exported if public. | HUMAN REVIEW REQUIRED |
+| `RadioGroup` | root | `components/form/RadioGroup.tsx` | component | public | beta | Basic form component; PLRNUI-24 exports `RadioGroupProps` and `RadioGroupOption` as type-only public API. | HUMAN REVIEW REQUIRED |
 | `Select` | root | `src/components/Select/Select.tsx` | component | experimental | experimental | PLRNUI-23 adds root visibility and smoke coverage; keyboard, focus and screen reader behavior remain unverified. | HUMAN REVIEW REQUIRED |
 | `FormField` | root | `components/form/FormField.tsx` | component | public | beta | Useful composition primitive but clone-props behavior needs review. | HUMAN REVIEW REQUIRED |
 | `Textarea` | root | `components/form/Textarea.tsx` | component | public | beta | PLRNUI-21 added explicit props, semantic spacing and forced multiline behavior; stable gate remains incomplete. | HUMAN REVIEW REQUIRED |

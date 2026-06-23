@@ -5,7 +5,7 @@ import { Pressable, View } from "react-native";
 import { useTheme } from "../../theme/useTheme";
 import { Text } from "../Text/Text";
 
-interface Option {
+export interface RadioGroupOption {
   label: string;
   value: string;
 }
@@ -13,7 +13,7 @@ interface Option {
 export interface RadioGroupProps {
   value?: string;
   onChange: (v: string) => void;
-  options: Option[];
+  options: RadioGroupOption[];
 }
 
 export function RadioGroup({

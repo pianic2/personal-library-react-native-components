@@ -25,6 +25,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-21 component blocker remediation evidence for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`, including smoke/render harness coverage.
 - Added PLRNUI-22 navigation component public API integration for `TopBar`, `BottomBar`, `NavBar`, `Link`, `NavContext` and `SideBar`, with local component barrels, root exports, smoke coverage and `audit/components/navigation-platform-contract-plrnui-22.md`.
 - Added PLRNUI-23 overlay/form modal API visibility for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`, with local component barrels, root exports, smoke coverage and `audit/components/overlay-platform-contract-plrnui-23.md`.
+- Added PLRNUI-24 approved root-public component props type exports, including `RadioGroupOption`, with a dedicated type-only fixture for root import verification.
 
 ### Changed
 
@@ -43,6 +44,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-21 moves the five remediated components at most to `beta`; `stable` remains blocked by ADR 0003/0007 stable gates.
 - Clarified that PLRNUI-22 intentionally broadens the root API for the approved navigation components without adding package subpath exports, dependencies, drawer/gesture behavior, overflow menus or router-specific integrations.
 - Clarified that PLRNUI-23 broadens root API visibility for experimental overlay/form modal components without adding package subpath exports, runtime dependencies, native dependencies, or stable promotion.
+- Clarified that PLRNUI-24 is additive type-surface work only: it preserves runtime behavior, does not add package subpath exports, and keeps experimental/internal props types out of the root API.
 
 ### PLRNUI-16 - Token export naming decision
 
@@ -84,6 +86,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - PLRNUI-21 component blockers are remediated for the five targeted components, but stable promotion remains blocked by docs/platform/support and consumer evidence requirements.
 - PLRNUI-22 navigation blockers are remediated for the targeted components, but stable promotion remains blocked by docs/platform/support, accessibility and consumer evidence requirements.
 - PLRNUI-23 overlay/form modal contracts are documented and smoke-rendered, but stable promotion remains blocked by platform runtime, focus, keyboard and accessibility evidence.
+- PLRNUI-24 completes the approved root-public component props type export set for this checkout, but release readiness still requires clean consumer TypeScript declaration resolution under PLRNUI-46.
 - Docs/demo still contain legacy AURA imports and repo-relative imports according to PLRNUI-9 context and existing audits.
 - Release candidate is blocked if the breaking change register is stale.
 
