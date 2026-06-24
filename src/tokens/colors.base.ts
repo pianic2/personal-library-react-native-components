@@ -86,4 +86,6 @@ export function resolveColors(mode: ColorScheme) {
   return mode === "dark" ? darkColors : lightColors;
 }
 
-export type Colors = typeof lightColors;
+export type Colors = {
+  readonly [Key in keyof typeof lightColors]: string;
+};

@@ -15,7 +15,7 @@ Priorities:
 
 | ID | Priority | Path | Component | Hardcoded value | Risk | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| HCV-001 | P0 | `theme/defaultTheme.tsx` | Base theme | `colors: lightColors`; `backgroundColor: lightColors.background` | Dark mode contract is declared but base theme remains light. | `createBaseTheme(mode)` accepts mode but assigns light colors. |
+| HCV-001 | P0 resolved by PLRNUI-27 | `theme/defaultTheme.tsx` | Base theme | formerly `colors: lightColors`; `backgroundColor: lightColors.background` | Resolved for base dark mode; `createBaseTheme(mode)` now selects semantic colors through `resolveColors(mode)`. | `tests/theme/base-theme-dark-mode.test.tsx` verifies dark base colors, dark app background, and provider toggle behavior. |
 | HCV-002 | P1 | `components/Button.tsx` | Button | `heightMap` values `26/32/40/48` | Duplicates `tokens/size.base.ts` and bypasses `theme.components.button.height`. | `Button` local map; `tokens/size.base.ts` exports same height scale. |
 | HCV-003 | P1 | `components/Button.tsx` | Button | `iconSizeMap` values `12/16/20/24` | No icon size token/component token; variant size cannot be themed. | Local `iconSizeMap`. |
 | HCV-004 | P1 | `components/Button.tsx` | Button | `horizontalPadding` values `8/12/16/20`; `borderWidth: 2`; `gap: 8`; opacity `0.5` | Button spacing/state tokens cannot be overridden consistently. | Local maps and style object. |
@@ -38,8 +38,7 @@ Priorities:
 
 ## Critical Themes
 
-- Core P0: base dark mode is blocked by hardcoded light colors.
+- Core P0: base dark mode hardcoded-light blocker is resolved by PLRNUI-27.
 - Core P1: Button/Input/Card have component-token contracts in `theme/types.ts`, but their implementations do not read `theme.components.*`.
 - Form controls need a shared control-size token family before stable promotion.
 - Overlay/navigation tokens are missing; current values may remain experimental until component maturity decisions are made.
-

@@ -6,14 +6,16 @@ import { typography } from "../tokens/typography.base";
 import { shadows } from "../tokens/shadows.base";
 import { zIndex } from "../tokens/zIndex.base";
 import { size } from "../tokens/size.base";
-import { lightColors } from "../tokens/colors.base";
+import { lightColors, resolveColors } from "../tokens/colors.base";
 import type { ThemeMode } from "./types";
 
 
 export function createBaseTheme(mode: ThemeMode) {
+  const colors = resolveColors(mode);
+
   return {
     mode,
-    colors: lightColors,
+    colors,
 
     spacing,
     space,
@@ -25,7 +27,7 @@ export function createBaseTheme(mode: ThemeMode) {
     globalStyles: {
       app: {
         flex: 1,
-        backgroundColor: lightColors.background,
+        backgroundColor: colors.background,
       },
       content: {
         flex: 1,
@@ -43,33 +45,5 @@ export function createBaseTheme(mode: ThemeMode) {
 
 export type Theme = ReturnType<typeof createBaseTheme>;
 
-export const defaultTheme: Theme = {
-  mode: 'light',
-
-  colors: lightColors,
-
-  spacing,
-  space,
-  radius,
-  typography,
-  shadows,
-  zIndex,
-  size,
-  globalStyles: {
-    app: {
-      flex: 1,
-      backgroundColor: lightColors.background,
-    },
-    content: {
-      flex: 1,
-    },
-    scrollContent: {
-      flexGrow: 1,
-    },
-    safeArea: {
-      flex: 1,
-    },
-  },
-};
-
+export const defaultTheme: Theme = createBaseTheme("light");
 

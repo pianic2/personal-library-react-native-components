@@ -23,7 +23,7 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 | Primitive tokens exist | verified | `tokens/colors.base.ts`, `tokens/spacing.base.ts`, `tokens/radius.base.ts`, `tokens/size.base.ts`, `tokens/shadows.base.ts`, `tokens/zIndex.base.ts`, `tokens/typography.base.ts`; ADR 0004 requires primitive tokens in `audit/adr/0004-theme-token-architecture.md`. |
 | Semantic color tokens exist | verified | `tokens/colors.base.ts` defines roles such as `background`, `surface`, `textPrimary`, `border`, `error`, `success`, `overlay`, `backdrop`; snapshot groups them into `surface`, `text`, `border`, `brand`, `feedback` in `tokens/snapshot.ts`. |
 | Component tokens exist in type contract | partial | `theme/types.ts` defines optional `components.button`, `components.input`, and `components.card`; no current component reads `theme.components.*` based on `rg "theme\\.components|components\\?\\." components theme`. |
-| Default ThemeProvider light/dark behavior | declared-not-wired | `ThemeProvider` recomputes `createBaseTheme(mode)` on mode changes, but `createBaseTheme` always assigns `colors: lightColors` and `globalStyles.app.backgroundColor: lightColors.background` in `theme/defaultTheme.tsx`. |
+| Default ThemeProvider light/dark behavior | verified by PLRNUI-27 | `ThemeProvider` recomputes `createBaseTheme(mode)` on mode changes; `createBaseTheme` now resolves semantic colors through `resolveColors(mode)` and `tests/theme/base-theme-dark-mode.test.tsx` verifies consumer-visible colors change after `toggleTheme()`. |
 | Alternative liquidglass light/dark theme factory | verified | `themes/liquidglass/index.ts` selects `mode === "dark" ? darkColors : lightColors` and exports `liquidglassDarkTheme`. |
 | Theme override API | partial | `ThemeProvider` accepts `themeOverrides?: Partial<Theme>` and calls `createTheme(themeOverrides, createBaseTheme(mode))`; `createTheme` uses untyped `any` inside `deepMerge`, already flagged by `audit/03-theme-token-system.md`. |
 | Public theme/tokens API classification | partial | `audit/api/export-matrix.md` marks `Theme`, `ThemeMode`, `createTheme`, `ThemeProvider`, `useTheme` as public/beta and `auraTokens`, `getAuraTokens` as deprecated. Current root `index.ts` still exports all `./tokens`, `./theme`, and `./themes`. |
@@ -31,11 +31,11 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 
 ## Findings
 
-### THM-PLRNUI6-01 - Base dark mode is declared but not wired
+### THM-PLRNUI6-01 - Base dark mode is wired by PLRNUI-27
 
-- Status: declared-not-wired.
-- Evidence: `theme/ThemeProvider.tsx` stores `mode`, exposes `toggleTheme`, and recomputes the theme with `createBaseTheme(mode)`. `theme/defaultTheme.tsx` persists `mode` but always uses `lightColors`.
-- Risk: consumers can toggle to `dark` while receiving light semantic colors.
+- Status: verified.
+- Evidence: `theme/ThemeProvider.tsx` stores `mode`, exposes `toggleTheme`, and recomputes the theme with `createBaseTheme(mode)`. `theme/defaultTheme.tsx` now resolves semantic colors through `resolveColors(mode)`, and `tests/theme/base-theme-dark-mode.test.tsx` verifies dark base colors, dark app background, and provider consumer-visible color changes after `toggleTheme()`.
+- Risk: P0 risk resolved for the base semantic color path; component-token and provider-responsibility findings remain separate.
 - Priority: P0.
 
 ### THM-PLRNUI6-02 - Component tokens are type-only for core components
@@ -70,9 +70,8 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 
 ADR 0004 verification gates are not met:
 
-- Light/dark mode: not met for base theme/provider.
+- Light/dark mode: met for base theme/provider after PLRNUI-27.
 - Token docs present: partial, docs exist but still use AURA imports and legacy token names.
 - Stable components without critical hardcoded values: not met; `audit/components/component-maturity-matrix.md` states no component is stable and several have blockers.
 - Theme override example: not verified in this audit; code supports `themeOverrides` but merge typing is partial.
 - Legacy token deprecation/rename mapping: partial; audit files identify candidates, but source still exposes only AURA token names.
-

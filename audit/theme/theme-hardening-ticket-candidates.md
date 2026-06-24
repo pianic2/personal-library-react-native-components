@@ -6,7 +6,7 @@ These are Jira candidates only. No Jira issues were created, transitioned, or ma
 
 | Candidate | Priority | Title | Evidence | Acceptance criteria |
 | --- | --- | --- | --- | --- |
-| PLRNUI-6-A | P0 | Wire base theme dark mode to semantic color tokens | `tokens/colors.base.ts` provides `darkColors`/`resolveColors`; `theme/defaultTheme.tsx` always uses `lightColors`; `ThemeProvider` calls `createBaseTheme(mode)`. | `createBaseTheme("dark").colors.background` uses dark semantic colors; provider toggle changes consumer-visible `theme.colors`; tests or demo evidence cover light and dark. |
+| PLRNUI-6-A / PLRNUI-27 | P0 resolved | Wire base theme dark mode to semantic color tokens | `tokens/colors.base.ts` provides `darkColors`/`resolveColors`; `theme/defaultTheme.tsx` now uses `resolveColors(mode)` in `createBaseTheme`; `ThemeProvider` calls `createBaseTheme(mode)`. | `tests/theme/base-theme-dark-mode.test.tsx` verifies `createBaseTheme("dark").colors.background`, dark `globalStyles.app.backgroundColor`, and consumer-visible `theme.colors` after `toggleTheme()`. |
 | PLRNUI-6-B | P1 | Define and wire Button component tokens | `theme/types.ts` defines `components.button`; `components/Button.tsx` uses local `heightMap`, `iconSizeMap`, `horizontalPadding`. | Button reads documented component token defaults for height/radius/padding/icon size or a deliberate token contract is rejected and ADR updated. |
 | PLRNUI-6-C | P1 | Define and wire Input component tokens | `theme/types.ts` defines `components.input`; `components/form/Input.tsx` uses marker `10x10`, radius `5`, `-2` and `-2.5` offsets. | Input sizing/radius/padding/focus marker values are tokenized or removed; no magic offsets remain without documented reason. |
 | PLRNUI-6-D | P1 | Define and wire Card component tokens | `theme/types.ts` defines `components.card`; `components/surfaces/Card.tsx` defaults to `radius = 14` and has component audit blocker. | Card default radius/padding/shadow uses theme component/base tokens; hook-rule blocker from component audit is resolved before stable promotion. |
@@ -21,7 +21,7 @@ These are Jira candidates only. No Jira issues were created, transitioned, or ma
 
 ## Suggested Sequencing
 
-1. Fix base dark mode first. It is the only P0 because it blocks the central ADR 0004 light/dark contract.
+1. Base dark mode was fixed by PLRNUI-27; continue treating the remaining rows as separate hardening work.
 2. Decide ThemeProvider responsibility before stabilizing public provider behavior, because changing default wrappers can be breaking.
 3. Approve token naming/deprecation strategy before adding neutral public token names.
 4. Wire Button/Input/Card component tokens before claiming component-token architecture.
