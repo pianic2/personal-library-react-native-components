@@ -30,6 +30,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-26 internal and experimental export fencing evidence: internal helper root exports are fenced, experimental root exports are documented, and root API docs are reconciled without adding subpath entrypoints.
 - Added PLRNUI-57 minimal consumer-facing docs and examples using the approved root package import.
 - Added PLRNUI-28 pure `ThemeProvider` split and explicit `ThemeAppShell` migration path.
+- Added PLRNUI-56 optional `ThemeStorageAdapter` persistence for `ThemeProvider`, keeping storage adapter-based, consumer-owned and disabled by default.
 
 ### Changed
 
@@ -53,6 +54,23 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-26 removes `cn` and `useIsMounted` from the root API as internal helpers, keeps `Stack` root-exported as a public-candidate layout primitive, reclassifies `useNavigate` as an experimental navigation hook, and keeps `getAuraTokens` as legacy/deprecated compatibility pending future deprecation planning.
 - Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
 - Clarified that PLRNUI-28 removes `withScroll` and implicit layout rendering from `ThemeProvider`; consumers that need app layout should compose `ThemeProvider` with `ThemeAppShell`.
+- Clarified that PLRNUI-56 intentionally defers `"system"` mode persistence because the current runtime `ThemeMode` remains `"light" | "dark"`; persisted `"system"` values are ignored as invalid.
+
+### PLRNUI-56 - Optional ThemeStorageAdapter persistence
+
+`ThemeProvider` now supports opt-in persistence through a consumer-provided adapter:
+
+```tsx
+<ThemeProvider persistTheme storage={themeStorage} storageKey="app.theme">
+  ...
+</ThemeProvider>
+```
+
+Default behavior remains non-persistent. Consumers that do not pass `persistTheme` and `storage` continue to get in-memory theme mode only.
+
+PLRNUI-56 does not add package dependencies, does not import a storage backend, does not add an official async-storage adapter subpath, and does not modify `ThemeAppShell` or safe-area behavior.
+
+Persisted values are limited to `light` and `dark`. The `"system"` mode proposed in `audit/dependencies/theme-persistence-strategy.md` remains deferred until runtime theme-mode support is added.
 
 ### PLRNUI-28 - ThemeProvider app-shell split
 

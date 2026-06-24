@@ -65,6 +65,7 @@ Allowed statuses:
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
 | PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area is not required by pure `ThemeProvider` after PLRNUI-28. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
 | PLRNUI-45 | Package entrypoint reconciliation | Current package metadata uses canonical package name, root-only exports, `dist/index.js`, `dist/index.d.ts`, and a minimal `files` whitelist. | Typecheck, build, pack dry-run, tarball file-list check and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because no runtime/API/metadata change is made by PLRNUI-45. |
+| PLRNUI-56 | Optional theme persistence | `ThemeProvider` accepts optional `ThemeStorageAdapter`, `storageKey` and `persistTheme`; persistence is disabled by default and storage backends remain consumer-owned. | Typecheck, Node tests, build, package metadata diff, AsyncStorage grep and docs/audit review. | Additive only while default behavior remains non-persistent and no storage dependency is added. |
 
 ### PLRNUI-16 - Token export naming
 
@@ -224,6 +225,24 @@ If these symbols existed in previous public package states, removal must be trea
 - Verification required: `npm run typecheck`, `npm run test`, `npm run build`, `npm run package:dry-run`, root export review and grep for removed provider prop.
 - Release blocking: Yes. RC is blocked if migration docs or export matrix omit the provider split.
 - Notes: PLRNUI-28 does not implement safe-area support, does not import `react-native-safe-area-context`, does not add AsyncStorage and does not change `package.json` or `package-lock.json`.
+
+### BC-010 - Optional ThemeStorageAdapter persistence
+
+- ID: BC-010
+- Status: implemented
+- Category: public API / dependency boundary
+- Source issue: PLRNUI-56
+- Related ADR / Risk Assessment: ADR 0004, ADR 0006, Risk Assessment 0004, Risk Assessment 0005
+- Decision: `ThemeProvider` supports optional theme persistence through a consumer-provided `ThemeStorageAdapter`. Persistence is enabled only when `persistTheme=true` and `storage` is provided.
+- Motivation: Consumers may want theme mode persistence without making the library own a native storage backend.
+- Consumer impact: Existing consumers are unaffected. Consumers that opt in must provide and validate their own storage backend.
+- Migration path: Keep `<ThemeProvider>` unchanged for non-persistent behavior. Add `persistTheme`, `storage` and optionally `storageKey` only when persistence is desired.
+- Legacy alias policy: Not applicable.
+- Deprecation window: Not applicable.
+- Removal target: Not applicable.
+- Verification required: `npm run typecheck`, `npm run test`, `npm run build`, package metadata diff, AsyncStorage grep and public API docs review.
+- Release blocking: No for existing consumers while default behavior remains non-persistent. Yes if package metadata adds a required storage dependency or default rendering begins requiring storage.
+- Notes: Runtime `ThemeMode` remains `light | dark`; persisted `system` is intentionally treated as invalid and ignored until system mode is implemented in a future ticket.
 
 ### BC-008 - Release candidate blocked unless register and changelog are updated
 

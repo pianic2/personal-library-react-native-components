@@ -62,8 +62,9 @@ Current-state note for PLRNUI-26: root type exports remain explicit `export type
 | `GlassMaterialTokens` | Theme materials | Exported through root | Maybe experimental | Useful for theme packs, but exposes experimental glass internals. | HUMAN REVIEW REQUIRED |
 | `Theme` | Theme | Exported through root | Yes | Required for consumer overrides and custom themes. |  |
 | `ThemeMode` | Theme | Exported through root | Yes | Required for provider and mode controls. |  |
+| `ThemeStorageAdapter` | Theme persistence | Exported through root | Yes | Public adapter contract for optional PLRNUI-56 persistence. Consumers own the concrete storage backend. |  |
 | `ThemeContextValue` | Theme provider context | Not exported | No | Internal provider implementation details. |  |
-| `ThemeProviderProps` | `ThemeProvider` | Exported through root | Yes | Public pure-provider props after PLRNUI-28. |  |
+| `ThemeProviderProps` | `ThemeProvider` | Exported through root | Yes | Public pure-provider props after PLRNUI-28, extended by PLRNUI-56 with optional `storage`, `storageKey` and `persistTheme`. |  |
 | `ThemeAppShellProps` | `ThemeAppShell` | Exported through root | Yes | Public opt-in shell props after PLRNUI-28. | HUMAN REVIEW REQUIRED |
 | `ThemeMeta` | Liquidglass theme pack | Exported through root | Maybe experimental | Theme-pack metadata, not stable core API. | HUMAN REVIEW REQUIRED |
 

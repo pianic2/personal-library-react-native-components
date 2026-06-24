@@ -73,7 +73,13 @@ export { TopBar } from "./components/TopBar";
 export type { TopBarProps } from "./components/TopBar";
 
 export { ThemeAppShell, ThemeProvider, useTheme } from "./theme";
-export type { Theme, ThemeAppShellProps, ThemeMode, ThemeProviderProps } from "./theme";
+export type {
+  Theme,
+  ThemeAppShellProps,
+  ThemeMode,
+  ThemeProviderProps,
+  ThemeStorageAdapter,
+} from "./theme";
 
 export {
   isAndroid,

@@ -102,8 +102,9 @@ Current-state note for PLRNUI-26: the root API remains an explicit named export 
 | `GlassMaterialTokens` | root | `theme/types.ts` | type | experimental | experimental | Theme extension for liquid/glass materials is not core stable yet. | HUMAN REVIEW REQUIRED |
 | `Theme` | root | `theme/types.ts` | type | public | beta | Required to use and override theme contract. |  |
 | `ThemeMode` | root | `theme/types.ts` | type | public | beta | Required for theme provider and mode controls. |  |
+| `ThemeStorageAdapter` | root | `theme/types.ts` | type | public | beta | Optional consumer-owned storage contract for PLRNUI-56 theme persistence. Does not approve a package-owned storage backend or AsyncStorage dependency. |  |
 | `createTheme` | root | `theme/createTheme.ts` | utility | public | beta | Public customization helper. | HUMAN REVIEW REQUIRED |
-| `ThemeProvider` | root | `theme/ThemeProvider.tsx` | provider | public | beta | Pure theme context provider after PLRNUI-28; app-shell wrappers moved out. |  |
+| `ThemeProvider` | root | `theme/ThemeProvider.tsx` | provider | public | beta | Pure theme context provider after PLRNUI-28; PLRNUI-56 adds optional adapter-based persistence while default behavior remains non-persistent. |  |
 | `ThemeAppShell` | root | `theme/ThemeAppShell.tsx` | component | public | beta | Opt-in themed layout wrapper for app/content styles and optional scroll container. | HUMAN REVIEW REQUIRED |
 | `useThemeContext` | root | `theme/ThemeProvider.tsx` | hook | internal | internal | Low-level context hook; `useTheme` should be consumer API. | HUMAN REVIEW REQUIRED |
 | `getStoredTheme` | root | `theme/themeStorage.ts` | utility | internal | internal | Persistence detail of provider. | HUMAN REVIEW REQUIRED |
@@ -121,8 +122,8 @@ Current-state note for PLRNUI-26: the root API remains an explicit named export 
 
 ## Summary
 
-- Exports analyzed: 92.
-- Proposed public: 40.
+- Exports analyzed: 93.
+- Proposed public: 41.
 - Proposed experimental: 32.
 - Proposed internal: 18.
 - Proposed deprecated: 2.
@@ -138,6 +139,12 @@ PLRNUI-57 documentation evidence:
 - Consumer docs: `docs/getting-started.md`, `docs/components.md`, `docs/migration.md`, `docs/platform-support.md`.
 - Consumer examples: `examples/basic-usage.tsx`, `examples/layout-primitives.tsx`, `examples/form-controls.tsx`, `examples/feedback.tsx`, `examples/navigation.tsx`, `examples/overlays.experimental.tsx`.
 - No package exports, package subpaths, runtime logic or stable classifications were changed.
+
+PLRNUI-56 implementation evidence:
+
+- `ThemeStorageAdapter` is root-exported as a type-only public/beta contract.
+- `ThemeProviderProps` now accepts optional `storage`, `storageKey` and `persistTheme` props.
+- Theme persistence remains opt-in, adapter-based and consumer-owned; no AsyncStorage dependency or official adapter subpath is introduced.
 
 PLRNUI-26 internal and experimental export fencing evidence:
 

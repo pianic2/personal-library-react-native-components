@@ -43,6 +43,7 @@ Export and metadata validation:
 - PLRNUI-26 fences internal helper root exports by removing `cn` and `useIsMounted` from `src/index.ts`, while keeping the root API explicit named exports only. `Stack` remains root-exported as a documented public-candidate layout primitive, `useNavigate` remains root-exported as experimental navigation API, overlay exports remain explicit experimental root runtime exports, and `getAuraTokens` remains legacy/deprecated compatibility pending future deprecation planning.
 - PLRNUI-57 adds minimal consumer-facing docs and examples that import from `@personal-library/react-native-components`; package metadata and runtime exports are unchanged.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
+- PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -51,6 +52,7 @@ Dependency/native validation:
 - Historical PLRNUI-8 evidence recorded `react-native` as a dependency, creating duplicate RN risk at that time. Current package metadata keeps `react-native` as a peer dependency with range `>=0.85.0 <0.86.0`.
 - Current package metadata has no hard runtime `dependencies`; AsyncStorage, Expo Clipboard, Safe Area, SVG and Lucide RN are not declared in current `package.json`.
 - PLRNUI-44 consolidates the native dependency policy: AsyncStorage and Clipboard remain consumer-owned. PLRNUI-28 removes safe-area behavior from `ThemeProvider`; future safe-area support requires separate dependency governance.
+- PLRNUI-56 keeps theme persistence storage-agnostic and consumer-owned. AsyncStorage remains allowed only as a consumer-provided adapter implementation and is not imported by the package runtime.
 - Expo Go, managed workflow, prebuild and custom dev client requirements remain unproven.
 
 ## Commands Executed
@@ -110,6 +112,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-26 reduces root API risk by fencing internal helpers and documenting remaining experimental/legacy exports; it does not add subpath entrypoints, package metadata, dependencies or stable promotion.
 - PLRNUI-57 expands docs/examples coverage while preserving beta/experimental labels; no component is promoted to `stable`.
 - PLRNUI-28 changes provider behavior before stable release; consumers using the old implicit layout wrapper or `withScroll` must migrate to `ThemeAppShell`.
+- PLRNUI-56 adds asynchronous opt-in hydration risk only for consumers that pass `persistTheme` and `storage`; persisted invalid values, read failures and write failures are ignored without crashing.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers
@@ -123,6 +126,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 7. Component `stable` promotion remains blocked until consumer runtime proof and any required interaction/accessibility coverage are complete; PLRNUI-25 and PLRNUI-57 add docs/examples evidence but do not promote components to `stable`.
 8. Overlay/form modal `stable` promotion remains blocked until iOS/Android/Web runtime behavior, focus, keyboard and accessibility behavior are validated beyond Node render smoke coverage.
 9. PLRNUI-26 documents and fences internal/experimental root API risk, but remaining experimental root exports still require future owner decisions before stable release.
+10. PLRNUI-56 does not prove consumer-native storage runtime behavior because the storage backend is consumer-owned; clean consumer validation remains PLRNUI-46 or a future app-level adapter smoke.
 
 ## Conclusion
 
