@@ -27,6 +27,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-23 overlay/form modal API visibility for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`, with local component barrels, root exports, smoke coverage and `audit/components/overlay-platform-contract-plrnui-23.md`.
 - Added PLRNUI-24 approved root-public component props type exports, including `RadioGroupOption`, with a dedicated type-only fixture for root import verification.
 - Added PLRNUI-25 component platform support matrix and docs import audit for the current checkout.
+- Added PLRNUI-26 internal and experimental export fencing evidence: internal helper root exports are fenced, experimental root exports are documented, and root API docs are reconciled without adding subpath entrypoints.
 - Added PLRNUI-57 minimal consumer-facing docs and examples using the approved root package import.
 
 ### Changed
@@ -48,6 +49,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-23 broadens root API visibility for experimental overlay/form modal components without adding package subpath exports, runtime dependencies, native dependencies, or stable promotion.
 - Clarified that PLRNUI-24 is additive type-surface work only: it preserves runtime behavior, does not add package subpath exports, and keeps experimental/internal props types out of the root API.
 - Clarified that PLRNUI-25 updates documentation/audit evidence and README import examples only; it does not change package metadata, runtime component logic, dependencies, subpath exports or stable classifications.
+- Clarified that PLRNUI-26 removes `cn` and `useIsMounted` from the root API as internal helpers, keeps `Stack` root-exported as a public-candidate layout primitive, reclassifies `useNavigate` as an experimental navigation hook, and keeps `getAuraTokens` as legacy/deprecated compatibility pending future deprecation planning.
 - Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
 
 ### PLRNUI-16 - Token export naming decision
@@ -73,10 +75,12 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - Deprecated AURA token names `auraTokens` and `getAuraTokens` with no compatibility aliases.
 - Deprecated unsupported consumer guidance based on deep imports, repo-relative imports or internal source/build paths.
 - Deprecated treating beta, experimental or internal API as stable without promotion evidence.
+- Deprecated consuming internal helpers such as `cn` and `useIsMounted` from the package root; PLRNUI-26 removes them from root and keeps them non-consumer-facing.
 
 ### Removed
 
-- No source code, package metadata, public exports, dependency declarations, build config or real docs were removed in PLRNUI-10.
+- PLRNUI-26 removes `cn` and `useIsMounted` from root exports as pre-stable internal helper fencing.
+- No package metadata, dependency declarations, build config or package subpath entrypoints were removed in PLRNUI-26.
 - No legacy alias was removed by this governance update.
 
 ### Blockers
@@ -91,6 +95,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - PLRNUI-22 navigation blockers are remediated for the targeted components, but stable promotion remains blocked by docs/platform/support, accessibility and consumer evidence requirements.
 - PLRNUI-23 overlay/form modal contracts are documented and smoke-rendered, but stable promotion remains blocked by platform runtime, focus, keyboard and accessibility evidence.
 - PLRNUI-24 completes the approved root-public component props type export set for this checkout, but release readiness still requires clean consumer TypeScript declaration resolution under PLRNUI-46.
+- PLRNUI-26 reduces root API risk by fencing internal helper exports and documenting experimental exports, but release readiness remains blocked by clean consumer and stable-gate evidence.
 - Historical PLRNUI-9 audit records still contain legacy AURA imports and repo-relative demo import findings. PLRNUI-25 confirms that current `docs/`, `examples/`, `demo/` and `preview-web/` paths are absent in this checkout, adds a canonical README root import example, and preserves historical audit references as migration notes.
 - Release candidate is blocked if the breaking change register is stale.
 

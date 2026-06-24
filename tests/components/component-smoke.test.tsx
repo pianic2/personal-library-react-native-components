@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import TestRenderer, { act } from "react-test-renderer";
 
+import * as RootApi from "../../src";
 import {
   Alert,
   Badge,
@@ -64,6 +65,11 @@ function flattenStyle(style: unknown): Record<string, unknown> {
 }
 
 describe("component smoke render baseline", () => {
+  it("fences internal helpers from the root API", () => {
+    assert.equal("cn" in RootApi, false);
+    assert.equal("useIsMounted" in RootApi, false);
+  });
+
   const priorityCases: Array<{
     name: string;
     element: React.ReactElement;

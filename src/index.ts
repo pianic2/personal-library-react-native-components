@@ -76,7 +76,6 @@ export { ThemeProvider, useTheme } from "./theme";
 export type { Theme, ThemeMode } from "./theme";
 
 export {
-  cn,
   isAndroid,
   isIOS,
   isMobile,
@@ -87,7 +86,6 @@ export {
 export {
   useBreakpoint,
   useDebounce,
-  useIsMounted,
   useToggle,
 } from "./hooks";
 export type { Breakpoint } from "./hooks";

@@ -40,6 +40,8 @@ PLRNUI-23 current-state note: overlay/form modal sources now live under `src/com
 
 PLRNUI-25 current-state note: `audit/components/component-platform-support-matrix-plrnui-25.md` now declares iOS, Android and Web support posture for current root-public component candidates and explicitly records web-only/native-fallback behavior for platform-risk components. This satisfies a documentation prerequisite for future stable promotion, but no component is promoted to `stable`.
 
+PLRNUI-26 current-state note: `Stack` is root-reachable through `src/index.ts` and is classified as a layout primitive public candidate, not an internal-only alias. Internal helpers `useIsMounted` and `cn` are excluded from root and are not component maturity entries. `useNavigate`, overlays and app-shell navigation exports may remain root-visible only as documented experimental/pre-stable APIs; no component is promoted to `stable`.
+
 ## Matrix
 
 | Area | Export | Source/export evidence | Initial maturity | Stable blocker | Platform limit | Notes |
@@ -47,7 +49,7 @@ PLRNUI-25 current-state note: `audit/components/component-platform-support-matri
 | Button | `Button` | `index.ts` exports `./components/Button`; source `components/Button.tsx`; docs `docs/components/buttons/button.md`; audit `CMP-07` | beta | No tests; variant `info` not handled | Cross-platform expected, unverified | Keep public candidate, but props type is not exported and variant map must be completed before stable. |
 | Layout | `Box` | `components/layout/index.tsx`; source `components/layout/Box.tsx`; docs `docs/components/layout/box.md` | beta | No tests; props type not exported | Web shadow behavior needs explicit support note | Foundational primitive; candidate stable after docs/test/support matrix hardening. |
 | Layout | `Column` | `components/layout/index.tsx`; source `components/layout/Column.tsx`; docs `docs/components/layout/column.md` | beta | No tests; props type not exported | Cross-platform expected, unverified | Child wrapping and index keys are known implementation debt. |
-| Layout | `Stack` | source alias `components/layout/Column.tsx`; `components/layout/index.tsx` currently does not export `Stack`; audit `export-matrix` marks human review | internal | Not root-reachable through current barrel; no docs/test | N/A until export decision | Treat as internal/currently non-root despite source alias. If intentionally exported later, classify beta or deprecated alias by policy. |
+| Layout | `Stack` | `src/index.ts` exports `Stack` from `src/components/Column/index.ts`; source alias in `src/components/Column/Column.tsx` | beta | Stable gate incomplete: alias policy, docs/platform/support review and consumer evidence remain open | Cross-platform expected through `Column`, unverified as a named alias | PLRNUI-26 reconciles this as a root-reachable layout primitive public candidate, not an internal-only alias. |
 | Layout | `Row` | `components/layout/index.tsx`; source `components/layout/Row.tsx`; docs `docs/components/layout/row.md`; audit `Row` ineffective `flex` prop | beta | No tests; `flex` prop declared but not applied | Cross-platform expected, unverified | Public candidate after prop behavior fix and props export. |
 | Layout | `Divider` | `components/layout/index.tsx`; source `components/layout/Divider.tsx`; docs `docs/components/layout/divider.md` | beta | No tests; props type not exported | Cross-platform expected, unverified | Simple component, but double `useTheme()` call should be cleaned before stable. |
 | Typography | `P` | `components/typography/index.ts`; source `components/typography/P.tsx`; docs `docs/components/typography/p.md` | beta | No tests; `PProps` not exported | Cross-platform expected, unverified | Public shorthand candidate. |
@@ -91,9 +93,9 @@ PLRNUI-25 current-state note: `audit/components/component-platform-support-matri
 | Maturity | Count |
 | --- | ---: |
 | stable | 0 |
-| beta | 28 |
+| beta | 29 |
 | experimental | 12 |
-| internal | 1 |
+| internal | 0 |
 | deprecated | 0 |
 | total | 41 |
 

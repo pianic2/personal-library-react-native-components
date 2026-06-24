@@ -4,6 +4,8 @@ Rule: props for public components must be exportable. This file lists currently 
 
 Current-state note for PLRNUI-24: `ButtonProps`, `BoxProps`, `ColumnProps`, `RowProps`, `DividerProps`, `PProps`, `BProps`, `SmallProps`, `QuoteProps`, `TextProps`, `TextGroupProps`, `HeadingProps`, `SpinnerProps`, `AlertProps`, `BadgeProps`, `InputProps`, `SwitchProps`, `CheckboxProps`, `RadioGroupProps`, `RadioGroupOption`, `FormFieldProps`, `NavItem`, `LinkProps` and `NavBarProps` are explicit source types and are exported from the root API through `src/index.ts`. `TextProps` is the approved typography component props name in this checkout and extends React Native `TextProps` internally as `RNTextProps`, so no `LibraryTextProps` alias is required. PLRNUI-21/22 type exports (`CardProps`, `ProgressBarProps`, `CodeInlineProps`, `TextareaProps`, `PasswordInputProps`, `BottomBarProps`, `LinkRouterAdapter`, `TopBarProps`, `SideBarProps` and `SideBarVariant`) remain exported. PLRNUI-23 experimental components (`Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`) remain runtime-exported, but their props/option interfaces remain non-exported because their platform contracts are still experimental.
 
+Current-state note for PLRNUI-26: root type exports remain explicit `export type` declarations in `src/index.ts`; no root `export *` is introduced. Overlay props for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select` remain intentionally not root-exported, so experimental runtime visibility does not promote their props contracts. Navigation/app-shell type exports such as `BottomBarProps`, `TopBarProps`, `SideBarProps` and `SideBarVariant` are root-visible only as pre-stable documented contracts and do not imply stable status.
+
 ## Props/types matrix
 
 | Type | Component/module | Current export status | Proposed public? | Reason | Human review |
@@ -49,7 +51,7 @@ Current-state note for PLRNUI-24: `ButtonProps`, `BoxProps`, `ColumnProps`, `Row
 | `LinkRouterAdapter` | `Link` | Exported through root | Yes | Router-agnostic adapter contract for consumer-owned navigation. |  |
 | `NavBarProps` | `NavBar` | Exported through root | Yes | Props for public navigation component. |  |
 | `BottomBarProps` | `BottomBar` | Exported through root | Maybe experimental | Props for bottom navigation; app-shell layout remains experimental. | HUMAN REVIEW REQUIRED |
-| `TopBarProps` | `TopBar` | Exported through root | Maybe experimental | Depends on whether `TopBar` remains root public or later moves behind an experimental policy. | HUMAN REVIEW REQUIRED |
+| `TopBarProps` | `TopBar` | Exported through root | Maybe experimental | Root-visible navigation type remains pre-stable until docs/platform/accessibility gates are satisfied. | HUMAN REVIEW REQUIRED |
 | `SideBarVariant` | `SideBar` | Exported through root | Maybe experimental | Platform-specific sidebar contract. | HUMAN REVIEW REQUIRED |
 | `SideBarProps` | `SideBar` | Exported through root | Maybe experimental | Platform-specific sidebar contract. | HUMAN REVIEW REQUIRED |
 | `Breakpoint` | `useBreakpoint` | Exported through root | Yes | Return type for public hook. |  |

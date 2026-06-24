@@ -16,6 +16,7 @@ Recommended root API should stay small and include only components that are docu
 Button
 Box
 Column
+Stack
 Row
 Divider
 P
@@ -40,7 +41,7 @@ NavBar
 
 HUMAN REVIEW REQUIRED:
 
-- `Stack`: keep as public alias for `Column`, move to components subpath only, or deprecate.
+- `Stack`: PLRNUI-26 keeps it root-reachable as a public-candidate layout primitive alias for `Column`; stable naming still requires final owner approval.
 - `TopBar`, `BottomBar`, `SideBar`: navigation components are documented but platform and behavior stability are not yet clear.
 - `Select`: useful form component, but modal/select behavior and accessibility need stabilization.
 - `Code`, `Page`, `Hero`: documented but may be too app-specific or incomplete for stable root API.
@@ -105,6 +106,7 @@ useNav
 Possible root hook exports after explicit approval:
 
 ```ts
+useNavigate
 useDebounce
 useToggle
 ```
@@ -118,11 +120,10 @@ useOptionalNav
 useNavItems
 useNavLogo
 useNavPathname
-useNavigate
 useIsMounted
 ```
 
-HUMAN REVIEW REQUIRED: decide whether generic hooks belong to this UI package public contract or should live under `hooks` only.
+HUMAN REVIEW REQUIRED: decide whether generic hooks belong to this UI package public contract or should live under `hooks` only. PLRNUI-26 treats `useNavigate` as a root-reachable experimental navigation hook, while `useIsMounted` is an internal helper excluded from root.
 
 ## Tokens
 
@@ -159,6 +160,40 @@ Legacy AURA-branded exports are deprecated and removed from the future API contr
 - `getAuraTokens`
 
 No compatibility aliases should be introduced for AURA-branded token names.
+
+## PLRNUI-26 Internal and Experimental Export Fencing
+
+PLRNUI-26 keeps the package root as an explicit named export surface:
+
+- no root `export *`;
+- no `/experimental` or `/internal` package entrypoint;
+- no stable promotion for any component;
+- internal helpers are excluded from root;
+- experimental overlays and navigation/app-shell APIs may remain root-exported before stable only when explicitly documented as experimental.
+
+Root-fenced internal helpers:
+
+```ts
+cn
+useIsMounted
+```
+
+Explicit experimental root exports retained pre-stable:
+
+```ts
+BottomSheet
+Modal
+Popover
+Select
+Tooltip
+BottomBar
+SideBar
+useNavigate
+```
+
+`Stack` remains root-exported as a public-candidate layout primitive alias for `Column`.
+
+`getAuraTokens` remains root-exported only as a legacy/deprecated compatibility export. It is not future stable naming; the future target remains neutral token naming such as `themeTokens` or `getThemeTokens` if an accessor remains required.
 
 ## Explicit exclusions
 

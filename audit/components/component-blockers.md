@@ -66,6 +66,8 @@ PLRNUI-22 note: PLRNUI5-BLK-015 and PLRNUI5-BLK-019 are retained above as histor
 
 PLRNUI-23 note: PLRNUI5-BLK-013, PLRNUI5-BLK-014, PLRNUI5-BLK-016, PLRNUI5-BLK-017 and PLRNUI5-BLK-018 are now documented and smoke-rendered, but remain blockers for stable promotion.
 
+PLRNUI-26 note: these blockers prevent stable promotion; they do not by themselves require removing every experimental runtime export from the pre-stable root API. Experimental root exposure remains acceptable only when explicit, documented and not presented as stable. Internal helpers such as `cn` and `useIsMounted` are fenced out of root because they are not consumer-facing component APIs.
+
 ## Cross-cutting blockers
 
 | Blocker ID | Scope | Evidence | Impact | Recommended Jira ticket |
@@ -73,3 +75,5 @@ PLRNUI-23 note: PLRNUI5-BLK-013, PLRNUI5-BLK-014, PLRNUI5-BLK-016, PLRNUI5-BLK-0
 | PLRNUI5-BLK-020 | Component-like exports without smoke coverage | PLRNUI-20 added `tests/components/component-smoke.test.tsx`; PLRNUI-21 extends it for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`; PLRNUI-22 extends it for `TopBar`, `BottomBar`, `NavBar`, `Link` and `SideBar`; PLRNUI-23 extends it for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`. | Components without smoke/render or equivalent tests remain blocked from `stable`; PLRNUI-23 coverage does not satisfy the full stable gate by itself. | Continue targeted smoke/interaction coverage for remaining beta/stable candidates. |
 | PLRNUI5-BLK-021 | Public/beta component props | `audit/api/public-types.md` | Many public candidates do not export named props types, blocking stable consumer contracts. | Export named props types for approved public components. |
 | PLRNUI5-BLK-022 | Root API scope | `index.ts`; `audit/api/export-matrix.md`; `audit/migration/breaking-change-register.md` `BC-004`, `BC-007` | Root exports currently include internal/experimental components. | Move/fence internal and experimental components before stable release. |
+
+PLRNUI-26 reduces `PLRNUI5-BLK-022` by removing internal helper root exports and documenting remaining experimental exports. The blocker remains open for future stable release decisions because overlays/app-shell APIs are still root-visible as experimental pre-stable APIs.

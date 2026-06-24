@@ -60,6 +60,7 @@ Allowed statuses:
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
 | PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
+| PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental; `getAuraTokens` is retained as legacy/deprecated compatibility. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
 | PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area remains governed by PLRNUI-37. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
 | PLRNUI-45 | Package entrypoint reconciliation | Current package metadata uses canonical package name, root-only exports, `dist/index.js`, `dist/index.d.ts`, and a minimal `files` whitelist. | Typecheck, build, pack dry-run, tarball file-list check and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because no runtime/API/metadata change is made by PLRNUI-45. |
@@ -222,3 +223,21 @@ If these symbols existed in previous public package states, removal must be trea
 - Verification required: Pre-RC review of register, changelog, export matrix, dependency policy and release readiness report.
 - Release blocking: Yes. This is itself a required release gate.
 - Notes: This entry implements the PLRNUI-10 rule that RC is blocked without an updated register.
+
+### PLRNUI-26 - Internal and experimental export fencing
+
+- ID: PLRNUI-26
+- Status: implemented
+- Category: public API / root export fencing
+- Source issue: PLRNUI-26
+- Related ADR / Risk Assessment: ADR 0002, ADR 0003, ADR 0008, Risk Assessment 0003, Risk Assessment 0008
+- Decision: Keep the root API as an explicit named export surface without adding `/experimental` or `/internal` entrypoints. Remove `useIsMounted` and `cn` from root because they are internal helpers. Keep `Stack` root-exported and reconcile docs as a public-candidate layout primitive. Keep `useNavigate` root-exported as an experimental navigation hook. Keep `getAuraTokens` root-exported only as a legacy/deprecated compatibility export pending future deprecation/removal planning.
+- Motivation: Internal helper exports make implementation details look consumer-facing, while undocumented experimental exports can be mistaken for stable API.
+- Consumer impact: Pre-stable consumers must stop importing `useIsMounted` or `cn` from the package root. Consumers may continue using documented pre-stable/experimental exports with migration risk. No stable consumer breaking change is recorded because the package is still pre-stable.
+- Migration path: Use documented public or experimental root APIs only. Do not consume internal helpers from root. Track future `getAuraTokens` deprecation/removal and any experimental export move/removal in this register and changelog.
+- Legacy alias policy: `getAuraTokens` remains a legacy/deprecated compatibility export; it is not future stable naming and no new AURA compatibility aliases should be introduced.
+- Deprecation window: HUMAN REVIEW REQUIRED for `getAuraTokens` and any experimental root export removals.
+- Removal target: `useIsMounted` and `cn` removed from root by PLRNUI-26. Future removal or movement of experimental exports and `getAuraTokens` requires a separate approved task.
+- Verification required: `npm test`, `npm run typecheck`, root API diff review and audit documentation review.
+- Release blocking: Yes. Stable release is blocked if internal helpers are root-exposed as stable/public or experimental APIs are undocumented.
+- Notes: PLRNUI-26 does not change package metadata, package subpaths, dependency declarations or stable classifications.

@@ -20,9 +20,9 @@ Current result: no exported component-like symbol satisfies the stable gate. PLR
 
 These components are usable candidates after test/docs/type hardening:
 
-`Button`, `Box`, `Column`, `Row`, `Divider`, `P`, `B`, `Small`, `CodeInline`, `Quote`, `Text`, `TextGroup`, `Heading`, `Spinner`, `Alert`, `Badge`, `Card`, `Input`, `PasswordInput`, `ProgressBar`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `Textarea`, `NavProvider`, `Link`, `NavBar`.
+`Button`, `Box`, `Column`, `Stack`, `Row`, `Divider`, `P`, `B`, `Small`, `CodeInline`, `Quote`, `Text`, `TextGroup`, `Heading`, `Spinner`, `Alert`, `Badge`, `Card`, `Input`, `PasswordInput`, `ProgressBar`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `Textarea`, `NavProvider`, `Link`, `NavBar`.
 
-`Stack` is counted as an analyzed source export but not as a root-reachable component because `components/layout/index.tsx` does not export it. If the barrel is changed later, it needs an explicit decision: public alias, internal alias, or deprecated alias.
+PLRNUI-26 reconciles `Stack` as a root-reachable public-candidate layout alias for `Column`; stable promotion still requires the same docs, test, platform and alias-policy gates as other beta candidates.
 
 Required work for every beta candidate:
 
@@ -38,7 +38,7 @@ Required work for every beta candidate:
 
 These components need platform/behavior decisions before even beta/stable promotion:
 
-`Code`, `Page`, `ToastProvider`, `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Hero`, `Select`, `TopBar`, `BottomBar`, `SideBar`.
+`Code`, `Page`, `ToastProvider`, `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Hero`, `Select`, `BottomBar`, `SideBar`.
 
 Required work:
 
@@ -76,3 +76,5 @@ These exports were fixed by PLRNUI-21 and may be treated as `beta`, not `stable`
 | PLRNUI5-API-001 | Fence internal/experimental exports or document root API maturity | Breaking change register `BC-004`, `BC-007` |
 
 PLRNUI-25 note: PLRNUI5-DOCS-001 is partially satisfied for the current checkout by `audit/components/component-platform-support-matrix-plrnui-25.md`, `audit/docs/docs-import-audit-plrnui-25.md`, and the canonical README root import example. It is not fully closed for stable promotion because package consumer smoke, per-component docs pages and platform runtime proof are still open.
+
+PLRNUI-26 note: internal/experimental export fencing reduces root API risk but does not satisfy stable promotion. `cn` and `useIsMounted` are removed from root because they are internal helpers. Explicit experimental root exports such as overlays, `BottomBar`, `SideBar` and `useNavigate` remain pre-stable and must keep experimental documentation until a future entrypoint or removal decision is approved.
