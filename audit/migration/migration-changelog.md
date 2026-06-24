@@ -27,6 +27,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-23 overlay/form modal API visibility for `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`, with local component barrels, root exports, smoke coverage and `audit/components/overlay-platform-contract-plrnui-23.md`.
 - Added PLRNUI-24 approved root-public component props type exports, including `RadioGroupOption`, with a dedicated type-only fixture for root import verification.
 - Added PLRNUI-25 component platform support matrix and docs import audit for the current checkout.
+- Added PLRNUI-57 minimal consumer-facing docs and examples using the approved root package import.
 
 ### Changed
 
@@ -47,6 +48,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-23 broadens root API visibility for experimental overlay/form modal components without adding package subpath exports, runtime dependencies, native dependencies, or stable promotion.
 - Clarified that PLRNUI-24 is additive type-surface work only: it preserves runtime behavior, does not add package subpath exports, and keeps experimental/internal props types out of the root API.
 - Clarified that PLRNUI-25 updates documentation/audit evidence and README import examples only; it does not change package metadata, runtime component logic, dependencies, subpath exports or stable classifications.
+- Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
 
 ### PLRNUI-16 - Token export naming decision
 

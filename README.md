@@ -36,6 +36,15 @@ import { Button, Text } from "@personal-library/react-native-components";
 Deep imports from `src/`, `dist/`, component internals, or legacy package names
 are not supported consumer API.
 
+Minimal consumer docs and examples are available in:
+
+- `docs/getting-started.md`
+- `docs/components.md`
+- `docs/platform-support.md`
+- `docs/migration.md`
+- `examples/basic-usage.tsx`
+- `examples/overlays.experimental.tsx`
+
 Source migration is ticket-driven. Do not migrate components, tokens, themes, or
 public APIs without the related PLRNUI issue and audit evidence.
 

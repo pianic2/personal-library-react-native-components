@@ -130,6 +130,12 @@ PLRNUI-25 documentation evidence:
 - Docs import audit: `audit/docs/docs-import-audit-plrnui-25.md`.
 - Consumer-facing README import example now uses `@personal-library/react-native-components`.
 
+PLRNUI-57 documentation evidence:
+
+- Consumer docs: `docs/getting-started.md`, `docs/components.md`, `docs/migration.md`, `docs/platform-support.md`.
+- Consumer examples: `examples/basic-usage.tsx`, `examples/layout-primitives.tsx`, `examples/form-controls.tsx`, `examples/feedback.tsx`, `examples/navigation.tsx`, `examples/overlays.experimental.tsx`.
+- No package exports, package subpaths, runtime logic or stable classifications were changed.
+
 ## Human Review Required
 
 - Confirm whether generic hooks/utilities belong in the root API or only in subpaths.

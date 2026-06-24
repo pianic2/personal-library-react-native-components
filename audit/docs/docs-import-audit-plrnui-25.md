@@ -44,13 +44,30 @@ Package metadata currently exposes only the root package entrypoint and `./packa
 ## Final status
 
 - Current consumer-facing README import example uses `@personal-library/react-native-components`.
-- No current `docs/`, `examples/`, `demo/` or `preview-web/` files exist to migrate in this checkout.
+- PLRNUI-57 adds current `docs/` and `examples/` files that use `@personal-library/react-native-components`.
+- No current `demo/` or `preview-web/` files exist to migrate in this checkout.
 - Legacy AURA and deep-import references remain inside audit artifacts only, where they are marked as historical migration evidence or prior findings.
 - No package metadata, lockfile, runtime component logic or dependencies were changed.
+
+## PLRNUI-57 update
+
+Current consumer-facing docs/examples created by PLRNUI-57:
+
+- `docs/getting-started.md`
+- `docs/components.md`
+- `docs/migration.md`
+- `docs/platform-support.md`
+- `examples/basic-usage.tsx`
+- `examples/layout-primitives.tsx`
+- `examples/form-controls.tsx`
+- `examples/feedback.tsx`
+- `examples/navigation.tsx`
+- `examples/overlays.experimental.tsx`
+
+These files use only the approved root package import. Experimental overlay examples are isolated in `examples/overlays.experimental.tsx`.
 
 ## Residual limits
 
 - Historical audit files still document old docs/demo gaps. They should stay as evidence unless a future ticket explicitly rewrites historical audit records.
 - Clean consumer TypeScript import and Metro/runtime verification remain deferred to release/consumer smoke work.
 - Stable promotion remains blocked until component-specific runtime, accessibility, focus/keyboard and consumer support evidence is complete.
-

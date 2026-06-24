@@ -40,6 +40,7 @@ Export and metadata validation:
 - Current `main`, `module` and top-level `types` point to `./dist/index.js` and `./dist/index.d.ts`.
 - Current `src/index.ts` exports `PACKAGE_NAME` plus the governed root component, theme, hook, utility and token APIs; PLRNUI-24 makes approved root-public component props type exports explicit, including `RadioGroupOption`, and keeps PLRNUI-23 experimental overlay/form modal root exports runtime-only through explicit component exports.
 - PLRNUI-25 adds component platform support documentation and a docs import audit for the current checkout; package metadata and runtime exports are unchanged.
+- PLRNUI-57 adds minimal consumer-facing docs and examples that import from `@personal-library/react-native-components`; package metadata and runtime exports are unchanged.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -104,6 +105,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-23 documents and smoke-renders `Modal`, `BottomSheet`, `Tooltip`, `Popover` and `Select`, adds root API visibility, and records the overlay platform contract; it does not promote any component to `stable`.
 - PLRNUI-24 adds approved root-public props type exports without adding package subpaths, runtime dependencies or stable promotion, and leaves experimental/internal props types intentionally unexported from root.
 - PLRNUI-25 documents iOS/Android/Web support posture and aligns the README consumer import example to `@personal-library/react-native-components`; no component is promoted to `stable`.
+- PLRNUI-57 expands docs/examples coverage while preserving beta/experimental labels; no component is promoted to `stable`.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers
@@ -114,7 +116,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 4. React Native package metadata alignment is completed by PLRNUI-43; consumer smoke proof remains deferred to PLRNUI-46.
 5. Native dependency governance is consolidated by PLRNUI-44 for the current package state; executable consumer proof remains deferred to PLRNUI-46.
 6. Package entrypoint metadata is aligned to `dist`, but clean consumer root import and TypeScript declaration resolution remain unproven until PLRNUI-46.
-7. Component `stable` promotion remains blocked until consumer runtime proof and any required interaction/accessibility coverage are complete; PLRNUI-25 adds the platform support matrix and import audit but does not promote components to `stable`.
+7. Component `stable` promotion remains blocked until consumer runtime proof and any required interaction/accessibility coverage are complete; PLRNUI-25 and PLRNUI-57 add docs/examples evidence but do not promote components to `stable`.
 8. Overlay/form modal `stable` promotion remains blocked until iOS/Android/Web runtime behavior, focus, keyboard and accessibility behavior are validated beyond Node render smoke coverage.
 
 ## Conclusion
