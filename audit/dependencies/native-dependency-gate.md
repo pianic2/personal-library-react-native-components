@@ -61,7 +61,7 @@ ADR required if:
 Evidence examples:
 
 - `expo-clipboard` as a hard dependency would change Expo policy.
-- `react-native-safe-area-context` as required by default `ThemeProvider` affects provider contract.
+- Future `react-native-safe-area-context` usage affects provider/app-shell contracts if a package API imports it.
 - `@react-native-async-storage/async-storage` tied to theme/storage API affects core runtime requirements.
 
 ## When Risk Assessment is required
@@ -149,7 +149,7 @@ Current `package.json` does not declare native runtime packages in `dependencies
 | Package | Current package state | Gate status |
 | --- | --- |
 | `react-native` | `peerDependencies` | Host runtime peer; consumer-owned; must not be bundled. |
-| `react-native-safe-area-context` | Not declared | Governed by PLRNUI-37 required peer contract while `ThemeProvider` safe-area behavior remains default. Future metadata change must pass this gate. |
+| `react-native-safe-area-context` | Not declared | Not required by pure `ThemeProvider` after PLRNUI-28. Future metadata change or API import must pass this gate. |
 | `@react-native-async-storage/async-storage` | Not declared | Consumer-owned adapter backend under PLRNUI-38; must not be added as required core runtime dependency. |
 | `expo-clipboard` | Not declared | Consumer-owned adapter backend under PLRNUI-39; must not be added to core package metadata or imported by core runtime. |
 | `react-native-svg` | Not declared | Future native dependency candidate only; gate required before package metadata or runtime introduction. |

@@ -3,6 +3,7 @@ import {
   Link,
   NavProvider,
   Text,
+  ThemeAppShell,
   ThemeProvider,
   TopBar,
   type NavItem,
@@ -16,17 +17,19 @@ const navItems: NavItem[] = [
 
 export function NavigationExample() {
   return (
-    <ThemeProvider withScroll={false}>
-      <NavProvider
-        items={navItems}
-        pathname="/docs"
-        navigate={() => undefined}
-      >
-        <Column gap="md" style={{ padding: 16 }}>
-          <TopBar title="Product" />
-          <Link href="/support">Contact support</Link>
-        </Column>
-      </NavProvider>
+    <ThemeProvider>
+      <ThemeAppShell>
+        <NavProvider
+          items={navItems}
+          pathname="/docs"
+          navigate={() => undefined}
+        >
+          <Column gap="md" style={{ padding: 16 }}>
+            <TopBar title="Product" />
+            <Link href="/support">Contact support</Link>
+          </Column>
+        </NavProvider>
+      </ThemeAppShell>
     </ThemeProvider>
   );
 }

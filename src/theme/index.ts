@@ -3,4 +3,5 @@
 export * from "./types";
 export * from "./createTheme";
 export * from "./ThemeProvider";
+export * from "./ThemeAppShell";
 export * from "./useTheme";

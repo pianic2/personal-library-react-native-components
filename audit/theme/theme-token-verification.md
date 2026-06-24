@@ -23,7 +23,7 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 | Primitive tokens exist | verified | `tokens/colors.base.ts`, `tokens/spacing.base.ts`, `tokens/radius.base.ts`, `tokens/size.base.ts`, `tokens/shadows.base.ts`, `tokens/zIndex.base.ts`, `tokens/typography.base.ts`; ADR 0004 requires primitive tokens in `audit/adr/0004-theme-token-architecture.md`. |
 | Semantic color tokens exist | verified | `tokens/colors.base.ts` defines roles such as `background`, `surface`, `textPrimary`, `border`, `error`, `success`, `overlay`, `backdrop`; snapshot groups them into `surface`, `text`, `border`, `brand`, `feedback` in `tokens/snapshot.ts`. |
 | Component tokens exist in type contract | partial | `theme/types.ts` defines optional `components.button`, `components.input`, and `components.card`; no current component reads `theme.components.*` based on `rg "theme\\.components|components\\?\\." components theme`. |
-| Default ThemeProvider light/dark behavior | verified by PLRNUI-27 | `ThemeProvider` recomputes `createBaseTheme(mode)` on mode changes; `createBaseTheme` now resolves semantic colors through `resolveColors(mode)` and `tests/theme/base-theme-dark-mode.test.tsx` verifies consumer-visible colors change after `toggleTheme()`. |
+| Default ThemeProvider light/dark behavior | verified by PLRNUI-27 and preserved by PLRNUI-28 | `ThemeProvider` recomputes `createBaseTheme(mode)` on mode changes; `createBaseTheme` resolves semantic colors through `resolveColors(mode)` and `tests/theme/base-theme-dark-mode.test.tsx` verifies consumer-visible colors change after `toggleTheme()` and `setMode()`. |
 | Alternative liquidglass light/dark theme factory | verified | `themes/liquidglass/index.ts` selects `mode === "dark" ? darkColors : lightColors` and exports `liquidglassDarkTheme`. |
 | Theme override API | partial | `ThemeProvider` accepts `themeOverrides?: Partial<Theme>` and calls `createTheme(themeOverrides, createBaseTheme(mode))`; `createTheme` uses untyped `any` inside `deepMerge`, already flagged by `audit/03-theme-token-system.md`. |
 | Public theme/tokens API classification | partial | `audit/api/export-matrix.md` marks `Theme`, `ThemeMode`, `createTheme`, `ThemeProvider`, `useTheme` as public/beta and `auraTokens`, `getAuraTokens` as deprecated. Current root `index.ts` still exports all `./tokens`, `./theme`, and `./themes`. |
@@ -52,11 +52,11 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 - Risk: token names are public API according to ADR 0004; renaming without alias/deprecation policy is breaking.
 - Priority: P1.
 
-### THM-PLRNUI6-04 - ThemeProvider currently owns app-shell responsibilities
+### THM-PLRNUI6-04 - ThemeProvider app-shell responsibilities split by PLRNUI-28
 
-- Status: verified.
-- Evidence: `theme/ThemeProvider.tsx` imports and renders `SafeAreaProvider`, `SafeAreaView`, and `ScrollView`; ADR 0004 states safe area, scroll container, and app layout wrappers should be optional or separate.
-- Risk: consumers may get unexpected layout/provider nesting when they only need theme context.
+- Status: resolved for current source.
+- Evidence: `src/theme/ThemeProvider.tsx` renders only context and children. `src/theme/ThemeAppShell.tsx` owns app/content styles and renders `ScrollView` only when `scroll` is true.
+- Risk: consumers must migrate from implicit provider layout or `withScroll` to explicit `ThemeAppShell` composition.
 - Priority: P1.
 
 ### THM-PLRNUI6-05 - Hardcoded values remain in public/beta component candidates

@@ -12,6 +12,7 @@ type ThemeSnapshot = {
   background: string;
   appBackground: string | undefined;
   toggleTheme: () => void;
+  setMode: (mode: "light" | "dark") => void;
 };
 
 function ThemeProbe({
@@ -19,16 +20,25 @@ function ThemeProbe({
 }: {
   onSnapshot: (snapshot: ThemeSnapshot) => void;
 }) {
-  const { colors, mode, theme, toggleTheme } = useTheme();
+  const { colors, mode, theme, toggleTheme, setMode } = useTheme();
 
   onSnapshot({
     mode,
     background: colors.background,
     appBackground: theme.globalStyles?.app?.backgroundColor,
     toggleTheme,
+    setMode,
   });
 
   return null;
+}
+
+function NullThemeProbe({
+  onSnapshot,
+}: {
+  onSnapshot: (snapshot: ThemeSnapshot) => void;
+}) {
+  return <ThemeProbe onSnapshot={onSnapshot} />;
 }
 
 describe("PLRNUI-27 base theme dark mode", () => {
@@ -58,7 +68,7 @@ describe("PLRNUI-27 base theme dark mode", () => {
 
     act(() => {
       TestRenderer.create(
-        <ThemeProvider initialMode="light" withScroll={false}>
+        <ThemeProvider initialMode="light">
           <ThemeProbe
             onSnapshot={(snapshot) => {
               latestSnapshot = snapshot;
@@ -81,5 +91,36 @@ describe("PLRNUI-27 base theme dark mode", () => {
     assert.equal(latestSnapshot.mode, "dark");
     assert.equal(latestSnapshot.background, darkColors.background);
     assert.equal(latestSnapshot.appBackground, darkColors.background);
+  });
+
+  it("renders only context and children without a layout wrapper", () => {
+    let latestSnapshot: ThemeSnapshot | undefined;
+    let renderer: TestRenderer.ReactTestRenderer | undefined;
+
+    act(() => {
+      renderer = TestRenderer.create(
+        <ThemeProvider initialMode="light">
+          <NullThemeProbe
+            onSnapshot={(snapshot) => {
+              latestSnapshot = snapshot;
+            }}
+          />
+        </ThemeProvider>
+      );
+    });
+
+    assert.ok(renderer);
+    assert.ok(latestSnapshot);
+    assert.equal(latestSnapshot.mode, "light");
+    assert.equal(renderer.root.findAllByType("ScrollView").length, 0);
+    assert.equal(renderer.root.findAllByType("View").length, 0);
+
+    act(() => {
+      latestSnapshot?.setMode("dark");
+    });
+
+    assert.ok(latestSnapshot);
+    assert.equal(latestSnapshot.mode, "dark");
+    assert.equal(latestSnapshot.background, darkColors.background);
   });
 });

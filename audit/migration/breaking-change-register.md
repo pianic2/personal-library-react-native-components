@@ -61,8 +61,9 @@ Allowed statuses:
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
 | PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
 | PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental; `getAuraTokens` is retained as legacy/deprecated compatibility. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
+| PLRNUI-28 | Theme provider app-shell split | `ThemeProvider` is pure; `ThemeAppShell` owns explicit layout/scroll behavior. | Node smoke tests, typecheck, build, package dry-run and migration docs. | Breaking for consumers relying on implicit provider layout or `withScroll`. |
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
-| PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area remains governed by PLRNUI-37. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
+| PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area is not required by pure `ThemeProvider` after PLRNUI-28. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
 | PLRNUI-45 | Package entrypoint reconciliation | Current package metadata uses canonical package name, root-only exports, `dist/index.js`, `dist/index.d.ts`, and a minimal `files` whitelist. | Typecheck, build, pack dry-run, tarball file-list check and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because no runtime/API/metadata change is made by PLRNUI-45. |
 
 ### PLRNUI-16 - Token export naming
@@ -177,14 +178,14 @@ If these symbols existed in previous public package states, removal must be trea
 - Category: native dependency / runtime compatibility
 - Source issue: PLRNUI-7, PLRNUI-8, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-46 smoke coverage before release. PLRNUI-37 confirms `react-native-safe-area-context` as a required peer while `ThemeProvider` keeps safe-area behavior enabled by default. PLRNUI-38 confirms AsyncStorage must remain consumer-owned and adapter-based. PLRNUI-39 confirms `expo-clipboard` must remain consumer-owned and adapter-based, not a core dependency or root peer. PLRNUI-44 confirms the current package metadata has no runtime `dependencies`.
+- Decision: Native or native-adjacent dependencies require Jira tracking, policy classification, Expo Go/managed/prebuild notes and PLRNUI-46 smoke coverage before release. PLRNUI-28 makes `ThemeProvider` pure and removes the default safe-area requirement. PLRNUI-38 confirms AsyncStorage must remain consumer-owned and adapter-based. PLRNUI-39 confirms `expo-clipboard` must remain consumer-owned and adapter-based, not a core dependency or root peer. PLRNUI-44 confirms the current package metadata has no runtime `dependencies`.
 - Motivation: Hard native dependencies can change install/runtime requirements for Expo and React Native consumers.
-- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs. Consumers using `ThemeProvider` must explicitly install `react-native-safe-area-context` as a peer dependency. Consumers using future clipboard support must provide and validate their own `ClipboardAdapter`; Expo consumers may implement it with `expo-clipboard`.
-- Migration path: Classify each native dependency as required peer, optional consumer-owned adapter, dev-only or isolated feature; update docs and smoke tests after package metadata changes. For `ThemeProvider`, document `react-native-safe-area-context` as a required peer and validate install/import/render in a clean consumer if/when package metadata exposes that contract. For theme persistence, keep AsyncStorage as a consumer adapter backend. For clipboard, document `ClipboardAdapter` as opt-in if implemented and keep `expo-clipboard` outside the core package metadata.
+- Consumer impact: Consumers may need to install peers, use prebuild/custom dev client, accept Expo Go limitations or avoid optional APIs. Consumers using pure `ThemeProvider` after PLRNUI-28 do not need a safe-area dependency for provider rendering. Consumers using future clipboard support must provide and validate their own `ClipboardAdapter`; Expo consumers may implement it with `expo-clipboard`.
+- Migration path: Classify each native dependency as required peer, optional consumer-owned adapter, dev-only or isolated feature; update docs and smoke tests after package metadata changes. For theme layout, use `ThemeAppShell` instead of provider-owned safe-area or scroll wrappers. For theme persistence, keep AsyncStorage as a consumer adapter backend. For clipboard, document `ClipboardAdapter` as opt-in if implemented and keep `expo-clipboard` outside the core package metadata.
 - Legacy alias policy: Not applicable.
 - Deprecation window: HUMAN REVIEW REQUIRED if public APIs lose native-backed behavior.
 - Removal target: Before release candidate for uncontrolled hard native dependencies.
-- Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs, including `ThemeProvider` render with safe-area behavior enabled if/when that contract is present in package metadata.
+- Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs. Future safe-area APIs require their own install/render smoke if package metadata exposes that contract.
 - Release blocking: Yes. RC is blocked if native dependency requirements are not classified and tested.
 - Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37, PLRNUI-38, PLRNUI-39 and PLRNUI-44 are governance/contract decisions only; no runtime or package metadata change is made by these register updates. PLRNUI-44 does not introduce a breaking change while it remains documentation-only and no native dependency is added.
 
@@ -205,6 +206,24 @@ If these symbols existed in previous public package states, removal must be trea
 - Verification required: Component maturity matrix, export matrix alignment, docs/demo stability audit and root API review.
 - Release blocking: Yes. RC is blocked if docs/demo communicate false stability.
 - Notes: PLRNUI-5 context reports 0 stable, 23 beta, 12 experimental and 6 internal; PLRNUI-4 reports root export statuses separately.
+
+### BC-009 - ThemeProvider app-shell split
+
+- ID: BC-009
+- Status: implemented
+- Category: public API / provider behavior
+- Source issue: PLRNUI-28
+- Related ADR / Risk Assessment: ADR 0004, Risk Assessment 0004
+- Decision: `ThemeProvider` renders only `ThemeContext.Provider` and children. `ThemeAppShell` is the explicit opt-in themed layout wrapper; `scroll` defaults to `false`.
+- Motivation: ADR 0004 says safe-area, scroll container and app layout wrappers should be optional or separate from pure theme context.
+- Consumer impact: Consumers relying on implicit provider layout, default scroll behavior or the `withScroll` prop must update composition.
+- Migration path: Use `<ThemeProvider>...</ThemeProvider>` for pure context. Use `<ThemeProvider><ThemeAppShell scroll>...</ThemeAppShell></ThemeProvider>` when themed layout or scrolling is required.
+- Legacy alias policy: No legacy alias. `withScroll` is removed from the provider contract before stable release.
+- Deprecation window: No compatibility window for pre-stable beta provider behavior.
+- Removal target: Implemented by PLRNUI-28.
+- Verification required: `npm run typecheck`, `npm run test`, `npm run build`, `npm run package:dry-run`, root export review and grep for removed provider prop.
+- Release blocking: Yes. RC is blocked if migration docs or export matrix omit the provider split.
+- Notes: PLRNUI-28 does not implement safe-area support, does not import `react-native-safe-area-context`, does not add AsyncStorage and does not change `package.json` or `package-lock.json`.
 
 ### BC-008 - Release candidate blocked unless register and changelog are updated
 

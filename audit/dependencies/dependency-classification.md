@@ -69,7 +69,7 @@ PLRNUI-44 does not change this baseline.
 | `react` | `peerDependencies` | Required host peer dependency | Keep as consumer-owned host runtime peer for the approved React 19 baseline. | `package.json`; `package-lock.json` root package. |
 | `react-native` | `peerDependencies` | Required host peer dependency | Keep as consumer-owned host runtime peer for RN `0.85.x`; do not bundle as runtime dependency. | `package.json`; `package-lock.json` root package; ADR 0005 / ADR 0006 policy. |
 | `typescript` | `devDependencies` | Dev/build/typecheck dependency | Keep dev-only; not a runtime dependency. | `package.json` scripts and `devDependencies`; `package-lock.json` root package. |
-| `react-native-safe-area-context` | Not declared | Approved required peer contract when `ThemeProvider` safe-area behavior exists | Governed by PLRNUI-37. Package metadata is not changed by PLRNUI-44. | `audit/dependencies/safe-area-provider-dependency-contract.md`. |
+| `react-native-safe-area-context` | Not declared | Future safe-area API governance | Not required by pure `ThemeProvider` after PLRNUI-28. Package metadata is unchanged. | `audit/dependencies/safe-area-provider-dependency-contract.md`. |
 | `@react-native-async-storage/async-storage` | Not declared | Consumer-owned native dependency | Must not be imported directly by the library core or added as a required runtime dependency. Theme persistence remains adapter-based. | `audit/dependencies/theme-persistence-strategy.md`. |
 | `expo-clipboard` | Not declared | Consumer-owned optional native/runtime integration | Must not be imported, bundled, added as runtime dependency, or promoted to root peer dependency of the core package. | `audit/dependencies/clipboard-dependency-strategy.md`. |
 | `react-native-svg` | Not declared | Native dependency candidate only if icon/native SVG functionality is introduced | Requires the native dependency gate before any package metadata or runtime use. | `audit/dependencies/native-dependency-gate.md`. |
@@ -84,7 +84,7 @@ PLRNUI-44 does not change this baseline.
 3. `typescript` is a dev/build dependency only.
 4. `@react-native-async-storage/async-storage` remains consumer-owned and adapter-based; it is not a core runtime dependency.
 5. `expo-clipboard` remains excluded from the core runtime package and root peer dependency contract.
-6. `react-native-safe-area-context` remains governed by the PLRNUI-37 safe-area provider dependency contract; PLRNUI-44 does not reopen that decision.
+6. `react-native-safe-area-context` is not required by pure `ThemeProvider` after PLRNUI-28; future safe-area API work must reopen dependency governance.
 7. PLRNUI-44 does not implement `ThemeStorageAdapter`; implementation remains a separate future code task.
 8. PLRNUI-44 does not create a clean Expo consumer smoke test; executable consumer validation remains PLRNUI-46.
 

@@ -22,7 +22,7 @@ PLRNUI-44 is documentation/governance only. It does not add dependencies, change
 | Package | Current package section | Native/runtime status | Governance owner | PLRNUI-44 decision |
 | --- | --- | --- | --- | --- |
 | `react-native` | `peerDependencies` | Host native runtime | Consumer application | Required host peer aligned to RN `0.85.x`; must not be bundled. |
-| `react-native-safe-area-context` | Not declared | RN native safe-area module | Governed by PLRNUI-37 contract | Required peer contract when `ThemeProvider` safe-area behavior is present; no metadata change in PLRNUI-44. |
+| `react-native-safe-area-context` | Not declared | RN native safe-area module | Future safe-area API governance | Not required by pure `ThemeProvider` after PLRNUI-28; no metadata change. |
 | `@react-native-async-storage/async-storage` | Not declared | RN native storage module | Consumer application | Consumer-owned adapter backend only; not core runtime. |
 | `expo-clipboard` | Not declared | Expo native/runtime module | Consumer application | Excluded from core runtime and root peer dependency; optional adapter backend only. |
 | `react-native-svg` | Not declared | RN native SVG module | Not approved for core metadata in this task | Future native dependency gate required before introduction. |
@@ -33,7 +33,7 @@ PLRNUI-44 is documentation/governance only. It does not add dependencies, change
 - `devDependencies`: `typescript`
 - `peerDependencies`: `react`, `react-native`
 
-`src/index.ts` currently exports only `PACKAGE_NAME`, so there is no current source import evidence for AsyncStorage, Clipboard, Safe Area, SVG, or Lucide in the published source tree.
+`src/index.ts` currently exports `PACKAGE_NAME` plus governed root APIs. There is no current source import evidence for AsyncStorage, Clipboard, Safe Area, SVG, or Lucide in the published source tree.
 
 ## Native dependency detail
 
@@ -49,10 +49,10 @@ PLRNUI-44 is documentation/governance only. It does not add dependencies, change
 ### `react-native-safe-area-context`
 
 - Current declaration: not declared in `package.json`.
-- Contract decision: PLRNUI-37 says `react-native-safe-area-context` remains a required peer while `ThemeProvider` keeps safe-area behavior enabled by default.
+- Contract decision: PLRNUI-28 supersedes the prior default-provider contract by making `ThemeProvider` pure and keeping safe-area support out of this ticket.
 - Ownership: consumer app owns installation, autolinking/setup and Expo/RN compatibility.
-- PLRNUI-44 decision: do not duplicate or reopen PLRNUI-37; safe-area remains governed by `audit/dependencies/safe-area-provider-dependency-contract.md`.
-- Future metadata change: must preserve the approved contract and pass package/consumer validation.
+- PLRNUI-44 decision: no package metadata change for Safe Area.
+- Future metadata change: must pass package/consumer validation and separate safe-area governance.
 
 ### `@react-native-async-storage/async-storage`
 
@@ -96,7 +96,7 @@ AsyncStorage and Clipboard are consumer-owned under this policy.
 | Package | Expo Go | Managed workflow | Prebuild/custom dev client | Bare RN |
 | --- | --- | --- | --- | --- |
 | `react-native` | Must match Expo SDK `56.0.0` bundled RN `0.85.x`. | Consumer owns Expo/RN pair. | Consumer owns generated native project. | Consumer owns RN install. |
-| `react-native-safe-area-context` | Must be validated for selected Expo SDK if/when metadata requires it. | Consumer installs SDK-compatible version. | Consumer owns native setup if needed. | Consumer owns autolinking/setup. |
+| `react-native-safe-area-context` | Must be validated for selected Expo SDK if/when a future API or metadata requires it. | Consumer installs SDK-compatible version if they choose or an API requires it. | Consumer owns native setup if needed. | Consumer owns autolinking/setup. |
 | AsyncStorage | Consumer validates when choosing AsyncStorage adapter. | Consumer installs SDK-compatible version. | Consumer-owned if Expo Go does not support the selected module/version. | Consumer owns autolinking/setup. |
 | Clipboard | Consumer validates when choosing Expo Clipboard adapter. | Consumer installs SDK-compatible `expo-clipboard`. | Consumer-owned if Expo Go does not support the selected module/version. | Expo Clipboard is not a general bare-RN core requirement. |
 | SVG/Lucide RN | Not approved in current core metadata. | Requires future gate. | Requires future gate. | Requires future gate. |
@@ -123,4 +123,4 @@ Before introducing any new native or native-adjacent dependency, the project mus
 
 The current core package has no bundled native runtime dependency.
 
-AsyncStorage and Clipboard remain consumer-owned. Safe Area remains governed by the approved PLRNUI-37 contract. PLRNUI-44 does not add dependencies and does not duplicate PLRNUI-45 or PLRNUI-46.
+AsyncStorage and Clipboard remain consumer-owned. Safe Area is not required by pure `ThemeProvider` after PLRNUI-28 and remains future API governance. PLRNUI-44 does not add dependencies and does not duplicate PLRNUI-45 or PLRNUI-46.

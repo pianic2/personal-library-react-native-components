@@ -63,7 +63,8 @@ Current-state note for PLRNUI-26: root type exports remain explicit `export type
 | `Theme` | Theme | Exported through root | Yes | Required for consumer overrides and custom themes. |  |
 | `ThemeMode` | Theme | Exported through root | Yes | Required for provider and mode controls. |  |
 | `ThemeContextValue` | Theme provider context | Not exported | No | Internal provider implementation details. |  |
-| `ThemeProviderProps` | `ThemeProvider` | Not exported | Yes | Props for public provider should be exportable. | HUMAN REVIEW REQUIRED |
+| `ThemeProviderProps` | `ThemeProvider` | Exported through root | Yes | Public pure-provider props after PLRNUI-28. |  |
+| `ThemeAppShellProps` | `ThemeAppShell` | Exported through root | Yes | Public opt-in shell props after PLRNUI-28. | HUMAN REVIEW REQUIRED |
 | `ThemeMeta` | Liquidglass theme pack | Exported through root | Maybe experimental | Theme-pack metadata, not stable core API. | HUMAN REVIEW REQUIRED |
 
 ## Policy proposal

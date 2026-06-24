@@ -103,7 +103,8 @@ Current-state note for PLRNUI-26: the root API remains an explicit named export 
 | `Theme` | root | `theme/types.ts` | type | public | beta | Required to use and override theme contract. |  |
 | `ThemeMode` | root | `theme/types.ts` | type | public | beta | Required for theme provider and mode controls. |  |
 | `createTheme` | root | `theme/createTheme.ts` | utility | public | beta | Public customization helper. | HUMAN REVIEW REQUIRED |
-| `ThemeProvider` | root | `theme/ThemeProvider.tsx` | provider | public | beta | Required for library usage, but wrapper behavior should be reviewed. | HUMAN REVIEW REQUIRED |
+| `ThemeProvider` | root | `theme/ThemeProvider.tsx` | provider | public | beta | Pure theme context provider after PLRNUI-28; app-shell wrappers moved out. |  |
+| `ThemeAppShell` | root | `theme/ThemeAppShell.tsx` | component | public | beta | Opt-in themed layout wrapper for app/content styles and optional scroll container. | HUMAN REVIEW REQUIRED |
 | `useThemeContext` | root | `theme/ThemeProvider.tsx` | hook | internal | internal | Low-level context hook; `useTheme` should be consumer API. | HUMAN REVIEW REQUIRED |
 | `getStoredTheme` | root | `theme/themeStorage.ts` | utility | internal | internal | Persistence detail of provider. | HUMAN REVIEW REQUIRED |
 | `setStoredTheme` | root | `theme/themeStorage.ts` | utility | internal | internal | Persistence detail of provider. | HUMAN REVIEW REQUIRED |

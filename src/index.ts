@@ -72,8 +72,8 @@ export { Tooltip } from "./components/Tooltip";
 export { TopBar } from "./components/TopBar";
 export type { TopBarProps } from "./components/TopBar";
 
-export { ThemeProvider, useTheme } from "./theme";
-export type { Theme, ThemeMode } from "./theme";
+export { ThemeAppShell, ThemeProvider, useTheme } from "./theme";
+export type { Theme, ThemeAppShellProps, ThemeMode, ThemeProviderProps } from "./theme";
 
 export {
   isAndroid,

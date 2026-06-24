@@ -7,7 +7,6 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { ScrollView, View } from "react-native";
 
 import { createBaseTheme } from "./defaultTheme";
 import { createTheme } from "./createTheme";
@@ -23,17 +22,15 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps {
   initialMode?: ThemeMode;
   children: React.ReactNode;
-  withScroll?: boolean;
   themeOverrides?: Partial<Theme>;
 }
 
 export function ThemeProvider({
   initialMode = "light",
   children,
-  withScroll = true,
   themeOverrides,
 }: ThemeProviderProps) {
   const [mode, setModeState] = useState<ThemeMode>(initialMode);
@@ -51,30 +48,11 @@ export function ThemeProvider({
     [mode, themeOverrides]
   );
 
-  const ContentWrapper = withScroll ? ScrollView : View;
-
   return (
     <ThemeContext.Provider
       value={{ theme, mode, toggleTheme, setMode, ready: true }}
     >
-      <ContentWrapper
-        style={[
-          {
-            flex: 1,
-            backgroundColor: theme.colors.background,
-          },
-          theme.globalStyles?.app,
-          theme.globalStyles?.content,
-        ]}
-        contentContainerStyle={
-          withScroll
-            ? [{ flexGrow: 1 }, theme.globalStyles?.scrollContent]
-            : undefined
-        }
-        showsVerticalScrollIndicator={false}
-      >
-        {children}
-      </ContentWrapper>
+      {children}
     </ThemeContext.Provider>
   );
 }

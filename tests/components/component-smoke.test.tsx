@@ -41,7 +41,7 @@ function renderWithTheme(element: React.ReactElement) {
 
   act(() => {
     renderer = TestRenderer.create(
-      <ThemeProvider withScroll={false}>{element}</ThemeProvider>
+      <ThemeProvider>{element}</ThemeProvider>
     );
   });
 

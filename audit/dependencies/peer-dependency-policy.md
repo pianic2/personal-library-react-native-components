@@ -88,15 +88,15 @@ Current policy:
 
 ## Safe Area
 
-`react-native-safe-area-context` remains governed by the PLRNUI-37 safe-area provider dependency contract.
+`react-native-safe-area-context` remains governed by safe-area dependency governance. PLRNUI-28 supersedes the prior default-provider requirement by making `ThemeProvider` pure.
 
 Policy:
 
-- If `ThemeProvider` keeps default safe-area behavior, Safe Area is a required peer contract.
+- After PLRNUI-28, `ThemeProvider` has no default safe-area behavior and does not require Safe Area.
 - The consumer owns installation and Expo/RN compatibility.
 - Do not place Safe Area in `dependencies`.
-- Do not mark Safe Area optional while default provider behavior requires it.
-- PLRNUI-44 does not modify package metadata for Safe Area and does not reopen the PLRNUI-37 decision.
+- Future Safe Area support in `ThemeAppShell` or another root API requires a separate package metadata and smoke evidence decision.
+- PLRNUI-44 does not modify package metadata for Safe Area.
 
 ## AsyncStorage
 
@@ -155,7 +155,7 @@ Every new native or native-adjacent dependency requires:
 | --- | --- |
 | `react` | Host runtime peer. |
 | `react-native` | Host native runtime peer. |
-| `react-native-safe-area-context` | Consumer-owned native peer under PLRNUI-37 when required. |
+| `react-native-safe-area-context` | Not required by pure `ThemeProvider` after PLRNUI-28; future safe-area APIs require separate governance. |
 | `@react-native-async-storage/async-storage` | Consumer-owned storage adapter backend under PLRNUI-38. |
 | `expo-clipboard` | Consumer-owned optional clipboard adapter backend under PLRNUI-39. |
 | `react-native-svg` | Native module requiring future gate before introduction. |

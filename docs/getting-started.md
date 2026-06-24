@@ -3,7 +3,7 @@
 Install and import the package by its approved package identity:
 
 ```tsx
-import { Button, Text, ThemeProvider } from "@personal-library/react-native-components";
+import { Button, Text, ThemeAppShell, ThemeProvider } from "@personal-library/react-native-components";
 ```
 
 Use the root package entrypoint for consumer-facing code. Do not import from source internals, build output, component internals, repo-relative paths, or legacy package names.
@@ -11,15 +11,17 @@ Use the root package entrypoint for consumer-facing code. Do not import from sou
 ## Minimal App
 
 ```tsx
-import { Button, Column, Text, ThemeProvider } from "@personal-library/react-native-components";
+import { Button, Column, Text, ThemeAppShell, ThemeProvider } from "@personal-library/react-native-components";
 
 export function App() {
   return (
-    <ThemeProvider withScroll={false}>
-      <Column gap="md" padding="md">
-        <Text>Personal Library components</Text>
-        <Button label="Continue" onPress={() => undefined} />
-      </Column>
+    <ThemeProvider>
+      <ThemeAppShell>
+        <Column gap="md" padding="md">
+          <Text>Personal Library components</Text>
+          <Button label="Continue" onPress={() => undefined} />
+        </Column>
+      </ThemeAppShell>
     </ThemeProvider>
   );
 }

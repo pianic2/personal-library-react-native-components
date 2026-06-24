@@ -18,9 +18,9 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added explicit reference to the recommended package target `@personal-library/react-native-components`.
 - Added explicit reference to the recommended repo/project identity `personal-library-react-native-components`.
 - Added clean Expo consumer install as mandatory verification before release readiness.
-- Added PLRNUI-37 safe-area provider dependency contract documentation: `ThemeProvider` consumers must install `react-native-safe-area-context` as a required peer while safe-area behavior remains enabled by default.
+- Added PLRNUI-37 safe-area provider dependency contract documentation; PLRNUI-28 later supersedes the default-provider requirement by making `ThemeProvider` pure.
 - Added PLRNUI-39 clipboard dependency strategy: clipboard support is optional, adapter-based and consumer-owned; `expo-clipboard` is not a core package runtime dependency or root peer dependency.
-- Added PLRNUI-44 native dependency governance consolidation: current package metadata has no runtime `dependencies`, keeps `react` / `react-native` as peers, keeps `typescript` dev-only, keeps AsyncStorage and Clipboard consumer-owned, and leaves Safe Area under the approved PLRNUI-37 contract.
+- Added PLRNUI-44 native dependency governance consolidation: current package metadata has no runtime `dependencies`, keeps `react` / `react-native` as peers, keeps `typescript` dev-only, keeps AsyncStorage and Clipboard consumer-owned, and leaves future Safe Area work under native dependency governance.
 - Added PLRNUI-45 package entrypoint reconciliation: canonical package name, `main`, `module`, `types`, root `exports`, `files`, current `dist` output and root import are aligned for the current package surface.
 - Added PLRNUI-21 component blocker remediation evidence for `Card`, `ProgressBar`, `CodeInline`, `Textarea` and `PasswordInput`, including smoke/render harness coverage.
 - Added PLRNUI-22 navigation component public API integration for `TopBar`, `BottomBar`, `NavBar`, `Link`, `NavContext` and `SideBar`, with local component barrels, root exports, smoke coverage and `audit/components/navigation-platform-contract-plrnui-22.md`.
@@ -29,6 +29,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-25 component platform support matrix and docs import audit for the current checkout.
 - Added PLRNUI-26 internal and experimental export fencing evidence: internal helper root exports are fenced, experimental root exports are documented, and root API docs are reconciled without adding subpath entrypoints.
 - Added PLRNUI-57 minimal consumer-facing docs and examples using the approved root package import.
+- Added PLRNUI-28 pure `ThemeProvider` split and explicit `ThemeAppShell` migration path.
 
 ### Changed
 
@@ -40,7 +41,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that root public API governance is based on PLRNUI-4 export analysis: 92 exports analyzed, with 40 public, 32 experimental, 18 internal and 2 deprecated.
 - Clarified that no current subpath exports are implemented and any future subpath policy must be verified through package metadata and consumer smoke tests.
 - Clarified that docs/demo imports using legacy `from "AURA"` or repo-relative `../../index` paths are not proof of valid consumer API.
-- Clarified that `react-native-safe-area-context` is not optional under the current `ThemeProvider` contract and must be validated against the selected Expo/RN baseline.
+- Clarified that `react-native-safe-area-context` is not required by the pure `ThemeProvider` contract after PLRNUI-28; future package-provided safe-area APIs must be validated against the selected Expo/RN baseline.
 - Clarified that PLRNUI-39 is a governance/dependency decision only and does not declare a breaking change while clipboard remains opt-in and package metadata is unchanged.
 - Clarified that PLRNUI-44 does not implement `ThemeStorageAdapter`, does not add native dependencies, does not change the approved Expo/RN baseline, and does not create the PLRNUI-46 Expo consumer smoke test.
 - Clarified that PLRNUI-45 does not add subpath exports, does not broaden the public API, and does not create the PLRNUI-46 Expo consumer smoke test.
@@ -51,6 +52,33 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-25 updates documentation/audit evidence and README import examples only; it does not change package metadata, runtime component logic, dependencies, subpath exports or stable classifications.
 - Clarified that PLRNUI-26 removes `cn` and `useIsMounted` from the root API as internal helpers, keeps `Stack` root-exported as a public-candidate layout primitive, reclassifies `useNavigate` as an experimental navigation hook, and keeps `getAuraTokens` as legacy/deprecated compatibility pending future deprecation planning.
 - Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
+- Clarified that PLRNUI-28 removes `withScroll` and implicit layout rendering from `ThemeProvider`; consumers that need app layout should compose `ThemeProvider` with `ThemeAppShell`.
+
+### PLRNUI-28 - ThemeProvider app-shell split
+
+Before:
+
+```tsx
+<ThemeProvider withScroll={false}>...</ThemeProvider>
+```
+
+After pure provider:
+
+```tsx
+<ThemeProvider>...</ThemeProvider>
+```
+
+After app shell:
+
+```tsx
+<ThemeProvider>
+  <ThemeAppShell scroll>
+    ...
+  </ThemeAppShell>
+</ThemeProvider>
+```
+
+`ThemeAppShell` defaults `scroll` to `false`. PLRNUI-28 does not add safe-area support, does not import `react-native-safe-area-context`, does not add AsyncStorage and does not change package metadata.
 
 ### PLRNUI-16 - Token export naming decision
 

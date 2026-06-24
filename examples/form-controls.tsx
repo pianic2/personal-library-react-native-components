@@ -8,6 +8,7 @@ import {
   RadioGroup,
   Switch,
   Textarea,
+  ThemeAppShell,
   ThemeProvider,
 } from "@personal-library/react-native-components";
 
@@ -20,36 +21,38 @@ export function FormControlsExample() {
   const [contact, setContact] = useState("email");
 
   return (
-    <ThemeProvider withScroll={false}>
-      <Column gap="md" style={{ padding: 16 }}>
-        <Input label="Name" value={name} onChangeText={setName} />
-        <PasswordInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Textarea
-          label="Message"
-          value={message}
-          onChangeText={setMessage}
-        />
-        <Switch value={enabled} onChange={setEnabled} label="Enable updates" />
-        <Checkbox
-          checked={accepted}
-          onChange={setAccepted}
-          label="Accept terms"
-        />
-        <FormField label="Preferred contact">
-          <RadioGroup
-            value={contact}
-            onChange={setContact}
-            options={[
-              { label: "Email", value: "email" },
-              { label: "Phone", value: "phone" },
-            ]}
+    <ThemeProvider>
+      <ThemeAppShell>
+        <Column gap="md" style={{ padding: 16 }}>
+          <Input label="Name" value={name} onChangeText={setName} />
+          <PasswordInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
           />
-        </FormField>
-      </Column>
+          <Textarea
+            label="Message"
+            value={message}
+            onChangeText={setMessage}
+          />
+          <Switch value={enabled} onChange={setEnabled} label="Enable updates" />
+          <Checkbox
+            checked={accepted}
+            onChange={setAccepted}
+            label="Accept terms"
+          />
+          <FormField label="Preferred contact">
+            <RadioGroup
+              value={contact}
+              onChange={setContact}
+              options={[
+                { label: "Email", value: "email" },
+                { label: "Phone", value: "phone" },
+              ]}
+            />
+          </FormField>
+        </Column>
+      </ThemeAppShell>
     </ThemeProvider>
   );
 }
