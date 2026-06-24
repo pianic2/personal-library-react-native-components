@@ -31,6 +31,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-57 minimal consumer-facing docs and examples using the approved root package import.
 - Added PLRNUI-28 pure `ThemeProvider` split and explicit `ThemeAppShell` migration path.
 - Added PLRNUI-56 optional `ThemeStorageAdapter` persistence for `ThemeProvider`, keeping storage adapter-based, consumer-owned and disabled by default.
+- Added PLRNUI-30 Button structural component-token contract wiring for height, horizontal padding, icon size, radius, gap, border width and opacity.
 
 ### Changed
 
@@ -55,6 +56,22 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
 - Clarified that PLRNUI-28 removes `withScroll` and implicit layout rendering from `ThemeProvider`; consumers that need app layout should compose `ThemeProvider` with `ThemeAppShell`.
 - Clarified that PLRNUI-56 intentionally defers `"system"` mode persistence because the current runtime `ThemeMode` remains `"light" | "dark"`; persisted `"system"` values are ignored as invalid.
+- Clarified that PLRNUI-30 does not add Button background, text, border, loading, typography, shadow, elevation, animation or width component tokens; Button colors continue to use semantic color tokens.
+
+### PLRNUI-30 - Button component token contract
+
+`Button` now reads approved structural values from `theme.components.button`:
+
+- `height.sm/md/lg`
+- `paddingX.sm/md/lg`
+- `iconSize.sm/md/lg`
+- `radius`
+- `gap`
+- `borderWidth`
+- `opacity.disabled`
+- `opacity.pressed`
+
+Public Button props, root package exports, variant behavior and semantic color behavior are unchanged. The existing `size="xs"` prop remains supported through the primitive height scale and existing fallback values because PLRNUI-30 only approved `sm/md/lg` component-token sizes.
 
 ### PLRNUI-56 - Optional ThemeStorageAdapter persistence
 

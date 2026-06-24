@@ -11,6 +11,25 @@ import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 type ThemeStyle = ViewStyle | TextStyle | ImageStyle;
 
+export type ButtonComponentSizeTokens = {
+  sm: number;
+  md: number;
+  lg: number;
+};
+
+export type ButtonComponentTokens = {
+  height: ButtonComponentSizeTokens;
+  paddingX: ButtonComponentSizeTokens;
+  iconSize: ButtonComponentSizeTokens;
+  radius: number;
+  gap: number;
+  borderWidth: number;
+  opacity: {
+    disabled: number;
+    pressed: number;
+  };
+};
+
 export interface GlassMaterialTokens {
   tint: string;
   border: string;
@@ -39,15 +58,8 @@ export interface Theme {
   zIndex: typeof zIndex;
   size: typeof size;
 
-  components?: {
-    button?: {
-      height?: {
-        sm?: number;
-        md?: number;
-        lg?: number;
-      };
-      radius?: number;
-    };
+  components: {
+    button: ButtonComponentTokens;
 
     input?: {
       height?: number;

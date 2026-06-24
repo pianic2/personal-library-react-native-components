@@ -16,9 +16,9 @@ Priorities:
 | ID | Priority | Path | Component | Hardcoded value | Risk | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
 | HCV-001 | P0 resolved by PLRNUI-27 | `theme/defaultTheme.tsx` | Base theme | formerly `colors: lightColors`; `backgroundColor: lightColors.background` | Resolved for base dark mode; `createBaseTheme(mode)` now selects semantic colors through `resolveColors(mode)`. | `tests/theme/base-theme-dark-mode.test.tsx` verifies dark base colors, dark app background, and provider toggle behavior. |
-| HCV-002 | P1 | `components/Button.tsx` | Button | `heightMap` values `26/32/40/48` | Duplicates `tokens/size.base.ts` and bypasses `theme.components.button.height`. | `Button` local map; `tokens/size.base.ts` exports same height scale. |
-| HCV-003 | P1 | `components/Button.tsx` | Button | `iconSizeMap` values `12/16/20/24` | No icon size token/component token; variant size cannot be themed. | Local `iconSizeMap`. |
-| HCV-004 | P1 | `components/Button.tsx` | Button | `horizontalPadding` values `8/12/16/20`; `borderWidth: 2`; `gap: 8`; opacity `0.5` | Button spacing/state tokens cannot be overridden consistently. | Local maps and style object. |
+| HCV-002 | P1 resolved by PLRNUI-30 | `components/Button.tsx` | Button | formerly local `heightMap` values `26/32/40/48` | Resolved for approved component-token sizes `sm/md/lg`; legacy `xs` continues to use `theme.size.height.xs` because PLRNUI-30 did not add `components.button.height.xs`. | `theme.defaultTheme.components.button.height`; `tests/theme/button-component-tokens.test.tsx`; `audit/theme/button-component-token-contract-plrnui-30.md`. |
+| HCV-003 | P1 resolved by PLRNUI-30 | `components/Button.tsx` | Button | formerly local `iconSizeMap` values `12/16/20/24` | Resolved for approved component-token sizes `sm/md/lg`; legacy `xs` retains the existing `12` fallback to preserve the public `size="xs"` behavior outside the PLRNUI-30 token contract. | `theme.defaultTheme.components.button.iconSize`; `tests/theme/button-component-tokens.test.tsx`; `audit/theme/button-component-token-contract-plrnui-30.md`. |
+| HCV-004 | P1 resolved by PLRNUI-30 | `components/Button.tsx` | Button | formerly local `horizontalPadding` values `8/12/16/20`; `borderWidth: 2`; `gap: 8`; opacity `0.5` | Resolved for approved component-token sizes and structural state values through `theme.components.button.paddingX`, `borderWidth`, `gap`, and `opacity`; legacy `xs` padding keeps `theme.space.sm` to preserve existing behavior without widening the approved contract. | `theme.defaultTheme.components.button`; `components/Button.tsx`; `tests/theme/button-component-tokens.test.tsx`; `audit/theme/button-component-token-contract-plrnui-30.md`. |
 | HCV-005 | P1 | `components/form/Input.tsx` | Input | Label marker `height: 10`, `width: 10`, `borderRadius: 5` | Visual marker is not represented by semantic/component tokens and may not belong in a generic input. | Inline Box before label. |
 | HCV-006 | P1 | `components/form/Input.tsx` | Input | `theme.size.height[size] - 2`; `theme.space["md"] - 2.5`; `paddingVertical: 0` | Magic offsets make component sizing fragile and hard to theme. | Input container/TextInput styles. |
 | HCV-007 | P1 | `components/surfaces/Card.tsx` | Card | `radius = 14` | Default radius is outside `radius` token scale (`md: 10`, `lg: 16`) and bypasses `theme.components.card.radius`. | Card props default. |
@@ -39,6 +39,6 @@ Priorities:
 ## Critical Themes
 
 - Core P0: base dark mode hardcoded-light blocker is resolved by PLRNUI-27.
-- Core P1: Button/Input/Card have component-token contracts in `theme/types.ts`, but their implementations do not read `theme.components.*`.
+- Core P1: Button now reads approved structural `theme.components.button` tokens after PLRNUI-30; Input/Card still have component-token contracts that their implementations do not read.
 - Form controls need a shared control-size token family before stable promotion.
 - Overlay/navigation tokens are missing; current values may remain experimental until component maturity decisions are made.

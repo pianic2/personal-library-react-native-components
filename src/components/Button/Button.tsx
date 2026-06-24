@@ -25,27 +25,18 @@ export function Button({
   disabled = false,
 }: ButtonProps) {
   const { theme, colors } = useTheme();
-
-  const heightMap = {
-    xs: 26,
-    sm: 32,
-    md: 40,
-    lg: 48,
-  };
-
-  const iconSizeMap = {
-    xs: 12,
-    sm: 16,
-    md: 20,
-    lg: 24,
-  };
-
-  const horizontalPadding = {
-    xs: 8,
-    sm: 12,
-    md: 16,
-    lg: 20,
-  };
+  const buttonTokens = theme.components.button;
+  const isTokenSize = size !== "xs";
+  const height = isTokenSize ? buttonTokens.height[size] : theme.size.height.xs;
+  const paddingHorizontal = isTokenSize
+    ? buttonTokens.paddingX[size]
+    : theme.space.sm;
+  const iconSize = isTokenSize ? buttonTokens.iconSize[size] : 12;
+  const borderRadius = buttonTokens.radius;
+  const gap = buttonTokens.gap;
+  const borderWidth = buttonTokens.borderWidth;
+  const disabledOpacity = buttonTokens.opacity.disabled;
+  const pressedOpacity = buttonTokens.opacity.pressed;
 
   const backgroundColor =
     variant === "primary"
@@ -82,23 +73,23 @@ export function Button({
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => ({
-        minHeight: heightMap[size],
-        paddingHorizontal: horizontalPadding[size],
+        minHeight: height,
+        paddingHorizontal,
         paddingVertical: theme.space[size],
-        borderWidth: 2,
+        borderWidth,
         borderColor: borderColor,
-        borderRadius: theme.radius.md,
+        borderRadius,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 8,
+        gap,
         backgroundColor: pressed
           ? colors.surface
           : backgroundColor,
-        opacity: disabled ? 0.5 : 1,
+        opacity: disabled ? disabledOpacity : pressed ? pressedOpacity : 1,
       })}
     >
-      {Icon && <Icon size={iconSizeMap[size]} color={contentColor} />}
+      {Icon && <Icon size={iconSize} color={contentColor} />}
 
       {label && (
         <Text

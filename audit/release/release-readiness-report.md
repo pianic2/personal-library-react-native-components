@@ -44,6 +44,7 @@ Export and metadata validation:
 - PLRNUI-57 adds minimal consumer-facing docs and examples that import from `@personal-library/react-native-components`; package metadata and runtime exports are unchanged.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
 - PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
+- PLRNUI-30 wires Button structural component tokens through `theme.components.button` without adding dependencies, package metadata changes, root exports or non-structural Button color tokens.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -113,6 +114,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-57 expands docs/examples coverage while preserving beta/experimental labels; no component is promoted to `stable`.
 - PLRNUI-28 changes provider behavior before stable release; consumers using the old implicit layout wrapper or `withScroll` must migrate to `ThemeAppShell`.
 - PLRNUI-56 adds asynchronous opt-in hydration risk only for consumers that pass `persistTheme` and `storage`; persisted invalid values, read failures and write failures are ignored without crashing.
+- PLRNUI-30 reduces Button token-architecture risk for structural values, but does not promote Button to stable and does not resolve remaining Input/Card component-token hardening.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers

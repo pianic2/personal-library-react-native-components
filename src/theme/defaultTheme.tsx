@@ -6,11 +6,11 @@ import { typography } from "../tokens/typography.base";
 import { shadows } from "../tokens/shadows.base";
 import { zIndex } from "../tokens/zIndex.base";
 import { size } from "../tokens/size.base";
-import { lightColors, resolveColors } from "../tokens/colors.base";
-import type { ThemeMode } from "./types";
+import { resolveColors } from "../tokens/colors.base";
+import type { Theme, ThemeMode } from "./types";
 
 
-export function createBaseTheme(mode: ThemeMode) {
+export function createBaseTheme(mode: ThemeMode): Theme {
   const colors = resolveColors(mode);
 
   return {
@@ -24,6 +24,32 @@ export function createBaseTheme(mode: ThemeMode) {
     shadows,
     zIndex,
     size,
+    components: {
+      button: {
+        height: {
+          sm: size.height.sm,
+          md: size.height.md,
+          lg: size.height.lg,
+        },
+        paddingX: {
+          sm: 12,
+          md: 16,
+          lg: 20,
+        },
+        iconSize: {
+          sm: 16,
+          md: 20,
+          lg: 24,
+        },
+        radius: radius.md,
+        gap: 8,
+        borderWidth: 2,
+        opacity: {
+          disabled: 0.5,
+          pressed: 1,
+        },
+      },
+    },
     globalStyles: {
       app: {
         flex: 1,
@@ -40,10 +66,7 @@ export function createBaseTheme(mode: ThemeMode) {
       },
     },
 
-  } as const;
+  };
 }
 
-export type Theme = ReturnType<typeof createBaseTheme>;
-
 export const defaultTheme: Theme = createBaseTheme("light");
-
