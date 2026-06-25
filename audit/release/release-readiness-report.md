@@ -40,7 +40,7 @@ Export and metadata validation:
 - Current `main`, `module` and top-level `types` point to `./dist/index.js` and `./dist/index.d.ts`.
 - Current `src/index.ts` exports `PACKAGE_NAME` plus the governed root component, theme, hook, utility and token APIs; PLRNUI-24 makes approved root-public component props type exports explicit, including `RadioGroupOption`, and keeps PLRNUI-23 experimental overlay/form modal root exports runtime-only through explicit component exports.
 - PLRNUI-25 adds component platform support documentation and a docs import audit for the current checkout; package metadata and runtime exports are unchanged.
-- PLRNUI-26 fences internal helper root exports by removing `cn` and `useIsMounted` from `src/index.ts`, while keeping the root API explicit named exports only. `Stack` remains root-exported as a documented public-candidate layout primitive, `useNavigate` remains root-exported as experimental navigation API, overlay exports remain explicit experimental root runtime exports, and `getAuraTokens` remains legacy/deprecated compatibility pending future deprecation planning.
+- PLRNUI-26 fences internal helper root exports by removing `cn` and `useIsMounted` from `src/index.ts`, while keeping the root API explicit named exports only. `Stack` remains root-exported as a documented public-candidate layout primitive, `useNavigate` remains root-exported as experimental navigation API, and overlay exports remain explicit experimental root runtime exports. PLRNUI-29 removes legacy token compatibility names.
 - PLRNUI-57 adds minimal consumer-facing docs and examples that import from `@personal-library/react-native-components`; package metadata and runtime exports are unchanged.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
 - PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
@@ -48,6 +48,7 @@ Export and metadata validation:
 - PLRNUI-31 wires Input structural component tokens through `theme.components.input`, removes the decorative label marker, eliminates magic sizing offsets and preserves semantic color behavior without adding dependencies, package metadata changes or root exports.
 - PLRNUI-32 wires Card structural defaults through `theme.components.card` for radius, padding and shadow, removes the former `radius = 14` default and preserves explicit Card prop overrides without adding dependencies, package metadata changes or root exports.
 - PLRNUI-33 verifies nested `themeOverrides` behavior for colors, radius, size and Button/Input/Card component tokens, hardens `createTheme` against invalid object branch replacements, and keeps package metadata, root exports and public provider props unchanged.
+- PLRNUI-29 removes legacy/snapshot public token names from root and token barrels, exposes neutral `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`, and records the change as an intentional breaking change with no deprecated root aliases.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -118,6 +119,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-28 changes provider behavior before stable release; consumers using the old implicit layout wrapper or `withScroll` must migrate to `ThemeAppShell`.
 - PLRNUI-56 adds asynchronous opt-in hydration risk only for consumers that pass `persistTheme` and `storage`; persisted invalid values, read failures and write failures are ignored without crashing.
 - PLRNUI-30 reduces Button token-architecture risk for structural values, PLRNUI-31 reduces Input token-architecture risk for structural values, PLRNUI-32 reduces Card token-architecture risk for structural defaults, and PLRNUI-33 reduces unsafe override risk for nested theme structures. These tickets do not promote components or the override API to stable.
+- PLRNUI-29 intentionally breaks consumers of `auraTokens`, `getAuraTokens` or `TokensSnapshot`; release readiness now depends on keeping neutral token names documented and coordinating consumer-facing policy through PLRNUI-53.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers

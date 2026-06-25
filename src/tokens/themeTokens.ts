@@ -4,7 +4,7 @@ import { shadows } from "./shadows.base";
 import { space } from "./spacing.base";
 import { typography } from "./typography.base";
 
-export interface TokensSnapshot {
+export interface ThemeTokens {
   readonly typography: {
     readonly fontFamily: typeof typography.fontFamily;
     readonly fontSize: typeof typography.fontSize;
@@ -52,7 +52,7 @@ export interface TokensSnapshot {
   };
 }
 
-function createSnapshot(mode: ColorScheme): TokensSnapshot {
+function buildThemeTokens(mode: ColorScheme): ThemeTokens {
   const colors = mode === "dark" ? darkColors : lightColors;
 
   return {
@@ -104,11 +104,11 @@ function createSnapshot(mode: ColorScheme): TokensSnapshot {
   };
 }
 
-const lightSnapshot = Object.freeze(createSnapshot("light"));
-const darkSnapshot = Object.freeze(createSnapshot("dark"));
+const lightThemeTokens = Object.freeze(buildThemeTokens("light"));
+const darkThemeTokens = Object.freeze(buildThemeTokens("dark"));
 
-export const auraTokens: TokensSnapshot = lightSnapshot;
+export const defaultThemeTokens: ThemeTokens = lightThemeTokens;
 
-export function getAuraTokens(mode: ColorScheme = "light"): TokensSnapshot {
-  return mode === "dark" ? darkSnapshot : lightSnapshot;
+export function createThemeTokens(mode: ColorScheme = "light"): ThemeTokens {
+  return mode === "dark" ? darkThemeTokens : lightThemeTokens;
 }

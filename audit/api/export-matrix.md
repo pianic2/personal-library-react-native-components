@@ -6,7 +6,7 @@ Audit read-only based on historical `index.ts`, internal barrel exports, `packag
 
 Current-state note for PLRNUI-25: this PLRNUI-4 matrix remains historical API governance evidence for a broader source tree. In the current checkout, `package.json` declares `@personal-library/react-native-components`, `main` / `module` / `types` point to `dist/index.js` and `dist/index.d.ts`, and `src/index.ts` exports `PACKAGE_NAME` plus component, theme, hook, utility and token APIs. PLRNUI-24 makes approved root-public component props explicit type-only root exports, including the newly named `RadioGroupOption`, and replaces broad root star exports for PLRNUI-23 experimental components with explicit runtime component exports only. PLRNUI-25 adds docs evidence for platform support and canonical package imports without changing package metadata, runtime exports or subpath policy. The root `NavContext` subset is `NavProvider`, `useNav`, `useNavigate` and `NavItem`, while helper hooks remain local/internal. It does not add package subpath exports, export experimental props types, or promote anything to `stable`.
 
-Current-state note for PLRNUI-26: the root API remains an explicit named export surface and still has no root `export *`. `Stack` is reconciled as root-reachable public-candidate layout primitive. `useNavigate` remains root-reachable but is classified as an experimental navigation hook, not internal and not stable. `useIsMounted` and `cn` are fenced out of the root API and remain local internal helpers. PLRNUI-23 overlay exports remain explicit experimental root runtime exports without root props type promotion. `getAuraTokens` remains root-reachable only as a legacy/deprecated compatibility export pending a future deprecation path.
+Current-state note for PLRNUI-26/PLRNUI-29: the root API remains an explicit named export surface and still has no root `export *`. `Stack` is reconciled as root-reachable public-candidate layout primitive. `useNavigate` remains root-reachable but is classified as an experimental navigation hook, not internal and not stable. `useIsMounted` and `cn` are fenced out of the root API and remain local internal helpers. PLRNUI-23 overlay exports remain explicit experimental root runtime exports without root props type promotion. PLRNUI-29 removes legacy/snapshot token names from root and token barrels.
 
 ## Package export map
 
@@ -96,9 +96,12 @@ Current-state note for PLRNUI-26: the root API remains an explicit named export 
 | `withSafeAreaPadding` | root | `utils/safeArea.ts` | utility | experimental | experimental | Potentially useful helper, but should not be root stable without docs contract. | HUMAN REVIEW REQUIRED |
 | `TokenStorage` | root | `storage/tokenStorage.ts` | type | internal | internal | Storage is not core UI API and implementation exports are incomplete. | HUMAN REVIEW REQUIRED |
 | `TokenPair` | root | `tokens/types.ts` | type | public | beta | Token typing candidate for public token API. | HUMAN REVIEW REQUIRED |
-| `auraTokens` | root | `tokens/snapshot.ts` | token | deprecated | deprecated | Legacy AURA naming conflicts with recommended package identity. | HUMAN REVIEW REQUIRED |
-| `getAuraTokens` | root | `tokens/snapshot.ts` | utility | deprecated-compatibility | deprecated | Legacy/deprecated compatibility export retained by PLRNUI-26 until a future deprecation/removal path is approved; not future stable naming. | HUMAN REVIEW REQUIRED |
-| `TokensSnapshot` | root | `tokens/snapshot.ts` | type | public | beta | Useful type for token snapshots; naming is neutral. | HUMAN REVIEW REQUIRED |
+| `auraTokens` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | token | removed | breaking | Legacy AURA token name removed now; no root deprecated alias is provided. | HUMAN REVIEW REQUIRED |
+| `getAuraTokens` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | utility | removed | breaking | Legacy AURA token accessor removed now; no root deprecated alias is provided. | HUMAN REVIEW REQUIRED |
+| `TokensSnapshot` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | type | removed | breaking | Snapshot-named public token type removed in favor of neutral `ThemeTokens`. | HUMAN REVIEW REQUIRED |
+| `defaultThemeTokens` | root | `tokens/themeTokens.ts` | token | public | beta | Neutral default light token export and stable target for former `auraTokens` consumers. | HUMAN REVIEW REQUIRED |
+| `createThemeTokens` | root | `tokens/themeTokens.ts` | utility | public | beta | Neutral light/dark token factory and stable target for former `getAuraTokens` consumers. | HUMAN REVIEW REQUIRED |
+| `ThemeTokens` | root | `tokens/themeTokens.ts` | type | public | beta | Neutral public token object type replacing `TokensSnapshot`. | HUMAN REVIEW REQUIRED |
 | `GlassMaterialTokens` | root | `theme/types.ts` | type | experimental | experimental | Theme extension for liquid/glass materials is not core stable yet. | HUMAN REVIEW REQUIRED |
 | `Theme` | root | `theme/types.ts` | type | public | beta | Required to use and override theme contract. |  |
 | `ThemeMode` | root | `theme/types.ts` | type | public | beta | Required for theme provider and mode controls. |  |
@@ -153,7 +156,7 @@ PLRNUI-26 internal and experimental export fencing evidence:
 - `useNavigate` remains root-exported and is documented as experimental navigation API.
 - `BottomSheet`, `Modal`, `Popover`, `Select` and `Tooltip` remain explicit experimental root runtime exports, with no broad root export and no root props type promotion.
 - `BottomBar` and `SideBar` remain explicit experimental navigation/app-shell root exports; `TopBar`, `NavBar`, `Link`, `NavProvider` and `useNav` remain beta/public-candidate navigation APIs until stable gates are satisfied.
-- `getAuraTokens` remains a legacy/deprecated compatibility export, not future stable naming.
+- Removed token names remain breaking removals, not deprecated compatibility exports.
 - PLRNUI-26 does not add `/experimental` or `/internal` entrypoints and does not promote any component to `stable`.
 
 ## Human Review Required

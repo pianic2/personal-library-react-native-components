@@ -58,7 +58,8 @@ Current-state note for PLRNUI-26: root type exports remain explicit `export type
 | `SafeAreaInsets` | `withSafeAreaPadding` | Exported through root | Maybe | Only public if safe-area utility remains public. | HUMAN REVIEW REQUIRED |
 | `TokenStorage` | Storage | Exported through root | No | Storage is not core UI API and implementation exports are incomplete. | HUMAN REVIEW REQUIRED |
 | `TokenPair` | Tokens | Exported through root | Yes | Token API helper type. | HUMAN REVIEW REQUIRED |
-| `TokensSnapshot` | Tokens | Exported through root | Yes | Token API snapshot type. | HUMAN REVIEW REQUIRED |
+| `TokensSnapshot` | Tokens | Removed from root by PLRNUI-29 | No | Snapshot-named public type removed as a breaking token API cleanup. Use `ThemeTokens`. | HUMAN REVIEW REQUIRED |
+| `ThemeTokens` | Tokens | Exported through root by PLRNUI-29 | Yes | Neutral public token API type for `defaultThemeTokens` and `createThemeTokens`. | HUMAN REVIEW REQUIRED |
 | `GlassMaterialTokens` | Theme materials | Exported through root | Maybe experimental | Useful for theme packs, but exposes experimental glass internals. | HUMAN REVIEW REQUIRED |
 | `Theme` | Theme | Exported through root | Yes | Required for consumer overrides and custom themes. |  |
 | `ThemeMode` | Theme | Exported through root | Yes | Required for provider and mode controls. |  |

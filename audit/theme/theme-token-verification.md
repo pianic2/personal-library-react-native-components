@@ -21,13 +21,13 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 | Contract area | Verification status | Evidence |
 | --- | --- | --- |
 | Primitive tokens exist | verified | `tokens/colors.base.ts`, `tokens/spacing.base.ts`, `tokens/radius.base.ts`, `tokens/size.base.ts`, `tokens/shadows.base.ts`, `tokens/zIndex.base.ts`, `tokens/typography.base.ts`; ADR 0004 requires primitive tokens in `audit/adr/0004-theme-token-architecture.md`. |
-| Semantic color tokens exist | verified | `tokens/colors.base.ts` defines roles such as `background`, `surface`, `textPrimary`, `border`, `error`, `success`, `overlay`, `backdrop`; snapshot groups them into `surface`, `text`, `border`, `brand`, `feedback` in `tokens/snapshot.ts`. |
+| Semantic color tokens exist | verified | `tokens/colors.base.ts` defines roles such as `background`, `surface`, `textPrimary`, `border`, `error`, `success`, `overlay`, `backdrop`; `tokens/themeTokens.ts` groups them into `surface`, `text`, `border`, `brand`, `feedback`. |
 | Component tokens exist in type contract | partial | `theme/types.ts` defines optional `components.button`, `components.input`, and `components.card`; no current component reads `theme.components.*` based on `rg "theme\\.components|components\\?\\." components theme`. |
 | Default ThemeProvider light/dark behavior | verified by PLRNUI-27 and preserved by PLRNUI-28 | `ThemeProvider` recomputes `createBaseTheme(mode)` on mode changes; `createBaseTheme` resolves semantic colors through `resolveColors(mode)` and `tests/theme/base-theme-dark-mode.test.tsx` verifies consumer-visible colors change after `toggleTheme()` and `setMode()`. |
 | Alternative liquidglass light/dark theme factory | verified | `themes/liquidglass/index.ts` selects `mode === "dark" ? darkColors : lightColors` and exports `liquidglassDarkTheme`. |
 | Theme override API | partial | `ThemeProvider` accepts `themeOverrides?: Partial<Theme>` and calls `createTheme(themeOverrides, createBaseTheme(mode))`; `createTheme` uses untyped `any` inside `deepMerge`, already flagged by `audit/03-theme-token-system.md`. |
-| Public theme/tokens API classification | partial | `audit/api/export-matrix.md` marks `Theme`, `ThemeMode`, `createTheme`, `ThemeProvider`, `useTheme` as public/beta and `auraTokens`, `getAuraTokens` as deprecated. Current root `index.ts` still exports all `./tokens`, `./theme`, and `./themes`. |
-| Legacy AURA token naming migration path | partial | `tokens/index.ts` exports `auraTokens` and `getAuraTokens`; `audit/migration/legacy-naming-map.md` maps them to unknown future neutral names and `audit/migration/breaking-change-register.md` marks token naming as a candidate breaking change. |
+| Public theme/tokens API classification | partial | `audit/api/export-matrix.md` marks `Theme`, `ThemeMode`, `createTheme`, `ThemeProvider`, `useTheme` as public/beta. PLRNUI-29 removes legacy/snapshot token names and exposes neutral `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`. |
+| Legacy AURA token naming migration path | verified by PLRNUI-29 | `tokens/index.ts` exports neutral token names only; `src/index.ts` exports neutral token names only; `audit/migration/breaking-change-register.md` marks token naming as implemented breaking cleanup. |
 
 ## Findings
 
@@ -45,11 +45,11 @@ ADR 0004 is architecturally aligned with the intended target, but the current im
 - Risk: ADR 0004 says component tokens should start from Button, Input, and Card, but those components are not wired to component token defaults.
 - Priority: P1.
 
-### THM-PLRNUI6-03 - Public token API still exposes AURA names
+### THM-PLRNUI6-03 - Public token API legacy names removed by PLRNUI-29
 
-- Status: verified legacy debt.
-- Evidence: `tokens/index.ts` exports `auraTokens`, `getAuraTokens`; `tokens/snapshot.ts` defines those names; `audit/api/export-matrix.md` classifies them as deprecated.
-- Risk: token names are public API according to ADR 0004; renaming without alias/deprecation policy is breaking.
+- Status: implemented breaking cleanup.
+- Evidence: `src/index.ts` and `tokens/index.ts` export `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`; `auraTokens`, `getAuraTokens` and `TokensSnapshot` are removed from root/token barrels. `tests/theme/token-public-api.test.tsx` verifies neutral root imports.
+- Risk: consumers using removed token names must migrate; PLRNUI-53 owns consumer-facing docs/policy.
 - Priority: P1.
 
 ### THM-PLRNUI6-04 - ThemeProvider app-shell responsibilities split by PLRNUI-28
@@ -74,4 +74,4 @@ ADR 0004 verification gates are not met:
 - Token docs present: partial, docs exist but still use AURA imports and legacy token names.
 - Stable components without critical hardcoded values: not met; `audit/components/component-maturity-matrix.md` states no component is stable and several have blockers.
 - Theme override example: not verified in this audit; code supports `themeOverrides` but merge typing is partial.
-- Legacy token deprecation/rename mapping: partial; audit files identify candidates, but source still exposes only AURA token names.
+- Legacy token deprecation/rename mapping: implemented by PLRNUI-29 for the technical source/API removal; consumer-facing documentation policy remains PLRNUI-53.

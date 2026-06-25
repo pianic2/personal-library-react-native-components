@@ -19,8 +19,9 @@ Iniziale. Le voci indicano mapping candidati e richiedono audit codice dove segn
 | `aura` | package import finale | import path | unknown | Compare come esempio legacy possibile; mapping dipende dal nome npm finale | Audit README/docs/demo |
 | `AURA` in README/docs | react-native-components | docs | rename | Da usare solo come storico nella migration guide | Audit docs e README |
 | `AURA` in mkdocs/site metadata | react-native-components | docs | rename | Candidate se presente in site name/description/repo URL | Audit `mkdocs.yml` e docs config |
-| `auraTokens` | `componentTokens` o nome token finale | symbol | unknown | La review cita token legacy ma il nuovo nome non e deciso | Audit `tokens/index.ts`, exports e consumer |
-| `getAuraTokens` | `getComponentTokens` o nome token finale | symbol | unknown | Nuovo nome da decidere con ADR/API matrix | Audit token exports e docs |
+| `auraTokens` | `defaultThemeTokens` | symbol | remove | PLRNUI-29 removes the public/root legacy token name now; no deprecated alias is provided. | `src/index.ts`, `src/tokens/index.ts`, `tests/theme/token-public-api.test.tsx` |
+| `getAuraTokens` | `createThemeTokens` | symbol | remove | PLRNUI-29 removes the public/root legacy token accessor now; no deprecated alias is provided. | `src/index.ts`, `src/tokens/index.ts`, `tests/theme/token-public-api.test.tsx` |
+| `TokensSnapshot` | `ThemeTokens` | type | remove | PLRNUI-29 removes the snapshot-named public type now; no deprecated alias is provided. | `src/index.ts`, `src/tokens/index.ts`, `tests/theme/token-public-api.test.tsx` |
 | `[ui/Button]` warning prefix | `[react-native-components/Button]` o prefisso package finale | symbol | rename | Candidate per messaggi runtime, non urgente senza API decision | Audit console warnings e log prefixes |
 | `UI_THEME_MODE` | key namespaced per `react-native-components` | symbol | unknown | Storage key legacy/generica; migrazione va valutata per compatibilita | Audit theme storage e persistenza esistente |
 | `packages/ui` | package directory finale da decidere | package | keep temporarily | Origine storica nel monorepo; non rinominare senza piano repo | Audit monorepo reale e path consumer |
@@ -45,6 +46,5 @@ Iniziale. Le voci indicano mapping candidati e richiedono audit codice dove segn
 - Audit package metadata.
 - Audit README, docs e example app.
 - Audit exports pubblici e token names.
-- Verifica consumer esistenti prima di rimuovere alias legacy.
+- PLRNUI-29 removes public token naming aliases now; consumer-facing docs/policy coordination remains PLRNUI-53.
 - Collegamento di ogni rename effettivo a Jira e changelog.
-

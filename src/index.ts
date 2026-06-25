@@ -96,5 +96,5 @@ export {
 } from "./hooks";
 export type { Breakpoint } from "./hooks";
 
-export { getAuraTokens } from "./tokens";
-export type { TokenPair, TokensSnapshot } from "./tokens";
+export { createThemeTokens, defaultThemeTokens } from "./tokens";
+export type { ThemeTokens, TokenPair } from "./tokens";

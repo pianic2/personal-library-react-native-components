@@ -59,26 +59,27 @@ Allowed statuses:
 | PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; historical clean Expo consumer install failed on React peer mismatch; verdict NOT READY until consumer evidence is regenerated. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
-| PLRNUI-16 | Token export naming | AURA-branded token exports are deprecated legacy names and removed from the future API contract; neutral theme-oriented naming is the target. | PLRNUI-29 cleanup/breaking-change tracking and PLRNUI-53 consumer docs policy. | Blocks RC if token naming remains ambiguous or legacy names are presented as stable. |
-| PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental; `getAuraTokens` is retained as legacy/deprecated compatibility. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
+| PLRNUI-16 / PLRNUI-29 | Token export naming | AURA-branded and snapshot-named public token exports are removed now; neutral theme-oriented names are the supported public token API. | Source/root export grep, token public API test, PLRNUI-53 consumer docs policy. | Blocks RC if removed token names are reintroduced as public/root aliases or legacy names are presented as stable. |
+| PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental. PLRNUI-29 removes legacy token compatibility names. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
 | PLRNUI-28 | Theme provider app-shell split | `ThemeProvider` is pure; `ThemeAppShell` owns explicit layout/scroll behavior. | Node smoke tests, typecheck, build, package dry-run and migration docs. | Breaking for consumers relying on implicit provider layout or `withScroll`. |
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
 | PLRNUI-44 | Native dependency governance consolidation | Current package metadata has no runtime `dependencies`; `react` and `react-native` are peers; AsyncStorage and Clipboard are consumer-owned; Safe Area is not required by pure `ThemeProvider` after PLRNUI-28. | Documentation review; future native dependency changes must pass the native dependency gate and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because it changes governance docs only. |
 | PLRNUI-45 | Package entrypoint reconciliation | Current package metadata uses canonical package name, root-only exports, `dist/index.js`, `dist/index.d.ts`, and a minimal `files` whitelist. | Typecheck, build, pack dry-run, tarball file-list check and PLRNUI-46 consumer smoke. | Does not introduce a breaking change because no runtime/API/metadata change is made by PLRNUI-45. |
 | PLRNUI-56 | Optional theme persistence | `ThemeProvider` accepts optional `ThemeStorageAdapter`, `storageKey` and `persistTheme`; persistence is disabled by default and storage backends remain consumer-owned. | Typecheck, Node tests, build, package metadata diff, AsyncStorage grep and docs/audit review. | Additive only while default behavior remains non-persistent and no storage dependency is added. |
 
-### PLRNUI-16 - Token export naming
+### PLRNUI-16 / PLRNUI-29 - Token export naming
 
-Legacy token exports `auraTokens` and `getAuraTokens` are deprecated legacy names and are removed from the future API contract.
+Legacy token exports `auraTokens` and `getAuraTokens`, plus the snapshot-named public type `TokensSnapshot`, are removed from the public/root API now by PLRNUI-29.
 
-Replacement target:
+Replacement names:
 
-- `themeTokens`
-- `getThemeTokens`, if accessor semantics are required.
+- `defaultThemeTokens`
+- `createThemeTokens`
+- `ThemeTokens`
 
-No compatibility aliases will be introduced for AURA-branded token names.
+No compatibility aliases will be introduced for AURA-branded or snapshot-named public token names.
 
-If these symbols existed in previous public package states, removal must be treated as intentional breaking cleanup.
+If these symbols existed in previous public package states, removal is an intentional breaking cleanup.
 
 ## Entries
 
@@ -118,6 +119,24 @@ If these symbols existed in previous public package states, removal must be trea
 - Release blocking: Yes. RC is blocked if legacy public aliases remain without deprecation/removal policy.
 - Notes: Current `package.json` no longer declares `@aura/ui`; remaining `@aura/ui` and `AURA` references are historical audit/smoke evidence or docs/demo migration findings.
 
+### BC-007 - Token naming aggressive removal
+
+- ID: BC-007
+- Status: implemented
+- Category: public token API
+- Source issue: PLRNUI-29
+- Related ADR / Risk Assessment: ADR 0002, ADR 0004, ADR 0008, PLRNUI-16
+- Decision: Remove `auraTokens`, `getAuraTokens` and `TokensSnapshot` from the public/root token API now. Expose `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens` instead.
+- Motivation: The package is in API-hardening phase; keeping temporary snapshot or legacy AURA names would increase migration debt before stabilization.
+- Consumer impact: Consumers importing removed token names must update imports and type annotations to neutral names.
+- Migration path: `auraTokens` -> `defaultThemeTokens`; `getAuraTokens(mode)` -> `createThemeTokens(mode)`; `TokensSnapshot` -> `ThemeTokens`.
+- Legacy alias policy: No root-level deprecated aliases are provided.
+- Deprecation window: None; removal milestone is now, PLRNUI-29.
+- Removal target: Implemented by PLRNUI-29.
+- Verification required: `npm run typecheck`, `npm run test`, `npm run build`, `git diff --check`, source grep for removed public token names.
+- Release blocking: Yes. RC is blocked if removed token names are publicly exported again.
+- Notes: PLRNUI-53 owns consumer-facing token docs and policy coordination.
+
 ### BC-003 - Root public API governance
 
 - ID: BC-003
@@ -129,7 +148,7 @@ If these symbols existed in previous public package states, removal must be trea
 - Motivation: Current broad barrel exports make internal or experimental modules appear public, which turns normal refactors into consumer breaking changes.
 - Consumer impact: Consumers importing internal/experimental symbols from root may need to move to documented public APIs, explicit experimental paths or remove usage.
 - Migration path: Approve export matrix, publish root API proposal, document any removed/moved root exports and provide explicit experimental or legacy paths only if approved.
-- Legacy alias policy: Existing root-reachable deprecated symbols such as `auraTokens` and `getAuraTokens` require replacement notes; PLRNUI-16 rejects AURA token compatibility aliases.
+- Legacy alias policy: Existing root-reachable deprecated token symbols such as `auraTokens` and `getAuraTokens` are removed by PLRNUI-29 with replacement notes; PLRNUI-16 rejects AURA token compatibility aliases.
 - Deprecation window: HUMAN REVIEW REQUIRED per export group.
 - Removal target: Before stable public API release; beta/experimental exports may remain only with clear labels.
 - Verification required: Recount export matrix, review root API proposal, verify docs/demo imports use only approved entrypoints, typecheck consumer imports.
@@ -269,13 +288,13 @@ If these symbols existed in previous public package states, removal must be trea
 - Category: public API / root export fencing
 - Source issue: PLRNUI-26
 - Related ADR / Risk Assessment: ADR 0002, ADR 0003, ADR 0008, Risk Assessment 0003, Risk Assessment 0008
-- Decision: Keep the root API as an explicit named export surface without adding `/experimental` or `/internal` entrypoints. Remove `useIsMounted` and `cn` from root because they are internal helpers. Keep `Stack` root-exported and reconcile docs as a public-candidate layout primitive. Keep `useNavigate` root-exported as an experimental navigation hook. Keep `getAuraTokens` root-exported only as a legacy/deprecated compatibility export pending future deprecation/removal planning.
+- Decision: Keep the root API as an explicit named export surface without adding `/experimental` or `/internal` entrypoints. Remove `useIsMounted` and `cn` from root because they are internal helpers. Keep `Stack` root-exported and reconcile docs as a public-candidate layout primitive. Keep `useNavigate` root-exported as an experimental navigation hook. PLRNUI-29 removes legacy token compatibility names from root.
 - Motivation: Internal helper exports make implementation details look consumer-facing, while undocumented experimental exports can be mistaken for stable API.
 - Consumer impact: Pre-stable consumers must stop importing `useIsMounted` or `cn` from the package root. Consumers may continue using documented pre-stable/experimental exports with migration risk. No stable consumer breaking change is recorded because the package is still pre-stable.
-- Migration path: Use documented public or experimental root APIs only. Do not consume internal helpers from root. Track future `getAuraTokens` deprecation/removal and any experimental export move/removal in this register and changelog.
-- Legacy alias policy: `getAuraTokens` remains a legacy/deprecated compatibility export; it is not future stable naming and no new AURA compatibility aliases should be introduced.
-- Deprecation window: HUMAN REVIEW REQUIRED for `getAuraTokens` and any experimental root export removals.
-- Removal target: `useIsMounted` and `cn` removed from root by PLRNUI-26. Future removal or movement of experimental exports and `getAuraTokens` requires a separate approved task.
+- Migration path: Use documented public or experimental root APIs only. Do not consume internal helpers from root. Migrate removed token names through the PLRNUI-29 mapping. Track any future experimental export move/removal in this register and changelog.
+- Legacy alias policy: Legacy token compatibility names are removed by PLRNUI-29; no new AURA compatibility aliases should be introduced.
+- Deprecation window: HUMAN REVIEW REQUIRED for any experimental root export removals.
+- Removal target: `useIsMounted` and `cn` removed from root by PLRNUI-26. Legacy token names removed from root by PLRNUI-29. Future removal or movement of experimental exports requires a separate approved task.
 - Verification required: `npm test`, `npm run typecheck`, root API diff review and audit documentation review.
 - Release blocking: Yes. Stable release is blocked if internal helpers are root-exposed as stable/public or experimental APIs are undocumented.
 - Notes: PLRNUI-26 does not change package metadata, package subpaths, dependency declarations or stable classifications.

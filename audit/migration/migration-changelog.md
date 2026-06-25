@@ -35,6 +35,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-31 Input structural component-token contract wiring for height, horizontal padding, vertical padding, icon box height and radius.
 - Added PLRNUI-32 Card structural component-token contract wiring for radius, padding and shadow defaults.
 - Added PLRNUI-33 theme override verification for nested colors, radius, size and Button/Input/Card component tokens.
+- Added PLRNUI-29 token naming removal evidence: legacy/snapshot public token names are removed now, neutral `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens` are the supported public token API, and no root deprecated aliases are provided.
 
 ### Changed
 
@@ -55,7 +56,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-23 broadens root API visibility for experimental overlay/form modal components without adding package subpath exports, runtime dependencies, native dependencies, or stable promotion.
 - Clarified that PLRNUI-24 is additive type-surface work only: it preserves runtime behavior, does not add package subpath exports, and keeps experimental/internal props types out of the root API.
 - Clarified that PLRNUI-25 updates documentation/audit evidence and README import examples only; it does not change package metadata, runtime component logic, dependencies, subpath exports or stable classifications.
-- Clarified that PLRNUI-26 removes `cn` and `useIsMounted` from the root API as internal helpers, keeps `Stack` root-exported as a public-candidate layout primitive, reclassifies `useNavigate` as an experimental navigation hook, and keeps `getAuraTokens` as legacy/deprecated compatibility pending future deprecation planning.
+- Clarified that PLRNUI-26 removes `cn` and `useIsMounted` from the root API as internal helpers, keeps `Stack` root-exported as a public-candidate layout primitive, and reclassifies `useNavigate` as an experimental navigation hook. PLRNUI-29 later removes legacy token compatibility names.
 - Clarified that PLRNUI-57 adds documentation and example files only; it does not add dependencies, package exports, runtime logic, package subpaths or stable promotions.
 - Clarified that PLRNUI-28 removes `withScroll` and implicit layout rendering from `ThemeProvider`; consumers that need app layout should compose `ThemeProvider` with `ThemeAppShell`.
 - Clarified that PLRNUI-56 intentionally defers `"system"` mode persistence because the current runtime `ThemeMode` remains `"light" | "dark"`; persisted `"system"` values are ignored as invalid.
@@ -63,6 +64,23 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-31 removes the decorative Input label marker instead of tokenizing it, eliminates the former Input magic offsets, and preserves semantic color behavior.
 - Clarified that PLRNUI-32 removes the former Card `radius = 14` default, maps Card defaults to approved theme/component tokens and preserves explicit Card prop overrides without stable promotion.
 - Clarified that PLRNUI-33 preserves the existing `themeOverrides?: Partial<Theme>` public API while hardening nested merge behavior; invalid scalar leaf casts remain unsupported because runtime schema validation is not introduced.
+- Clarified that PLRNUI-29 is an aggressive removal: `auraTokens`, `getAuraTokens` and `TokensSnapshot` are removed from root and token barrels now, with migration to `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`. PLRNUI-53 remains responsible for consumer-facing docs/policy.
+
+### PLRNUI-29 - Token naming removal
+
+The public token API now exposes only neutral token names:
+
+- `defaultThemeTokens`
+- `createThemeTokens`
+- `ThemeTokens`
+
+Removed public/root token names:
+
+- `auraTokens`
+- `getAuraTokens`
+- `TokensSnapshot`
+
+No root-level deprecated aliases are provided. This is an intentional breaking change during API hardening. Consumers must migrate token imports to the neutral names. PLRNUI-53 owns consumer-facing docs and policy follow-up.
 
 ### PLRNUI-33 - Theme override verification
 
