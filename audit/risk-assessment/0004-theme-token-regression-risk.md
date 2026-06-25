@@ -19,7 +19,7 @@ La review segnala che light/dark non deve essere interpretato come gia verificat
 - Dark mode dichiarato ma non implementato correttamente.
 - Token legacy o naming AURA ancora pubblici.
 - Componenti che duplicano spacing, radius, size o colori hardcoded.
-- Override theme non tipizzati o non coperti da test.
+- Override theme non tipizzati o non coperti da test. PLRNUI-33 riduce questo rischio per strutture nested verificando `colors`, `radius`, `size` e component tokens Button/Input/Card.
 - `ThemeProvider` che mescola tema, safe area e layout applicativo.
 
 ## Impatto
@@ -52,7 +52,7 @@ Alta.
 
 - Cambio `mode` senza cambio colori effettivo.
 - Componenti stable con colori o dimensioni hardcoded non motivati.
-- Override theme che richiede `any` o cast non sicuri.
+- Override theme che richiede `any` o cast non sicuri. PLRNUI-33 rimuove il broad internal `any` dal merge path e documenta la policy per strutture invalide forzate oltre TypeScript.
 - Docs che promettono component tokens non presenti.
 - Token AURA legacy ancora esposti come API primaria.
 
@@ -62,11 +62,10 @@ Alta.
 - Mappa token reale approvata.
 - Component tokens minimi definiti per componenti core.
 - Hardcoded values critici censiti e collegati a ticket.
-- Theme override dimostrato con esempio consumer.
+- Theme override dimostrato con esempio consumer. PLRNUI-33 aggiunge test eseguibili per override nested e partial component overrides; esempi consumer completi restano parte della documentazione/release readiness.
 - Docs theme/tokens allineate allo stato implementato.
 
 ## Collegamenti
 
 - ADR collegati: ADR 0004.
 - Review collegata: ADR 0004 richiede mappa token reale, verifica light/dark e audit hardcoded values prima di passare ad `Accettato`.
-

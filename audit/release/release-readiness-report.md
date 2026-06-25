@@ -47,6 +47,7 @@ Export and metadata validation:
 - PLRNUI-30 wires Button structural component tokens through `theme.components.button` without adding dependencies, package metadata changes, root exports or non-structural Button color tokens.
 - PLRNUI-31 wires Input structural component tokens through `theme.components.input`, removes the decorative label marker, eliminates magic sizing offsets and preserves semantic color behavior without adding dependencies, package metadata changes or root exports.
 - PLRNUI-32 wires Card structural defaults through `theme.components.card` for radius, padding and shadow, removes the former `radius = 14` default and preserves explicit Card prop overrides without adding dependencies, package metadata changes or root exports.
+- PLRNUI-33 verifies nested `themeOverrides` behavior for colors, radius, size and Button/Input/Card component tokens, hardens `createTheme` against invalid object branch replacements, and keeps package metadata, root exports and public provider props unchanged.
 - Historical PLRNUI-4 audit files classify 92 candidate/source-tree exports: 40 public, 32 experimental, 18 internal and 2 deprecated. Those are governance proposals, not current package exports.
 - Proposed subpaths are not implemented in package metadata.
 
@@ -116,7 +117,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-57 expands docs/examples coverage while preserving beta/experimental labels; no component is promoted to `stable`.
 - PLRNUI-28 changes provider behavior before stable release; consumers using the old implicit layout wrapper or `withScroll` must migrate to `ThemeAppShell`.
 - PLRNUI-56 adds asynchronous opt-in hydration risk only for consumers that pass `persistTheme` and `storage`; persisted invalid values, read failures and write failures are ignored without crashing.
-- PLRNUI-30 reduces Button token-architecture risk for structural values, PLRNUI-31 reduces Input token-architecture risk for structural values and PLRNUI-32 reduces Card token-architecture risk for structural defaults. These tickets do not promote components to stable.
+- PLRNUI-30 reduces Button token-architecture risk for structural values, PLRNUI-31 reduces Input token-architecture risk for structural values, PLRNUI-32 reduces Card token-architecture risk for structural defaults, and PLRNUI-33 reduces unsafe override risk for nested theme structures. These tickets do not promote components or the override API to stable.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers

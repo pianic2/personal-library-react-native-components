@@ -34,6 +34,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-30 Button structural component-token contract wiring for height, horizontal padding, icon size, radius, gap, border width and opacity.
 - Added PLRNUI-31 Input structural component-token contract wiring for height, horizontal padding, vertical padding, icon box height and radius.
 - Added PLRNUI-32 Card structural component-token contract wiring for radius, padding and shadow defaults.
+- Added PLRNUI-33 theme override verification for nested colors, radius, size and Button/Input/Card component tokens.
 
 ### Changed
 
@@ -61,6 +62,24 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-30 does not add Button background, text, border, loading, typography, shadow, elevation, animation or width component tokens; Button colors continue to use semantic color tokens.
 - Clarified that PLRNUI-31 removes the decorative Input label marker instead of tokenizing it, eliminates the former Input magic offsets, and preserves semantic color behavior.
 - Clarified that PLRNUI-32 removes the former Card `radius = 14` default, maps Card defaults to approved theme/component tokens and preserves explicit Card prop overrides without stable promotion.
+- Clarified that PLRNUI-33 preserves the existing `themeOverrides?: Partial<Theme>` public API while hardening nested merge behavior; invalid scalar leaf casts remain unsupported because runtime schema validation is not introduced.
+
+### PLRNUI-33 - Theme override verification
+
+`createTheme` now deep-merges nested plain-object override branches while preserving sibling tokens and required base theme structure.
+
+Verified nested override areas:
+
+- `colors`
+- `radius`
+- `size.height`
+- `components.button`
+- `components.input`
+- `components.card`
+
+`undefined` override values do not erase base values. Invalid object branch replacements forced past TypeScript, such as `colors: null` or `components.button: []`, are safely ignored for required object branches.
+
+Public `ThemeProvider` props, `createTheme` signature, root package exports, package metadata and component props are unchanged. PLRNUI-33 does not add runtime schema validation and does not promote the theme override API to `stable`.
 
 ### PLRNUI-30 - Button component token contract
 

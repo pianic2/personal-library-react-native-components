@@ -16,7 +16,7 @@ These are Jira candidates only. No Jira issues were created, transitioned, or ma
 | PLRNUI-6-H | P2 | Create shared form-control size tokens | Switch, Checkbox, and RadioGroup hardcode control dimensions; no form-control component tokens exist. | Shared tokens cover control box/track/thumb/icon sizes and border widths, or components are kept beta until tokenization is complete. |
 | PLRNUI-6-I | P2 | Create overlay geometry and motion tokens | Modal, BottomSheet, Tooltip, and ToastProvider hardcode widths, snap heights, delays, durations, max widths, and queue defaults. | Overlay/motion tokens are defined for promoted components; experimental components document hardcoded behavior until stabilized. |
 | PLRNUI-6-J | P2 | Create navigation layout tokens or keep navigation experimental | TopBar, BottomBar, and SideBar hardcode nav heights/widths/min widths and fallback z-index. | Navigation layout tokens exist for promoted nav components, or export policy keeps navigation experimental. |
-| PLRNUI-6-K | P2 | Add theme override verification | `ThemeProvider` accepts `themeOverrides`; `createTheme` uses `any` internally; Risk Assessment 0004 flags unsafe overrides. | Type-safe override behavior is tested for nested colors/component tokens and invalid structures are rejected or documented. |
+| PLRNUI-6-K / PLRNUI-33 | P2 implemented | Add theme override verification | `ThemeProvider` accepts `themeOverrides`; PLRNUI-33 removes broad internal `any` from `createTheme`, deep-merges plain-object override branches, ignores `undefined`, and preserves base object branches when invalid structures are forced past TypeScript. | `tests/theme/theme-overrides.test.tsx` verifies nested colors, radius, size and Button/Input/Card component-token overrides preserve sibling tokens and required theme structure; unsupported invalid object branches are safely ignored. |
 | PLRNUI-6-L | P2 | Align token docs with current public API and migration naming | Docs still use `AURA` imports; token docs list `auraTokens`/`getAuraTokens`; API audit proposes future token entrypoint names. | Docs clearly distinguish current legacy exports from target names and do not present unapproved token names as implemented. |
 
 ## Suggested Sequencing
@@ -25,4 +25,5 @@ These are Jira candidates only. No Jira issues were created, transitioned, or ma
 2. Decide ThemeProvider responsibility before stabilizing public provider behavior, because changing default wrappers can be breaking.
 3. Approve token naming/deprecation strategy before adding neutral public token names.
 4. Button structural component tokens are wired by PLRNUI-30, Input structural component tokens are wired by PLRNUI-31 and Card structural component tokens are wired by PLRNUI-32; continue component-token work only for future promoted candidates.
-5. Defer overlay/navigation tokenization unless those components are promoted from experimental.
+5. Theme override verification is implemented by PLRNUI-33 without widening `themeOverrides?: Partial<Theme>` or adding runtime schema validation.
+6. Defer overlay/navigation tokenization unless those components are promoted from experimental.

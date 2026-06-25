@@ -8,7 +8,7 @@
 | Expose consumer hook path | verified | `useTheme` delegates to `useThemeContext`; `theme/index.ts` exports `useTheme`. | In scope, but `useThemeContext` is currently root-reachable and classified internal in API audit. |
 | Manage light/dark mode state | verified | `ThemeProvider` stores `mode`, exposes `toggleTheme`/`setMode`, and passes mode to `createBaseTheme(mode)`. | In scope for ThemeProvider. |
 | Persist mode | implemented as optional | PLRNUI-56 adds `ThemeStorageAdapter`, `storage`, `storageKey` and `persistTheme` to `ThemeProvider`; persistence is skipped unless `persistTheme=true` and a consumer adapter is supplied. | In scope only as adapter-based, storage-agnostic and consumer-owned persistence. Runtime `ThemeMode` remains `light | dark`; persisted `system` is ignored until future runtime support exists. |
-| Merge overrides | partial | `ThemeProvider` accepts `themeOverrides?: Partial<Theme>`; `createTheme` deep-merges overrides. | In scope, but merge typing uses `any` and lacks test evidence in this audit. |
+| Merge overrides | verified by PLRNUI-33 | `ThemeProvider` accepts `themeOverrides?: Partial<Theme>`; `createTheme` deep-merges plain-object override branches and preserves required base structure for invalid object branches. | In scope. PLRNUI-33 adds nested override coverage for colors, radius, size and Button/Input/Card component tokens without widening the public prop type. |
 | Safe-area provider ownership | not implemented in current source | `ThemeProvider` does not import `react-native-safe-area-context`, `SafeAreaProvider` or `SafeAreaView`. | PLRNUI-28 does not implement safe-area support. Future safe-area work remains separate dependency governance. |
 | Scroll/layout wrapper ownership | split by PLRNUI-28 | `ThemeProvider` renders only context and children. `ThemeAppShell` renders `View` by default and `ScrollView` only when `scroll` is true. | ADR 0004 target is satisfied for provider/app-shell separation. |
 | Global app/content/safeArea styles | split by PLRNUI-28 | `ThemeAppShell` applies `globalStyles.app`, `content`, and `scrollContent`; `ThemeProvider` no longer applies layout styles. | App-shell adjacent styles are explicit opt-in wrapper behavior. |
@@ -36,4 +36,4 @@
 
 ## Verification Outcome
 
-PLRNUI-28 makes `ThemeProvider` a pure theme context provider. App-shell layout behavior is moved to `ThemeAppShell`, where scroll defaults to false and no safe-area support is implemented. PLRNUI-56 keeps that boundary intact while adding optional consumer-owned theme persistence.
+PLRNUI-28 makes `ThemeProvider` a pure theme context provider. App-shell layout behavior is moved to `ThemeAppShell`, where scroll defaults to false and no safe-area support is implemented. PLRNUI-56 keeps that boundary intact while adding optional consumer-owned theme persistence. PLRNUI-33 verifies nested `themeOverrides` behavior and hardens the merge path without changing the public provider API.
