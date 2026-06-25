@@ -76,7 +76,7 @@ Inventariare i path docs/demo/preview da aggiornare in una fase successiva. Ques
 | `docs/theme/use-theme.md` | Import legacy; `useTheme` beta/public. | import, stability-label | P1 |
 | `docs/theme/create-theme.md` | Import legacy; `createTheme` beta/public. | import, stability-label | P1 |
 | `docs/theme/types.md` | Import legacy; theme types public/beta. | import, stability-label | P1 |
-| `docs/tokens/index.md` | Documenta `auraTokens`/`getAuraTokens`, deprecated in PLRNUI-4. | naming, stability-label | P0 |
+| `docs/tokens/index.md` | Historical inventory: documented `auraTokens`/`getAuraTokens`; PLRNUI-53 now marks them legacy/deprecated, removed, not stable public API and forbidden in consumer examples. | naming, stability-label | P0 resolved for current PLRNUI-53 policy |
 | `docs/tokens/**` | Token docs non distinguono public/deprecated/experimental. | stability-label | P1 |
 | `docs/storage/**` | Storage e internal/uncertain in PLRNUI-4. | stability-label, missing-docs | P1 |
 | `docs/utils/cn.md` | `cn` internal-helper secondo PLRNUI-4. | stability-label | P0 |
@@ -93,7 +93,7 @@ Inventariare i path docs/demo/preview da aggiornare in una fase successiva. Ques
 | `demo/app/App.tsx` | Import da `../../index`, import internal `../../theme/types`, legacy branding, usa internal/experimental components. | import, stability-label | P0 |
 | `demo/app/theme-toggle.tsx` | Import da `../../index`, usa `Card` internal. | import, stability-label | P0 |
 | `demo/app/DemoStateMatrix.tsx` | Import da `../../index`, usa `Card` internal. | import, stability-label | P0 |
-| `demo/screens/FoundationsScreen.tsx` | Import da `../../index`, usa deprecated `getAuraTokens` e internal/experimental components. | import, stability-label | P0 |
+| `demo/screens/FoundationsScreen.tsx` | Historical inventory: imported from `../../index` and used deprecated/removed `getAuraTokens`; PLRNUI-53 forbids this legacy token name in consumer examples. | import, stability-label | P0 resolved for current PLRNUI-53 policy |
 | `demo/screens/ComponentsScreen.tsx` | Import da `../../index`; demo communicates previewability without stability labels. | import, stability-label | P0 |
 | `demo/screens/FormsScreen.tsx` | Import da `../../index`; includes beta/experimental/internal form components. | import, stability-label | P0 |
 | `demo/screens/FeedbackScreen.tsx` | Import da `../../index`; includes `ProgressBar`, `ToastProvider`, `Tooltip`, `useToast`. | import, stability-label | P0 |

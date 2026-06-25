@@ -59,7 +59,7 @@ Allowed statuses:
 | PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; historical clean Expo consumer install failed on React peer mismatch; verdict NOT READY until consumer evidence is regenerated. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
-| PLRNUI-16 / PLRNUI-29 | Token export naming | AURA-branded and snapshot-named public token exports are removed now; neutral theme-oriented names are the supported public token API. | Source/root export grep, token public API test, PLRNUI-53 consumer docs policy. | Blocks RC if removed token names are reintroduced as public/root aliases or legacy names are presented as stable. |
+| PLRNUI-16 / PLRNUI-29 / PLRNUI-53 | Token export naming and docs policy | AURA-branded and snapshot-named public token exports are removed now; neutral theme-oriented names are the supported public token API; legacy token names are not stable public API and are forbidden in consumer examples. | Source/root export grep, token public API test, PLRNUI-53 consumer docs policy. | Blocks RC if removed token names are reintroduced as public/root aliases, shown in consumer examples, or presented as stable. |
 | PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental. PLRNUI-29 removes legacy token compatibility names. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
 | PLRNUI-28 | Theme provider app-shell split | `ThemeProvider` is pure; `ThemeAppShell` owns explicit layout/scroll behavior. | Node smoke tests, typecheck, build, package dry-run and migration docs. | Breaking for consumers relying on implicit provider layout or `withScroll`. |
 | PLRNUI-39 | Clipboard dependency strategy | `expo-clipboard` is optional consumer-owned adapter implementation, not a core runtime dependency or root peer dependency. | Documentation review; future implementation must verify no direct core import and no package metadata dependency. | Does not introduce a breaking change while opt-in/documental. |
@@ -80,6 +80,8 @@ Replacement names:
 No compatibility aliases will be introduced for AURA-branded or snapshot-named public token names.
 
 If these symbols existed in previous public package states, removal is an intentional breaking cleanup.
+
+PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `getAuraTokens` are legacy/deprecated, not stable public API, not allowed in consumer examples, and not reintroduced as aliases.
 
 ## Entries
 
@@ -135,7 +137,7 @@ If these symbols existed in previous public package states, removal is an intent
 - Removal target: Implemented by PLRNUI-29.
 - Verification required: `npm run typecheck`, `npm run test`, `npm run build`, `git diff --check`, source grep for removed public token names.
 - Release blocking: Yes. RC is blocked if removed token names are publicly exported again.
-- Notes: PLRNUI-53 owns consumer-facing token docs and policy coordination.
+- Notes: PLRNUI-53 confirms `auraTokens` and `getAuraTokens` are legacy/deprecated, not stable public API, forbidden in consumer examples, and not reintroduced as aliases.
 
 ### BC-003 - Root public API governance
 

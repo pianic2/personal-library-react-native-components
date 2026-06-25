@@ -36,7 +36,7 @@
 | `ThemeProvider` | `theme/ThemeProvider.tsx` | public/beta with responsibility risk | `audit/api/export-matrix.md`; `theme/ThemeProvider.tsx` renders safe-area and scroll wrappers. |
 | `useTheme` | `theme/useTheme.ts` | public/beta | `audit/api/export-matrix.md`; `theme/index.ts` exports it. |
 | `createTheme` | `theme/createTheme.ts` | public/beta with merge typing risk | `audit/api/export-matrix.md`; `theme/createTheme.ts` uses `any` internally. |
-| `auraTokens`, `getAuraTokens` | `tokens/themeTokens.ts` | removed/breaking | Removed from root and token barrels by PLRNUI-29; no compatibility aliases. |
+| `auraTokens`, `getAuraTokens` | `tokens/themeTokens.ts` | removed/breaking | Removed from root and token barrels by PLRNUI-29; PLRNUI-53 confirms they are legacy/deprecated, not stable public API, forbidden in consumer examples, and not aliases. |
 | `TokensSnapshot` | `tokens/themeTokens.ts` | removed/breaking | Removed from root and token barrels by PLRNUI-29; replacement is `ThemeTokens`. |
 | `defaultThemeTokens`, `createThemeTokens` | `tokens/themeTokens.ts` | public/beta | Neutral public token exports verified by `tests/theme/token-public-api.test.tsx`. |
 | `ThemeTokens` | `tokens/themeTokens.ts` | public/beta | Neutral public token type replacing `TokensSnapshot`. |

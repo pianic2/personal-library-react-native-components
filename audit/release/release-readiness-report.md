@@ -119,7 +119,7 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 - PLRNUI-28 changes provider behavior before stable release; consumers using the old implicit layout wrapper or `withScroll` must migrate to `ThemeAppShell`.
 - PLRNUI-56 adds asynchronous opt-in hydration risk only for consumers that pass `persistTheme` and `storage`; persisted invalid values, read failures and write failures are ignored without crashing.
 - PLRNUI-30 reduces Button token-architecture risk for structural values, PLRNUI-31 reduces Input token-architecture risk for structural values, PLRNUI-32 reduces Card token-architecture risk for structural defaults, and PLRNUI-33 reduces unsafe override risk for nested theme structures. These tickets do not promote components or the override API to stable.
-- PLRNUI-29 intentionally breaks consumers of `auraTokens`, `getAuraTokens` or `TokensSnapshot`; release readiness now depends on keeping neutral token names documented and coordinating consumer-facing policy through PLRNUI-53.
+- PLRNUI-29 intentionally breaks consumers of `auraTokens`, `getAuraTokens` or `TokensSnapshot`; PLRNUI-53 confirms `auraTokens` and `getAuraTokens` are legacy/deprecated, not stable public API, forbidden in consumer examples, and not reintroduced as aliases.
 - Current Node patch version is slightly below the engine range required by current Expo/RN toolchain.
 
 ## Blockers

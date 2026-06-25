@@ -12,7 +12,7 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
 | beta | `Button`, `Box`, `Column`, `Row`, `Divider`, `P`, `B`, `Small`, `Quote`, `Text`, `TextGroup`, `Heading`, `Spinner`, `Alert`, `Badge`, `Input`, `Switch`, `Checkbox`, `RadioGroup`, `FormField`, `NavProvider`, `Link`, `NavBar` | Documentati senza label `beta`; import legacy. |
 | experimental | `Code`, `Page`, `ToastProvider`, `useToast`, `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Hero`, `Select`, `TopBar`, `BottomBar`, `SideBar` | Documentati senza label sistematica `experimental`; alcune note platform presenti ma non standardizzate. |
 | internal | `CodeInline`, `ProgressBar`, `Card`, `PasswordInput`, `Textarea`, `Stack`/alias interno secondo PLRNUI-5 | Hanno pagine navigabili o citazioni docs/demo senza label `internal`. |
-| deprecated non-component | `auraTokens`, `getAuraTokens` | Deprecated secondo PLRNUI-4, ma ancora documentati/usati in `docs/tokens/index.md` e demo. |
+| deprecated non-component | `auraTokens`, `getAuraTokens` | Historical legacy/deprecated token names; PLRNUI-29 removed them and PLRNUI-53 forbids them in consumer examples. |
 
 ## Evidenze principali
 
@@ -20,7 +20,7 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
 - I componenti beta sono documentati senza label `beta`.
 - I componenti experimental sono documentati senza label `experimental`.
 - I componenti internal hanno pagine navigabili in MkDocs o sono usati dalla demo.
-- `auraTokens` e `getAuraTokens` sono deprecated in PLRNUI-4 ma ancora documentati/usati.
+- `auraTokens` e `getAuraTokens` are legacy/deprecated token names; PLRNUI-29 removed them and PLRNUI-53 confirms they are not stable public API and forbidden in consumer examples.
 
 ## Demo false-stability
 
@@ -30,7 +30,7 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
 | `demo/app/App.tsx` | `ThemeProvider`, `Button`, `Column`, `Heading`, `Row`, `Small`, `Text` | beta | Demo non distingue beta da stable. | Aggiungere legenda maturity nella demo docs/artifact. |
 | `demo/app/theme-toggle.tsx` | `Card` | internal | Usa componente internal come container principale. | Registrare gap finche `Card` non e stabilizzato o sostituito. |
 | `demo/app/DemoStateMatrix.tsx` | `Card` | internal | Stato-matrix basata su API internal. | Registrare come demo-only helper, non consumer example. |
-| `demo/screens/FoundationsScreen.tsx` | `getAuraTokens` | deprecated non-component | Deprecated token usato come source of truth preview. | Marcare legacy/deprecated o rimuovere dai consumer examples futuri. |
+| `demo/screens/FoundationsScreen.tsx` | `getAuraTokens` | deprecated non-component | Historical deprecated/removed token was used as preview source of truth. | PLRNUI-53 forbids this legacy token name in consumer examples. |
 | `demo/screens/FoundationsScreen.tsx` | `Code`, `CodeInline`, `Card` | experimental/internal | Preview mostra API non stable senza label. | Etichettare maturity e limiti. |
 | `demo/screens/FeedbackScreen.tsx` | `ProgressBar` | internal | Componente con bug funzionale mostrato come normale. | Marcare internal/blocker. |
 | `demo/screens/FeedbackScreen.tsx` | `ToastProvider`, `useToast`, `Tooltip` | experimental | Feature experimental mostrate senza warning. | Marcare experimental e platform limits. |
@@ -53,4 +53,4 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
 - Mantenere le API internal fuori dalle pagine consumer oppure marcarle esplicitamente come internal/non-stable.
 - Documentare experimental come opt-in e non come root stable API.
 - Collegare ogni pagina componente alla riga PLRNUI-5 corrispondente.
-- Trattare `auraTokens` e `getAuraTokens` come legacy/deprecated finche non esiste una policy di alias.
+- PLRNUI-53 resolves alias policy for `auraTokens` e `getAuraTokens`: legacy/deprecated, removed, not stable public API, no compatibility aliases and forbidden in consumer examples.

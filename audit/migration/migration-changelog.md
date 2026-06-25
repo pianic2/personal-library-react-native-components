@@ -65,6 +65,15 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-32 removes the former Card `radius = 14` default, maps Card defaults to approved theme/component tokens and preserves explicit Card prop overrides without stable promotion.
 - Clarified that PLRNUI-33 preserves the existing `themeOverrides?: Partial<Theme>` public API while hardening nested merge behavior; invalid scalar leaf casts remain unsupported because runtime schema validation is not introduced.
 - Clarified that PLRNUI-29 is an aggressive removal: `auraTokens`, `getAuraTokens` and `TokensSnapshot` are removed from root and token barrels now, with migration to `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`. PLRNUI-53 remains responsible for consumer-facing docs/policy.
+- Clarified that PLRNUI-53 closes the consumer-facing docs/demo policy for `auraTokens` and `getAuraTokens`: they are legacy/deprecated, not stable public API, not allowed in README/docs/examples/demo as recommended consumer API, and not reintroduced as aliases.
+
+### PLRNUI-53 - Legacy token API docs policy
+
+`auraTokens` and `getAuraTokens` remain historical governance terms only. They are legacy/deprecated token API names, not stable public API, and not valid consumer-facing examples.
+
+README, docs, examples and demo/public sample code must not recommend or use those names. Historical audit/migration/governance references are allowed only when clearly marked legacy, deprecated, removed or not stable.
+
+PLRNUI-16 owns the API/export naming decision. PLRNUI-29 owns the technical aggressive removal. PLRNUI-53 owns the consumer-facing docs/demo policy.
 
 ### PLRNUI-29 - Token naming removal
 
@@ -198,7 +207,7 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 
 - Deprecated AURA / UI Experience as canonical project or package identity for new technical artifacts.
 - Deprecated legacy package/import naming such as `@aura/ui` and `from "AURA"` unless retained under an explicit alias policy.
-- Deprecated AURA token names `auraTokens` and `getAuraTokens` with no compatibility aliases.
+- Deprecated AURA token names `auraTokens` and `getAuraTokens` with no compatibility aliases; PLRNUI-53 confirms they are not stable public API and must not appear in consumer examples.
 - Deprecated unsupported consumer guidance based on deep imports, repo-relative imports or internal source/build paths.
 - Deprecated treating beta, experimental or internal API as stable without promotion evidence.
 - Deprecated consuming internal helpers such as `cn` and `useIsMounted` from the package root; PLRNUI-26 removes them from root and keeps them non-consumer-facing.

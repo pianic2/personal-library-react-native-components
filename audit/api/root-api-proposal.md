@@ -193,7 +193,7 @@ useNavigate
 
 `Stack` remains root-exported as a public-candidate layout primitive alias for `Column`.
 
-`getAuraTokens` remains root-exported only as a legacy/deprecated compatibility export. It is not future stable naming; the future target remains neutral token naming such as `themeTokens` or `getThemeTokens` if an accessor remains required.
+PLRNUI-29 later removed `getAuraTokens` from the root API as an aggressive breaking cleanup. PLRNUI-53 confirms it is legacy/deprecated, not stable public API, forbidden in consumer examples and not reintroduced as a compatibility alias.
 
 ## Explicit exclusions
 

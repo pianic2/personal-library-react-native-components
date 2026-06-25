@@ -38,7 +38,7 @@ Package metadata currently exposes only the root package entrypoint and `./packa
 | `examples/` | Directory is absent in the current checkout. | No files to edit. |
 | `demo/` / `preview-web/` | Directories are absent in the current checkout. Historical audit files still mention repo-relative demo imports. | No real demo/preview files to edit; historical rows remain migration notes. |
 | `audit/` | Contains many intentional historical references to AURA, `@aura/ui`, `from "AURA"` and previous demo paths. | Preserved as audit/migration evidence, not consumer-facing current docs. |
-| `src/` | Source uses internal relative imports by design. Root API still exports deprecated `getAuraTokens` as tracked by API governance. | Not treated as docs cleanup; runtime/API cleanup belongs to separate token/API tickets. |
+| `src/` | Source uses internal relative imports by design. PLRNUI-29 later removed the legacy/deprecated `getAuraTokens` token name from the root API, and PLRNUI-53 forbids it in consumer examples. | Not treated as PLRNUI-25 docs cleanup; runtime/API cleanup is now recorded by PLRNUI-29/53. |
 | `tests/` | Tests import from `../../src` for source-level verification. | Allowed test-local import, not a consumer-facing example. |
 
 ## Final status

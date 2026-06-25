@@ -69,7 +69,7 @@ Analizzati:
 - I 23 componenti beta sono documentati senza label `beta`.
 - I 12 componenti experimental sono documentati senza label `experimental`.
 - I 6 componenti internal hanno pagine navigabili o sono usati in demo.
-- `auraTokens` e `getAuraTokens` sono deprecated secondo PLRNUI-4, ma ancora documentati/usati.
+- Historical PLRNUI-9 evidence found `auraTokens` e `getAuraTokens` documented/used; PLRNUI-53 now marks them legacy/deprecated, removed, not stable public API and forbidden in consumer examples.
 
 ## Sintesi preview shim
 
@@ -125,7 +125,7 @@ PLRNUI-9 puo procedere con gli artefatti audit sotto `audit/docs/`, ma docs/demo
 3. Separare consumer examples da demo preview.
 4. Documentare esplicitamente preview shim e limiti.
 5. Aggiungere troubleshooting Expo/RN/Metro nelle docs.
-6. Registrare o risolvere policy per `auraTokens`/`getAuraTokens`.
+6. Policy for `auraTokens`/`getAuraTokens` is resolved by PLRNUI-53: legacy/deprecated, removed, not stable public API and forbidden in consumer examples.
 7. Allineare demo a entrypoint pubblico quando package metadata e API sono approvati.
 
 ## Note esplicite di scope

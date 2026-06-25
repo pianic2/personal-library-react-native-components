@@ -40,5 +40,6 @@ Priorities:
 
 - Core P0: base dark mode hardcoded-light blocker is resolved by PLRNUI-27.
 - Core P1: Button reads approved structural `theme.components.button` tokens after PLRNUI-30; Input reads approved structural `theme.components.input` tokens after PLRNUI-31; Card reads approved structural `theme.components.card` tokens after PLRNUI-32.
+- PLRNUI-53 confirms legacy token API names are docs/governance-only historical references when present, not stable public API and not allowed in consumer examples.
 - Form controls need a shared control-size token family before stable promotion.
 - Overlay/navigation tokens are missing; current values may remain experimental until component maturity decisions are made.

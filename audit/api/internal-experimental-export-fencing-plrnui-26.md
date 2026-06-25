@@ -31,7 +31,7 @@ PLRNUI-26 keeps the package root as an explicit named export surface. It does no
 | useNavigate | root-exported/docs internal | experimental navigation hook | remains root-exported | not stable |
 | useIsMounted | root-exported/internal helper | internal helper | removed from root | not consumer-facing |
 | cn | root-exported/internal helper | internal helper | removed from root | not consumer-facing |
-| getAuraTokens | root-exported legacy | deprecated compatibility | remains root-exported | future deprecation path |
+| getAuraTokens | formerly root-exported legacy | deprecated/removed by PLRNUI-29 | removed from root | PLRNUI-53 forbids consumer examples and aliases |
 | BottomSheet/Modal/Popover/Select/Tooltip | experimental overlays | explicit experimental root exports | remain root-exported | no broad export |
 | BottomBar/SideBar/navigation shell | experimental app-shell | explicit experimental root exports | remain root-exported | no stable promotion |
 
@@ -69,5 +69,5 @@ PLRNUI-26 keeps the package root as an explicit named export surface. It does no
 
 - Global release readiness remains `NOT READY` until clean consumer, resolver and native runtime evidence are regenerated.
 - Experimental root exports remain root-exposed until a future package entrypoint, removal or stable API decision is approved.
-- `getAuraTokens` remains a legacy/deprecated compatibility export and still requires a future deprecation/removal path if retained long term.
+- `getAuraTokens` was later removed by PLRNUI-29; PLRNUI-53 confirms it is legacy/deprecated, not stable public API, forbidden in consumer examples and not reintroduced as an alias.
 - Local Node is `v20.19.2`, below the package `engines.node >=22` target.

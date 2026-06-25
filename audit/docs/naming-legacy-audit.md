@@ -39,7 +39,7 @@ Token cercati:
 | `docs/theme.md` | 18,38 | `from "AURA"` | legacy-blocker | Aggiornare import documentati. |
 | `docs/components/**/*.md` | prevalentemente riga 8 | `from "AURA"` | legacy-blocker | Aggiornare tutte le pagine componente dopo decisione package/API. |
 | `docs/components/navigation/index.md` | 3 | `componenti di navigazione in AURA` | legacy-blocker | Allineare naming del testo descrittivo. |
-| `docs/tokens/index.md` | 19-20,26-29 | `auraTokens`, `getAuraTokens`, `from "AURA"` | legacy-blocker | Marcare come deprecated o spostare in legacy policy. |
+| `docs/tokens/index.md` | historical audit lines 19-20,26-29 | `auraTokens`, `getAuraTokens`, `from "AURA"` | legacy/deprecated/removed by later policy | PLRNUI-53 resolves the policy: these token names are not stable public API and must not appear in consumer examples. |
 | `docs/storage/token-storage.md` | 8 | `from "AURA"` | legacy-blocker | Storage e internal/uncertain secondo PLRNUI-4: non documentarlo come root API senza decisione. |
 | `docs/utils/cn.md` | 8 | `from "AURA"` | legacy-blocker | Allineare import e stability. |
 | `docs/utils/merge-styles.md` | 8 | `from "AURA"` | legacy-blocker | Allineare import e stability. |
@@ -50,7 +50,7 @@ Token cercati:
 | `demo/app/App.tsx` | 47 | `AURA UI Complete Demo` | cleanup | Rinominare demo e chiarire che non e source of truth. |
 | `demo/screens/FeedbackScreen.tsx` | 211 | `AURA Enterprise Rollout` | cleanup | Sostituire esempio branding. |
 | `demo/screens/LayoutScreen.tsx` | 139 | logo `AURA` | cleanup | Sostituire demo branding. |
-| `demo/screens/FoundationsScreen.tsx` | 16,20,36,44,76 | `getAuraTokens` | ambiguous | PLRNUI-4 lo classifica deprecated: usare solo se documentato come legacy. |
+| `demo/screens/FoundationsScreen.tsx` | historical audit lines 16,20,36,44,76 | `getAuraTokens` | legacy/deprecated/removed by later policy | PLRNUI-53 forbids this legacy token name in consumer examples; this row remains historical audit evidence only. |
 | `audit/adr/0001-package-identity-and-naming.md` | varie | `AURA`, `UI Experience`, `react-native-components` | historical-ok | Conservare come contesto storico di migrazione. |
 | `audit/migration/legacy-naming-map.md` | varie | mapping AURA -> `react-native-components` | historical-ok | Conservare come registro di migrazione. |
 | `audit/migration/migration-changelog.md` | varie | AURA/UI Experience storico | historical-ok | Conservare come changelog di migrazione. |
@@ -63,7 +63,7 @@ Token cercati:
 
 - `README.md`, `mkdocs.yml`, `docs/index.md` e `docs/getting-started.md` presentano ancora `AURA` come nome prodotto o import path.
 - Le pagine componente documentano in modo sistematico `from "AURA"`.
-- `docs/tokens/index.md` documenta `auraTokens` e `getAuraTokens`, che PLRNUI-4 classifica come deprecated.
+- Historical `docs/tokens/index.md` evidence documented `auraTokens` e `getAuraTokens`; PLRNUI-53 now classifies them as legacy/deprecated, removed by PLRNUI-29, not stable public API and forbidden in consumer examples.
 - Demo e preview contengono branding AURA non chiaramente storico.
 
 ## Note sui riferimenti storici
