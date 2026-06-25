@@ -1,0 +1,91 @@
+site_name: Personal Library React Native Components
+site_description: React Native components for Personal Library applications
+repo_url: https://github.com/niccolo/personal-library-react-native-components
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: mkdocs
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Platform Support: platform-support.md
+  - Migration Notes: migration.md
+  - Theme:
+      - Overview: theme.md
+      - Tree: theme/index.md
+      - ThemeProvider: theme/theme-provider.md
+      - useTheme: theme/use-theme.md
+      - createTheme: theme/create-theme.md
+      - types: theme/types.md
+  - Components:
+      - Overview: components.md
+      - Layout:
+          - Overview: components/layout/index.md
+          - Box: components/layout/box.md
+          - Row: components/layout/row.md
+          - Column / Stack: components/layout/column.md
+          - Divider: components/layout/divider.md
+      - Typography:
+          - Overview: components/typography/index.md
+          - Text: components/typography/text.md
+          - Heading: components/typography/heading.md
+          - P: components/typography/p.md
+          - B: components/typography/b.md
+          - Small: components/typography/small.md
+          - CodeInline: components/typography/code-inline.md
+          - Quote: components/typography/quote.md
+          - TextGroup: components/typography/text-group.md
+      - Form:
+          - Overview: components/form/index.md
+          - Input: components/form/input.md
+          - PasswordInput: components/form/password-input.md
+          - Textarea: components/form/textarea.md
+          - Checkbox: components/form/checkbox.md
+          - Switch: components/form/switch.md
+          - RadioGroup: components/form/radio-group.md
+          - Select: components/form/select.md
+          - FormField: components/form/form-field.md
+      - Navigation:
+          - Overview: components/navigation/index.md
+          - NavContext: components/navigation/nav-context.md
+          - NavBar: components/navigation/nav-bar.md
+          - TopBar: components/navigation/top-bar.md
+          - BottomBar: components/navigation/bottom-bar.md
+          - SideBar: components/navigation/side-bar.md
+          - Link: components/navigation/link.md
+      - Feedback:
+          - Overview: components/feedback/index.md
+          - Alert: components/feedback/alert.md
+          - ProgressBar: components/feedback/progress-bar.md
+          - Spinner: components/feedback/spinner.md
+      - Overlay:
+          - Overview: components/overlay/index.md
+          - Modal: components/overlay/modal.md
+          - BottomSheet: components/overlay/bottom-sheet.md
+          - Popover: components/overlay/popover.md
+          - Tooltip: components/overlay/tooltip.md
+      - Surfaces:
+          - Overview: components/surfaces/index.md
+          - Badge: components/surfaces/badge.md
+          - Card: components/surfaces/card.md
+      - Buttons:
+          - Overview: components/buttons/index.md
+          - Button: components/buttons/button.md
+  - Tokens:
+      - Overview: tokens/index.md
+      - colors.base: tokens/colors.md
+      - spacing.base: tokens/spacing.md
+      - radius.base: tokens/radius.md
+      - typography.base: tokens/typography.md
+      - shadows.base: tokens/shadows.md
+      - zIndex.base: tokens/zindex.md
+      - size.base: tokens/size.md
+      - types: tokens/types.md
+  - Utils:
+      - Overview: utils/index.md
+      - cn: utils/cn.md
+      - mergeStyles: utils/merge-styles.md
+      - platform: utils/platform.md

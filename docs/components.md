@@ -1,74 +1,75 @@
 # Components
 
-This page summarizes the current consumer-facing component surface. It follows `audit/components/component-platform-support-matrix-plrnui-25.md` and does not promote any component to `stable`.
+Questa pagina è la mappa dei componenti esportati e dei relativi file di documentazione.
 
-## Beta Public Candidates
+La documentazione ricalca l’albero dei componenti in `components/` e vive in `docs/components/`.
 
-Use these from the root package entrypoint:
+## Layout
 
-```tsx
-import {
-  Alert,
-  Badge,
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  CodeInline,
-  Column,
-  Divider,
-  FormField,
-  Heading,
-  Input,
-  Link,
-  NavBar,
-  NavProvider,
-  P,
-  PasswordInput,
-  ProgressBar,
-  Quote,
-  RadioGroup,
-  Row,
-  Small,
-  Spinner,
-  Switch,
-  Text,
-  TextGroup,
-  Textarea,
-  ThemeProvider,
-  TopBar,
-} from "@personal-library/react-native-components";
-```
+- Overview: [Layout](components/layout/index.md)
+- [Box](components/layout/box.md)
+- [Row](components/layout/row.md)
+- [Column / Stack](components/layout/column.md)
+- [Divider](components/layout/divider.md)
 
-These components are expected to render on iOS, Android and Web, but stable promotion remains blocked by consumer runtime proof, accessibility/focus/keyboard coverage, and component-specific hardening.
+## Typography
 
-## Experimental Components
+- Overview: [Typography](components/typography/index.md)
+- [Text](components/typography/text.md)
+- [Heading](components/typography/heading.md)
+- [P](components/typography/p.md)
+- [B](components/typography/b.md)
+- [Small](components/typography/small.md)
+- [CodeInline](components/typography/code-inline.md)
+- [Quote](components/typography/quote.md)
+- [TextGroup](components/typography/text-group.md)
 
-The following APIs remain experimental and must be labelled as such in examples:
+## Form
 
-- `BottomBar`
-- `BottomSheet`
-- `Modal`
-- `Popover`
-- `Select`
-- `SideBar`
-- `Tooltip`
+- Overview: [Form](components/form/index.md)
+- [Input](components/form/input.md)
+- [PasswordInput](components/form/password-input.md)
+- [Textarea](components/form/textarea.md)
+- [Checkbox](components/form/checkbox.md)
+- [Switch](components/form/switch.md)
+- [RadioGroup](components/form/radio-group.md)
+- [Select](components/form/select.md)
+- [FormField](components/form/form-field.md)
 
-`Tooltip` and `Popover` have web content behavior and reduced native fallback behavior. `SideBar` has a minimal native vertical-list fallback and richer web behavior.
+## Navigation
 
-## Import Policy
+- Overview: [Navigation](components/navigation/index.md)
+- [NavContext](components/navigation/nav-context.md)
+- [NavBar](components/navigation/nav-bar.md)
+- [TopBar](components/navigation/top-bar.md)
+- [BottomBar](components/navigation/bottom-bar.md)
+- [SideBar](components/navigation/side-bar.md)
+- [Link](components/navigation/link.md)
 
-Consumer-facing docs and examples must use:
+## Feedback
 
-```tsx
-import { Button } from "@personal-library/react-native-components";
-```
+- Overview: [Feedback](components/feedback/index.md)
+- [Alert](components/feedback/alert.md)
+- [ProgressBar](components/feedback/progress-bar.md)
+- [Spinner](components/feedback/spinner.md)
 
-Forbidden in consumer docs/examples:
+## Overlay
 
-- legacy package names;
-- source internals;
-- build output;
-- direct component internals;
-- repo-relative package imports;
-- package subpaths not declared in package metadata.
+- Overview: [Overlay](components/overlay/index.md)
+- [Modal](components/overlay/modal.md)
+- [BottomSheet](components/overlay/bottom-sheet.md)
+- [Popover](components/overlay/popover.md)
+- [Tooltip](components/overlay/tooltip.md)
+
+## Surfaces
+
+- Overview: [Surfaces](components/surfaces/index.md)
+- [Badge](components/surfaces/badge.md)
+- [Card](components/surfaces/card.md)
+
+## Button
+
+- Overview: [Buttons](components/buttons/index.md)
+- [Button](components/buttons/button.md)
+
+> Nota: molti componenti sono basati su primitive `react-native` (Pressable/View/Text). In ambiente web tipicamente si usa React Native Web.

@@ -1,35 +1,37 @@
 # Getting Started
 
-Install and import the package by its approved package identity:
+## Installazione
 
-```tsx
-import { Button, Text, ThemeAppShell, ThemeProvider } from "@personal-library/react-native-components";
+Installa e importa il pacchetto usando l’identità approvata:
+
+```sh
+npm install @personal-library/react-native-components
 ```
 
-Use the root package entrypoint for consumer-facing code. Do not import from source internals, build output, component internals, repo-relative paths, or legacy package names.
+## Uso minimo
 
-## Minimal App
+Personal Library React Native Components espone un provider di tema che
+inizializza e fornisce `theme` tramite `useTheme()`.
 
 ```tsx
-import { Button, Column, Text, ThemeAppShell, ThemeProvider } from "@personal-library/react-native-components";
+import React from "react";
+import { ThemeProvider, Box, Text } from "@personal-library/react-native-components";
 
 export function App() {
   return (
     <ThemeProvider>
-      <ThemeAppShell>
-        <Column gap="md" padding="md">
-          <Text>Personal Library components</Text>
-          <Button label="Continue" onPress={() => undefined} />
-        </Column>
-      </ThemeAppShell>
+      <Box bg="surface" padding="md">
+        <Text weight="bold">Personal Library components</Text>
+      </Box>
     </ThemeProvider>
   );
 }
 ```
 
-## Optional Theme Persistence
+## Persistenza tema opzionale
 
-Theme persistence is opt-in and storage-agnostic. Consumers own the storage implementation and pass it to `ThemeProvider`.
+La persistenza del tema è opt-in e storage-agnostic. L’app consumer possiede
+l’implementazione storage e la passa a `ThemeProvider`.
 
 ```tsx
 import {
@@ -53,14 +55,30 @@ export function App() {
 }
 ```
 
-If no storage adapter is passed, `ThemeProvider` remains non-persistent and manages theme mode in memory only.
+## Navigazione (routing gestito dall’app)
 
-## Current Stability
+I componenti di navigazione non includono un router: l’app passa `pathname` e `navigate(href)`.
 
-No component is promoted to `stable` yet. Public candidates are documented as `beta`; platform-risk APIs are documented as `experimental`.
+```tsx
+import React from "react";
+import { NavBar, type NavItem } from "@personal-library/react-native-components";
 
-See:
+const items: NavItem[] = [
+  { label: "Home", href: "/" },
+  { label: "Settings", href: "/settings" },
+];
 
-- `docs/components.md`
-- `docs/platform-support.md`
-- `examples/basic-usage.tsx`
+export function Shell({ pathname }: { pathname: string }) {
+  return (
+    <NavBar
+      items={items}
+      pathname={pathname}
+      navigate={(href) => {
+        // integra qui il tuo router
+        window.location.assign(href);
+      }}
+      layout="top"
+    />
+  );
+}
+```

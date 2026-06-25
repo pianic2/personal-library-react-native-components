@@ -1,8 +1,9 @@
-# personal-library-react-native-components
+# Personal Library React Native Components
 
 Package target: `@personal-library/react-native-components`
 
-React Native component library baseline.
+React Native component library for shared app UI, built around reusable
+components, theme primitives and design tokens.
 
 ## Status
 
@@ -36,10 +37,13 @@ import { Button, Text } from "@personal-library/react-native-components";
 Deep imports from `src/`, `dist/`, component internals, or legacy package names
 are not supported consumer API.
 
-Minimal consumer docs and examples are available in:
+Consumer docs and examples are available in:
 
+- `docs/index.md`
 - `docs/getting-started.md`
 - `docs/components.md`
+- `docs/theme.md`
+- `docs/tokens/index.md`
 - `docs/platform-support.md`
 - `docs/migration.md`
 - `examples/basic-usage.tsx`
