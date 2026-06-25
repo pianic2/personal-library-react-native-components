@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  View,
   TextInput,
   TextInputProps,
 } from "react-native";
@@ -33,6 +32,7 @@ export function Input({
   ...rest
 }: InputProps) {
   const { theme, colors } = useTheme();
+  const inputTokens = theme.components.input;
   const [focused, setFocused] = useState(false);
 
   const borderColor = error
@@ -44,32 +44,26 @@ export function Input({
   return (
     <>
       <P style={{ marginBottom: theme.space.xs }} weight="medium" size={size}>
-        <Box style={{ 
-          height: 10, 
-          width: 10, 
-          backgroundColor: colors.primary, 
-          borderRadius: 5, 
-        }}></Box>{" "}
         {rest.label}
       </P>
       <Row
         style={{
           borderWidth: 1,
           borderColor,
-          borderRadius: theme.radius.md,
+          borderRadius: inputTokens.radius,
           backgroundColor: editable
             ? colors.surface
             : colors.disabledBg,
-          paddingHorizontal: theme.space[size],
-          minHeight: theme.size.height[size],
-          paddingVertical: 0,
+          paddingHorizontal: inputTokens.paddingX[size],
+          minHeight: inputTokens.height[size],
+          paddingVertical: inputTokens.paddingY[size],
 
         }}
         align="flex-start"
         gap={size}
       >
         {LeftIcon && (
-          <Box style={{ flexDirection: "row", alignItems: "center", height: theme.size.height[size] - 2 }}>
+          <Box style={{ flexDirection: "row", alignItems: "center", height: inputTokens.iconBoxHeight[size] }}>
             {LeftIcon}
           </Box>
         )}
@@ -85,14 +79,14 @@ export function Input({
             {
               flex: 1,
               color: colors.textPrimary,
-              height: theme.size.height[size] - 2,
-              paddingVertical: theme.space["md"] - 2.5
+              height: inputTokens.iconBoxHeight[size],
+              paddingVertical: inputTokens.paddingY[size],
             },
             style,
           ]}
         />
         {RightIcon && (
-          <Box style={{ flexDirection: "row", alignItems: "center", height: theme.size.height[size] - 2 }}>
+          <Box style={{ flexDirection: "row", alignItems: "center", height: inputTokens.iconBoxHeight[size] }}>
             {RightIcon}
           </Box>
         )}

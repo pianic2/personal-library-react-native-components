@@ -32,6 +32,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-28 pure `ThemeProvider` split and explicit `ThemeAppShell` migration path.
 - Added PLRNUI-56 optional `ThemeStorageAdapter` persistence for `ThemeProvider`, keeping storage adapter-based, consumer-owned and disabled by default.
 - Added PLRNUI-30 Button structural component-token contract wiring for height, horizontal padding, icon size, radius, gap, border width and opacity.
+- Added PLRNUI-31 Input structural component-token contract wiring for height, horizontal padding, vertical padding, icon box height and radius.
 
 ### Changed
 
@@ -57,6 +58,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-28 removes `withScroll` and implicit layout rendering from `ThemeProvider`; consumers that need app layout should compose `ThemeProvider` with `ThemeAppShell`.
 - Clarified that PLRNUI-56 intentionally defers `"system"` mode persistence because the current runtime `ThemeMode` remains `"light" | "dark"`; persisted `"system"` values are ignored as invalid.
 - Clarified that PLRNUI-30 does not add Button background, text, border, loading, typography, shadow, elevation, animation or width component tokens; Button colors continue to use semantic color tokens.
+- Clarified that PLRNUI-31 removes the decorative Input label marker instead of tokenizing it, eliminates the former Input magic offsets, and preserves semantic color behavior.
 
 ### PLRNUI-30 - Button component token contract
 
@@ -72,6 +74,18 @@ It is governance evidence only. It does not imply that package metadata, source 
 - `opacity.pressed`
 
 Public Button props, root package exports, variant behavior and semantic color behavior are unchanged. The existing `size="xs"` prop remains supported through the primitive height scale and existing fallback values because PLRNUI-30 only approved `sm/md/lg` component-token sizes.
+
+### PLRNUI-31 - Input component token contract
+
+`Input` now reads approved structural values from `theme.components.input`:
+
+- `height.xs/sm/md/lg`
+- `paddingX.xs/sm/md/lg`
+- `paddingY.xs/sm/md/lg`
+- `iconBoxHeight.xs/sm/md/lg`
+- `radius`
+
+The former decorative label marker was removed. The former `-2` and `-2.5` sizing offsets were eliminated. Public Input props, root package exports, package metadata and semantic color behavior are unchanged.
 
 ### PLRNUI-56 - Optional ThemeStorageAdapter persistence
 

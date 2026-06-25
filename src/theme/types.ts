@@ -30,6 +30,21 @@ export type ButtonComponentTokens = {
   };
 };
 
+export type InputComponentSizeTokens = {
+  xs: number;
+  sm: number;
+  md: number;
+  lg: number;
+};
+
+export type InputComponentTokens = {
+  height: InputComponentSizeTokens;
+  paddingX: InputComponentSizeTokens;
+  paddingY: InputComponentSizeTokens;
+  iconBoxHeight: InputComponentSizeTokens;
+  radius: number;
+};
+
 export interface GlassMaterialTokens {
   tint: string;
   border: string;
@@ -61,10 +76,7 @@ export interface Theme {
   components: {
     button: ButtonComponentTokens;
 
-    input?: {
-      height?: number;
-      radius?: number;
-    };
+    input: InputComponentTokens;
 
     card?: {
       radius?: number;

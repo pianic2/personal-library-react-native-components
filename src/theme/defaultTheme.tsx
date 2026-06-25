@@ -49,6 +49,33 @@ export function createBaseTheme(mode: ThemeMode): Theme {
           pressed: 1,
         },
       },
+      input: {
+        height: {
+          xs: size.height.xs,
+          sm: size.height.sm,
+          md: size.height.md,
+          lg: size.height.lg,
+        },
+        paddingX: {
+          xs: space.xs,
+          sm: space.sm,
+          md: space.md,
+          lg: space.lg,
+        },
+        paddingY: {
+          xs: space.none,
+          sm: space.none,
+          md: space.none,
+          lg: space.none,
+        },
+        iconBoxHeight: {
+          xs: size.height.xs,
+          sm: size.height.sm,
+          md: size.height.md,
+          lg: size.height.lg,
+        },
+        radius: radius.md,
+      },
     },
     globalStyles: {
       app: {
