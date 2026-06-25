@@ -7,8 +7,7 @@ traceable to the issue that authorizes them.
 
 - Do not migrate runtime source without audit evidence.
 - Do not stabilize public API without a Jira issue.
-- Do not add a legacy alias such as `@aura/ui` without an explicit owner
-  decision.
+- Do not add a legacy package alias without an explicit owner decision.
 - Legacy references in audit files are allowed only as historical or governance
   evidence.
 - Do not commit generated artifacts unless the ticket explicitly justifies them.
