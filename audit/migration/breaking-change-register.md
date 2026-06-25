@@ -59,6 +59,7 @@ Allowed statuses:
 | PLRNUI-8 | Build/package/consumer smoke | Typecheck, build and pack pass; historical clean Expo consumer install failed on React peer mismatch; verdict NOT READY until consumer evidence is regenerated. | Clean Expo install, root import, TypeScript resolution, Metro/runtime smoke, duplicate React/RN check. | Blocks RC until consumer verification passes or limitations are explicitly accepted. |
 | PLRNUI-9 | Docs/demo migration readiness | Docs/demo still use legacy AURA imports and repo-relative demo imports; preview web is not Expo/RN runtime proof. | Docs/demo import audit, clean consumer examples, runtime smoke beyond preview web. | Blocks RC if docs/demo conflict with public API and package identity. |
 | PLRNUI-10 | Breaking change governance | This register and migration changelog must be maintained as release gates. | Register/changelog review before RC. | Blocks RC if register or changelog is stale. |
+| PLRNUI-17 | Canonical naming governance | Repository/project identity is `personal-library-react-native-components`; package/import identity is `@personal-library/react-native-components`; AURA, aura, `@aura/ui`, UI Experience and ambiguous `react-native-components` identities are legacy/historical unless explicitly governed as temporary aliases. | Legacy naming map, migration changelog and breaking-change register review; no runtime/source/package metadata changes in this ticket. | Blocks RC if package/import identity changes lack owner/context, migration path or alias/deprecation policy. |
 | PLRNUI-16 / PLRNUI-29 / PLRNUI-53 | Token export naming and docs policy | AURA-branded and snapshot-named public token exports are removed now; neutral theme-oriented names are the supported public token API; legacy token names are not stable public API and are forbidden in consumer examples. | Source/root export grep, token public API test, PLRNUI-53 consumer docs policy. | Blocks RC if removed token names are reintroduced as public/root aliases, shown in consumer examples, or presented as stable. |
 | PLRNUI-26 | Internal and experimental export fencing | Root remains explicit named export surface; `cn` and `useIsMounted` are removed from root; `Stack` docs are reconciled; `useNavigate` is experimental. PLRNUI-29 removes legacy token compatibility names. | Root API diff, export matrix review, migration changelog entry and docs stability review. | Blocks stable release if internal helpers are exposed as stable/public or experimental exports are undocumented. |
 | PLRNUI-28 | Theme provider app-shell split | `ThemeProvider` is pure; `ThemeAppShell` owns explicit layout/scroll behavior. | Node smoke tests, typecheck, build, package dry-run and migration docs. | Breaking for consumers relying on implicit provider layout or `withScroll`. |
@@ -92,34 +93,34 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 - Category: package rename
 - Source issue: PLRNUI-3, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0001, ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: Current `package.json` declares `@personal-library/react-native-components`; `@aura/ui` remains historical audit and PLRNUI-8 package-artifact evidence only.
+- Decision: Current `package.json` declares `@personal-library/react-native-components`; `@aura/ui` remains historical audit and PLRNUI-8 package-artifact evidence only. PLRNUI-17 confirms the canonical package/import identity as `@personal-library/react-native-components`.
 - Motivation: Package identity must align with the reusable React Native component library identity and avoid publishing the legacy AURA name as the canonical contract.
 - Consumer impact: Consumers importing or installing `@aura/ui` must update install commands, import paths and package references once the rename is implemented.
-- Migration path: Publish migration notes mapping historical `@aura/ui` references to `@personal-library/react-native-components`; update consumer install docs and root imports where legacy docs still exist.
-- Legacy alias policy: Optional compatibility alias may be kept only if explicitly approved; otherwise `@aura/ui` remains historical documentation only.
+- Migration path: Map historical `@aura/ui`, `AURA` import placeholders, UI Experience references and ambiguous package identity prose to `@personal-library/react-native-components` for package/import usage and `personal-library-react-native-components` for repository/project identity. Consumer-facing cleanup belongs to explicit implementation/docs tickets.
+- Legacy alias policy: `@aura/ui` is historical only unless an owner explicitly approves and documents a temporary migration alias with reason, scope, deprecation window and removal target.
 - Deprecation window: HUMAN REVIEW REQUIRED before implementation.
 - Removal target: Before first release candidate under the new package identity, unless owner approves a documented compatibility release.
 - Verification required: Package metadata audit, `npm pack --dry-run`, clean Expo consumer install of the packed artifact, root import smoke and docs import audit.
 - Release blocking: Yes. RC is blocked if package identity is unresolved or register/changelog omit the rename.
-- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is historical artifact evidence. PLRNUI-45 verifies current package metadata uses `@personal-library/react-native-components`.
+- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is historical artifact evidence. PLRNUI-45 verifies current package metadata uses `@personal-library/react-native-components`. PLRNUI-17 is a governance documentation update only and does not change package metadata or runtime source.
 
 ### BC-002 - Legacy AURA naming deprecation/removal
 
 - ID: BC-002
 - Status: candidate
 - Category: legacy naming
-- Source issue: PLRNUI-3, PLRNUI-9, PLRNUI-10
+- Source issue: PLRNUI-3, PLRNUI-9, PLRNUI-10, PLRNUI-17
 - Related ADR / Risk Assessment: ADR 0001, ADR 0008, Risk Assessment 0008
-- Decision: AURA and UI Experience are historical/deprecated names; new governance artifacts should use `personal-library-react-native-components` for repo/project identity and `@personal-library/react-native-components` for package target.
+- Decision: AURA, aura, `@aura/ui`, UI Experience and ambiguous `react-native-components` identity references are historical/deprecated names. New governance artifacts should use `personal-library-react-native-components` for repo/project identity and `@personal-library/react-native-components` for package/import identity.
 - Motivation: Legacy naming in docs, imports and token names creates ambiguity about the supported package identity and API contract.
-- Consumer impact: Consumers using `auraTokens` or `getAuraTokens` must migrate to neutral token names with no AURA token compatibility alias. Consumers using `from "AURA"` or `@aura/ui` need updated imports or a separately approved package/import alias path.
-- Migration path: Maintain `audit/migration/legacy-naming-map.md`; update docs/demo in a dedicated task; publish removal notes in changelog.
-- Legacy alias policy: AURA token aliases are not allowed by PLRNUI-16. Any package/import legacy alias must be explicitly marked deprecated and mapped to replacement import paths.
+- Consumer impact: Consumers using `from "AURA"`, `aura` package examples, `@aura/ui`, UI Experience package prose or ambiguous package identity wording must update imports and documentation references to `@personal-library/react-native-components` and repository/project references to `personal-library-react-native-components`. Consumers using `auraTokens` or `getAuraTokens` must migrate to neutral token names with no AURA token compatibility alias.
+- Migration path: Maintain `audit/migration/legacy-naming-map.md`; update docs/demo/repository wording in dedicated implementation tickets; publish removal notes in changelog.
+- Legacy alias policy: AURA token aliases are not allowed by PLRNUI-16. Any package/import legacy alias must be explicitly marked deprecated and mapped to replacement import paths with owner/context and removal/containment policy. Without that approval, legacy aliases are historical only.
 - Deprecation window: HUMAN REVIEW REQUIRED; no silent removal.
 - Removal target: Before stable release unless a compatibility window is approved.
-- Verification required: Repository grep for `@aura/ui`, `from "AURA"`, `from 'AURA'`, `auraTokens`, `getAuraTokens` and docs/demo import review.
+- Verification required: Repository grep for `AURA`, `aura`, `@aura/ui`, `UI Experience`, ambiguous `react-native-components`, `auraTokens`, `getAuraTokens` and docs/demo import review.
 - Release blocking: Yes. RC is blocked if legacy public aliases remain without deprecation/removal policy.
-- Notes: Current `package.json` no longer declares `@aura/ui`; remaining `@aura/ui` and `AURA` references are historical audit/smoke evidence or docs/demo migration findings.
+- Notes: Current `package.json` no longer declares `@aura/ui`; remaining `@aura/ui` and `AURA` references are historical audit/smoke evidence or docs/demo migration findings. PLRNUI-17 records governance policy only and does not implement naming cleanup, source changes, generated file edits or Jira workflow transitions.
 
 ### BC-007 - Token naming aggressive removal
 

@@ -11,6 +11,11 @@ It is governance evidence only. It does not imply that package metadata, source 
 
 ### Added
 
+- Added PLRNUI-17 canonical naming-governance register update: legacy AURA,
+  aura, `@aura/ui`, UI Experience and ambiguous `react-native-components`
+  identities now map to repository/project identity
+  `personal-library-react-native-components` and package/import identity
+  `@personal-library/react-native-components`.
 - Added PLRNUI-10 migration governance structure for release candidate review.
 - Added explicit release gate: release candidate is blocked unless `audit/migration/breaking-change-register.md` and this changelog are updated.
 - Added issue mapping for PLRNUI-3, PLRNUI-4, PLRNUI-5, PLRNUI-7, PLRNUI-8, PLRNUI-9 and PLRNUI-10.
@@ -41,6 +46,18 @@ It is governance evidence only. It does not imply that package metadata, source 
 
 ### Changed
 
+- Clarified PLRNUI-17 canonical migration policy: new consumer-facing imports
+  must use `@personal-library/react-native-components`; legacy aliases are
+  historical only unless explicitly documented as temporary migration aliases;
+  any remaining legacy names require reason, owner/context and
+  removal/containment policy.
+- Clarified that PLRNUI-17 is governance documentation only: no runtime/code
+  change, no generated file edit, no package metadata change and no
+  consumer-facing docs cleanup are made by this ticket.
+- Clarified that ADR and Risk Assessment documents remain `Proposto`; PLRNUI-17
+  does not promote ADR/RA status without explicit owner approval.
+- Clarified that naming cleanup must be handled by explicit implementation
+  tickets and not hidden inside governance register updates.
 - Clarified that current migration state remains governance/proposed for broader API/docs work, while current package metadata is canonical and aligned to `dist`.
 - PLRNUI-42 aligned `peerDependencies.react` to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`.
 - PLRNUI-43 confirmed `peerDependencies.react-native` as `>=0.85.0 <0.86.0`, aligned to the approved Expo SDK `56.0.0` / React Native `0.85.x` baseline.
@@ -211,6 +228,9 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 
 - Deprecated AURA / UI Experience as canonical project or package identity for new technical artifacts.
 - Deprecated legacy package/import naming such as `@aura/ui` and `from "AURA"` unless retained under an explicit alias policy.
+- Deprecated ambiguous use of `react-native-components` as a standalone current
+  repository identity where `personal-library-react-native-components` is
+  required for canonical repository/project naming.
 - Deprecated AURA token names `auraTokens` and `getAuraTokens` with no compatibility aliases; PLRNUI-53 confirms they are not stable public API and must not appear in consumer examples.
 - Deprecated unsupported consumer guidance based on deep imports, repo-relative imports or internal source/build paths.
 - Deprecated treating beta, experimental or internal API as stable without promotion evidence.
