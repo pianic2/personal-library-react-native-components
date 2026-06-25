@@ -5,6 +5,7 @@ import type { spacing, space } from "../tokens/spacing.base";
 import type { radius } from "../tokens/radius.base";
 import type { typography } from "../tokens/typography.base";
 import type { shadows } from "../tokens/shadows.base";
+import type { Shadow } from "../tokens/shadows.base";
 import type { zIndex } from "../tokens/zIndex.base";
 import { size } from "../tokens/size.base";
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
@@ -45,6 +46,12 @@ export type InputComponentTokens = {
   radius: number;
 };
 
+export type CardComponentTokens = {
+  radius: number;
+  padding: number;
+  shadow: Shadow;
+};
+
 export interface GlassMaterialTokens {
   tint: string;
   border: string;
@@ -78,11 +85,7 @@ export interface Theme {
 
     input: InputComponentTokens;
 
-    card?: {
-      radius?: number;
-      shadow?: any;
-      padding?: number;
-    };
+    card?: CardComponentTokens;
   };
 
   materials?: {

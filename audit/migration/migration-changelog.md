@@ -33,6 +33,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-56 optional `ThemeStorageAdapter` persistence for `ThemeProvider`, keeping storage adapter-based, consumer-owned and disabled by default.
 - Added PLRNUI-30 Button structural component-token contract wiring for height, horizontal padding, icon size, radius, gap, border width and opacity.
 - Added PLRNUI-31 Input structural component-token contract wiring for height, horizontal padding, vertical padding, icon box height and radius.
+- Added PLRNUI-32 Card structural component-token contract wiring for radius, padding and shadow defaults.
 
 ### Changed
 
@@ -59,6 +60,7 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-56 intentionally defers `"system"` mode persistence because the current runtime `ThemeMode` remains `"light" | "dark"`; persisted `"system"` values are ignored as invalid.
 - Clarified that PLRNUI-30 does not add Button background, text, border, loading, typography, shadow, elevation, animation or width component tokens; Button colors continue to use semantic color tokens.
 - Clarified that PLRNUI-31 removes the decorative Input label marker instead of tokenizing it, eliminates the former Input magic offsets, and preserves semantic color behavior.
+- Clarified that PLRNUI-32 removes the former Card `radius = 14` default, maps Card defaults to approved theme/component tokens and preserves explicit Card prop overrides without stable promotion.
 
 ### PLRNUI-30 - Button component token contract
 
@@ -86,6 +88,16 @@ Public Button props, root package exports, variant behavior and semantic color b
 - `radius`
 
 The former decorative label marker was removed. The former `-2` and `-2.5` sizing offsets were eliminated. Public Input props, root package exports, package metadata and semantic color behavior are unchanged.
+
+### PLRNUI-32 - Card component token contract
+
+`Card` now reads approved structural defaults from `theme.components.card`:
+
+- `radius`
+- `padding`
+- `shadow`
+
+Default theme values map to approved base tokens: `radius.lg`, `space.md` and `shadows.sm`. Explicit Card props still override component-token defaults. Public Card props, root package exports, package metadata and semantic color behavior are unchanged. Card remains `beta`; PLRNUI-32 does not promote it to `stable`.
 
 ### PLRNUI-56 - Optional ThemeStorageAdapter persistence
 

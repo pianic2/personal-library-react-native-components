@@ -68,6 +68,8 @@ PLRNUI-23 note: PLRNUI5-BLK-013, PLRNUI5-BLK-014, PLRNUI5-BLK-016, PLRNUI5-BLK-0
 
 PLRNUI-26 note: these blockers prevent stable promotion; they do not by themselves require removing every experimental runtime export from the pre-stable root API. Experimental root exposure remains acceptable only when explicit, documented and not presented as stable. Internal helpers such as `cn` and `useIsMounted` are fenced out of root because they are not consumer-facing component APIs.
 
+PLRNUI-32 note: `Card` also resolves its component-token blocker for radius, padding and shadow defaults. `tests/theme/card-component-tokens.test.tsx` covers `theme.components.card` defaults and explicit prop override precedence. Card remains `beta`; this does not satisfy the full stable promotion gate.
+
 ## Cross-cutting blockers
 
 | Blocker ID | Scope | Evidence | Impact | Recommended Jira ticket |

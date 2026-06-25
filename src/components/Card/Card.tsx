@@ -25,16 +25,23 @@ export function Card({
   children,
   style,
   bgColor,
-  radius = 14,
+  radius,
   margin = "none",
-  padding = "md",
+  padding,
   variant = "default",
   shadow,
 }: CardProps) {
   const { theme, colors } = useTheme();
+  const cardTokens = theme.components.card;
+  const resolvedRadius = radius ?? cardTokens?.radius ?? theme.radius.lg;
+  const resolvedPadding =
+    padding !== undefined
+      ? theme.space[padding]
+      : cardTokens?.padding ?? theme.space.md;
 
   const resolvedShadow: Shadow =
     shadow ??
+    cardTokens?.shadow ??
     (variant === "outline"
       ? "none"
       : variant === "elevated"
@@ -51,9 +58,9 @@ export function Card({
         styles.base,
         {
           backgroundColor: cardBackground,
-          borderRadius: radius,
+          borderRadius: resolvedRadius,
           margin: theme.space[margin],
-          padding: theme.space[padding],
+          padding: resolvedPadding,
         },
 
         variant === "outline" && {

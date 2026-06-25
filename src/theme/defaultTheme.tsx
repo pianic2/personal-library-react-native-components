@@ -76,6 +76,11 @@ export function createBaseTheme(mode: ThemeMode): Theme {
         },
         radius: radius.md,
       },
+      card: {
+        radius: radius.lg,
+        padding: space.md,
+        shadow: "sm",
+      },
     },
     globalStyles: {
       app: {
