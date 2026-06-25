@@ -6,10 +6,14 @@ File-based validation of root exports, subpath exports, deep imports, public typ
 
 Current-state note for PLRNUI-45: this PLRNUI-8 report is historical evidence for an older package artifact. PLRNUI-45 supersedes the current package metadata assessment with `@personal-library/react-native-components`, `dist/index.js`, `dist/index.d.ts`, and root-only package exports.
 
+Current-state note for PLRNUI-46: `npm run consumer:smoke` now validates root package consumption from a packed tarball in an external generated fixture. The fixture imports runtime APIs and public types from `@personal-library/react-native-components`; it does not use library source paths, `dist` direct imports, package subpaths or legacy AURA imports.
+
+Current-state note for PLRNUI-58: `npm run consumer:expo` validates the same representative root package API through a generated Expo fixture and `expo export --platform web`, without direct `src/`, direct `dist/`, package subpath or legacy AURA imports.
+
 ## Evidence
 
 - Historical PLRNUI-8 artifact: `index.ts` exported broad barrels from components, hooks, utils, storage, tokens, theme and themes.
-- Current PLRNUI-45 checkout: `src/index.ts` exports only `PACKAGE_NAME`.
+- Current checkout: `src/index.ts` exports `PACKAGE_NAME` plus governed component, theme, hook, utility and token APIs through explicit named exports.
 - Current `package.json` exposes only root `exports["."]` with `types: "./dist/index.d.ts"` and `import: "./dist/index.js"`, plus `./package.json`.
 - `package.json` does not expose subpaths.
 - `audit/api/export-matrix.md` analyzes 92 exports: 40 public, 32 experimental, 18 internal and 2 deprecated.
@@ -62,10 +66,11 @@ rg -n "from ['\"](src|dist|@aura/ui|AURA|\.\./\.\./|\.\./\.\./theme|\.\./\.\./in
 
 ## Blockers
 
-- Clean consumer validation is still required under PLRNUI-46.
+- PLRNUI-46 clean consumer validation now passes for packed-artifact root import, type declaration resolution and Node render smoke.
+- PLRNUI-58 Expo/Metro validation now passes for packed-artifact root import, type declaration resolution and web export bundling.
 - Proposed broader root API is not implemented.
 - Public props/types policy is not implemented.
 
 ## Conclusion
 
-Root package export metadata is present and points to current build output. The package is root-only and does not expose unapproved subpaths. Release readiness is still not complete because PLRNUI-46 clean consumer validation and future broader API decisions remain open.
+Root package export metadata is present and points to current build output. The package is root-only and does not expose unapproved subpaths. PLRNUI-46 proves representative root API consumption from the packed artifact, and PLRNUI-58 proves representative Expo/Metro web bundling from the packed artifact. Broader API decisions and native runtime proof remain separate release gates.

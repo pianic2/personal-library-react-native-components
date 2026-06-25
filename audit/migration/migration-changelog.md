@@ -36,6 +36,8 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-32 Card structural component-token contract wiring for radius, padding and shadow defaults.
 - Added PLRNUI-33 theme override verification for nested colors, radius, size and Button/Input/Card component tokens.
 - Added PLRNUI-29 token naming removal evidence: legacy/snapshot public token names are removed now, neutral `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens` are the supported public token API, and no root deprecated aliases are provided.
+- Added PLRNUI-46 automated consumer smoke validation: the current package is built, packed, installed into a deterministic external fixture from the generated tarball, imported from `@personal-library/react-native-components`, typechecked and render-smoked with `ThemeProvider`, `Button`, `Text`, `Box`, `Input` and `Card`.
+- Added PLRNUI-58 automated Expo/Metro consumer validation: the current package is built, packed, installed into a deterministic Expo fixture from the generated tarball, imported from `@personal-library/react-native-components`, typechecked and bundled with `expo export --platform web`.
 
 ### Changed
 
@@ -66,6 +68,8 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-33 preserves the existing `themeOverrides?: Partial<Theme>` public API while hardening nested merge behavior; invalid scalar leaf casts remain unsupported because runtime schema validation is not introduced.
 - Clarified that PLRNUI-29 is an aggressive removal: `auraTokens`, `getAuraTokens` and `TokensSnapshot` are removed from root and token barrels now, with migration to `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens`. PLRNUI-53 remains responsible for consumer-facing docs/policy.
 - Clarified that PLRNUI-53 closes the consumer-facing docs/demo policy for `auraTokens` and `getAuraTokens`: they are legacy/deprecated, not stable public API, not allowed in README/docs/examples/demo as recommended consumer API, and not reintroduced as aliases.
+- Clarified that PLRNUI-46 proves packed-artifact root import and type/render smoke in a generated consumer fixture, but does not prove Expo CLI Metro export, native device runtime, Expo Go, prebuild or custom dev client behavior.
+- Clarified that PLRNUI-58 proves Expo web/Metro export in a generated consumer fixture, but does not prove Expo Go, native device runtime, prebuild or custom dev client behavior.
 
 ### PLRNUI-53 - Legacy token API docs policy
 
@@ -223,14 +227,15 @@ Consumer-facing documentation policy is deferred to PLRNUI-53.
 - PLRNUI-8 verdict remains **NOT READY**.
 - Historical PLRNUI-8 clean Expo consumer install failed with `ERESOLVE` because the consumer used `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`; PLRNUI-42 updates current package metadata to accept React `19.2.3`.
 - Root import, TypeScript consumer import, Metro resolution and native runtime smoke could not proceed after the PLRNUI-8 install failure.
-- React Native peer package metadata is aligned by PLRNUI-43; clean consumer duplicate React/RN proof remains deferred to PLRNUI-46.
+- React Native peer package metadata is aligned by PLRNUI-43; PLRNUI-46 verifies the generated consumer fixture resolves a single root-level `react@19.2.7` and `react-native@0.85.3` alongside the packed package.
 - Native/native-adjacent dependency policy is consolidated by PLRNUI-44 for the current package state; any future native dependency introduction remains blocked by the native dependency gate and PLRNUI-46 consumer validation.
-- Package entrypoint metadata is aligned by PLRNUI-45; clean consumer resolver/import proof remains deferred to PLRNUI-46.
+- Package entrypoint metadata is aligned by PLRNUI-45; PLRNUI-46 verifies clean consumer root import and type declaration resolution from the packed artifact.
 - PLRNUI-21 component blockers are remediated for the five targeted components, but stable promotion remains blocked by docs/platform/support and consumer evidence requirements.
 - PLRNUI-22 navigation blockers are remediated for the targeted components, but stable promotion remains blocked by docs/platform/support, accessibility and consumer evidence requirements.
 - PLRNUI-23 overlay/form modal contracts are documented and smoke-rendered, but stable promotion remains blocked by platform runtime, focus, keyboard and accessibility evidence.
-- PLRNUI-24 completes the approved root-public component props type export set for this checkout, but release readiness still requires clean consumer TypeScript declaration resolution under PLRNUI-46.
-- PLRNUI-26 reduces root API risk by fencing internal helper exports and documenting experimental exports, but release readiness remains blocked by clean consumer and stable-gate evidence.
+- PLRNUI-24 completes the approved root-public component props type export set for this checkout, and PLRNUI-46 verifies representative clean consumer TypeScript declaration resolution.
+- PLRNUI-26 reduces root API risk by fencing internal helper exports and documenting experimental exports; release readiness remains blocked by Metro/native runtime and stable-gate evidence.
+- PLRNUI-58 adds Expo web/Metro bundling evidence; release readiness remains blocked by native runtime and stable-gate evidence.
 - Historical PLRNUI-9 audit records still contain legacy AURA imports and repo-relative demo import findings. PLRNUI-25 confirms that current `docs/`, `examples/`, `demo/` and `preview-web/` paths are absent in this checkout, adds a canonical README root import example, and preserves historical audit references as migration notes.
 - Release candidate is blocked if the breaking change register is stale.
 
@@ -241,10 +246,10 @@ Required before release readiness can become ready:
 - `npm run typecheck`
 - `npm run build`
 - `npm pack --dry-run`
-- Clean Expo TypeScript consumer app install of the packed artifact without `--force` or `--legacy-peer-deps`
+- Clean Expo/React Native-style TypeScript consumer fixture install of the packed artifact without `--force` or `--legacy-peer-deps`
 - Root import from `@personal-library/react-native-components`
 - TypeScript declaration resolution in the clean consumer
-- Metro startup or equivalent consumer resolver verification
+- Metro startup or equivalent consumer resolver verification through PLRNUI-58 `expo export --platform web`
 - Duplicate React/RN check in the consumer dependency tree
 - Native dependency gate review for Expo Go, managed workflow, prebuild/custom dev client and bare RN impact
 - Export matrix/root API approval and docs/demo import audit

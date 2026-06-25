@@ -8,6 +8,10 @@ Repository sources, package metadata, lockfile, TypeScript config and build conf
 
 Current-state note for PLRNUI-45: this PLRNUI-8 report is historical evidence for an older package artifact. Current package metadata is reconciled by PLRNUI-45: `name` is `@personal-library/react-native-components`, `main` / `module` point to `./dist/index.js`, `types` points to `./dist/index.d.ts`, and root `exports["."]` points to the same emitted files.
 
+Current-state note for PLRNUI-46: automated consumer validation now builds and packs the current package, installs `/tmp/plrnui-46-consumer-smoke/artifacts/personal-library-react-native-components-0.0.0.tgz` into a generated external fixture, and verifies root package import, type declaration resolution and Node render smoke for representative public components.
+
+Current-state note for PLRNUI-58: automated Expo/Metro validation now builds and packs the current package, installs `/tmp/plrnui-58-expo-consumer/artifacts/personal-library-react-native-components-0.0.0.tgz` into a generated Expo fixture, and verifies TypeScript plus `expo export --platform web`.
+
 ## Evidence
 
 - Repository state before report creation: branch `main` tracking `origin/main`; pre-existing dirty state `M package-lock.json` and `?? audit/`.
@@ -75,13 +79,13 @@ find dist -maxdepth 2 -type f -printf '%p %s bytes\n' | sort
 
 - npm commands may fail in this managed environment unless npm cache is redirected away from read-only `/home/optimus/.npm`.
 - In the historical PLRNUI-8 artifact, including `index.ts` in the published tarball was unexpected when `files` was limited to `dist`; it was pulled in because package metadata referenced it.
-- Current `main` and `types` fields point to `dist`; consumer resolver proof remains deferred to PLRNUI-46.
+- Current `main` and `types` fields point to `dist`; PLRNUI-46 adds consumer resolver proof for the packed artifact and PLRNUI-58 adds Expo/Metro web export proof.
 
 ## Blockers
 
 - No build/typecheck/package command blocker was observed after using `/tmp` npm cache.
-- Historical PLRNUI-8 packaging metadata was a release blocker because root `main`/`types` were not aligned with the built artifacts. Current package metadata is aligned; release remains blocked on PLRNUI-46 consumer evidence.
+- Historical PLRNUI-8 packaging metadata was a release blocker because root `main`/`types` were not aligned with the built artifacts. Current package metadata is aligned; PLRNUI-46 adds packed-artifact consumer evidence and PLRNUI-58 adds Expo/Metro web export evidence.
 
 ## Conclusion
 
-Build and typecheck were executable in the historical PLRNUI-8 validation, and dry-run packaging succeeded with a writable npm cache. Current package metadata no longer exposes source entry metadata alongside `dist` exports, but clean consumer validation remains required before release readiness.
+Build and typecheck were executable in the historical PLRNUI-8 validation, and dry-run packaging succeeded with a writable npm cache. Current package metadata no longer exposes source entry metadata alongside `dist` exports. PLRNUI-46 verifies clean consumer package resolution from the packed tarball, and PLRNUI-58 verifies Expo/Metro web export from the packed tarball.

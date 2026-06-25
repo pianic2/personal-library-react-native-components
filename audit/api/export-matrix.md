@@ -143,6 +143,20 @@ PLRNUI-57 documentation evidence:
 - Consumer examples: `examples/basic-usage.tsx`, `examples/layout-primitives.tsx`, `examples/form-controls.tsx`, `examples/feedback.tsx`, `examples/navigation.tsx`, `examples/overlays.experimental.tsx`.
 - No package exports, package subpaths, runtime logic or stable classifications were changed.
 
+PLRNUI-46 consumer smoke evidence:
+
+- `npm run consumer:smoke` builds and packs `@personal-library/react-native-components`, installs the packed tarball into `/tmp/plrnui-46-consumer-smoke/consumer`, and imports from the package root only.
+- Representative runtime root imports covered: `ThemeProvider`, `Button`, `Text`, `Box`, `Input` and `Card`.
+- Representative type root imports covered: `ButtonProps`, `TextProps`, `InputProps`, `CardProps` and `ThemeProviderProps`.
+- The smoke does not add package subpaths, direct source imports, legacy AURA aliases or stable promotions.
+
+PLRNUI-58 Expo/Metro consumer evidence:
+
+- `npm run consumer:expo` builds and packs `@personal-library/react-native-components`, installs the packed tarball into `/tmp/plrnui-58-expo-consumer/consumer`, and runs `expo export --platform web`.
+- Representative runtime root imports covered: `ThemeProvider`, `Box`, `Text`, `Button`, `Input` and `Card`.
+- Representative type root imports covered: `ThemeProviderProps`, `ButtonProps`, `TextProps`, `InputProps` and `CardProps`.
+- The Expo/Metro smoke does not add package subpaths, direct source imports, direct dist imports, legacy AURA aliases or stable promotions.
+
 PLRNUI-56 implementation evidence:
 
 - `ThemeStorageAdapter` is root-exported as a type-only public/beta contract.

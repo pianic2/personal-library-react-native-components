@@ -8,6 +8,8 @@ Runtime validation in Expo Go or Metro could not proceed because clean consumer 
 
 Current-state note: this PLRNUI-8 report is historical evidence for the failed consumer validation run. PLRNUI-44 supersedes the package dependency classification for the current checkout: current `package.json` has no runtime `dependencies`, keeps `react` / `react-native` as peers, and keeps AsyncStorage / Clipboard consumer-owned.
 
+Current-state note for PLRNUI-58: automated Expo/Metro web export now passes in a generated external Expo fixture installed from the packed package tarball. This proves Metro web bundling, but it does not prove Expo Go, native device runtime, prebuild or custom dev client behavior.
+
 ## Evidence
 
 Inputs reviewed:
@@ -58,8 +60,9 @@ rg -n "from ['\"](react|react-native|react-dom|react-native-web|@react-native-as
 
 ## Findings
 
-- Expo Go compatibility is unknown for the selected package dependency set because the clean consumer cannot install the package.
-- Managed workflow compatibility is unknown for the same reason.
+- Expo web/Metro bundling is proven by PLRNUI-58 with `expo export --platform web`.
+- Expo Go compatibility remains unknown because no device/runtime session is automated locally.
+- Managed workflow device compatibility is unknown because PLRNUI-58 validates web export only.
 - Prebuild/custom dev client requirement is unknown and must remain blocked until native dependencies are installed and run in a clean consumer.
 - AsyncStorage strategy in current governance is consumer-owned and adapter-based; executable consumer validation remains deferred.
 - Safe Area strategy remains governed by PLRNUI-37 and must be validated if/when package metadata exposes that contract.
@@ -77,12 +80,13 @@ rg -n "from ['\"](react|react-native|react-dom|react-native-web|@react-native-as
 
 ## Blockers
 
-- Clean consumer install failure blocks all native runtime validation.
+- PLRNUI-46 clean consumer package install/type/render smoke now passes for the packed artifact, but it does not execute native runtime paths.
+- PLRNUI-58 Expo/Metro web export now passes for the packed artifact.
 - Expo Go compatibility has not been proven.
 - Managed workflow compatibility has not been proven.
 - Prebuild/custom dev client requirement has not been proven or ruled out.
-- Native dependency gate decisions are documented by PLRNUI-44 for the current package state; executable consumer validation remains deferred to PLRNUI-46.
+- Native dependency gate decisions are documented by PLRNUI-44 for the current package state; PLRNUI-58 adds executable Expo/Metro web export validation, while native device runtime validation remains separate.
 
 ## Conclusion
 
-Native runtime readiness is not validated. Historical PLRNUI-8 evidence supports only a risk classification for that artifact. Current PLRNUI-44 package governance has no bundled native runtime dependency, but clean Expo/RN consumer validation still remains required before release readiness.
+Native runtime readiness is only partially validated. Historical PLRNUI-8 evidence supports only a risk classification for that artifact. Current PLRNUI-44 package governance has no bundled native runtime dependency, PLRNUI-46 adds packed-artifact consumer install/type/render evidence, and PLRNUI-58 adds Expo/Metro web export evidence. Expo Go, native device runtime, prebuild and custom dev client behavior still remain unproven.
