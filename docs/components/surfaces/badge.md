@@ -1,5 +1,7 @@
 # Badge
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Badge testuale con varianti.
 
 ## Import

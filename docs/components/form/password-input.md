@@ -1,5 +1,7 @@
 # PasswordInput
 
+**Stability:** internal / non-stable — not part of the public consumer API.
+
 Wrapper di `Input` che abilita/disabilita `secureTextEntry`.
 
 ## Import

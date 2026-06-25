@@ -1,5 +1,8 @@
 # Column (Stack)
 
+**Stability:** beta for `Column`; internal / non-stable for the `Stack` alias. `Stack` is not part of the public consumer API.
+
+
 `Column` (alias `Stack`) impila i figli verticalmente e inserisce spacing tra gli elementi.
 
 ## Import

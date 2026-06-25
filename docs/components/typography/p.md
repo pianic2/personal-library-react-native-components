@@ -1,5 +1,7 @@
 # P
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Wrapper di `Text` con defaults: `size="md"`, `weight="regular"`, `align="left"`.
 
 ## Import

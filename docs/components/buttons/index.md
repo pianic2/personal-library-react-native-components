@@ -1,3 +1,3 @@
 # Buttons
 
-- [Button](button.md)
+- [Button](button.md) — beta

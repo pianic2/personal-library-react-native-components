@@ -41,11 +41,27 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
 
 ## Sintesi gap
 
-- Le docs non contengono una tassonomia visibile di maturity.
-- Le pagine internal sono navigabili senza avviso.
-- Le pagine experimental non hanno warning uniforme.
-- I componenti beta non vengono dichiarati come beta.
+- PLRNUI-49 aggiunge una tassonomia visibile di maturity in README/docs e
+  label per le pagine component/API correnti.
+- PLRNUI-49 mantiene le pagine internal navigabili ma le marca
+  `internal / non-stable — not part of the public consumer API`.
+- PLRNUI-49 marca le pagine experimental con warning uniforme.
+- PLRNUI-49 marca i componenti/API beta come beta.
 - La demo comunica disponibilita visiva, non stato API.
+
+## PLRNUI-49 application notes
+
+- Nessun componente/API e stato promosso a `stable`; la label `stable` resta
+  esplicitamente vuota.
+- `CodeInline`, `ProgressBar`, `Card`, `PasswordInput`, `Textarea`, `Stack` e
+  helper navigation hooks sono marcati internal / non-stable nelle superfici
+  consumer correnti.
+- `Modal`, `BottomSheet`, `Tooltip`, `Popover`, `Select`, `TopBar`,
+  `BottomBar`, `SideBar`, `mergeStyles` e platform helpers sono marcati
+  experimental.
+- I simboli legacy `auraTokens` e `getAuraTokens` non compaiono in README/docs
+  consumer correnti; le occorrenze residue restano audit storico/governance e
+  sono gia marcate legacy/deprecated/removed/not stable.
 
 ## Raccomandazioni di audit
 

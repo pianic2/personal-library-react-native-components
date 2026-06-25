@@ -1,5 +1,7 @@
 # ProgressBar
 
+**Stability:** internal / non-stable — not part of the public consumer API.
+
 Barra di progresso (0–100) con variante colore.
 
 ## Import

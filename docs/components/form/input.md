@@ -1,5 +1,7 @@
 # Input
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Campo input basato su `TextInput` con label, helper text, stato errore e slot icone.
 
 ## Import

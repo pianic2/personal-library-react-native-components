@@ -1,4 +1,4 @@
 # Surfaces
 
-- [Badge](badge.md)
-- [Card](card.md)
+- [Badge](badge.md) — beta
+- [Card](card.md) — internal / non-stable

@@ -1,5 +1,7 @@
 # TopBar
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Barra di navigazione in alto (web-only).
 
 ## Import

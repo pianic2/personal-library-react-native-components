@@ -1,5 +1,7 @@
 # Theme
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 ## ThemeProvider
 
 `ThemeProvider` inizializza il tema, gestisce la modalità (`light`/`dark`) e fornisce i valori tramite context.
@@ -7,9 +9,10 @@
 Props principali:
 
 - `initialMode?: "light" | "dark"`
-- `withSafeArea?: boolean` (default `true`)
-- `withScroll?: boolean` (default `true`)
 - `themeOverrides?: Partial<Theme>`
+- `persistTheme?: boolean`
+- `storage?: ThemeStorageAdapter`
+- `storageKey?: string`
 
 Esempio:
 
@@ -19,7 +22,7 @@ import { ThemeProvider } from "@personal-library/react-native-components";
 
 export function App({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider initialMode="light" withSafeArea={false} withScroll={false}>
+    <ThemeProvider initialMode="light">
       {children}
     </ThemeProvider>
   );
@@ -31,15 +34,14 @@ export function App({ children }: { children: React.ReactNode }) {
 Hook per accedere a:
 
 - `theme` (token completi)
-- `colors` (alias di `theme.colors`)
 - `mode`, `toggleTheme()`, `setMode(mode)`
 
 ```ts
 import { useTheme } from "@personal-library/react-native-components";
 
 function Example() {
-  const { theme, colors, toggleTheme } = useTheme();
-  return { theme, colors, toggleTheme };
+  const { theme, toggleTheme } = useTheme();
+  return { theme, toggleTheme };
 }
 ```
 

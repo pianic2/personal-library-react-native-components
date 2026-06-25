@@ -1,5 +1,7 @@
 # colors.base
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Definisce le scale colore interne usate per costruire i token tema.
 
 ## API

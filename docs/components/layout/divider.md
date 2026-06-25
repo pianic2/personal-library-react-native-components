@@ -1,5 +1,7 @@
 # Divider
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Separatore orizzontale a piena larghezza.
 
 ## Import

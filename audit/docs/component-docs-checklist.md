@@ -53,8 +53,21 @@ Ogni componente candidato a `stable` deve avere almeno:
 
 ## Gap trasversali rilevati
 
-- Le pagine esistenti usano import legacy `from "AURA"`.
-- Le pagine non hanno label sistematiche `beta`, `experimental`, `internal` o `deprecated`.
+- PLRNUI-48 ha allineato le docs consumer correnti agli import da
+  `@personal-library/react-native-components`.
+- PLRNUI-49 aggiunge label sistematiche `beta`, `experimental`,
+  `internal / non-stable` e `deprecated / legacy` dove applicabile.
 - Molte props documentate non risultano esportate come public props types secondo PLRNUI-4.
-- Alcune pagine documentano componenti internal o experimental come normali componenti consumer.
+- Le pagine per componenti internal o experimental restano consultabili ma ora
+  non li presentano come normali componenti stable consumer.
 - Le note platform/accessibility sono parziali e non uniformi.
+
+## PLRNUI-49 docs labeling checklist
+
+| Area | Esito PLRNUI-49 | Note |
+| --- | --- | --- |
+| Stable label | satisfied | Nessun componente/API marcato stable. |
+| Beta label | satisfied | Componenti/API public candidate marcati beta nelle pagine e negli overview. |
+| Experimental label | satisfied | Overlay, navigation platform-risk, `Select` e utility provvisorie marcati experimental. |
+| Internal label | satisfied | Internal rimasti in docs marcati internal / non-stable, non rimossi per evitare modifiche API/source. |
+| Legacy token names | satisfied | `auraTokens` e `getAuraTokens` assenti da README/docs consumer; audit storico preservato. |

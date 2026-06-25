@@ -17,6 +17,14 @@ Native Web.
 - [Tokens](tokens/index.md)
 - [Utils](utils/index.md)
 
+## Stability labels
+
+- `beta`: public consumer API, usable but contract may still change.
+- `experimental`: provisional API, not recommended for production dependency.
+- `internal`: not part of the public consumer API.
+- `deprecated / legacy`: historical alias or API kept only for migration context.
+- `stable`: currently no component/API is classified as stable.
+
 ## Entry point
 
 L’API pubblica consumer è esposta dal root package entrypoint:

@@ -1,5 +1,7 @@
 # platform
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Helper di piattaforma basato su `Platform.OS`.
 
 ## Import

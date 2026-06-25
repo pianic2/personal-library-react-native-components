@@ -1,5 +1,7 @@
 # Spinner
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Spinner basato su `ActivityIndicator`.
 
 ## Import

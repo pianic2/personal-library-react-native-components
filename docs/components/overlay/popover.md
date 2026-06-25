@@ -1,5 +1,7 @@
 # Popover
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Popover posizionato rispetto a un anchor (web-only per la parte overlay).
 
 ## Import

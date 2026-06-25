@@ -4,6 +4,19 @@
 
 Inventariare i path docs/demo/preview da aggiornare in una fase successiva. Questo file non applica modifiche ai documenti reali.
 
+## PLRNUI-49 update
+
+PLRNUI-49 applies visible stability labels to the current README/docs/examples
+surface without promoting anything to stable.
+
+- Current stable count remains `0`.
+- Current component/API pages are labeled `beta`, `experimental` or
+  `internal / non-stable`.
+- Internal pages are not removed; they are clearly marked as not part of the
+  public consumer API.
+- Legacy token names `auraTokens` and `getAuraTokens` remain absent from
+  README/docs consumer examples; audit historical references are preserved.
+
 ## README/mkdocs
 
 | Path | Motivo | Tipo aggiornamento | Priorita |
@@ -17,7 +30,7 @@ Inventariare i path docs/demo/preview da aggiornare in una fase successiva. Ques
 | --- | --- | --- | --- |
 | `docs/index.md` | Usa AURA come nome prodotto e import da `"AURA"`. | naming, import | P0 |
 | `docs/getting-started.md` | Usa AURA/import legacy; non copre troubleshooting Expo/RN/Metro. | naming, import, troubleshooting | P0 |
-| `docs/components.md` | Overview componenti senza legame a maturity/stability. | stability-label | P1 |
+| `docs/components.md` | Overview componenti senza legame a maturity/stability. | stability-label | P1 resolved by PLRNUI-49 |
 
 ## Component docs
 

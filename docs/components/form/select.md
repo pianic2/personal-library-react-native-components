@@ -1,5 +1,7 @@
 # Select
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Select controllato con overlay (usa `Modal` di React Native).
 
 ## Import

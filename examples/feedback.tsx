@@ -17,7 +17,7 @@ export function FeedbackExample() {
         <Column gap="md" style={{ padding: 16 }}>
           <Alert
             title="Review needed"
-            message="Feedback components are beta candidates and still need accessibility support evidence."
+            message="Alert and Spinner are beta. ProgressBar and CodeInline are internal / non-stable and shown only as preview coverage."
             variant="info"
           />
           <Badge variant="info">beta</Badge>

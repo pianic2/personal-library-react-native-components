@@ -37,6 +37,14 @@ import { Button, Text } from "@personal-library/react-native-components";
 Deep imports from `src/`, `dist/`, component internals, or legacy package names
 are not supported consumer API.
 
+Stability labels used in docs:
+
+- `beta`: public consumer API, usable but contract may still change.
+- `experimental`: provisional API, not recommended for production dependency.
+- `internal`: not part of the public consumer API.
+- `deprecated / legacy`: historical alias or API kept only for migration context.
+- `stable`: currently no component or API is classified as stable.
+
 Consumer docs and examples are available in:
 
 - `docs/index.md`

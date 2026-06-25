@@ -1,5 +1,7 @@
 # Theme types
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Tipi principali esportati da `theme/types.ts`.
 
 ## Import

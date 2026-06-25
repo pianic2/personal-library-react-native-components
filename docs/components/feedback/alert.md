@@ -1,5 +1,7 @@
 # Alert
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Alert “inline” con varianti colore e azione opzionale.
 
 ## Import

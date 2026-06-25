@@ -1,5 +1,7 @@
 # tokens/types
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Tipi token esportati.
 
 ## TokenPair

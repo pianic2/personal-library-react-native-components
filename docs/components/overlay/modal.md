@@ -1,5 +1,7 @@
 # Modal
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Modal centrato con backdrop.
 
 ## Import

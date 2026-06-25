@@ -1,5 +1,7 @@
 # Switch
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Switch controllato.
 
 ## Import

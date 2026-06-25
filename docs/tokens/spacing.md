@@ -1,5 +1,7 @@
 # spacing.base
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Token di spacing.
 
 ## API

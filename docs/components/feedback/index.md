@@ -1,5 +1,5 @@
 # Feedback
 
-- [Alert](alert.md)
-- [ProgressBar](progress-bar.md)
-- [Spinner](spinner.md)
+- [Alert](alert.md) — beta
+- [ProgressBar](progress-bar.md) — internal / non-stable
+- [Spinner](spinner.md) — beta

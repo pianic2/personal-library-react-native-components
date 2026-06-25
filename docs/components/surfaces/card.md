@@ -1,5 +1,7 @@
 # Card
 
+**Stability:** internal / non-stable — not part of the public consumer API.
+
 Surface container con variant (`default` / `elevated` / `outline`) e shadow.
 
 ## Import

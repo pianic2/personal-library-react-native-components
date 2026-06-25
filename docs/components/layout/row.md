@@ -1,5 +1,7 @@
 # Row
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 `Row` è un layout orizzontale (`flexDirection: "row"`) con supporto a `gap`, `align`, `justify` e wrap.
 
 ## Import

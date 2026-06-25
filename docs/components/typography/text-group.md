@@ -1,5 +1,7 @@
 # TextGroup
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Wrapper che impila i children e applica spacing verticale tra gli elementi.
 
 ## Import

@@ -1,5 +1,8 @@
 # NavContext
 
+**Stability:** beta for `NavProvider`; internal / non-stable for navigation helper hooks unless separately promoted.
+
+
 Contiene `NavProvider` e i hook per accedere allo stato di navigazione.
 
 ## Import

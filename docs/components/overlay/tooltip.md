@@ -1,5 +1,7 @@
 # Tooltip
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Tooltip con delay (web-only).
 
 ## Import

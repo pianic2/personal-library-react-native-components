@@ -1,5 +1,7 @@
 # Quote
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Blocchetto citazione con bordo sinistro colorato e testo in corsivo.
 
 ## Import

@@ -1,5 +1,7 @@
 # Heading
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Heading semantico basato su `Text` con mapping `level → size` e `weight="bold"`.
 
 ## Import

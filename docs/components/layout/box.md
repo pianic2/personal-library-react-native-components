@@ -1,5 +1,7 @@
 # Box
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 `Box` è un wrapper di layout che applica rapidamente token del tema (padding, margin, background, radius, border, shadow).
 
 ## Import

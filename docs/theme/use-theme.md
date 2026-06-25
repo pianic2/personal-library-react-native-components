@@ -1,6 +1,8 @@
 # useTheme
 
-Hook che legge il context del tema e restituisce un oggetto comodo con `theme`, `colors`, `mode`, `toggleTheme`, `setMode`.
+**Stability:** beta — public consumer API, usable but contract may still change.
+
+Hook che legge il context del tema e restituisce un oggetto con `theme`, `mode`, `toggleTheme`, `setMode` e `ready`.
 
 ## Import
 
@@ -11,5 +13,5 @@ import { useTheme } from "@personal-library/react-native-components";
 ## API
 
 ```ts
-const { theme, colors, mode, toggleTheme, setMode } = useTheme();
+const { theme, mode, toggleTheme, setMode, ready } = useTheme();
 ```

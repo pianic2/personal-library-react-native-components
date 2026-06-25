@@ -1,5 +1,7 @@
 # BottomBar
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Barra di navigazione in basso (tipicamente per mobile). Usa `NavContext` per items e pathname.
 
 ## Import

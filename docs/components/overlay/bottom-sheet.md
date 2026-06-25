@@ -1,5 +1,7 @@
 # BottomSheet
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Bottom sheet con due snap semplificati: `collapsed` / `expanded`.
 
 ## Import

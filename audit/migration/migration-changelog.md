@@ -43,6 +43,10 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-29 token naming removal evidence: legacy/snapshot public token names are removed now, neutral `defaultThemeTokens`, `createThemeTokens` and `ThemeTokens` are the supported public token API, and no root deprecated aliases are provided.
 - Added PLRNUI-46 automated consumer smoke validation: the current package is built, packed, installed into a deterministic external fixture from the generated tarball, imported from `@personal-library/react-native-components`, typechecked and render-smoked with `ThemeProvider`, `Button`, `Text`, `Box`, `Input` and `Card`.
 - Added PLRNUI-58 automated Expo/Metro consumer validation: the current package is built, packed, installed into a deterministic Expo fixture from the generated tarball, imported from `@personal-library/react-native-components`, typechecked and bundled with `expo export --platform web`.
+- Added PLRNUI-49 stability labeling across current consumer docs and examples:
+  beta public candidates, experimental provisional APIs, internal/non-stable
+  APIs and deprecated/legacy migration terms are now explicitly labeled without
+  promoting any component/API to stable.
 
 ### Changed
 
@@ -87,6 +91,9 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-53 closes the consumer-facing docs/demo policy for `auraTokens` and `getAuraTokens`: they are legacy/deprecated, not stable public API, not allowed in README/docs/examples/demo as recommended consumer API, and not reintroduced as aliases.
 - Clarified that PLRNUI-46 proves packed-artifact root import and type/render smoke in a generated consumer fixture, but does not prove Expo CLI Metro export, native device runtime, Expo Go, prebuild or custom dev client behavior.
 - Clarified that PLRNUI-58 proves Expo web/Metro export in a generated consumer fixture, but does not prove Expo Go, native device runtime, prebuild or custom dev client behavior.
+- Clarified that PLRNUI-49 is documentation/audit-only: it does not change
+  runtime source, public exports, package metadata, generated outputs or Jira
+  workflow state.
 
 ### PLRNUI-53 - Legacy token API docs policy
 

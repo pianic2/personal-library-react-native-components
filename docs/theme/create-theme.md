@@ -1,5 +1,7 @@
 # createTheme
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Helper per fare deep-merge di override su un tema base.
 
 ## Import

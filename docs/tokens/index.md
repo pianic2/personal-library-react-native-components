@@ -1,5 +1,7 @@
 # Tokens
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Questa sezione ricalca l’albero dei token in `tokens/`.
 
 - [colors.base](colors.md)

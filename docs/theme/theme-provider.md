@@ -1,5 +1,7 @@
 # ThemeProvider
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Provider che inizializza il tema, gestisce `mode` e rende disponibili `theme`/`colors` via context.
 
 ## Import
@@ -14,13 +16,15 @@ import { ThemeProvider } from "@personal-library/react-native-components";
 interface ThemeProviderProps {
   initialMode?: "light" | "dark";
   children: React.ReactNode;
-  withSafeArea?: boolean;
-  withScroll?: boolean;
   themeOverrides?: Partial<Theme>;
+  storage?: ThemeStorageAdapter;
+  storageKey?: string;
+  persistTheme?: boolean;
 }
 ```
 
 ## Note
 
-- `withSafeArea=true` usa `SafeAreaProvider`/`SafeAreaView`.
-- `withScroll=true` wrappa i children in `ScrollView`, altrimenti in `View`.
+- `ThemeProvider` fornisce solo il context tema.
+- La persistenza è opt-in tramite `persistTheme` e adapter storage consumer-owned.
+- Layout, safe-area e scroll devono essere composti fuori dal provider.

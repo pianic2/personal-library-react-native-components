@@ -1,5 +1,7 @@
 # B
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Wrapper di `Text` con `weight="bold"`.
 
 ## Import

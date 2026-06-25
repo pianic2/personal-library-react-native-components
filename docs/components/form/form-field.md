@@ -1,5 +1,7 @@
 # FormField
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Wrapper per label + helper/error text e pass-through di alcune props al child (es. `error`, `status`, `aria-*`).
 
 ## Import

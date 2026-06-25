@@ -1,5 +1,7 @@
 # SideBar
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Sidebar per web (vedi `SideBar.web.tsx`).
 
 ## Import

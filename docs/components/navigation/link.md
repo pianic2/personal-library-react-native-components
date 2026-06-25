@@ -1,5 +1,7 @@
 # Link
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Link “smart” che:
 
 - usa `NavProvider` se presente

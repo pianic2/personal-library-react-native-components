@@ -24,6 +24,11 @@ export function FormControlsExample() {
     <ThemeProvider>
       <ThemeAppShell>
         <Column gap="md" style={{ padding: 16 }}>
+          <Input
+            label="Stability note"
+            value="Input, Switch, Checkbox, RadioGroup and FormField are beta. PasswordInput and Textarea are internal / non-stable preview coverage."
+            editable={false}
+          />
           <Input label="Name" value={name} onChangeText={setName} />
           <PasswordInput
             label="Password"

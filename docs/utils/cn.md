@@ -1,5 +1,7 @@
 # cn
 
+**Stability:** internal / non-stable — not part of the public consumer API.
+
 Utility per comporre classi CSS (stringhe) in modo condizionale.
 
 ## Import

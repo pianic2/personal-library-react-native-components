@@ -1,5 +1,7 @@
 # Button
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Pulsante basato su `Pressable` con varianti e dimensioni.
 
 ## Import

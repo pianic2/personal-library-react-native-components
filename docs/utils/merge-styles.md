@@ -1,5 +1,7 @@
 # mergeStyles
 
+**Stability:** experimental — provisional API, not recommended for production dependency.
+
 Utility per unire array di style (React Native) filtrando valori falsy.
 
 ## Import

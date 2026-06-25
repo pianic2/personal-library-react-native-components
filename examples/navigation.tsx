@@ -25,6 +25,10 @@ export function NavigationExample() {
           navigate={() => undefined}
         >
           <Column gap="md" style={{ padding: 16 }}>
+            <Text>
+              Stability: NavProvider, Link and NavBar are beta. TopBar is
+              experimental and web-oriented.
+            </Text>
             <TopBar title="Product" />
             <Link href="/support">Contact support</Link>
           </Column>

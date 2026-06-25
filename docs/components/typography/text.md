@@ -1,5 +1,7 @@
 # Text
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Componente base tipografico (wrapper di `react-native` `Text`) che applica token di font size/weight, colori e allineamento.
 
 ## Import

@@ -1,5 +1,7 @@
 # NavBar
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Componente “orchestrator” che wrapppa `NavProvider` e renderizza un layout tra `TopBar` / `BottomBar` / `SideBar`.
 
 ## Import

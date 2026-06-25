@@ -1,5 +1,7 @@
 # RadioGroup
 
+**Stability:** beta — public consumer API, usable but contract may still change.
+
 Gruppo di radio button controllato.
 
 ## Import
