@@ -11,8 +11,17 @@ This repository is the clean canonical repository for the React Native component
 library. It starts as an enterprise baseline while migration work is in
 progress.
 
-The repository was created from a clean directory. Runtime source, package API,
-and component migration are intentionally minimal in PLRNUI-13.
+The current package surface is governed and pre-stable, not merely the minimal
+PLRNUI-13 baseline. Consumers must use the root package entrypoint only. The
+root API includes beta component/theme/token utilities and explicitly documented
+experimental surfaces, while `stable` remains zero until a future promotion
+gate.
+
+Current RC posture:
+
+- `CONDITIONAL GO` to enter PLRNUI-41 hardening.
+- `NO-GO` to cut or publish an RC artifact until native runtime, version and
+  owner publication gates close.
 
 ## Audit Evidence
 
@@ -56,6 +65,16 @@ Stability labels used in docs:
 - `internal`: not part of the public consumer API.
 - `deprecated / legacy`: historical alias or API kept only for migration context.
 - `stable`: currently no component or API is classified as stable.
+
+Surface boundaries:
+
+- root public/beta surface: documented root imports that may still change
+  before stable release;
+- experimental root surface: provisional APIs such as overlays and app-shell /
+  navigation surfaces that are root-visible but not stable;
+- internal/non-public surface: repository implementation details, preview
+  shims, source-tree-only inventory entries and unexported helpers;
+- source-tree inventory is not the same as the package root API.
 
 Consumer docs and examples are available in:
 

@@ -20,10 +20,11 @@ Reason:
   the breaking-change register collision/stale statuses, recording RA 0001..0008
   dispositions, annotating ADR 0001..0008 for RC scope, and preparing Jira /
   Confluence evidence text.
-- RC artifact publication remains blocked because native device runtime /
-  Expo Go / prebuild / custom dev client proof is still a tracked residual, the
-  real RC version is not assigned, and external Jira/Confluence decisions are
-  not performed by repository docs.
+- PLRNUI-60 records native runtime as accepted only for PLRNUI-41 hardening
+  entry, still **NOT PROVEN** for Expo Go, native iOS, native Android, prebuild,
+  custom dev client and EAS build.
+- RC artifact publication remains blocked until native runtime, real RC version
+  assignment and owner publication gates close.
 
 The historical PLRNUI-8 report below remains preserved as evidence of the older
 release-readiness baseline and should not be read as the current consolidated
@@ -194,11 +195,11 @@ npm_config_cache=/tmp/plrnui8-npm-cache npm ls expo --depth=0
 
 Historical PLRNUI-8 verdict: **NOT READY**.
 
-Current PLRNUI-59 RC-state verdict: **CONDITIONAL GO to enter PLRNUI-41
-hardening; NO-GO to cut/publish RC artifact until mandatory gates and residual
-decisions close.**
+Current PLRNUI-60 RC-state verdict: **CONDITIONAL GO to enter PLRNUI-41
+hardening; NO-GO to cut/publish RC artifact until native runtime, version and
+owner publication gates close.**
 
-The library can typecheck, build and produce a package dry-run artifact. PLRNUI-45 aligns package entrypoint governance with the current `dist` output and root-only export map. PLRNUI-46 adds automated packed-artifact consumer proof for root API import, type declaration resolution and Node render coverage. PLRNUI-58 adds Expo/Metro web export proof. PLRNUI-59 adds formal RC governance disposition. Release artifact publication still requires native runtime compatibility proof or explicit owner disposition, real RC version assignment and external Jira/Confluence decision closure.
+The library can typecheck, build and produce a package dry-run artifact. PLRNUI-45 aligns package entrypoint governance with the current `dist` output and root-only export map. PLRNUI-46 adds automated packed-artifact consumer proof for root API import, type declaration resolution and Node render coverage. PLRNUI-58 adds Expo/Metro web export proof. PLRNUI-59 adds formal RC governance disposition. PLRNUI-60 records native runtime as NOT PROVEN for publication and reconciles component/documentation drift against the current `src/index.ts` root surface. Release artifact publication still requires native runtime compatibility proof or explicit owner disposition, real RC version assignment and external Jira/Confluence decision closure.
 
 Candidate follow-up tickets:
 

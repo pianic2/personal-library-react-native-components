@@ -63,6 +63,23 @@ Verificare se docs e demo comunicano correttamente la maturity definita da PLRNU
   consumer correnti; le occorrenze residue restano audit storico/governance e
   sono gia marcate legacy/deprecated/removed/not stable.
 
+## PLRNUI-60 current-state reconciliation
+
+PLRNUI-60 reconciles this historical stability audit with the current
+`src/index.ts` root surface:
+
+- Current stable root surface remains `0`.
+- Current beta root component/provider surface is tracked in
+  `audit/components/component-maturity-matrix.md` and includes remediated
+  root-visible components such as `Card`, `CodeInline`, `PasswordInput`,
+  `ProgressBar`, `Textarea`, `Stack` and `TopBar` as beta/non-stable rather
+  than internal stable candidates.
+- Current experimental root component surface remains explicit for overlays and
+  app-shell/platform-sensitive components: `BottomBar`, `BottomSheet`, `Modal`,
+  `Popover`, `Select`, `SideBar`, `Tooltip`.
+- `Code`, `Page`, `Hero` and `ToastProvider` are historical/source-tree
+  inventory rows, not current root public API.
+
 ## Raccomandazioni di audit
 
 - Introdurre un requisito di label obbligatoria per ogni pagina API/componente.

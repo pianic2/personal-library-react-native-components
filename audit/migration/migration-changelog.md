@@ -63,6 +63,9 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Added PLRNUI-59 mandatory RC governance evidence: RC risk disposition for
   RA 0001..0008, ADR RC-scope annotations, Jira/Confluence-ready evidence
   linkage and a current consolidated RC-state report.
+- Added PLRNUI-60 residual RC validation gap tracking: native runtime residual
+  decision, component/API drift reconciliation, and current root-surface
+  classification against `src/index.ts`.
 
 ### Changed
 
@@ -130,6 +133,11 @@ It is governance evidence only. It does not imply that package metadata, source 
   ADR lifecycle statuses conservative, and does not change runtime source,
   package metadata, lockfile, Jira state, Confluence publication state or RC
   artifact state.
+- Clarified that PLRNUI-60 is governance/audit-only: RA 0005 native runtime is
+  accepted only for PLRNUI-41 hardening entry and remains NOT PROVEN / blocking
+  for RC artifact publication; component maturity docs now distinguish current
+  root API from historical source-tree inventory without adding/removing exports
+  or promoting anything to stable.
 
 ### PLRNUI-53 - Legacy token API docs policy
 

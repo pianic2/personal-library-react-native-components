@@ -8,6 +8,13 @@ Current-state note for PLRNUI-25: this PLRNUI-4 matrix remains historical API go
 
 Current-state note for PLRNUI-26/PLRNUI-29: the root API remains an explicit named export surface and still has no root `export *`. `Stack` is reconciled as root-reachable public-candidate layout primitive. `useNavigate` remains root-reachable but is classified as an experimental navigation hook, not internal and not stable. `useIsMounted` and `cn` are fenced out of the root API and remain local internal helpers. PLRNUI-23 overlay exports remain explicit experimental root runtime exports without root props type promotion. PLRNUI-29 removes legacy/snapshot token names from root and token barrels.
 
+Current-state note for PLRNUI-60: this matrix still preserves historical
+source-tree inventory rows. For RC-hardening drift reconciliation, current root
+runtime evidence comes from `src/index.ts`. `Code`, `Page`, `Hero` and
+`ToastProvider` are not current root exports in this checkout and must not be
+counted as current root public API. The current stable root surface remains
+zero.
+
 ## Package export map
 
 | Entry | Current value | Assessment | Human review |
