@@ -1,9 +1,7 @@
 import {
   Alert,
   Badge,
-  CodeInline,
   Column,
-  ProgressBar,
   Spinner,
   Text,
   ThemeAppShell,
@@ -17,15 +15,12 @@ export function FeedbackExample() {
         <Column gap="md" style={{ padding: 16 }}>
           <Alert
             title="Review needed"
-            message="Alert and Spinner are beta. ProgressBar and CodeInline are internal / non-stable and shown only as preview coverage."
+            message="Alert, Badge and Spinner are beta public candidates. This example uses only the root package entrypoint."
             variant="info"
           />
           <Badge variant="info">beta</Badge>
-          <ProgressBar progress={72} />
           <Spinner />
-          <Text>
-            Inline code example: <CodeInline>npm test</CodeInline>
-          </Text>
+          <Text>Use the root package entrypoint for consumer feedback UI.</Text>
         </Column>
       </ThemeAppShell>
     </ThemeProvider>

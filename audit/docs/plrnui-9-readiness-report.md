@@ -128,6 +128,24 @@ PLRNUI-9 puo procedere con gli artefatti audit sotto `audit/docs/`, ma docs/demo
 6. Policy for `auraTokens`/`getAuraTokens` is resolved by PLRNUI-53: legacy/deprecated, removed, not stable public API and forbidden in consumer examples.
 7. Allineare demo a entrypoint pubblico quando package metadata e API sono approvati.
 
+## PLRNUI-50 follow-up status
+
+PLRNUI-50 resolves the current-checkout consumer example split without changing
+runtime source, package metadata or public exports:
+
+- `examples/*.tsx` are current consumer examples and import only from
+  `@personal-library/react-native-components`.
+- `README.md` and `docs/migration.md` document that consumer examples must not
+  use `../../index`, `../../theme/types`, `src/*`, `dist/*` or non-public
+  subpaths.
+- `demo/` and `preview-web/` are absent in the current checkout. Historical
+  findings for those paths remain audit evidence, not current consumer examples.
+- Demo/preview harness success is explicitly not package validation. Package
+  validation belongs to packed-artifact consumer checks and release gates.
+- API maturity gaps for internal/non-stable components previously shown as
+  preview coverage in examples are registered rather than bypassed through deep
+  imports.
+
 ## Note esplicite di scope
 
 - Nessun codice sorgente modificato.

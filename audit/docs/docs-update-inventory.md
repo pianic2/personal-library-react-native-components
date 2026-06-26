@@ -20,6 +20,24 @@ surface without promoting anything to stable.
 - Legacy token names `auraTokens` and `getAuraTokens` remain absent from
   README/docs consumer examples; audit historical references are preserved.
 
+## PLRNUI-50 update
+
+PLRNUI-50 separates current copy-pasteable consumer examples from historical
+repo-local demo/preview harness evidence.
+
+- Current `examples/*.tsx` files import only from
+  `@personal-library/react-native-components`.
+- Current consumer examples no longer use internal/non-stable preview coverage
+  components (`Card`, `CodeInline`, `ProgressBar`, `PasswordInput`,
+  `Textarea`).
+- `README.md` and `docs/migration.md` now state that consumer examples must use
+  public package entrypoints and must not use repo-relative package paths,
+  `src/*`, `dist/*` or non-public subpaths.
+- No current `demo/` or `preview-web/` directories exist in this checkout.
+  Historical rows below remain audit evidence only.
+- Demo/preview harness success is not package validation; packed-artifact
+  consumer validation remains owned by release/consumer-smoke gates.
+
 ## README/mkdocs
 
 | Path | Motivo | Tipo aggiornamento | Priorita |
@@ -126,3 +144,9 @@ surface without promoting anything to stable.
 | `preview-web/shims/react-native-safe-area-context.tsx` | Safe area no-op shim, not device behavior. | shim-note | P0 |
 | `preview-web/preview.tsx` | Preview imports demo internals. | shim-note | P1 |
 | `preview-web/index.html` | Legacy title `AURA Preview`. | naming | P1 |
+
+PLRNUI-50 status for demo/preview rows: retained as historical audit inventory
+because the directories are absent in the current checkout. If a demo/preview
+harness is reintroduced, local imports must be documented as demo-only
+infrastructure and must not be represented as consumer examples or package
+validation.

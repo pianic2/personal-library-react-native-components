@@ -1,11 +1,11 @@
 import {
   Column,
   Link,
+  NavBar,
   NavProvider,
   Text,
   ThemeAppShell,
   ThemeProvider,
-  TopBar,
   type NavItem,
 } from "@personal-library/react-native-components";
 
@@ -16,20 +16,27 @@ const navItems: NavItem[] = [
 ];
 
 export function NavigationExample() {
+  const navigate = (_href: string) => undefined;
+
   return (
     <ThemeProvider>
       <ThemeAppShell>
         <NavProvider
           items={navItems}
           pathname="/docs"
-          navigate={() => undefined}
+          navigate={navigate}
         >
           <Column gap="md" style={{ padding: 16 }}>
             <Text>
-              Stability: NavProvider, Link and NavBar are beta. TopBar is
-              experimental and web-oriented.
+              Stability: NavProvider, Link and NavBar are beta public
+              candidates. This consumer example avoids repo-local demo imports.
             </Text>
-            <TopBar title="Product" />
+            <NavBar
+              items={navItems}
+              pathname="/docs"
+              navigate={navigate}
+              layout="top"
+            />
             <Link href="/support">Contact support</Link>
           </Column>
         </NavProvider>

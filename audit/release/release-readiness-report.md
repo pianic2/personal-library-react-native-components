@@ -47,6 +47,10 @@ Export and metadata validation:
 - PLRNUI-25 adds component platform support documentation and a docs import audit for the current checkout; package metadata and runtime exports are unchanged.
 - PLRNUI-26 fences internal helper root exports by removing `cn` and `useIsMounted` from `src/index.ts`, while keeping the root API explicit named exports only. `Stack` remains root-exported as a documented public-candidate layout primitive, `useNavigate` remains root-exported as experimental navigation API, and overlay exports remain explicit experimental root runtime exports. PLRNUI-29 removes legacy token compatibility names.
 - PLRNUI-57 adds minimal consumer-facing docs and examples that import from `@personal-library/react-native-components`; package metadata and runtime exports are unchanged.
+- PLRNUI-50 keeps current consumer examples on the root package entrypoint,
+  removes internal/non-stable preview coverage from copy-pasteable examples and
+  documents repo-local demo/preview paths as harness-only when present. Demo or
+  preview success is not package validation.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
 - PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
 - PLRNUI-30 wires Button structural component tokens through `theme.components.button` without adding dependencies, package metadata changes, root exports or non-structural Button color tokens.

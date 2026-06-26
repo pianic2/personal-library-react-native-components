@@ -33,3 +33,21 @@ legacy names such as `auraTokens` and `getAuraTokens` are historical migration
 terms only and must not be recommended in consumer examples.
 
 Historical migration evidence remains under `audit/`. Those files may mention legacy names and old demo paths as historical findings; they are not current consumer-facing examples.
+
+## Consumer Examples vs Demo Harness
+
+Consumer examples live under `examples/` and must import only from the approved
+public package entrypoint:
+
+```tsx
+import { Button, Text } from "@personal-library/react-native-components";
+```
+
+Do not use repo-relative package paths such as `../../index` or
+`../../theme/types`, and do not use `src/*`, `dist/*`, or non-public subpaths in
+consumer-facing snippets.
+
+Repo-local demo or preview harness files, if present, may use local paths only
+as development infrastructure. They are not package validation, not consumer API
+source of truth, and any missing public API/type must be registered as an audit
+gap instead of bypassed through a deep import.

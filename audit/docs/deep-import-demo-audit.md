@@ -56,3 +56,50 @@ Import vietati o da registrare come gap:
 ## Sintesi
 
 Il gap piu grave e l'import diretto di `Theme` da `../../theme/types`, perche bypassa la policy di API pubblica. Gli import demo da `../../index` sono meno profondi, ma restano incompatibili con ADR 0007 perche la example app dovrebbe comportarsi da consumer reale e non da app in-repo con path relativi.
+
+## PLRNUI-50 current checkout update
+
+PLRNUI-50 separates current consumer examples from historical repo-local
+demo/preview evidence.
+
+Current consumer examples:
+
+- `examples/basic-usage.tsx`
+- `examples/layout-primitives.tsx`
+- `examples/form-controls.tsx`
+- `examples/feedback.tsx`
+- `examples/navigation.tsx`
+- `examples/overlays.experimental.tsx`
+
+All current `examples/*.tsx` files import from
+`@personal-library/react-native-components`. They do not import from
+`../../index`, `../../theme/types`, `src/*`, `dist/*` or non-public package
+subpaths.
+
+Current `docs/**/*.md` snippets are consumer-facing and must use the same root
+package entrypoint policy. `README.md` and `docs/migration.md` now state that
+consumer examples are copy-pasteable package-root examples, while repo-local
+demo/preview paths are development harness infrastructure only.
+
+Current checkout note:
+
+- No `demo/` directory exists in this checkout.
+- No `preview-web/` directory exists in this checkout.
+- Historical `demo/**` and `preview-web/**` rows above remain audit evidence for
+  prior gaps. They are not current consumer examples and are not package
+  validation.
+
+Repo-local demo/preview imports may be retained only inside a future
+demo/preview harness, and only when documented as local infrastructure. Demo or
+preview success must not be cited as package validation; package validation must
+come from packed-artifact consumer checks such as PLRNUI-46/PLRNUI-58 or later
+release gates.
+
+API gaps registered by PLRNUI-50:
+
+- `Card`, `CodeInline`, `ProgressBar`, `PasswordInput` and `Textarea` were
+  removed from current copy-pasteable consumer examples because they are
+  documented as internal / non-stable in PLRNUI-49 consumer docs. They remain
+  API maturity gaps rather than examples to bypass with repo-local imports.
+- Historical demo import gaps for `../../index` and `../../theme/types` remain
+  registered above. No current demo files exist to edit in this checkout.

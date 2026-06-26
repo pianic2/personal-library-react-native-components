@@ -37,6 +37,18 @@ import { Button, Text } from "@personal-library/react-native-components";
 Deep imports from `src/`, `dist/`, component internals, or legacy package names
 are not supported consumer API.
 
+Consumer examples live in `examples/` and must remain copy-pasteable from the
+published package root:
+
+- use `@personal-library/react-native-components`;
+- do not use repo-relative imports such as `../../index` or
+  `../../theme/types`;
+- do not use `src/*`, `dist/*`, or unapproved package subpaths.
+
+Repo-local demo or preview harnesses, when present, are development
+infrastructure only. Their local paths and shims are not representative of
+package consumers, and demo/preview success is not package validation.
+
 Stability labels used in docs:
 
 - `beta`: public consumer API, usable but contract may still change.

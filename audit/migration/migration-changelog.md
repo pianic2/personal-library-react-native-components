@@ -47,6 +47,10 @@ It is governance evidence only. It does not imply that package metadata, source 
   beta public candidates, experimental provisional APIs, internal/non-stable
   APIs and deprecated/legacy migration terms are now explicitly labeled without
   promoting any component/API to stable.
+- Added PLRNUI-50 consumer example / demo harness split: current
+  `examples/*.tsx` remain copy-pasteable root-package examples, repo-local
+  demo/preview paths are documented as harness-only when present, and demo or
+  preview success is not package validation.
 
 ### Changed
 
@@ -94,6 +98,11 @@ It is governance evidence only. It does not imply that package metadata, source 
 - Clarified that PLRNUI-49 is documentation/audit-only: it does not change
   runtime source, public exports, package metadata, generated outputs or Jira
   workflow state.
+- Clarified that PLRNUI-50 is documentation/examples/audit-only: it removes
+  internal/non-stable preview coverage from current consumer examples, keeps
+  imports on `@personal-library/react-native-components`, does not introduce
+  deep imports, and does not change runtime source, public exports, package
+  metadata, generated outputs or Jira workflow state.
 
 ### PLRNUI-53 - Legacy token API docs policy
 
