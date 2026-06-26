@@ -76,3 +76,28 @@ Prima della release candidate:
 - theme/tokens documentati;
 - troubleshooting packaging/Expo presente.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- La documentazione consumer e sufficiente per entrare in PLRNUI-41 hardening.
+- La documentazione non prova native device runtime e non promuove componenti a
+  `stable`.
+- Repository audit docs restano source tecnico; Confluence resta publication /
+  summary layer; Jira resta workflow / decision tracking layer.
+
+Evidenza:
+
+- `README.md` punta al package canonico e vieta deep import consumer.
+- Consumer docs ed esempi sono elencati nel README e usano il root package.
+- `audit/release/plrnui-12-senior-rc-readiness-review.md` registra docs
+  remediation e residui non bloccanti per hardening.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra RA 0007
+  come `TRACKED CONDITION`.
+
+Blocco residuo:
+
+- La pubblicazione/sintesi Confluence e il tracking Jira non sono eseguiti in
+  PLRNUI-59; restano owner-controlled.

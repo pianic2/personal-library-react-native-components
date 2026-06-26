@@ -89,3 +89,31 @@ Prima della release candidate:
 - API pubblica approvata;
 - package smoke test completato.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- La governance minima per entrare in PLRNUI-41 hardening viene formalizzata in
+  PLRNUI-59.
+- La pubblicazione RC resta bloccata fino alla chiusura delle decisioni residue.
+- Source-of-truth operativo:
+  - repository audit docs: source tecnico primario;
+  - Confluence: publication/summary layer;
+  - Jira: workflow/decision tracking layer.
+
+Evidenza:
+
+- `audit/migration/breaking-change-register.md` corregge il duplicato BC-007,
+  re-keyando la stability-contract entry a BC-011, e aggiorna BC-001/005/006.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra disposizioni
+  RA 0001..0008.
+- `audit/release/plrnui-59-mandatory-rc-governance-gates.md` prepara commenti
+  Jira e summary Confluence-ready senza pubblicarli.
+
+Blocco residuo:
+
+- PLRNUI-59 non transiziona Jira, non pubblica su Confluence e non taglia RC.
+  Queste azioni restano fuori scope e devono essere approvate/eseguite dal
+  project owner.

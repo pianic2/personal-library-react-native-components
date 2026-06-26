@@ -60,6 +60,9 @@ It is governance evidence only. It does not imply that package metadata, source 
   README/mkdocs/docs/components/theme/tokens/utils/demo/preview inventory rows
   are closed, marked not applicable for absent current paths or deferred with
   explicit rationale; P1 residuals are recorded without stable promotion.
+- Added PLRNUI-59 mandatory RC governance evidence: RC risk disposition for
+  RA 0001..0008, ADR RC-scope annotations, Jira/Confluence-ready evidence
+  linkage and a current consolidated RC-state report.
 
 ### Changed
 
@@ -121,6 +124,12 @@ It is governance evidence only. It does not imply that package metadata, source 
   the internal `cn` helper from docs, does not change runtime source, package
   metadata, public exports, generated outputs or Jira workflow state, and does
   not promote any component/API to stable.
+- Clarified that PLRNUI-59 is governance/audit-only: it re-keys the duplicate
+  stability-contract breaking-change entry from `BC-007` to `BC-011`, updates
+  stale BC-001/BC-005/BC-006 statuses to current evidence-backed states, keeps
+  ADR lifecycle statuses conservative, and does not change runtime source,
+  package metadata, lockfile, Jira state, Confluence publication state or RC
+  artifact state.
 
 ### PLRNUI-53 - Legacy token API docs policy
 

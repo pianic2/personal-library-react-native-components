@@ -89,7 +89,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-001 - Package rename `@aura/ui` -> `@personal-library/react-native-components`
 
 - ID: BC-001
-- Status: candidate
+- Status: verified
 - Category: package rename
 - Source issue: PLRNUI-3, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0001, ADR 0006, ADR 0008, Risk Assessment 0008
@@ -102,7 +102,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 - Removal target: Before first release candidate under the new package identity, unless owner approves a documented compatibility release.
 - Verification required: Package metadata audit, `npm pack --dry-run`, clean Expo consumer install of the packed artifact, root import smoke and docs import audit.
 - Release blocking: Yes. RC is blocked if package identity is unresolved or register/changelog omit the rename.
-- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is historical artifact evidence. PLRNUI-45 verifies current package metadata uses `@personal-library/react-native-components`. PLRNUI-17 is a governance documentation update only and does not change package metadata or runtime source.
+- Notes: PLRNUI-8 evidence still uses `@aura/ui@1.0.0`; this is historical artifact evidence. PLRNUI-45 verifies current package metadata uses `@personal-library/react-native-components`. PLRNUI-46 and PLRNUI-58 verify packed-artifact consumer use through the package root, and README/docs/examples use the canonical root import. PLRNUI-17 is a governance documentation update only and does not change package metadata or runtime source.
 
 ### BC-002 - Legacy AURA naming deprecation/removal
 
@@ -179,11 +179,11 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-005 - Peer dependency compatibility policy
 
 - ID: BC-005
-- Status: candidate
+- Status: verified
 - Category: dependency policy / peer compatibility
 - Source issue: PLRNUI-7, PLRNUI-8, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0006, ADR 0008, Risk Assessment 0008
-- Decision: React and React Native host runtimes must be compatible with the selected Expo/RN baseline and verified in a clean consumer; current React peer range blocks PLRNUI-8.
+- Decision: React and React Native host runtimes must be compatible with the selected Expo/RN baseline and verified in a clean consumer. PLRNUI-42 and PLRNUI-43 align the current peer ranges, and PLRNUI-46 / PLRNUI-58 verify the packed artifact in generated external consumers.
 - Motivation: A reusable RN library must not force duplicate or incompatible React/RN runtimes into consumer apps.
 - Consumer impact: Consumers may be unable to install the package under strict npm resolution or may get duplicate React/RN if dependency sections are wrong.
 - Migration path: Align peer ranges to the chosen Expo/RN baseline in a package-metadata ticket; document required peers and rerun clean consumer install/import smoke.
@@ -191,13 +191,13 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 - Deprecation window: Not applicable.
 - Removal target: Before release candidate.
 - Verification required: Clean Expo app install without `--force` or `--legacy-peer-deps`, root import, TypeScript resolution, Metro startup and `npm ls react react-native` duplicate check.
-- Release blocking: Yes. PLRNUI-8 verdict is NOT READY until this passes.
-- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the React peer range to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`. PLRNUI-43 confirms the React Native peer range as `>=0.85.0 <0.86.0`; clean consumer smoke proof remains PLRNUI-46.
+- Release blocking: Yes. RC is blocked if peer ranges or consumer verification regress.
+- Notes: PLRNUI-8 failed because Expo consumer had `react@19.2.3`, while `@aura/ui@1.0.0` required peer `react@^19.2.4`. PLRNUI-42 aligns the React peer range to `>=19.2.3 <20.0.0` using the latest stable Expo SDK baseline: Expo SDK `56.0.0`, React Native `0.85`, React `19.2.3`, and Node minimum `22.13.x`. PLRNUI-43 confirms the React Native peer range as `>=0.85.0 <0.86.0`. PLRNUI-46 verifies packed-artifact install, root import, consumer TypeScript and render smoke with `react-native@0.85.3`; PLRNUI-58 verifies Expo/Metro web export from the packed artifact. Native device runtime remains separate under BC-006 / RA 0005.
 
 ### BC-006 - Native dependency gate
 
 - ID: BC-006
-- Status: candidate
+- Status: implemented
 - Category: native dependency / runtime compatibility
 - Source issue: PLRNUI-7, PLRNUI-8, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0006, ADR 0008, Risk Assessment 0008
@@ -209,12 +209,12 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 - Deprecation window: HUMAN REVIEW REQUIRED if public APIs lose native-backed behavior.
 - Removal target: Before release candidate for uncontrolled hard native dependencies.
 - Verification required: Native dependency gate checklist, clean Expo install, Expo Go/managed/prebuild assessment and runtime smoke for root import plus affected APIs. Future safe-area APIs require their own install/render smoke if package metadata exposes that contract.
-- Release blocking: Yes. RC is blocked if native dependency requirements are not classified and tested.
-- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37, PLRNUI-38, PLRNUI-39 and PLRNUI-44 are governance/contract decisions only; no runtime or package metadata change is made by these register updates. PLRNUI-44 does not introduce a breaking change while it remains documentation-only and no native dependency is added.
+- Release blocking: Yes. RC artifact publication is blocked if native dependency requirements are not classified and tested, or if the native-runtime residual is not explicitly accepted/scheduled.
+- Notes: Current gate-tracked packages include React Native, Safe Area, AsyncStorage, Expo Clipboard, React Native SVG and Lucide RN. PLRNUI-37, PLRNUI-38, PLRNUI-39 and PLRNUI-44 are governance/contract decisions only; no runtime or package metadata change is made by these register updates. PLRNUI-44 confirms current package metadata has no runtime `dependencies`, and PLRNUI-58 proves Expo web/Metro bundling. Expo Go, native device runtime, prebuild and custom dev client behavior remain unproven and are tracked as a PLRNUI-60 / PLRNUI-41 residual.
 
-### BC-007 - Stability contract: 0 stable, beta/experimental/internal labeling
+### BC-011 - Stability contract: 0 stable, beta/experimental/internal labeling
 
-- ID: BC-007
+- ID: BC-011
 - Status: candidate
 - Category: stability contract / documentation
 - Source issue: PLRNUI-5, PLRNUI-9, PLRNUI-10

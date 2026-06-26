@@ -67,3 +67,29 @@ Prima della release candidate:
 - override theme dimostrato con esempio;
 - eventuali token legacy deprecati o rinominati con mapping.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- Le precondizioni theme/token necessarie per entrare in PLRNUI-41 hardening sono
+  sostanzialmente mitigate.
+- `ThemeProvider` resta provider puro; `ThemeAppShell` possiede il layout
+  opt-in.
+- La persistenza theme resta opzionale, adapter-based e consumer-owned.
+
+Evidenza:
+
+- `audit/migration/breaking-change-register.md` registra BC-009 e BC-010 come
+  implementati.
+- PLRNUI-28 separa provider e app shell.
+- PLRNUI-30, PLRNUI-31, PLRNUI-32 e PLRNUI-33 registrano i component token
+  contract e la verifica degli override nested.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra RA 0004
+  come mitigato per RC-hardening entry.
+
+Blocco residuo:
+
+- La stabilizzazione completa dei token/componenti e la promozione stable
+  richiedono ancora owner review e prove di hardening successive.

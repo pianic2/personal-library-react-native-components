@@ -55,3 +55,29 @@ Prima della release candidate:
 - migration guide con riferimenti AURA/UI Experience solo come storico;
 - eventuali alias legacy esplicitamente deprecati.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- Package npm canonico: `@personal-library/react-native-components`.
+- Il valore `0.0.0` in `package.json` non e una versione RC pubblicabile.
+- L'assegnazione della versione RC reale e differita al momento del taglio
+  artifact, prima di publish/tag, e non viene applicata in PLRNUI-59.
+
+Evidenza:
+
+- `package.json` dichiara `name:
+  "@personal-library/react-native-components"` e `version: "0.0.0"`.
+- `README.md` e gli esempi consumer usano il root package canonico.
+- `audit/migration/breaking-change-register.md` registra BC-001 come verificato.
+- `audit/release/consumer-smoke-validation-plrnui-46.md` e
+  `audit/release/expo-metro-consumer-validation-plrnui-58.md` verificano il
+  consumo del tarball tramite package root canonico.
+
+Blocco residuo:
+
+- Lo stato `Accettato` richiede owner review e chiusura del flusso
+  Jira/Confluence. PLRNUI-59 prepara il record, ma non pubblica su Confluence,
+  non transiziona Jira e non cambia la versione reale del package.

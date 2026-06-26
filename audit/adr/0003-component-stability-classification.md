@@ -106,3 +106,27 @@ Ogni componente promosso a `stable` deve avere:
 - support matrix;
 - smoke test o verifica equivalente.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- Nessun componente o API viene promosso a `stable` da PLRNUI-59.
+- La postura RC-hardening resta beta/experimental/internal dove indicato.
+- La pubblicazione RC resta bloccata se docs/demo comunicano falsa stabilita.
+
+Evidenza:
+
+- `README.md` dichiara che nessun componente o API e attualmente classificato
+  `stable`.
+- `audit/release/plrnui-12-senior-rc-readiness-review.md` registra la deriva
+  residua tra maturity matrix e root export come difetto non bloccante per
+  hardening, ma non chiuso per publish.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra RA 0003
+  come `TRACKED CONDITION`.
+
+Blocco residuo:
+
+- La riconciliazione finale della component maturity matrix e della surface
+  stabile resta in PLRNUI-60 / PLRNUI-41.

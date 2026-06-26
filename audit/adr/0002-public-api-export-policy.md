@@ -76,3 +76,27 @@ Prima della release candidate:
 - docs allineate agli entrypoint pubblici;
 - changelog dei breaking changes generato.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- La root API corrente resta l'unico entrypoint consumer supportato insieme a
+  `./package.json`.
+- Non vengono introdotti subpath exports in PLRNUI-59.
+- Gli export experimental/root-visible restano pre-stable e non sono promossi.
+
+Evidenza:
+
+- `package.json` espone solo `"."` e `"./package.json"`.
+- `src/index.ts` usa export nominati espliciti, senza broad `export *` root.
+- `audit/api/internal-experimental-export-fencing-plrnui-26.md` registra la
+  rimozione root di `cn` e `useIsMounted` e la postura degli export
+  experimental.
+- PLRNUI-46 e PLRNUI-58 consumano solo il package root.
+
+Blocco residuo:
+
+- `audit/api/export-matrix.md` mantiene punti `HUMAN REVIEW REQUIRED`; questi
+  impediscono di trattare l'intera policy come approvata/stabile.

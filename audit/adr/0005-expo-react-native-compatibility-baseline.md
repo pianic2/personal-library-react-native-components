@@ -76,3 +76,32 @@ Prima della release candidate:
 - TypeScript consumer vede i tipi;
 - nessuna dipendenza nativa nuova senza decisione;
 - peer dependencies documentate.
+
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- La baseline Expo/RN e sufficiente per entrare in PLRNUI-41 hardening.
+- Non e sufficiente per tagliare/pubblicare un RC artifact.
+- RA 0005 e accettato/tracciato solo come residuale di hardening entry:
+  Expo Go, native device runtime, prebuild e custom dev client non sono ancora
+  provati.
+
+Evidenza:
+
+- `package.json` dichiara `engines.node >=22`, `react >=19.2.3 <20.0.0` e
+  `react-native >=0.85.0 <0.86.0`.
+- `audit/release/expo-metro-consumer-validation-plrnui-58.md` prova Expo web /
+  Metro export dal tarball.
+- `audit/release/native-runtime-validation.md` dichiara esplicitamente che
+  Expo Go, native device runtime, prebuild e custom dev client restano
+  non provati.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra RA 0005
+  come `TRACKED CONDITION / ACCEPTED RESIDUAL FOR HARDENING ENTRY ONLY`.
+
+Blocco residuo:
+
+- PLRNUI-60 / PLRNUI-41 deve chiudere la decisione native-runtime prima di
+  qualsiasi RC artifact publication.

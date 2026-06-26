@@ -70,3 +70,29 @@ Checklist release candidate:
 - render smoke di componenti stabili;
 - controllo duplicazione React/RN.
 
+## Risoluzione PLRNUI-59 per RC scope
+
+Stato lifecycle: resta `Proposto`.
+
+Decisione RC-scope registrata:
+
+- Packaging e consumer installation sono mitigati per PLRNUI-41 hardening entry.
+- Il package non e pubblicabile come RC mentre resta `version: "0.0.0"`.
+- Ogni RC artifact richiede nuova validazione su Node compatibile con
+  `engines.node >=22`.
+
+Evidenza:
+
+- `audit/release/plrnui-12-senior-rc-readiness-review.md` registra PASS per
+  `typecheck`, `test`, `build`, `package:dry-run`, `consumer:smoke` e
+  `consumer:expo` su Node v24.17.0.
+- `audit/release/package-validation.md`, `audit/release/export-validation.md`,
+  PLRNUI-46 e PLRNUI-58 registrano package metadata, root import, declaration
+  resolution e consumer proof.
+- `audit/risk-assessment/rc-risk-disposition-plrnui-59.md` registra RA 0006
+  come `MITIGATED`.
+
+Blocco residuo:
+
+- PLRNUI-59 non taglia, pubblica o prepara un RC artifact; la versione reale RC
+  resta da assegnare prima del taglio artifact.
