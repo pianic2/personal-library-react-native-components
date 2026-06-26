@@ -21,6 +21,9 @@ eventuali shim o alias Vite della preview non provano installazione Expo/RN,
 Metro, iOS, Android, Hermes o runtime nativo. Vedi
 [Preview web shims and runtime limits](preview-runtime-limits.md).
 
+For install, peer dependency, Metro and TypeScript resolver troubleshooting, see
+[Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
+
 ## Uso minimo
 
 Personal Library React Native Components espone un provider di tema che

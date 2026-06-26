@@ -9,6 +9,10 @@ not prove Metro resolution, native modules, iOS, Android, Hermes, Expo Go,
 prebuild or custom dev-client behavior. See
 [Preview web shims and runtime limits](preview-runtime-limits.md).
 
+For clean consumer install, peer alignment, Metro resolver and native runtime
+triage, see
+[Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
+
 Stability labels:
 
 - `beta`: public consumer API, usable but contract may still change.

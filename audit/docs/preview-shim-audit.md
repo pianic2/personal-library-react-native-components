@@ -80,3 +80,18 @@ PLRNUI-51 shim matrix:
 Current checkout note: no `preview-web/` directory exists in this checkout. The
 historical shim rows above remain audit evidence for preview-runtime risk and
 for any future reintroduced preview harness.
+
+## PLRNUI-52 troubleshooting linkage
+
+PLRNUI-52 adds `docs/expo-rn-metro-troubleshooting.md` as the consumer-facing
+guide for Expo/RN/Metro install, peer, resolver, type and native-runtime issues.
+
+The troubleshooting page cross-references `docs/preview-runtime-limits.md` and
+keeps this preview boundary explicit:
+
+- Vite preview/browser docs runtime is separate from Expo/RN/Metro consumer
+  runtime.
+- Preview shims are docs/demo-only browser compatibility layers.
+- Vite aliases and `preview-web/shims/**` are not Metro resolver configuration.
+- Consumer examples must use public package entrypoints and must not rely on
+  preview shims.

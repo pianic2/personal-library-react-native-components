@@ -51,6 +51,12 @@ Export and metadata validation:
   removes internal/non-stable preview coverage from copy-pasteable examples and
   documents repo-local demo/preview paths as harness-only when present. Demo or
   preview success is not package validation.
+- PLRNUI-52 adds consumer-facing Expo/RN/Metro troubleshooting documentation at
+  `docs/expo-rn-metro-troubleshooting.md`, covering clean consumer install, peer
+  alignment, Metro, TypeScript declarations, native runtime limits, preview shim
+  boundaries, deep import bans, known errors and packaging/API blocker criteria.
+  It is documentation-only and does not change runtime source, package metadata,
+  package exports or release validation status.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
 - PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
 - PLRNUI-30 wires Button structural component tokens through `theme.components.button` without adding dependencies, package metadata changes, root exports or non-structural Button color tokens.

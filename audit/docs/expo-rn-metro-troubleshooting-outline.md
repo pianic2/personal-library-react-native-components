@@ -106,3 +106,32 @@ Aprire ticket quando:
 - native dependency e richiesta da API root senza policy;
 - demo usa internals come consumer examples;
 - shim preview sono necessari ma non documentati.
+
+## PLRNUI-52 materialization
+
+PLRNUI-52 materializes this outline into real consumer-facing documentation at
+`docs/expo-rn-metro-troubleshooting.md`.
+
+The docs page now covers:
+
+- clean Expo consumer install flow;
+- React / Expo / React Native peer dependency alignment;
+- the PLRNUI-8 peer React mismatch (`react@19.2.3` in the consumer versus
+  historical `@aura/ui@1.0.0` peer `react@^19.2.4`);
+- Metro resolver troubleshooting;
+- TypeScript module resolution troubleshooting;
+- native runtime limitations;
+- strict deep-import bans for `src`, `dist`, repository-relative paths,
+  unpublished package subpaths and preview/shim internals;
+- the boundary between Vite preview/browser docs runtime and Expo/RN/Metro
+  consumer runtime;
+- preview/demo shims as docs/demo-only browser compatibility layers;
+- known errors and canonical responses;
+- when to open a packaging/API blocker ticket.
+
+The docs page explicitly discourages `--force` and `--legacy-peer-deps` as final
+consumer setup. They are mentioned only as temporary diagnostic bypasses.
+
+PLRNUI-52 does not change runtime source, package metadata, package exports or
+dependency policy. It documents troubleshooting expectations and preserves real
+Expo/RN validation as a separate release gate.

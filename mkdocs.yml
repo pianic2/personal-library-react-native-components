@@ -13,6 +13,7 @@ nav:
   - Getting Started: getting-started.md
   - Platform Support: platform-support.md
   - Preview Runtime Limits: preview-runtime-limits.md
+  - Expo/RN/Metro Troubleshooting: expo-rn-metro-troubleshooting.md
   - Migration Notes: migration.md
   - Theme:
       - Overview: theme.md

@@ -66,6 +66,7 @@ Consumer docs and examples are available in:
 - `docs/tokens/index.md`
 - `docs/platform-support.md`
 - `docs/preview-runtime-limits.md`
+- `docs/expo-rn-metro-troubleshooting.md`
 - `docs/migration.md`
 - `examples/basic-usage.tsx`
 - `examples/overlays.experimental.tsx`

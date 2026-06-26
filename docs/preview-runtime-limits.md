@@ -69,7 +69,9 @@ alias.
 ## Troubleshooting link
 
 For current consumer-facing platform posture, see
-[Platform Support](platform-support.md).
+[Platform Support](platform-support.md). For consumer install, Metro, TypeScript
+and native runtime triage, see
+[Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
 
 The detailed Expo/RN/Metro troubleshooting outline is tracked as audit evidence
 in `audit/docs/expo-rn-metro-troubleshooting-outline.md`. That outline is the

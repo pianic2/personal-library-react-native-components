@@ -55,3 +55,6 @@ gap instead of bypassed through a deep import.
 Preview web runtime limits are documented in
 [Preview web shims and runtime limits](preview-runtime-limits.md). Preview web
 success is not Expo/RN validation.
+
+For Expo/RN consumer install, Metro resolver and TypeScript declaration issues,
+see [Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).

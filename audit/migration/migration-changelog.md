@@ -51,6 +51,11 @@ It is governance evidence only. It does not imply that package metadata, source 
   `examples/*.tsx` remain copy-pasteable root-package examples, repo-local
   demo/preview paths are documented as harness-only when present, and demo or
   preview success is not package validation.
+- Added PLRNUI-52 Expo/RN/Metro troubleshooting documentation:
+  `docs/expo-rn-metro-troubleshooting.md` materializes the PLRNUI-9 outline
+  into consumer-facing guidance for clean install, peer alignment, Metro,
+  TypeScript declarations, native runtime limits, preview shim boundaries, deep
+  import bans, known errors and packaging/API blocker criteria.
 
 ### Changed
 
@@ -103,6 +108,10 @@ It is governance evidence only. It does not imply that package metadata, source 
   imports on `@personal-library/react-native-components`, does not introduce
   deep imports, and does not change runtime source, public exports, package
   metadata, generated outputs or Jira workflow state.
+- Clarified that PLRNUI-52 is documentation/audit-only: it does not change
+  runtime source, package metadata, public exports, dependency policy or Jira
+  workflow state, and it does not make Vite preview success equivalent to
+  Expo/RN native runtime validation.
 
 ### PLRNUI-53 - Legacy token API docs policy
 
