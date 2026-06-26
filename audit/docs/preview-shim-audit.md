@@ -45,3 +45,38 @@ Se la preview viene trattata come source of truth, puo mascherare:
 - TypeScript declaration resolution failure;
 - API internal usate tramite path repo-local;
 - differenze web/native in componenti experimental.
+
+## PLRNUI-51 documentation update
+
+PLRNUI-51 adds consumer-facing documentation for preview web shims and runtime
+limits in `docs/preview-runtime-limits.md`.
+
+The documented boundary is:
+
+- preview web is only a browser documentation/demo surface;
+- preview web is not Expo/RN validation;
+- passing preview web does not prove Expo, Metro, native runtime, iOS, Android,
+  Hermes or React Native compatibility;
+- `preview-web/shims/**` are documentation infrastructure only, not public API;
+- consumer examples must import only from the approved public package API, such
+  as `@personal-library/react-native-components`;
+- consumer examples must not import from `preview-web/shims/**`;
+- consumer examples must not rely on the Vite `@` alias;
+- real Expo/RN validation must happen through external consumer validation, not
+  through Vite preview.
+
+PLRNUI-51 shim matrix:
+
+| Preview alias/shim | Preview target | Preview-only status | Runtime limit |
+| --- | --- | --- | --- |
+| `react-native` | `react-native-web` | Not public API | Does not validate native RN behavior, Metro resolution, platform APIs, Hermes, iOS or Android. |
+| `react-native-safe-area-context` | Preview shim | Not public API | Does not validate native safe-area insets or device cutout behavior. |
+| `@react-native-async-storage/async-storage` | `localStorage` shim | Not public API | Browser `localStorage` semantics differ from native AsyncStorage behavior. |
+| `expo-clipboard` | Browser Clipboard shim | Not public API | Does not validate Expo Clipboard permissions or native behavior. |
+| `lucide-react-native` | `lucide-react` | Not public API | Does not validate `react-native-svg` or native icon behavior. |
+| `@` alias | Repo root | Not public API | Consumer apps must not depend on repo-local aliases. |
+| `preview-web/shims/**` | Local preview shims | Not public API | Browser-only compatibility layer, not exported or versioned as a package contract. |
+
+Current checkout note: no `preview-web/` directory exists in this checkout. The
+historical shim rows above remain audit evidence for preview-runtime risk and
+for any future reintroduced preview harness.

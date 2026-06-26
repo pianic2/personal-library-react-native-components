@@ -12,6 +12,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Platform Support: platform-support.md
+  - Preview Runtime Limits: preview-runtime-limits.md
   - Migration Notes: migration.md
   - Theme:
       - Overview: theme.md

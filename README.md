@@ -65,6 +65,7 @@ Consumer docs and examples are available in:
 - `docs/theme.md`
 - `docs/tokens/index.md`
 - `docs/platform-support.md`
+- `docs/preview-runtime-limits.md`
 - `docs/migration.md`
 - `examples/basic-usage.tsx`
 - `examples/overlays.experimental.tsx`

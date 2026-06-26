@@ -146,6 +146,28 @@ runtime source, package metadata or public exports:
   preview coverage in examples are registered rather than bypassed through deep
   imports.
 
+## PLRNUI-51 follow-up status
+
+PLRNUI-51 addresses the preview shim documentation gap without changing runtime
+source, package metadata or preview configuration:
+
+- `docs/preview-runtime-limits.md` documents preview web as a browser
+  documentation/demo surface only.
+- The docs explicitly state that preview web is not Expo/RN validation and does
+  not prove Expo, Metro, native runtime, iOS, Android, Hermes or React Native
+  compatibility.
+- The shim matrix documents `react-native` -> `react-native-web`,
+  `react-native-safe-area-context` preview shim,
+  `@react-native-async-storage/async-storage` -> `localStorage`, `expo-clipboard`
+  -> browser Clipboard, `lucide-react-native` -> `lucide-react`, the Vite `@`
+  alias and `preview-web/shims/**` as non-public preview infrastructure.
+- `README.md`, `docs/getting-started.md`, `docs/migration.md`,
+  `docs/platform-support.md` and `mkdocs.yml` link or surface the preview
+  runtime-limit boundary.
+- Remaining validation still requires real Expo/RN consumer checks; preview shim
+  documentation does not close package install, Metro, native runtime or device
+  validation risk.
+
 ## Note esplicite di scope
 
 - Nessun codice sorgente modificato.

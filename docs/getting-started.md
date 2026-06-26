@@ -16,6 +16,11 @@ Installa e importa il pacchetto usando l’identità approvata:
 npm install @personal-library/react-native-components
 ```
 
+La preview web del repository non sostituisce questa verifica consumer:
+eventuali shim o alias Vite della preview non provano installazione Expo/RN,
+Metro, iOS, Android, Hermes o runtime nativo. Vedi
+[Preview web shims and runtime limits](preview-runtime-limits.md).
+
 ## Uso minimo
 
 Personal Library React Native Components espone un provider di tema che

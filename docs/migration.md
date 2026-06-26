@@ -51,3 +51,7 @@ Repo-local demo or preview harness files, if present, may use local paths only
 as development infrastructure. They are not package validation, not consumer API
 source of truth, and any missing public API/type must be registered as an audit
 gap instead of bypassed through a deep import.
+
+Preview web runtime limits are documented in
+[Preview web shims and runtime limits](preview-runtime-limits.md). Preview web
+success is not Expo/RN validation.

@@ -4,6 +4,11 @@ This page is the consumer-facing summary of `audit/components/component-platform
 
 No component is promoted to `stable` by this documentation.
 
+Preview web is not Expo/RN validation. Browser preview shims and Vite aliases do
+not prove Metro resolution, native modules, iOS, Android, Hermes, Expo Go,
+prebuild or custom dev-client behavior. See
+[Preview web shims and runtime limits](preview-runtime-limits.md).
+
 Stability labels:
 
 - `beta`: public consumer API, usable but contract may still change.

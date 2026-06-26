@@ -66,6 +66,25 @@ Consentire solo entrypoint pubblici approvati e documentati.
 - Non usare preview success come prova di package install, Metro, Expo Go o native runtime.
 - Elencare shim Safe Area, AsyncStorage, Clipboard, Lucide/SVG.
 
+## PLRNUI-51 linkage
+
+Consumer-facing preview runtime limits are documented in
+`docs/preview-runtime-limits.md`.
+
+Preview shim success does not close Expo/RN runtime risk. In particular, Vite
+preview does not prove:
+
+- clean package install in an external Expo/RN app;
+- Metro package root or export-map resolution;
+- generated TypeScript declaration resolution in a consumer project;
+- native Safe Area, AsyncStorage, Clipboard, SVG/icon, iOS, Android, Hermes,
+  Expo Go, prebuild or custom dev-client behavior;
+- absence of duplicate React or React Native copies in a consumer app.
+
+Troubleshooting and release validation must continue to use real Expo/RN
+consumer checks. `preview-web/shims/**`, Vite aliases and repo-local imports are
+not consumer API and must not appear in copy-pasteable consumer examples.
+
 ## 8. Errori noti
 
 - `npm ERR! ERESOLVE unable to resolve dependency tree`: possibile mismatch peer React/Expo/RN.
