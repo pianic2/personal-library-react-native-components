@@ -168,6 +168,43 @@ source, package metadata or preview configuration:
   documentation does not close package install, Metro, native runtime or device
   validation risk.
 
+## PLRNUI-52 follow-up status
+
+PLRNUI-52 materializes the PLRNUI-9 Expo/RN/Metro troubleshooting outline into
+consumer-facing documentation without changing runtime source, package metadata
+or public exports:
+
+- `docs/expo-rn-metro-troubleshooting.md` documents clean Expo consumer install,
+  peer dependency alignment, the historical PLRNUI-8 React peer mismatch, Metro
+  resolver troubleshooting, TypeScript module resolution troubleshooting,
+  native runtime limits, deep-import bans, preview/demo shim boundaries, known
+  errors and packaging/API blocker criteria.
+- `mkdocs.yml` includes the troubleshooting page in the docs navigation.
+- `docs/preview-runtime-limits.md` links preview runtime limits back to the
+  Expo/RN/Metro troubleshooting boundary.
+- The troubleshooting page explicitly states that `--force` and
+  `--legacy-peer-deps` are not final consumer setup solutions.
+
+## PLRNUI-54 closure status
+
+PLRNUI-54 executes the final PLRNUI-9 docs update inventory as a closure task:
+
+- P0 rows in `audit/docs/docs-update-inventory.md` are closed, marked not
+  applicable for absent current paths, or deferred with explicit rationale.
+- Current README/docs/examples use canonical package identity
+  `@personal-library/react-native-components` for consumer imports.
+- Current consumer examples do not use repo-relative imports, `src/*`, `dist/*`,
+  `preview-web/*`, shims or unpublished package subpaths.
+- Stability labels remain conservative: beta, experimental and internal /
+  non-stable are visible where required, and no component/API is promoted to
+  stable.
+- Preview web shims and runtime limits are documented as browser docs/demo
+  infrastructure only, not Expo/RN validation.
+- `docs/utils/cn.md` no longer shows a consumer root-package import for the
+  internal/non-stable `cn` helper.
+- Residual P1 items are limited to absent or out-of-scope future docs surfaces
+  that require a public API decision before consumer documentation.
+
 ## Note esplicite di scope
 
 - Nessun codice sorgente modificato.

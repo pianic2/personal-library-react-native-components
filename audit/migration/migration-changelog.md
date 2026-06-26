@@ -56,6 +56,10 @@ It is governance evidence only. It does not imply that package metadata, source 
   into consumer-facing guidance for clean install, peer alignment, Metro,
   TypeScript declarations, native runtime limits, preview shim boundaries, deep
   import bans, known errors and packaging/API blocker criteria.
+- Added PLRNUI-54 PLRNUI-9 docs update inventory closure evidence: P0
+  README/mkdocs/docs/components/theme/tokens/utils/demo/preview inventory rows
+  are closed, marked not applicable for absent current paths or deferred with
+  explicit rationale; P1 residuals are recorded without stable promotion.
 
 ### Changed
 
@@ -112,6 +116,11 @@ It is governance evidence only. It does not imply that package metadata, source 
   runtime source, package metadata, public exports, dependency policy or Jira
   workflow state, and it does not make Vite preview success equivalent to
   Expo/RN native runtime validation.
+- Clarified that PLRNUI-54 is documentation/audit closure only: it verifies the
+  PLRNUI-48 through PLRNUI-52 outputs, removes a misleading consumer import for
+  the internal `cn` helper from docs, does not change runtime source, package
+  metadata, public exports, generated outputs or Jira workflow state, and does
+  not promote any component/API to stable.
 
 ### PLRNUI-53 - Legacy token API docs policy
 

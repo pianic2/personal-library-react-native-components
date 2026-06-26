@@ -38,6 +38,54 @@ repo-local demo/preview harness evidence.
 - Demo/preview harness success is not package validation; packed-artifact
   consumer validation remains owned by release/consumer-smoke gates.
 
+## PLRNUI-54 execution status
+
+PLRNUI-54 closes the PLRNUI-9 docs update inventory as a documentation/audit
+container task. It does not replace PLRNUI-48, PLRNUI-49, PLRNUI-50, PLRNUI-51
+or PLRNUI-52; it verifies their current outputs and records remaining deferrals.
+
+### P0 closure matrix
+
+| Inventory path/topic | Status | Resolution | Evidence |
+| --- | --- | --- | --- |
+| `README.md` | closed | Canonical package identity, root package import, stability taxonomy, preview/runtime boundary and troubleshooting links are present. | `README.md` |
+| `mkdocs.yml` | closed | Canonical site metadata and navigation include platform support, preview runtime limits and Expo/RN/Metro troubleshooting. | `mkdocs.yml` |
+| `docs/index.md` | closed | Canonical project/package identity, root import guidance and stability-label taxonomy are present. | `docs/index.md` |
+| `docs/getting-started.md` | closed | Consumer setup uses `@personal-library/react-native-components`, includes stability labels and links troubleshooting/runtime-limit docs. | `docs/getting-started.md` |
+| `docs/components/**/*.md` | closed | Current component pages use root package imports where examples are consumer-facing and carry visible beta, experimental or internal/non-stable labels. | `docs/components/**`, `audit/docs/stability-labeling-audit.md` |
+| `docs/components/buttons/button.md` | closed | `Button` is labeled beta. | `docs/components/buttons/button.md` |
+| `docs/components/layout/box.md`, `column.md`, `row.md` | closed | Layout component pages are labeled beta and avoid stable claims. | `docs/components/layout/*.md` |
+| `docs/components/typography/text.md`, `code-inline.md` | closed | `Text` is labeled beta; `CodeInline` is labeled internal/non-stable. Historical `Code` and `Page` rows are not applicable to this checkout because those component docs/source paths are absent. | `docs/components/typography/*.md`, `src/components/` |
+| `docs/components/feedback/progress-bar.md` | closed | `ProgressBar` is labeled internal/non-stable. Historical `ToastProvider` and `useToast` rows are not applicable to this checkout because those docs/source paths are absent. | `docs/components/feedback/progress-bar.md`, `src/components/` |
+| `docs/components/overlay/modal.md`, `bottom-sheet.md`, `tooltip.md`, `popover.md` | closed | Overlay pages are labeled experimental and keep runtime/platform limitations visible. | `docs/components/overlay/*.md` |
+| `docs/components/surfaces/card.md` | closed | `Card` is labeled internal/non-stable. Historical `Hero` row is not applicable to this checkout because the docs/source path is absent. | `docs/components/surfaces/card.md`, `src/components/` |
+| `docs/components/form/input.md`, `password-input.md`, `textarea.md`, `select.md` | closed | `Input` is labeled beta; `PasswordInput` and `Textarea` are labeled internal/non-stable; `Select` is labeled experimental. | `docs/components/form/*.md` |
+| `docs/components/navigation/nav-context.md`, `nav-bar.md`, `link.md`, `top-bar.md`, `bottom-bar.md`, `side-bar.md` | closed | Navigation docs carry beta or experimental labels and avoid stable claims. | `docs/components/navigation/*.md` |
+| `docs/theme.md` | closed | Theme docs use the canonical root package import and beta/internal labels; runtime troubleshooting is covered by the dedicated Expo/RN/Metro page. | `docs/theme.md`, `docs/expo-rn-metro-troubleshooting.md` |
+| `docs/theme/theme-storage.md` | not applicable | The historical internal storage helper page is absent. Current storage guidance is adapter-based and consumer-owned through `ThemeStorageAdapter`. | `docs/theme/theme-provider.md`, `docs/getting-started.md` |
+| `docs/tokens/index.md` | closed | Legacy `auraTokens` / `getAuraTokens` are not recommended in consumer docs; historical audit references remain marked legacy/deprecated. | `docs/tokens/index.md`, `audit/docs/naming-legacy-audit.md` |
+| `docs/utils/cn.md` | closed | `cn` remains documented only as internal/non-stable; the misleading root-package consumer import was removed. | `docs/utils/cn.md` |
+| `demo/app/**`, `demo/screens/**` | not applicable | No `demo/` directory exists in the current checkout. Historical rows remain audit evidence only; current consumer examples live under `examples/`. | `examples/*.tsx`, `audit/docs/deep-import-demo-audit.md` |
+| `preview-web/vite.config.ts`, `preview-web/shims/**` | not applicable | No `preview-web/` directory exists in the current checkout. Preview shim behavior is documented as browser docs/demo infrastructure only. | `docs/preview-runtime-limits.md`, `audit/docs/preview-shim-audit.md` |
+
+### P1 residual matrix
+
+| Inventory path/topic | Status | Rationale |
+| --- | --- | --- |
+| P1 component pages (`Divider`, typography variants, `Spinner`, `Alert`, `Badge`, `Checkbox`, `Switch`, `RadioGroup`, `FormField`) | closed by PLRNUI-49 | Pages exist in the current docs and now carry visible beta labels without stable promotion. |
+| `docs/theme/theme-provider.md`, `use-theme.md`, `create-theme.md`, `types.md` | closed by PLRNUI-49/PLRNUI-52 | Theme pages use canonical imports and beta labels; runtime and resolver troubleshooting is centralized in `docs/expo-rn-metro-troubleshooting.md`. |
+| `docs/tokens/**` | closed by PLRNUI-49/PLRNUI-53 | Token docs carry beta labels and avoid recommending legacy token aliases. |
+| `docs/storage/**` | deferred / not applicable | No storage docs directory exists. Current persistence docs intentionally describe only consumer-owned `ThemeStorageAdapter`; separate storage docs should wait for a public storage API decision. |
+| `docs/utils/merge-styles.md`, `docs/utils/platform.md` | closed by PLRNUI-49 | Utility pages carry experimental labels and use root package imports for root-exported utilities. |
+| `docs/utils/safe-area.md`, `docs/utils/clipboard.md` | deferred / not applicable | No public safe-area or clipboard utility docs exist in this checkout. Native/runtime behavior is covered by preview limits and Expo/RN/Metro troubleshooting until a public API is approved. |
+| `themes/liquidglass/README.md` | deferred / out of hard scope | The PLRNUI-54 hard scope covers README/mkdocs, docs root, component docs, token/theme/storage/utils docs, demo app/examples and preview web docs. Theme pack documentation remains outside this closure task. |
+| `demo/index.ts`, `preview-web/preview.tsx`, `preview-web/index.html` | not applicable | Demo and preview-web directories are absent in the current checkout; future reintroduction must keep local harness paths clearly separate from consumer examples. |
+
+PLRNUI-54 validation found no current consumer-facing deep imports from
+`src/*`, `dist/*`, `preview-web/*`, `shims/*`, component internals or theme
+internals in `README.md`, `docs/` or `examples/`. Historical audit references
+remain as evidence and are not rewritten as current product docs.
+
 ## README/mkdocs
 
 | Path | Motivo | Tipo aggiornamento | Priorita |

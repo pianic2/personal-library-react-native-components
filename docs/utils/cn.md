@@ -6,9 +6,11 @@ Utility per comporre classi CSS (stringhe) in modo condizionale.
 
 ## Import
 
-```ts
-import { cn } from "@personal-library/react-native-components";
-```
+No consumer import is documented for `cn`.
+
+`cn` is an internal / non-stable helper. It is not part of the public consumer
+API, is not exported from the package root, and must not be imported from
+repository internals, unpublished subpaths, `src/*` or `dist/*`.
 
 ## Firma
 

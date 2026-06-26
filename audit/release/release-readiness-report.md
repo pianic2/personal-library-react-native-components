@@ -57,6 +57,14 @@ Export and metadata validation:
   boundaries, deep import bans, known errors and packaging/API blocker criteria.
   It is documentation-only and does not change runtime source, package metadata,
   package exports or release validation status.
+- PLRNUI-54 closes the PLRNUI-9 docs update inventory by recording P0/P1
+  resolution status in `audit/docs/docs-update-inventory.md`, confirming current
+  consumer examples use only `@personal-library/react-native-components`,
+  confirming preview shims/runtime limits are documented as browser docs/demo
+  infrastructure only, and removing the misleading consumer import example for
+  the internal/non-stable `cn` helper. It is documentation/audit-only and does
+  not change runtime source, package metadata, package exports or release
+  validation status.
 - PLRNUI-28 makes `ThemeProvider` a pure theme context provider, adds root-exported `ThemeAppShell` for explicit themed layout/scroll behavior, and removes provider-owned layout rendering.
 - PLRNUI-56 adds root-exported `ThemeStorageAdapter` and optional `ThemeProvider` persistence props. The default provider behavior remains non-persistent and the implementation does not introduce an official storage adapter subpath.
 - PLRNUI-30 wires Button structural component tokens through `theme.components.button` without adding dependencies, package metadata changes, root exports or non-structural Button color tokens.
