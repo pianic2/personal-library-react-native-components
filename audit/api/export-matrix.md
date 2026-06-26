@@ -99,8 +99,8 @@ Current-state note for PLRNUI-26/PLRNUI-29: the root API remains an explicit nam
 | `auraTokens` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | token | removed | breaking | PLRNUI-53 confirms this is a legacy/deprecated token name, not stable public API, not allowed in consumer examples, and not reintroduced as an alias. | HUMAN REVIEW REQUIRED |
 | `getAuraTokens` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | utility | removed | breaking | PLRNUI-53 confirms this is a legacy/deprecated token accessor, not stable public API, not allowed in consumer examples, and not reintroduced as an alias. | HUMAN REVIEW REQUIRED |
 | `TokensSnapshot` | removed from root by PLRNUI-29 | `tokens/themeTokens.ts` | type | removed | breaking | Snapshot-named public token type removed in favor of neutral `ThemeTokens`. | HUMAN REVIEW REQUIRED |
-| `defaultThemeTokens` | root | `tokens/themeTokens.ts` | token | public | beta | Neutral default light token export and stable target for former `auraTokens` consumers. | HUMAN REVIEW REQUIRED |
-| `createThemeTokens` | root | `tokens/themeTokens.ts` | utility | public | beta | Neutral light/dark token factory and stable target for former `getAuraTokens` consumers. | HUMAN REVIEW REQUIRED |
+| `defaultThemeTokens` | root | `tokens/themeTokens.ts` | token | public | beta | Neutral default light token export and migration target for former `auraTokens` consumers; not classified as stable. | HUMAN REVIEW REQUIRED |
+| `createThemeTokens` | root | `tokens/themeTokens.ts` | utility | public | beta | Neutral light/dark token factory and migration target for former `getAuraTokens` consumers; not classified as stable. | HUMAN REVIEW REQUIRED |
 | `ThemeTokens` | root | `tokens/themeTokens.ts` | type | public | beta | Neutral public token object type replacing `TokensSnapshot`. | HUMAN REVIEW REQUIRED |
 | `GlassMaterialTokens` | root | `theme/types.ts` | type | experimental | experimental | Theme extension for liquid/glass materials is not core stable yet. | HUMAN REVIEW REQUIRED |
 | `Theme` | root | `theme/types.ts` | type | public | beta | Required to use and override theme contract. |  |

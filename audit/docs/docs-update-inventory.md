@@ -12,6 +12,9 @@ surface without promoting anything to stable.
 - Current stable count remains `0`.
 - Current component/API pages are labeled `beta`, `experimental` or
   `internal / non-stable`.
+- `docs/getting-started.md` and `docs/migration.md` now include the shared
+  stability-label taxonomy and call out beta/experimental/internal boundaries
+  where their examples mention public surfaces.
 - Internal pages are not removed; they are clearly marked as not part of the
   public consumer API.
 - Legacy token names `auraTokens` and `getAuraTokens` remain absent from

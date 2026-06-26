@@ -111,7 +111,7 @@ useDebounce
 useToggle
 ```
 
-Explicitly exclude from root stable API:
+Explicitly exclude from the public root API under the current governance decision:
 
 ```ts
 useThemeContext
@@ -197,7 +197,7 @@ PLRNUI-29 later removed `getAuraTokens` from the root API as an aggressive break
 
 ## Explicit exclusions
 
-These should not be root stable API without a separate decision:
+These should not be public root API without a separate decision:
 
 ```ts
 Card
