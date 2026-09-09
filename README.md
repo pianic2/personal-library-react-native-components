@@ -1,33 +1,47 @@
 # Personal Library React Native Components
 
-Package target: `@personal-library/react-native-components`
+Package: `@personal-library/react-native-components`
 
 React Native component library for shared app UI, built around reusable
 components, theme primitives and design tokens.
 
 ## Status
 
-This repository is the clean canonical repository for the React Native component
-library. It starts as an enterprise baseline while migration work is in
-progress.
+The repository migration and hardening programme is complete. The current
+package surface is governed and **pre-stable**: beta APIs are usable but may
+change, experimental APIs are provisional, and `stable` remains zero until a
+future promotion gate.
 
-The current package surface is governed and pre-stable, not merely the minimal
-PLRNUI-13 baseline. Consumers must use the root package entrypoint only. The
-root API includes beta component/theme/token utilities and explicitly documented
-experimental surfaces, while `stable` remains zero until a future promotion
-gate.
+First release-candidate preparation targets **`0.1.0-rc.1`**. The package is
+configured for the public npm registry with the **`rc`** dist-tag; using
+`latest` for this RC is intentionally forbidden by the release guard.
 
-Current RC posture:
+Current first-RC runtime boundary:
 
-- `CONDITIONAL GO` to enter PLRNUI-41 hardening.
-- `NO-GO` to cut or publish an RC artifact until native runtime, version and
-  owner publication gates close.
+- Expo Go Android on Expo SDK 57 / React Native 0.86.3: validated PASS.
+- Native Android outside the Expo Go proof lane: owner-accepted residual, not a
+  validated PASS claim.
+- Native iOS: owner-accepted residual, not a validated PASS claim.
+- Prebuild, custom dev client and EAS build are outside the selected first-RC
+  support claim.
+
+The RC may be prepared and certified, but **npm publication, Git tag and GitHub
+Release require the separate final PLRNUI-61 authorization**.
+
+## Installation
+
+After the RC is published, pin the prerelease explicitly:
+
+```sh
+npm install @personal-library/react-native-components@0.1.0-rc.1
+```
+
+Do not treat the RC as a stable release.
 
 ## Audit Evidence
 
-`audit/` contains governance evidence imported from previous PLRNUI work:
-analysis reports, ADRs, registers, release checks, migration notes, and related
-verification material.
+`audit/` contains governance evidence from PLRNUI work: analysis reports, ADRs,
+registers, release checks, migration notes, and verification material.
 
 `audit/` is not runtime source code, is not consumer-facing documentation, and is
 not part of the published package API. Legacy references inside `audit/` are
@@ -70,7 +84,7 @@ Surface boundaries:
 
 - root public/beta surface: documented root imports that may still change
   before stable release;
-- experimental root surface: provisional APIs such as overlays and app-shell /
+- experimental root surface: provisional APIs such as overlays and selected
   navigation surfaces that are root-visible but not stable;
 - internal/non-public surface: repository implementation details, preview
   shims, source-tree-only inventory entries and unexported helpers;
@@ -90,26 +104,19 @@ Consumer docs and examples are available in:
 - `examples/basic-usage.tsx`
 - `examples/overlays.experimental.tsx`
 
-Source migration is ticket-driven. Do not migrate components, tokens, themes, or
-public APIs without the related PLRNUI issue and audit evidence.
-
 Useful commands:
 
 ```sh
 npm run dev
 npm run typecheck
+npm test
 npm run build
-npm run build:prod
 npm run package:dry-run
+npm run consumer:smoke
+npm run consumer:expo
+npm run release:guard
 npm run release:check
 ```
 
-## PLRNUI Scope
-
-PLRNUI-13 creates the canonical enterprise baseline.
-
-PLRNUI-14 owns advanced package metadata.
-
-PLRNUI-18 owns the selective migration plan.
-
-Component migration and public API stabilization happen in later tickets.
+Release preparation is ticket-driven. Do not publish, tag or create a GitHub
+Release unless the current publication gate explicitly authorizes it.
