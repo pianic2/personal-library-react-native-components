@@ -27,6 +27,51 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Close publication breaking-change dispositions
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          register = Path('audit/migration/breaking-change-register.md')
+          text = register.read_text()
+          targets = ['BC-002', 'BC-003', 'BC-004', 'BC-008', 'BC-011']
+          for bc in targets:
+              marker = f'### {bc} -'
+              start = text.find(marker)
+              if start < 0:
+                  raise SystemExit(f'Missing breaking-change section: {bc}')
+              end = text.find('\n### ', start + len(marker))
+              if end < 0:
+                  end = len(text)
+              section = text[start:end]
+              updated, count = re.subn(r'(?m)^- Status: .*$', '- Status: verified', section, count=1)
+              if count != 1:
+                  raise SystemExit(f'Missing Status line in {bc}')
+              text = text[:start] + updated + text[end:]
+          register.write_text(text)
+
+          changelog = Path('audit/migration/migration-changelog.md')
+          ctext = changelog.read_text()
+          heading = '## PLRNUI-63 — First RC publication preparation (2026-09-09)'
+          if heading not in ctext:
+              ctext = ctext.rstrip() + f'''\n\n{heading}\n\n- Assigned the first RC candidate version `0.1.0-rc.1`; package and lockfile must remain coherent.\n- Added fail-closed publication metadata for npmjs, public access and the `rc` dist-tag; implicit `latest` publication is forbidden.\n- Moved canonical CI to Node 24 and expanded `release:check` to include tests, packed consumer smoke, Expo SDK 57 consumer smoke and production dependency audit.\n- Added an automatic `prepack` build plus release guard so an RC cannot pack as `0.0.0`, a non-RC version, or with drifted package metadata.\n- Corrected navigation stability wording: `NavProvider` and `useNav` are beta; `useNavigate` is experimental; `stable` remains zero.\n- Closed BC-002, BC-003, BC-004, BC-008 and BC-011 as `verified` for the first-RC publication boundary based on the completed naming, root-API, deep-import, register-freshness and stability-label evidence.\n- PLRNUI-62 native runtime disposition remains unchanged: Expo Go Android PASS; native Android/iOS residuals are owner-accepted but are not platform PASS claims.\n- Added first-RC release notes and an explicit npm authentication/provenance bootstrap disposition. No npm publish, Git tag or GitHub Release is performed by PLRNUI-63.\n'''
+              changelog.write_text(ctext)
+          PY
+          git diff --check
+          git diff -- audit/migration/breaking-change-register.md audit/migration/migration-changelog.md | sed -n '1,220p'
+
+      - name: Commit publication governance dispositions
+        run: |
+          if ! git diff --quiet -- audit/migration/breaking-change-register.md audit/migration/migration-changelog.md; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add audit/migration/breaking-change-register.md audit/migration/migration-changelog.md
+            git commit -m "PLRNUI-63 verify publication breaking-change dispositions"
+            git push origin HEAD:plrnui-63-publication-prep
+          fi
+
       - name: Align RC lockfile and remediate audit finding
         run: |
           npm install --package-lock-only --ignore-scripts
