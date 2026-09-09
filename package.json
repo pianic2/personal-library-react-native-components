@@ -29,6 +29,9 @@
     "access": "public",
     "tag": "rc"
   },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  },
   "scripts": {
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
