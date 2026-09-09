@@ -1,0 +1,109 @@
+name: PLRNUI-63 final publication evidence
+
+on:
+  push:
+    branches:
+      - plrnui-63-publication-prep
+    paths:
+      - .github/workflows/plrnui-63-finalize.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: plrnui-63-publication-prep
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Align RC lockfile
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(l.version!==p.version || l.packages[''].version!==p.version) process.exit(1)"
+          git diff --check
+          git diff -- package-lock.json | sed -n '1,100p'
+
+      - name: Commit aligned lockfile
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "PLRNUI-63 align lockfile with 0.1.0-rc.1"
+            git push origin HEAD:plrnui-63-publication-prep
+          fi
+
+      - name: Clean install
+        run: npm ci
+
+      - name: Registry and candidate-version check
+        shell: bash
+        run: |
+          npm ping --registry=https://registry.npmjs.org/
+          set +e
+          npm view @personal-library/react-native-components@0.1.0-rc.1 version --registry=https://registry.npmjs.org/
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ]; then
+            echo "Candidate version already exists on npm; refusing immutable-version reuse."
+            exit 1
+          fi
+          echo "Candidate version is not currently resolvable from the public registry (expected before first publication)."
+
+      - name: Dependency security disposition
+        shell: bash
+        run: |
+          npm audit --json > /tmp/plrnui63-audit.json || true
+          node <<'NODE'
+          const fs = require('fs');
+          const audit = JSON.parse(fs.readFileSync('/tmp/plrnui63-audit.json','utf8'));
+          console.log('AUDIT_METADATA=' + JSON.stringify(audit.metadata?.vulnerabilities ?? {}));
+          for (const [name, item] of Object.entries(audit.vulnerabilities ?? {})) {
+            console.log(`AUDIT_ITEM name=${name} severity=${item.severity} direct=${item.isDirect} via=${JSON.stringify(item.via)}`);
+          }
+          NODE
+          npm audit --omit=dev --audit-level=high
+
+      - name: Install-script inventory
+        shell: bash
+        run: |
+          npm install-scripts ls || true
+
+      - name: Full release check
+        run: npm run release:check
+
+      - name: Final artifact identity and leakage check
+        shell: bash
+        run: |
+          rm -rf /tmp/plrnui63-artifact
+          mkdir -p /tmp/plrnui63-artifact
+          npm pack --pack-destination /tmp/plrnui63-artifact
+          TGZ=$(find /tmp/plrnui63-artifact -maxdepth 1 -name '*.tgz' -print -quit)
+          echo "FINAL_TARBALL=$(basename "$TGZ")"
+          sha256sum "$TGZ"
+          echo "FINAL_SIZE_BYTES=$(stat -c %s "$TGZ")"
+          count=$(tar -tzf "$TGZ" | wc -l)
+          echo "FINAL_FILE_COUNT=$count"
+          tar -tzf "$TGZ" > /tmp/plrnui63-files.txt
+          if grep -E '^package/(src|audit|tests|scripts|examples|docs|\.github)(/|$)' /tmp/plrnui63-files.txt; then
+            echo "Forbidden repository-only content leaked into tarball"
+            exit 1
+          fi
+          tar -tzf "$TGZ" | grep -Fx 'package/dist/index.js'
+          tar -tzf "$TGZ" | grep -Fx 'package/dist/index.d.ts'
+          tar -tzf "$TGZ" | grep -Fx 'package/package.json'
+          tar -tzf "$TGZ" | grep -Fx 'package/README.md'
+          tar -tzf "$TGZ" | grep -Fx 'package/LICENSE'
+          git diff --check
+          git status --short
