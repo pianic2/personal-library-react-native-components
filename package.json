@@ -33,7 +33,7 @@
     "release:check": "npm run clean && npm ci && npm run typecheck && npm run build && npm run package:dry-run"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13.0"
   },
   "peerDependencies": {
     "react": ">=19.2.3 <20.0.0",
