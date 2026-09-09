@@ -1,9 +1,14 @@
 {
   "name": "@personal-library/react-native-components",
-  "version": "0.0.0",
+  "version": "0.1.0-rc.1",
   "description": "Personal Library React Native Components.",
   "private": false,
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pianic2/personal-library-react-native-components.git"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,6 +24,11 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "rc"
+  },
   "scripts": {
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
@@ -29,8 +39,11 @@
     "consumer:smoke": "node scripts/consumer-smoke.mjs",
     "consumer:expo": "node scripts/expo-consumer-smoke.mjs",
     "clean": "rm -rf dist *.tgz",
-    "prepack:check": "npm run build:prod && npm run package:dry-run",
-    "release:check": "npm run clean && npm ci && npm run typecheck && npm run build && npm run package:dry-run"
+    "release:guard": "node scripts/release-guard.mjs",
+    "release:security": "npm audit --omit=dev --audit-level=high",
+    "prepack": "npm run build:prod && npm run release:guard",
+    "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
+    "release:check": "npm run clean && npm ci && npm run release:guard && npm run typecheck && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
   },
   "engines": {
     "node": ">=22.13.0"
