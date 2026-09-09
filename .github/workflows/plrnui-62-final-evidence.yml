@@ -56,6 +56,13 @@ jobs:
       - name: Expo 57 consumer preflight
         run: npm run consumer:expo
 
+      - name: Expo dependency compatibility checks
+        working-directory: /tmp/plrnui-64-expo-consumer/consumer
+        run: |
+          npm ls @personal-library/react-native-components expo react react-dom react-native --depth=0
+          npx expo install --check
+          npx --yes expo-doctor@latest
+
       - name: Candidate tarball and SHA256
         shell: bash
         run: |
