@@ -5,10 +5,11 @@ import { spawnSync } from "node:child_process";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const packageName = "@personal-library/react-native-components";
-const smokeRoot = "/tmp/plrnui-46-consumer-smoke";
+const smokeRoot = "/tmp/plrnui-64-consumer-smoke";
 const artifactsDir = join(smokeRoot, "artifacts");
 const consumerDir = join(smokeRoot, "consumer");
-const npmCache = join(smokeRoot, "npm-cache");
+const npmCache = "/tmp/plrnui-consumer-npm-cache";
+const installTimeoutMs = 7 * 60 * 1000;
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -20,7 +21,17 @@ function run(command, args, options = {}) {
     },
     encoding: "utf8",
     stdio: options.capture ? ["ignore", "pipe", "pipe"] : "inherit",
+    timeout: options.timeout ?? undefined,
   });
+
+  if (result.error?.code === "ETIMEDOUT") {
+    throw new Error(
+      `Command timed out after ${Math.round((options.timeout ?? 0) / 1000)}s: ${[
+        command,
+        ...args,
+      ].join(" ")}`
+    );
+  }
 
   if (result.status !== 0) {
     const rendered = [command, ...args].join(" ");
@@ -60,12 +71,19 @@ async function assertPackageSurface() {
     throw new Error("Root package export must expose import and types entries");
   }
 
+  if (packageJson.peerDependencies?.["react-native"] !== ">=0.86.0 <0.87.0") {
+    throw new Error(
+      `PLRNUI-64 requires RN 0.86 peer support; found ${
+        packageJson.peerDependencies?.["react-native"]
+      }`
+    );
+  }
+
   packageVersion = packageJson.version;
 }
 
 async function packLibrary() {
   run("npm", ["run", "build"]);
-
   run("npm", ["pack", "--pack-destination", artifactsDir]);
 
   const filename = `${packageName
@@ -100,7 +118,7 @@ async function writeConsumerFixture(tarballPath) {
   await mkdir(join(consumerDir, "test"), { recursive: true });
 
   await writeJson(join(consumerDir, "package.json"), {
-    name: "plrnui-46-expo-consumer-smoke",
+    name: "plrnui-64-consumer-smoke",
     version: "0.0.0",
     private: true,
     type: "module",
@@ -111,16 +129,16 @@ async function writeConsumerFixture(tarballPath) {
     },
     dependencies: {
       [packageName]: `file:${tarballPath}`,
-      react: "19.2.7",
-      "react-native": "0.85.3",
+      react: "19.2.3",
+      "react-native": "0.86.3",
     },
     devDependencies: {
       "@types/node": "26.0.0",
       "@types/react": "19.2.17",
       "@types/react-test-renderer": "19.1.0",
-      "react-test-renderer": "19.2.7",
+      "react-test-renderer": "19.2.3",
       tsx: "4.22.4",
-      typescript: "5.9.3",
+      typescript: "6.0.3",
     },
   });
 
@@ -144,8 +162,8 @@ async function writeConsumerFixture(tarballPath) {
     `${JSON.stringify(
       {
         expo: {
-          name: "PLRNUI 46 Consumer Smoke",
-          slug: "plrnui-46-consumer-smoke",
+          name: "PLRNUI 64 Consumer Smoke",
+          slug: "plrnui-64-consumer-smoke",
         },
       },
       null,
@@ -180,6 +198,7 @@ const textProps: TextProps = {
 };
 
 const inputProps: InputProps = {
+  label: "Name",
   value: "Ada",
   onChangeText: () => undefined,
 };
@@ -352,8 +371,9 @@ async function validateConsumerInstall() {
       "--no-fund",
       "--ignore-scripts",
       "--package-lock=false",
+      "--prefer-offline",
     ],
-    { cwd: consumerDir }
+    { cwd: consumerDir, timeout: installTimeoutMs }
   );
 
   run("npm", ["ls", packageName, "react", "react-native", "--depth=0"], {
@@ -372,4 +392,4 @@ const tarballPath = await packLibrary();
 await writeConsumerFixture(tarballPath);
 await validateConsumerInstall();
 
-console.log(`PLRNUI-46 consumer smoke passed using ${tarballPath}`);
+console.log(`PLRNUI-64 consumer smoke passed using ${tarballPath}`);
