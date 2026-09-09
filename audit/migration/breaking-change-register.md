@@ -107,7 +107,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-002 - Legacy AURA naming deprecation/removal
 
 - ID: BC-002
-- Status: candidate
+- Status: verified
 - Category: legacy naming
 - Source issue: PLRNUI-3, PLRNUI-9, PLRNUI-10, PLRNUI-17
 - Related ADR / Risk Assessment: ADR 0001, ADR 0008, Risk Assessment 0008
@@ -143,7 +143,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-003 - Root public API governance
 
 - ID: BC-003
-- Status: candidate
+- Status: verified
 - Category: public API / root exports
 - Source issue: PLRNUI-4, PLRNUI-5, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0002, ADR 0006, ADR 0008, Risk Assessment 0008
@@ -161,7 +161,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-004 - Deep import restriction
 
 - ID: BC-004
-- Status: candidate
+- Status: verified
 - Category: import path / entrypoint governance
 - Source issue: PLRNUI-4, PLRNUI-9, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0002, ADR 0006, ADR 0008, Risk Assessment 0008
@@ -215,7 +215,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-011 - Stability contract: 0 stable, beta/experimental/internal labeling
 
 - ID: BC-011
-- Status: candidate
+- Status: verified
 - Category: stability contract / documentation
 - Source issue: PLRNUI-5, PLRNUI-9, PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0002, ADR 0008, Risk Assessment 0008
@@ -269,7 +269,7 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 ### BC-008 - Release candidate blocked unless register and changelog are updated
 
 - ID: BC-008
-- Status: confirmed
+- Status: verified
 - Category: release governance
 - Source issue: PLRNUI-10
 - Related ADR / Risk Assessment: ADR 0008, Risk Assessment 0008
