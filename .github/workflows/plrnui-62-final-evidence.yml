@@ -1,0 +1,67 @@
+name: PLRNUI-62 final evidence
+
+on:
+  push:
+    branches:
+      - plrnui-62-final-closure
+    paths:
+      - .github/workflows/plrnui-62-final-evidence.yml
+      - package.json
+      - package-lock.json
+      - scripts/**
+
+permissions:
+  contents: read
+
+jobs:
+  final-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Environment
+        run: |
+          node -v
+          npm -v
+          git rev-parse HEAD
+          node -e "const p=require('./package.json'); console.log(JSON.stringify({version:p.version,node:p.engines.node,peers:p.peerDependencies},null,2))"
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Package dry run
+        run: npm run package:dry-run
+
+      - name: Packed consumer smoke
+        run: npm run consumer:smoke
+
+      - name: Expo 57 consumer preflight
+        run: npm run consumer:expo
+
+      - name: Candidate tarball and SHA256
+        shell: bash
+        run: |
+          rm -f ./*.tgz
+          TGZ="$(npm pack --silent)"
+          echo "CANDIDATE_TARBALL=$TGZ"
+          sha256sum "$TGZ"
+          echo "CANDIDATE_SIZE_BYTES=$(stat -c %s "$TGZ")"
+          tar -tzf "$TGZ" | sed -n '1,80p'
