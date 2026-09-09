@@ -51,7 +51,7 @@ ma la superficie consumer corrente è la root API di
 ## Navigation
 
 - Overview: [Navigation](components/navigation/index.md)
-- [NavContext](components/navigation/nav-context.md) — `NavProvider` beta; helper hooks internal / non-stable unless separately promoted
+- [NavContext](components/navigation/nav-context.md) — `NavProvider` beta; `useNav` beta; `useNavigate` experimental
 - [NavBar](components/navigation/nav-bar.md) — beta
 - [TopBar](components/navigation/top-bar.md) — beta / non-stable
 - [BottomBar](components/navigation/bottom-bar.md) — experimental
