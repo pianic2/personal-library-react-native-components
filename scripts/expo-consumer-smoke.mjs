@@ -131,7 +131,7 @@ async function writeConsumerFixture(tarballPath) {
       react: "19.2.3",
       "react-dom": "19.2.3",
       "react-native": "0.86.3",
-      "react-native-web": "0.21.0",
+      "react-native-web": "0.21.2",
     },
     devDependencies: {
       "@types/node": "26.0.0",
@@ -191,7 +191,7 @@ function Probe() {
   return (
     <Box padding="md">
       <Card padding="md">
-        <Text>{`Mode: ${mode}; count: ${count}; input: ${value}`}</Text>
+        <Text>{"Mode: " + mode + "; count: " + count + "; input: " + value}</Text>
         <Input label="Name" value={value} onChangeText={setValue} />
         <Button label="Increment" onPress={() => setCount((n) => n + 1)} />
         <Button label="Toggle theme" onPress={toggleTheme} />
