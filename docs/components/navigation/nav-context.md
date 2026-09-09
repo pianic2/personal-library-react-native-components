@@ -1,7 +1,6 @@
 # NavContext
 
-**Stability:** beta for `NavProvider`; internal / non-stable for navigation helper hooks unless separately promoted.
-
+**Stability:** beta for `NavProvider` and `useNav`; experimental for `useNavigate`. None of these APIs are stable.
 
 Contiene `NavProvider` e i hook per accedere allo stato di navigazione.
 
@@ -45,5 +44,5 @@ Props:
 
 ## Hook
 
-- `useNav()` (throw se non sei dentro provider)
-- `useNavigate()`
+- `useNav()` — **beta**; throws if used outside `NavProvider`.
+- `useNavigate()` — **experimental**; root-visible but provisional and not recommended as a stable production dependency.
