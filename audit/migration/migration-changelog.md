@@ -373,3 +373,14 @@ PLRNUI-8 evidence already shows:
 - ADR 0006: build/package/release require typecheck, build, pack, consumer install and import verification.
 - ADR 0008: every breaking change requires motivation, consumer impact, migration path, Jira ticket, changelog note and verification.
 - Risk Assessment 0008: release candidate must be blocked when breaking changes or consumer verification are not tracked.
+
+## PLRNUI-63 — First RC publication preparation (2026-09-09)
+
+- Assigned the first RC candidate version `0.1.0-rc.1`; package and lockfile must remain coherent.
+- Added fail-closed publication metadata for npmjs, public access and the `rc` dist-tag; implicit `latest` publication is forbidden.
+- Moved canonical CI to Node 24 and expanded `release:check` to include tests, packed consumer smoke, Expo SDK 57 consumer smoke and production dependency audit.
+- Added an automatic `prepack` build plus release guard so an RC cannot pack as `0.0.0`, a non-RC version, or with drifted package metadata.
+- Corrected navigation stability wording: `NavProvider` and `useNav` are beta; `useNavigate` is experimental; `stable` remains zero.
+- Closed BC-002, BC-003, BC-004, BC-008 and BC-011 as `verified` for the first-RC publication boundary based on the completed naming, root-API, deep-import, register-freshness and stability-label evidence.
+- PLRNUI-62 native runtime disposition remains unchanged: Expo Go Android PASS; native Android/iOS residuals are owner-accepted but are not platform PASS claims.
+- Added first-RC release notes and an explicit npm authentication/provenance bootstrap disposition. No npm publish, Git tag or GitHub Release is performed by PLRNUI-63.
