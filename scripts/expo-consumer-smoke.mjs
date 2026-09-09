@@ -5,10 +5,11 @@ import { spawnSync } from "node:child_process";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const packageName = "@personal-library/react-native-components";
-const smokeRoot = "/tmp/plrnui-58-expo-consumer";
+const smokeRoot = "/tmp/plrnui-64-expo-consumer";
 const artifactsDir = join(smokeRoot, "artifacts");
 const consumerDir = join(smokeRoot, "consumer");
-const npmCache = join(smokeRoot, "npm-cache");
+const npmCache = "/tmp/plrnui-expo57-npm-cache";
+const installTimeoutMs = 7 * 60 * 1000;
 
 let packageVersion = "";
 
@@ -24,7 +25,17 @@ function run(command, args, options = {}) {
     },
     encoding: "utf8",
     stdio: options.capture ? ["ignore", "pipe", "pipe"] : "inherit",
+    timeout: options.timeout ?? undefined,
   });
+
+  if (result.error?.code === "ETIMEDOUT") {
+    throw new Error(
+      `Command timed out after ${Math.round((options.timeout ?? 0) / 1000)}s: ${[
+        command,
+        ...args,
+      ].join(" ")}`
+    );
+  }
 
   if (result.status !== 0) {
     const rendered = [command, ...args].join(" ");
@@ -60,6 +71,14 @@ async function assertPackageSurface() {
 
   if (!packageJson.exports?.["."]?.import || !packageJson.exports?.["."]?.types) {
     throw new Error("Root package export must expose import and types entries");
+  }
+
+  if (packageJson.peerDependencies?.["react-native"] !== ">=0.86.0 <0.87.0") {
+    throw new Error(
+      `Expo 57 RC baseline requires React Native 0.86 peer support; found ${
+        packageJson.peerDependencies?.["react-native"]
+      }`
+    );
   }
 
   packageVersion = packageJson.version;
@@ -98,7 +117,7 @@ async function packLibrary() {
 
 async function writeConsumerFixture(tarballPath) {
   await writeJson(join(consumerDir, "package.json"), {
-    name: "plrnui-58-expo-metro-consumer",
+    name: "plrnui-64-expo-57-consumer",
     version: "0.0.0",
     private: true,
     type: "module",
@@ -108,24 +127,24 @@ async function writeConsumerFixture(tarballPath) {
     },
     dependencies: {
       [packageName]: `file:${tarballPath}`,
-      expo: "~56.0.12",
-      react: "19.2.7",
-      "react-dom": "19.2.7",
-      "react-native": "0.85.3",
-      "react-native-web": "^0.21.0",
+      expo: "57.0.21",
+      react: "19.2.3",
+      "react-dom": "19.2.3",
+      "react-native": "0.86.3",
+      "react-native-web": "0.21.0",
     },
     devDependencies: {
       "@types/node": "26.0.0",
       "@types/react": "19.2.17",
-      typescript: "5.9.3",
+      typescript: "6.0.3",
     },
   });
 
   await writeJson(join(consumerDir, "app.json"), {
     expo: {
-      name: "PLRNUI 58 Expo Metro Consumer",
-      slug: "plrnui-58-expo-metro-consumer",
-      platforms: ["web"],
+      name: "PLRNUI 64 Expo 57 Consumer",
+      slug: "plrnui-64-expo-57-consumer",
+      platforms: ["android", "ios", "web"],
       web: {
         bundler: "metro",
       },
@@ -153,7 +172,7 @@ registerRootComponent(App);
 
   await writeFile(
     join(consumerDir, "App.tsx"),
-    `import React from "react";
+    `import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -161,45 +180,30 @@ import {
   Input,
   Text,
   ThemeProvider,
-  type ButtonProps,
-  type CardProps,
-  type InputProps,
-  type TextProps,
-  type ThemeProviderProps,
+  useTheme,
 } from "${packageName}";
 
-const providerInitialMode: ThemeProviderProps["initialMode"] = "light";
+function Probe() {
+  const [value, setValue] = useState("Ada");
+  const [count, setCount] = useState(0);
+  const { mode, toggleTheme } = useTheme();
 
-const textProps: TextProps = {
-  children: "Expo Metro text",
-};
-
-const inputProps: InputProps = {
-  label: "Name",
-  value: "Ada",
-  onChangeText: () => undefined,
-};
-
-const buttonProps: ButtonProps = {
-  label: "Save",
-  onPress: () => undefined,
-};
-
-const cardProps: CardProps = {
-  padding: "md",
-};
+  return (
+    <Box padding="md">
+      <Card padding="md">
+        <Text>{`Mode: ${mode}; count: ${count}; input: ${value}`}</Text>
+        <Input label="Name" value={value} onChangeText={setValue} />
+        <Button label="Increment" onPress={() => setCount((n) => n + 1)} />
+        <Button label="Toggle theme" onPress={toggleTheme} />
+      </Card>
+    </Box>
+  );
+}
 
 export default function App() {
   return (
-    <ThemeProvider initialMode={providerInitialMode}>
-      <Box padding="md">
-        <Text {...textProps} />
-        <Input {...inputProps} />
-        <Card {...cardProps}>
-          <Text>Card body</Text>
-          <Button {...buttonProps} />
-        </Card>
-      </Box>
+    <ThemeProvider initialMode="light">
+      <Probe />
     </ThemeProvider>
   );
 }
@@ -217,14 +221,16 @@ async function validateConsumer(tarballPath) {
       "--no-audit",
       "--no-fund",
       "--ignore-scripts",
-      "--package-lock=false",
+      "--prefer-offline",
     ],
-    { cwd: consumerDir }
+    { cwd: consumerDir, timeout: installTimeoutMs }
   );
 
-  run("npm", ["ls", packageName, "expo", "react", "react-native", "--depth=0"], {
-    cwd: consumerDir,
-  });
+  run(
+    "npm",
+    ["ls", packageName, "expo", "react", "react-dom", "react-native", "--depth=0"],
+    { cwd: consumerDir }
+  );
   run("npm", ["run", "typecheck"], { cwd: consumerDir });
   run("npx", ["expo", "export", "--platform", "web", "--output-dir", "dist-web"], {
     cwd: consumerDir,
@@ -240,4 +246,4 @@ await mkdir(npmCache, { recursive: true });
 const tarballPath = await packLibrary();
 await validateConsumer(tarballPath);
 
-console.log(`PLRNUI-58 Expo/Metro consumer smoke passed using ${tarballPath}`);
+console.log(`PLRNUI-64 Expo 57 consumer smoke passed using ${tarballPath}`);
