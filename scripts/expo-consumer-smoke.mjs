@@ -131,7 +131,7 @@ async function writeConsumerFixture(tarballPath) {
       react: "19.2.3",
       "react-dom": "19.2.3",
       "react-native": "0.86.3",
-      "react-native-web": "0.21.0",
+      "react-native-web": "0.21.2",
     },
     devDependencies: {
       "@types/node": "26.0.0",
