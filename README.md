@@ -38,6 +38,25 @@ npm install @personal-library/react-native-components@0.1.0-rc.1
 
 Do not treat the RC as a stable release.
 
+## Feedback and Improvement Intake
+
+Consumer findings, bug reports, compatibility problems, feature requests,
+documentation gaps, accessibility concerns, performance observations and other
+improvement ideas should be submitted through the repository's single
+**Improvement Intake** GitHub Issue Form:
+
+https://github.com/pianic2/personal-library-react-native-components/issues/new/choose
+
+The GitHub issue is an external intake record, not an approved development
+task. Reports are deduplicated and normalized into the project's canonical
+Jira/Confluence improvement process, evaluated in the weekly ideation cycle,
+and may later be proposed for a release. Release scope still requires Product
+Owner approval before autonomous implementation.
+
+When reporting a problem, include reproducible evidence and relevant package,
+Expo, React Native, React and platform versions when known. Never include
+passwords, tokens, OTPs, private keys or other sensitive data.
+
 ## Audit Evidence
 
 `audit/` contains governance evidence from PLRNUI work: analysis reports, ADRs,
