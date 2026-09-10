@@ -1,0 +1,153 @@
+name: Improvement Intake
+description: Report a finding, bug, improvement, feature request, compatibility issue, or other actionable feedback.
+title: "[Intake] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve `@personal-library/react-native-components`.
+
+        This form is the external entry point for the project's unified improvement intake. Submitting an issue does **not** create release scope automatically. The report will be triaged, deduplicated, ranked in the weekly ideation cycle, and may later be proposed for a release subject to Product Owner approval.
+
+        Do not include passwords, tokens, OTPs, private keys, secrets, or other sensitive data.
+
+  - type: dropdown
+    id: intake_type
+    attributes:
+      label: Intake type
+      description: Choose the category that best describes the report.
+      options:
+        - Finding / technical observation
+        - Bug / regression
+        - Improvement
+        - Feature request
+        - Developer experience
+        - Documentation / examples
+        - Compatibility
+        - Accessibility
+        - Performance
+        - Security / supply-chain
+        - Investigation / question
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and observed problem
+      description: Explain what you observed, what you expected, and why it matters.
+      placeholder: Describe the problem or opportunity with enough context for another person to understand it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence / reproduction
+      description: Add reproducible steps, non-sensitive logs, stack traces, screenshots, failing tests, links, or other evidence when available.
+      placeholder: |
+        1. Install/use ...
+        2. Run ...
+        3. Observe ...
+    validations:
+      required: false
+
+  - type: input
+    id: package_version
+    attributes:
+      label: Package version
+      description: Version of @personal-library/react-native-components involved, if known.
+      placeholder: e.g. 0.1.0-rc.1
+    validations:
+      required: false
+
+  - type: input
+    id: expo_version
+    attributes:
+      label: Expo SDK version
+      placeholder: e.g. 57
+    validations:
+      required: false
+
+  - type: input
+    id: react_native_version
+    attributes:
+      label: React Native version
+      placeholder: e.g. 0.86.3
+    validations:
+      required: false
+
+  - type: input
+    id: react_version
+    attributes:
+      label: React version
+      placeholder: e.g. 19.2.3
+    validations:
+      required: false
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Not platform-specific
+        - Android
+        - iOS
+        - Web
+        - Multiple platforms
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime / environment
+      description: Optional device, Expo Go/dev client, Node/npm, OS, or other relevant environment details.
+      placeholder: e.g. Expo Go Android; Node 24; npm 11
+    validations:
+      required: false
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: Choose the closest impact level. Final prioritization is performed during ideation.
+      options:
+        - Blocker / unusable
+        - High impact
+        - Medium impact
+        - Low impact
+        - Enhancement / opportunity
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Verified workaround
+      description: Include only workarounds you have actually verified. Do not present bypasses such as force-installing dependencies or skipping tests as a final solution.
+      placeholder: Optional
+    validations:
+      required: false
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related issues, PRs, or documentation
+      description: Link anything that may be related or duplicated.
+      placeholder: Optional
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Submission checks
+      options:
+        - label: I searched existing issues for obvious duplicates.
+          required: true
+        - label: I did not include credentials, tokens, secrets, or other sensitive information.
+          required: true
+        - label: I understand this report enters the improvement intake and is not automatically approved for implementation or release.
+          required: true
