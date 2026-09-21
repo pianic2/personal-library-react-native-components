@@ -1,6 +1,6 @@
 {
   "name": "@personal-library/react-native-components",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "description": "Personal Library React Native Components.",
   "private": false,
   "type": "module",
@@ -35,18 +35,23 @@
   "scripts": {
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
+    "typecheck:contracts": "tsc -p tsconfig.type-tests.json --noEmit",
     "test": "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/react-native-loader.mjs --test tests/**/*.test.tsx",
     "build": "tsc -p tsconfig.build.json",
     "build:prod": "npm run clean && npm run typecheck && npm run build",
     "package:dry-run": "npm pack --dry-run",
     "consumer:smoke": "node scripts/consumer-smoke.mjs",
     "consumer:expo": "node scripts/expo-consumer-smoke.mjs",
+    "docs:compat": "node scripts/compatibility-docs.mjs",
+    "docs:compat:check": "node scripts/compatibility-docs.mjs --check",
+    "api:snapshot": "node scripts/public-api-snapshot.mjs",
+    "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
     "clean": "rm -rf dist *.tgz",
     "release:guard": "node scripts/release-guard.mjs",
     "release:security": "npm audit --omit=dev --audit-level=high",
     "prepack": "npm run build:prod && npm run release:guard",
     "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
-    "release:check": "npm run clean && npm ci && npm run release:guard && npm run typecheck && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
+    "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
   },
   "engines": {
     "node": ">=22.13.0"

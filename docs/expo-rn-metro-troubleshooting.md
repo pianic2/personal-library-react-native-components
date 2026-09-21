@@ -25,18 +25,19 @@ Checklist:
    verified.
 7. Run Metro from the consumer app root.
 
-Example flow:
+For the `0.1.0-rc.2` candidate, the explicit prerelease flow is:
 
 ```sh
 npx create-expo-app@latest /tmp/plrnui-consumer --template blank-typescript
 cd /tmp/plrnui-consumer
-npm install @personal-library/react-native-components
+npm install @personal-library/react-native-components@0.1.0-rc.2
 npm ls react react-native expo --depth=0
 npx expo start --clear
 ```
 
 For sprint tarball validation, replace the package install with the generated
-package artifact path.
+package artifact path. Do not use an unpinned package install as evidence for a
+pre-stable release candidate.
 
 Do not treat `--force` or `--legacy-peer-deps` as final fixes. They can be used
 briefly to diagnose npm peer-resolution behavior, but committed consumer setup
@@ -48,10 +49,15 @@ Expo pins compatible React and React Native versions per SDK. The consumer app
 owns `expo`, `react`, `react-native` and native runtime dependencies. The
 library must not vendor or duplicate React or React Native.
 
-Current package metadata declares:
+The canonical package metadata for this candidate declares:
 
 - `react`: `>=19.2.3 <20.0.0`
-- `react-native`: `>=0.85.0 <0.86.0`
+- `react-native`: `>=0.86.0 <0.87.0`
+- Node: `>=22.13.0`
+
+The currently validated consumer baseline is Expo SDK 57, React 19.2.3 and React
+Native 0.86.3. Expo 57 is a validation boundary, not a peer dependency inferred
+from React Native alone.
 
 PLRNUI-8 exposed a peer React mismatch during clean Expo consumer validation:
 the generated Expo app used `react@19.2.3`, while the historical package
@@ -89,8 +95,7 @@ Valid fixes:
 
 - Use `@personal-library/react-native-components`.
 - Verify `package.json` exports point to generated package files.
-- Verify the documented component or type is actually exported by the public
-  API.
+- Verify the documented component or type is actually exported by the public API.
 - Clear Metro cache after dependency or package artifact changes.
 - Open a packaging blocker if Metro cannot resolve a documented public export.
 
@@ -110,11 +115,9 @@ Valid fixes:
 
 - Use public package imports only.
 - Verify generated declarations exist in `dist`.
-- Verify package `types` and `exports["."].types` point to generated
-  declarations.
+- Verify package `types` and `exports["."].types` point to generated declarations.
 - Verify the consumer TypeScript config can resolve package exports.
-- Open an API/type blocker if a documented public type is missing from the
-  public package entrypoint.
+- Open an API/type blocker if a documented public type is missing from the public package entrypoint.
 
 Do not import from source files to recover a missing public type.
 
@@ -128,39 +131,16 @@ Browser-only shims do not make native modules available in Expo Go, prebuilds or
 native builds. Expo Go also has limits when a component requires custom native
 code not included in the Expo Go runtime.
 
-Runtime checks should cover:
-
-- native Safe Area behavior;
-- AsyncStorage behavior when a consumer app provides a storage adapter;
-- Expo Clipboard availability and permissions when clipboard behavior is used;
-- native icon/SVG behavior when an icon package requires `react-native-svg`;
-- iOS and Android behavior separately from React Native Web behavior;
-- Expo Go, prebuild or custom dev-client requirements when native modules are
-  introduced.
+Runtime checks should cover native Safe Area behavior, consumer-provided storage,
+Expo Clipboard, native icon/SVG behavior, iOS/Android behavior separately from
+React Native Web, and Expo Go/prebuild/dev-client requirements when native
+modules are introduced.
 
 ## Deep imports are forbidden
 
-Forbidden consumer imports:
-
-- `@personal-library/react-native-components/src/...`
-- `@personal-library/react-native-components/dist/...`
-- local repo-relative imports such as `../../src/...` or `../../index`
-- unpublished package subpaths not listed in package exports
-- `preview-web/**` or shim internals
-
-Allowed imports:
-
-- `@personal-library/react-native-components`
-- explicitly documented public subpaths only, if package exports add them in the
-  future
-
-Deep imports are forbidden because they:
-
-- break the package boundary;
-- bypass generated declarations;
-- bypass export governance;
-- may pass locally but fail in Metro or package consumers;
-- couple consumer apps to repository internals.
+Forbidden consumer imports include package `src/...`, `dist/...`, repo-relative
+internals, unpublished subpaths and preview shims. Allowed imports use the
+package root or an explicitly documented public subpath added to package exports.
 
 If the public API does not expose something needed by consumers, open an
 API/package blocker instead of bypassing the package boundary.
@@ -168,25 +148,8 @@ API/package blocker instead of bypassing the package boundary.
 ## Preview/demo shims
 
 Preview shims exist for browser documentation/demo runtime only. They support
-Vite preview compatibility and are not native implementations.
-
-Preview shims must not be copied into consumer apps as production fixes. Vite
-aliases and `preview-web/shims/**` are not Metro resolver configuration.
-
-Known preview-only substitutions include:
-
-| Preview shim or alias | Boundary |
-| --- | --- |
-| `react-native` -> `react-native-web` | Browser rendering only; not native RN behavior. |
-| `react-native-safe-area-context` -> preview shim | Does not validate native safe-area insets. |
-| `@react-native-async-storage/async-storage` -> `localStorage` shim | Does not validate native AsyncStorage semantics. |
-| `expo-clipboard` -> browser Clipboard shim | Does not validate Expo Clipboard permissions or native behavior. |
-| `lucide-react-native` -> `lucide-react` | Does not validate `react-native-svg` or native icon behavior. |
-| Vite `@` alias -> repo root | Repo-local authoring convenience only. |
-| `preview-web/shims/**` | Documentation infrastructure, not public API. |
-
-See [Preview web shims and runtime limits](preview-runtime-limits.md) for the
-full preview boundary.
+Vite preview compatibility and are not native implementations. They must not be
+copied into consumer apps as production fixes.
 
 ## Known errors
 
@@ -201,19 +164,8 @@ full preview boundary.
 
 ## When to open a packaging/API ticket
 
-Open a blocker when:
-
-- a documented public component cannot be imported from the package entrypoint;
-- Metro cannot resolve a documented public export;
-- TypeScript declarations are missing for public API;
-- a required native dependency is undocumented;
-- a preview-only shim is required to make a consumer import work;
-- a consumer has to deep import to use a documented feature.
-
-Do not open a blocker when:
-
-- the consumer app uses private imports;
-- the consumer app has incompatible Expo/React/RN versions;
-- the issue only exists after using `--force` or `--legacy-peer-deps`;
-- the issue only reproduces in browser preview and not in a clean Expo consumer,
-  or vice versa, without noting the runtime boundary.
+Open a blocker when a documented public component cannot be imported, Metro
+cannot resolve a documented export, declarations are missing, a required native
+dependency is undocumented, a preview shim is required, or a consumer must deep
+import. Do not open one solely for incompatible consumer versions or bypassed
+peer resolution.

@@ -12,31 +12,31 @@ package surface is governed and **pre-stable**: beta APIs are usable but may
 change, experimental APIs are provisional, and `stable` remains zero until a
 future promotion gate.
 
-First release-candidate preparation targets **`0.1.0-rc.1`**. The package is
+The current implementation cycle prepares **`0.1.0-rc.2`**. The package is
 configured for the public npm registry with the **`rc`** dist-tag; using
 `latest` for this RC is intentionally forbidden by the release guard.
 
-Current first-RC runtime boundary:
+Current validated consumer boundary:
 
-- Expo Go Android on Expo SDK 57 / React Native 0.86.3: validated PASS.
-- Native Android outside the Expo Go proof lane: owner-accepted residual, not a
-  validated PASS claim.
-- Native iOS: owner-accepted residual, not a validated PASS claim.
-- Prebuild, custom dev client and EAS build are outside the selected first-RC
-  support claim.
+- Expo Go Android on Expo SDK 57 / React Native 0.86.3 / React 19.2.3: validated PASS on the preceding RC baseline.
+- Package peer contract: React `>=19.2.3 <20.0.0`, React Native `>=0.86.0 <0.87.0`.
+- Node engine: `>=22.13.0`.
+- Native Android outside the Expo Go proof lane: residual, not a validated PASS claim.
+- Native iOS: residual, not a validated PASS claim.
+- Prebuild, custom dev client and EAS build are outside the selected RC support claim.
 
 The RC may be prepared and certified, but **npm publication, Git tag and GitHub
-Release require the separate final PLRNUI-61 authorization**.
+Release require a separate publication authorization**.
 
 ## Installation
 
-After the RC is published, pin the prerelease explicitly:
+For the candidate, pin the prerelease explicitly:
 
 ```sh
-npm install @personal-library/react-native-components@0.1.0-rc.1
+npm install @personal-library/react-native-components@0.1.0-rc.2
 ```
 
-Do not treat the RC as a stable release.
+Do not treat the RC or an unpinned `latest` install as a stable release.
 
 ## Feedback and Improvement Intake
 
@@ -80,16 +80,9 @@ Deep imports from `src/`, `dist/`, component internals, or legacy package names
 are not supported consumer API.
 
 Consumer examples live in `examples/` and must remain copy-pasteable from the
-published package root:
-
-- use `@personal-library/react-native-components`;
-- do not use repo-relative imports such as `../../index` or
-  `../../theme/types`;
-- do not use `src/*`, `dist/*`, or unapproved package subpaths.
-
-Repo-local demo or preview harnesses, when present, are development
-infrastructure only. Their local paths and shims are not representative of
-package consumers, and demo/preview success is not package validation.
+published package root. Repo-local demo or preview harnesses are development
+infrastructure only; their local paths and shims are not representative of
+package consumers.
 
 Stability labels used in docs:
 
@@ -99,29 +92,9 @@ Stability labels used in docs:
 - `deprecated / legacy`: historical alias or API kept only for migration context.
 - `stable`: currently no component or API is classified as stable.
 
-Surface boundaries:
-
-- root public/beta surface: documented root imports that may still change
-  before stable release;
-- experimental root surface: provisional APIs such as overlays and selected
-  navigation surfaces that are root-visible but not stable;
-- internal/non-public surface: repository implementation details, preview
-  shims, source-tree-only inventory entries and unexported helpers;
-- source-tree inventory is not the same as the package root API.
-
-Consumer docs and examples are available in:
-
-- `docs/index.md`
-- `docs/getting-started.md`
-- `docs/components.md`
-- `docs/theme.md`
-- `docs/tokens/index.md`
-- `docs/platform-support.md`
-- `docs/preview-runtime-limits.md`
-- `docs/expo-rn-metro-troubleshooting.md`
-- `docs/migration.md`
-- `examples/basic-usage.tsx`
-- `examples/overlays.experimental.tsx`
+Consumer docs and examples are available in `docs/` and `examples/`, including
+getting started, platform support, Expo/RN/Metro troubleshooting, migration and
+basic usage.
 
 Useful commands:
 

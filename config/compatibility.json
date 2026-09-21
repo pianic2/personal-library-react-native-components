@@ -1,0 +1,10 @@
+{
+  "expoSdk": "57",
+  "validatedConsumer": {
+    "expo": "57.0.21",
+    "reactNative": "0.86.3",
+    "react": "19.2.3",
+    "runtime": "Expo Go Android"
+  },
+  "claim": "validated-consumer-baseline"
+}
