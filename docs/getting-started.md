@@ -10,11 +10,18 @@
 
 ## Installazione
 
-Installa e importa il pacchetto usando l’identità approvata:
+La libreria è ancora pre-stable. Per il candidato `0.1.0-rc.2`, installa sempre
+la prerelease in modo esplicito; non assumere che `latest` rappresenti il canale
+RC:
 
 ```sh
-npm install @personal-library/react-native-components
+npm install @personal-library/react-native-components@0.1.0-rc.2
 ```
+
+Baseline consumer validata per questo ciclo: Expo SDK 57, React 19.2.3 e React
+Native 0.86.x. I range canonici React/React Native e il requisito Node restano
+quelli dichiarati dal package metadata e devono essere verificati prima di
+installare il pacchetto.
 
 La preview web del repository non sostituisce questa verifica consumer:
 eventuali shim o alias Vite della preview non provano installazione Expo/RN,
