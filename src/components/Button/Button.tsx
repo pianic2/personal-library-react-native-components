@@ -16,92 +16,49 @@ export interface ButtonProps {
   disabled?: boolean;
 }
 
-export function Button({
-  icon: Icon,
-  label,
-  onPress,
-  variant = "primary",
-  size = "md",
-  disabled = false,
-}: ButtonProps) {
+export function Button({ icon: Icon, label, onPress, variant = "primary", size = "md", disabled = false }: ButtonProps) {
   const { theme, colors } = useTheme();
   const buttonTokens = theme.components.button;
   const isTokenSize = size !== "xs";
   const height = isTokenSize ? buttonTokens.height[size] : theme.size.height.xs;
-  const paddingHorizontal = isTokenSize
-    ? buttonTokens.paddingX[size]
-    : theme.space.sm;
+  const paddingHorizontal = isTokenSize ? buttonTokens.paddingX[size] : theme.space.sm;
   const iconSize = isTokenSize ? buttonTokens.iconSize[size] : 12;
   const borderRadius = buttonTokens.radius;
   const gap = buttonTokens.gap;
   const borderWidth = buttonTokens.borderWidth;
   const disabledOpacity = buttonTokens.opacity.disabled;
   const pressedOpacity = buttonTokens.opacity.pressed;
+  const backgroundColor = variant === "primary" ? colors.primary : variant === "secondary" ? colors.secondary : variant === "danger" ? colors.error : "transparent";
+  const contentColor = variant === "ghost" ? colors.textPrimary : colors.textInverted;
+  const borderColor = variant === "primary" ? colors.primary : variant === "secondary" ? colors.secondary : variant === "danger" ? colors.error : colors.textInverted;
 
-  const backgroundColor =
-    variant === "primary"
-      ? colors.primary
-      : variant === "secondary"
-      ? colors.secondary
-      : variant === "danger"
-      ? colors.error
-      : "transparent"
-
-  const contentColor =
-    variant === "ghost"
-      ? colors.textPrimary
-      : colors.textInverted;
-
-  const borderColor =
-    variant === "primary"
-      ? colors.primary
-      : variant === "secondary"
-      ? colors.secondary
-      : variant === "danger"
-      ? colors.error
-      : colors.textInverted;
-
-
-  if (__DEV__ && !Icon && !label) {
-    console.warn(
-      "[ui/Button] Button rendered without `icon` and `label`. It will appear empty."
-    );
-  }
+  if (__DEV__ && !Icon && !label) console.warn("[ui/Button] Button rendered without `icon` and `label`. It will appear empty.");
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => ({
-        minHeight: height,
+        minHeight: Math.max(44, height),
+        minWidth: 44,
         paddingHorizontal,
         paddingVertical: theme.space[size],
         borderWidth,
-        borderColor: borderColor,
+        borderColor,
         borderRadius,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
         gap,
-        backgroundColor: pressed
-          ? colors.surface
-          : backgroundColor,
+        backgroundColor: pressed ? colors.surface : backgroundColor,
         opacity: disabled ? disabledOpacity : pressed ? pressedOpacity : 1,
       })}
     >
       {Icon && <Icon size={iconSize} color={contentColor} />}
-
-      {label && (
-        <Text
-          style={{
-            color: contentColor,
-            fontSize: theme.typography.fontSize[size],
-            fontWeight: "600",
-          }}
-        >
-          {label}
-        </Text>
-      )}
+      {label && <Text style={{ color: contentColor, fontSize: theme.typography.fontSize[size], fontWeight: "600" }}>{label}</Text>}
     </Pressable>
   );
 }
