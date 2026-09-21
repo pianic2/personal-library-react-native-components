@@ -1,16 +1,37 @@
 {
   "name": "@personal-library/react-native-components",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "description": "Personal Library React Native Components.",
   "private": false,
   "type": "module",
   "license": "MIT",
-  "repository": {"type":"git","url":"git+https://github.com/pianic2/personal-library-react-native-components.git"},
-  "main": "./dist/index.js", "module": "./dist/index.js", "types": "./dist/index.d.ts",
-  "exports": {".": {"types":"./dist/index.d.ts","import":"./dist/index.js"},"./package.json":"./package.json"},
-  "files": ["dist","README.md","LICENSE"],
-  "publishConfig": {"registry":"https://registry.npmjs.org/","access":"public","tag":"rc"},
-  "allowScripts": {"esbuild@0.28.1":true},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pianic2/personal-library-react-native-components.git"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "tag": "rc"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  },
   "scripts": {
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
@@ -32,7 +53,18 @@
     "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
     "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
   },
-  "engines": {"node":">=22.13.0"},
-  "peerDependencies": {"react":">=19.2.3 <20.0.0","react-native":">=0.86.0 <0.87.0"},
-  "devDependencies": {"@types/react":"^19.2.17","@types/react-test-renderer":"^19.1.0","react-test-renderer":"^19.2.7","tsx":"^4.22.4","typescript":"^5.8.0"}
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "peerDependencies": {
+    "react": ">=19.2.3 <20.0.0",
+    "react-native": ">=0.86.0 <0.87.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^19.2.7",
+    "tsx": "^4.22.4",
+    "typescript": "^5.8.0"
+  }
 }
