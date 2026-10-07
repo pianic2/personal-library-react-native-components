@@ -1,7 +1,7 @@
 # PLRNUI Agent Benchmark v0 — Design
 
 Date: 2026-10-07
-Status: Design candidate for review
+Status: Design candidate for user review
 Branch: `agent/plrnui-agent-benchmark-v0`
 
 ## 1. Goal
@@ -183,7 +183,7 @@ Initial development runs may execute each condition once. The comparable benchma
 
 Each task is scored from 0 to 100.
 
-### Deterministic score — 60 points
+### Deterministic code score — 60 points
 
 - 20: TypeScript/typecheck success.
 - 10: candidate renders without runtime crash.
@@ -191,14 +191,18 @@ Each task is scored from 0 to 100.
 - 10: used APIs and props are valid.
 - 10: appropriate PLRNUI primitives are used instead of unnecessary React Native reinvention.
 
-### Visual score — 40 points
+### Deterministic visual/structure score — 40 points
 
-- 15: structure and layout.
-- 10: spacing and alignment.
-- 10: requested visual semantics such as variant, hierarchy, and status.
-- 5: simplicity and compositional coherence.
+Each `task.json` contains evaluator-only assertions. The evaluated agent cannot read them.
 
-The initial visual evaluator must remain deterministic. It may combine element presence, measured geometry, relative spacing, and tolerant perceptual screenshot similarity. Pixel-perfect RGB equality is explicitly rejected because it is too sensitive to rendering noise.
+- 15: required rendered elements are present. Assertions identify visible text, accessible role, placeholder, or other stable rendered identifiers. Partial credit is the fraction of required assertions that pass.
+- 10: layout relations are correct. Task metadata encodes relations such as `horizontal`, `vertical`, `left-of`, `above`, `centered`, or `space-between`; Playwright bounding boxes evaluate them with fixed tolerances.
+- 10: requested visual semantics are correct. These are deterministic source/render assertions for properties explicitly requested by the prompt, such as PLRNUI variant, heading level, muted/success semantics, enabled/checked state, or configured gap token.
+- 5: composition is minimal. Full credit requires no extra visible UI beyond allowed task elements and no task-local custom component that merely wraps or recreates an expected PLRNUI primitive; otherwise this item scores zero.
+
+Geometry tolerances are fixed per assertion type and versioned with the benchmark schema. The same tolerance configuration is used for reference and candidate runs.
+
+Reference and candidate screenshots are always captured. Perceptual screenshot similarity may be reported as a diagnostic metric, but it does not contribute to the canonical v0 score. Pixel-perfect RGB equality is explicitly rejected because it is too sensitive to rendering noise.
 
 A probabilistic LLM visual judge may be added later only as a separate optional metric and must not replace the deterministic v0 score.
 
@@ -217,7 +221,7 @@ Required flags include:
 - `unnecessary_hardcoding`
 - `unrelated_file_change`
 
-Suggested severity penalties used by the reporting layer:
+Suggested severity labels used by the reporting layer:
 
 - deep import: severe;
 - invented component or prop: severe;
@@ -225,7 +229,7 @@ Suggested severity penalties used by the reporting layer:
 - recreating a clearly available PLRNUI primitive with raw React Native: material;
 - unnecessary hardcoded spacing/style where PLRNUI already models the concept: moderate.
 
-The canonical 0-100 score is component-based and bounded; reporting may display penalty findings without allowing totals below zero.
+Flags are explanatory evidence and do not subtract points a second time. Their underlying failures are represented by the applicable scoring categories. The canonical total is therefore always the sum of the bounded 60-point code score and 40-point visual/structure score.
 
 ## 10. Metrics
 
@@ -242,6 +246,8 @@ The runner must aggregate at least:
 - `tokens_used` when available from the local agent runner
 - `tool_calls` when available
 - `time_to_solution`
+
+For v0, `task_success_rate` uses a fixed threshold of score >= 80 with both typecheck and render passing. `plrnui_adoption_rate` is the fraction of expected PLRNUI primitive opportunities satisfied by PLRNUI rather than raw React Native reinvention. `invalid_api_rate` is the fraction of runs containing at least one unknown root export or invalid statically-checkable prop.
 
 Results must be attributable to model, condition, task, benchmark version, PLRNUI version, and run timestamp.
 
@@ -294,7 +300,7 @@ The runner must ensure evaluated agents cannot read:
 - prior candidate outputs;
 - prior benchmark results for the current task.
 
-Task metadata may contain private evaluator expectations in a location mounted only for the evaluator process.
+Task metadata visible to the agent contains only the public prompt and execution constraints. Private evaluator assertions are stored outside the agent-mounted task directory and are mounted only for the evaluator process.
 
 ## 14. Reproducibility
 
@@ -324,7 +330,7 @@ Implementation should proceed in this order:
 1. Create benchmark package and neutral Expo Web sandbox.
 2. Implement five representative tasks: 001, 006, 011, 016, 020.
 3. Implement deterministic typecheck/import/API/render evaluator.
-4. Implement screenshot capture and deterministic visual scoring.
+4. Implement screenshot capture and deterministic visual/structure assertions.
 5. Run A0 baseline with Sonnet 5.5 on the five-task pilot.
 6. Freeze baseline results.
 7. Implement skill v0.
