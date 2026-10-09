@@ -2,8 +2,10 @@ name: Security
 
 # Supply-chain checks (PLRNUI-248): dependency review on pull requests, CodeQL, a scheduled
 # npm audit and a CycloneDX SBOM that is attached to published releases.
-# The repository must have the dependency graph and code scanning available
-# (public repository or GitHub Advanced Security) for dependency-review and CodeQL to run.
+# dependency-review and CodeQL need the dependency graph and code scanning (public repository or
+# GitHub Advanced Security). They run only when the repository variable SECURITY_SCANS is "true";
+# set it once those features are enabled (Settings > Security > Code security). Until then they are
+# skipped instead of failing every pull request.
 
 on:
   pull_request:
@@ -30,7 +32,7 @@ concurrency:
 jobs:
   dependency-review:
     name: dependency-review
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && vars.SECURITY_SCANS == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -47,7 +49,7 @@ jobs:
 
   codeql:
     name: codeql
-    if: github.event_name != 'release'
+    if: github.event_name != 'release' && vars.SECURITY_SCANS == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
