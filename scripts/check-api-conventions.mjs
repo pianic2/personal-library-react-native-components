@@ -24,7 +24,7 @@ const RULES = [
 class UsageError extends Error {}
 
 function parseArgs(argv) {
-  const opts = { root: process.cwd(), entry: 'src/index.ts', baseline: resolve(here, 'api-conventions.baseline.json') };
+  const opts = { root: resolve(here, '..'), entry: 'src/index.ts', baseline: resolve(here, 'api-conventions.baseline.json') };
   for (let i = 0; i < argv.length; i += 2) {
     const flag = argv[i];
     const value = argv[i + 1];
