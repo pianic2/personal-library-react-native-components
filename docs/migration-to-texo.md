@@ -1,10 +1,10 @@
 # Migrating from the legacy package to Texo
 
-> **Draft.** This guide contains placeholders written as `<TEXO_PACKAGE>`, `<LEGACY_PACKAGE>` and similar tokens. They are replaced at the cutover, when the final names are applied (see [Package identity](../config/package-identity.json) and ADR 0013). `node scripts/check-doc-tokens.mjs` lists the tokens that remain and fails the release while any exist.
+> **Draft.** This guide contains placeholders written as `<TEXO_PACKAGE>`, `<LEGACY_PACKAGE>` and similar tokens. They are replaced at the cutover, when the final names are applied (see Package identity (`config/package-identity.json`) and ADR 0013). `node scripts/check-doc-tokens.mjs` lists the tokens that remain and fails the release while any exist.
 
 ## Why
 
-`<LEGACY_PACKAGE>` is replaced by `<TEXO_PACKAGE>`. The legacy name keeps working during the migration: it becomes a thin shim that only re-exports `<TEXO_PACKAGE>` (see [ADR 0013](../audit/adr/0013-legacy-shim-policy.md)). You can upgrade first, change imports later, and remove the shim last, without a flag day.
+`<LEGACY_PACKAGE>` is replaced by `<TEXO_PACKAGE>`. The legacy name keeps working during the migration: it becomes a thin shim that only re-exports `<TEXO_PACKAGE>` (see ADR 0013 (`audit/adr/0013-legacy-shim-policy.md`)). You can upgrade first, change imports later, and remove the shim last, without a flag day.
 
 ## The 3-step path
 
@@ -76,7 +76,7 @@ Deep imports into `src/` or `dist/` were never public and are not mapped.
 
 ## FAQ
 
-**Which peer dependencies do I need?** The same as today: `react` and `react-native` within the ranges in [Compatibility](compatibility.md) (Expo 57 / React Native 0.86 for 1.0). Optional adapters add their own optional peers only when you use them, see [ADR 0010](../audit/adr/0010-peer-dependency-policy.md).
+**Which peer dependencies do I need?** The same as today: `react` and `react-native` within the ranges in [Compatibility](compatibility.md) (Expo 57 / React Native 0.86 for 1.0). Optional adapters add their own optional peers only when you use them, see ADR 0010 (`audit/adr/0010-peer-dependency-policy.md`).
 
 **I see two copies of React, or hooks fail with "Invalid hook call".** Check `npm ls react`; only one copy may exist. The shim depends on `<TEXO_PACKAGE>` with a caret range so the package manager can share one copy; if both names are installed at different majors, upgrade them together.
 
