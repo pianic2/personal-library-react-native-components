@@ -19,7 +19,7 @@ A new orchestrator can resume from here without redoing the audit.
 - Epics PLRNUI-78…94 = E1…E17. 348 Tasks created as children (E8-28 = PLRNUI-442).
 - Status policy: all in `Da fare`; labels `texo-v1`, `ready` | `blocked-decision`, `awaiting-po-approval`, `wave-N`, `size-S|M`, `epic-eN`, `post-1.0`.
   READY = complete body + `ready` label. `po-approved` / `Approvato` is the PO gate: NEVER set by the orchestrator.
-- Dependencies = Jira links type Blocks (inwardIssue = blocker, outwardIssue = blocked). 1,248 links, created in 13 chunks (`scratchpad/links/chunk_NN.json` + `.done.json`; not in repo, regenerate from `jira-map.json` + backlog `dependencies` if lost).
+- Dependencies = Jira links type Blocks (createIssueLink inwardIssue = blocker, outwardIssue = blocked; on the blocked issue Jira shows `inwardIssue` = its blocker). All 1,248 links created (idempotent calls; spot-checked PLRNUI-166, 156, 211, 310). To re-derive: `jira-map.json` + backlog `dependencies`.
 - PLRNUI-77 (GitHub Pages showcase, already Approvato) is a dependency of E11 tickets; do not duplicate it.
 
 ## Numbers
@@ -37,7 +37,7 @@ Baseline: 36 components = 18 demo / 18 prototype / 0 stable.
 H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDependenciesMeta for non-Expo libs · H3 confirm 1.0 scope + stable set · H4 support matrix + deprecation windows · H5 AI eval budget/model · H6 version line · H7 audit/ public or private · H8 codemod naming · H9 po-approved / any publish, tag, Release.
 
 ## Recommended next work
-1. Verify link import finished (1,248 Blocks links); spot-check direction on 3 tickets.
+1. (done) 1,248 dependency links imported and spot-checked.
 2. Ask owner for H1–H8; PO approval (`po-approved`) of Wave 0–2 tickets (E1-15, E14-03, E2-01, E2-06, E14-13, E6-01, E4-03, E8-01, E14-12, …) so execution can start.
 3. Optional hardening pass: re-send mangled descriptions as ADF; tighten flagged acceptance criteria; fix E4-16.
 4. When execution begins, first tickets on the critical path: E1-15 -> E14-03 (ESM) -> E2-01 -> E2-06 -> API-conventions ADR.
