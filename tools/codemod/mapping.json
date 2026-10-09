@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "from": "@personal-library/react-native-components",
+  "to": "@texo-placeholder/ui"
+}
