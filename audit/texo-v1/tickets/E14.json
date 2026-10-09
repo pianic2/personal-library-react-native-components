@@ -1,0 +1,589 @@
+[
+  {
+    "id": "E14-01",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Define subpath export contract and ADR 0009",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "exports",
+      "adr"
+    ],
+    "problem": "Package exposes only '.'; audit/api/subpath-exports.md is an unreviewed proposal with 'HUMAN REVIEW REQUIRED' everywhere and predates theme/native/meta needs of Texo.",
+    "value": "One reviewed, machine-readable list of subpaths lets the exports map, shim map, API snapshot and docs all derive from a single source.",
+    "scope": [
+      "Create config/exports.json listing subpaths: '.', './theme', './tokens', './hooks', './utils', './navigation', './experimental', './native' (reserved, empty until E8), './meta' (reserved, JSON manifest, no react-native import), './package.json'",
+      "Per subpath: stability, owning symbols, allowed peers, sideEffects flag",
+      "Decide per-component subpaths './components/*' as generated allow-list vs root-only; record choice and rationale",
+      "Write audit/adr/0009-subpath-exports.md superseding audit/api/subpath-exports.md; explicitly forbid src/*, dist/*, internal"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "config/exports.json validates against a JSON schema checked by a node script (exit 0)",
+      "ADR 0009 lists every subpath with stability and tree-shaking rationale and states the legacy-shim parity rule (every subpath exists identically in the shim)",
+      "Each symbol of audit/api/public-root-api.snapshot is assigned to exactly one primary subpath or marked root-only",
+      "Subpaths './native' and './meta' marked reserved with owner epic (E8/E13)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "node scripts/lib/validate-exports-config.mjs (created in this ticket) exits 0",
+      "grep -c 'HUMAN REVIEW' audit/adr/0009-subpath-exports.md returns 0 only after human sign-off"
+    ],
+    "evidence": [
+      "config/exports.json",
+      "audit/adr/0009-subpath-exports.md",
+      "symbol-to-subpath table"
+    ],
+    "risks": [
+      "Subpath proliferation becomes permanent API; each is semver surface",
+      "Human sign-off needed on navigation/experimental split (see ADR open points)"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "config/exports.json",
+      "audit/adr/0009-subpath-exports.md",
+      "scripts/lib/validate-exports-config.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-02",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Generate package.json exports, sideEffects and typesVersions from config",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "exports",
+      "tree-shaking",
+      "semver-sensitive"
+    ],
+    "problem": "package.json exports only has 'import' + 'types' for '.', no 'default'/'react-native' condition, no 'sideEffects', no typesVersions; CJS/jest and node10-resolution consumers cannot resolve it reliably.",
+    "value": "Deterministic exports map enables subpath imports, bundler tree-shaking and TS node10/node16/bundler resolution.",
+    "scope": [
+      "Add scripts/generate-exports.mjs that rewrites ONLY exports, typesVersions, sideEffects, main/module/types in package.json from config/exports.json (--check mode for CI)",
+      "Conditions order: types, react-native, import, default",
+      "Set sideEffects:false (or explicit file list) only after E14-06 proves it",
+      "Add metadata fields keywords, homepage, bugs (no name/repository change)",
+      "Keep ./package.json export"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/generate-exports.mjs --check exits 0 and non-zero after a manual edit of exports",
+      "Every export target file exists after npm run build (script verifies)",
+      "npm pack --dry-run lists all subpath entry files and .d.ts",
+      "release-guard (unchanged) still passes"
+    ],
+    "dependencies": [
+      "E14-01",
+      "E14-03",
+      "E14-06"
+    ],
+    "validation": [
+      "npm run build && node scripts/generate-exports.mjs --check",
+      "npm run package:dry-run",
+      "npm run consumer:smoke"
+    ],
+    "evidence": [
+      "diff of package.json exports",
+      "pack listing"
+    ],
+    "risks": [
+      "Wrong sideEffects silently drops theme/registration code in Metro/webpack",
+      "Shared file package.json: serialize other package.json edits (E17-01) after this"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "package.json",
+      "scripts/generate-exports.mjs"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E14-03",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Emit ESM with explicit relative extensions and verify Node ESM import of dist",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "esm",
+      "build"
+    ],
+    "problem": "tsconfig uses module ESNext + moduleResolution bundler and src uses extensionless relative imports (e.g. src/components/Button/index.ts: './Button'); emitted dist/*.js is not importable by strict Node ESM, tsx/jest-ESM or vitest consumers.",
+    "value": "Published ESM that works in Node, Metro, Vite, webpack, jest ESM - prerequisite for subpath exports and the shim.",
+    "scope": [
+      "Evaluate rewriteRelativeImportExtensions (TS >=5.7) vs module NodeNext vs bundling per subpath; pick least invasive",
+      "Adjust tsconfig.build.json only (tsconfig.json shared with typecheck stays valid)",
+      "Add test importing every dist entry via 'node --input-type=module'"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "After npm run build, node -e \"await import('./dist/index.js')\" fails only on react-native (not on relative resolution) - documented stub used to prove resolution",
+      "Test tests/scripts/dist-esm-resolve.test.ts passes",
+      "d.ts files keep resolving under moduleResolution bundler and node16 in a fixture",
+      "npm run typecheck still green"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run build:prod",
+      "npm test"
+    ],
+    "evidence": [
+      "test output",
+      "dist sample import lines"
+    ],
+    "risks": [
+      "Changing emit may break Metro source maps; verify with expo consumer smoke"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tsconfig.build.json",
+      "tests/scripts/dist-esm-resolve.test.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-04",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Spike: ESM-only vs dual ESM+CJS vs jest-expo/Metro resolution",
+    "priority": "Medium",
+    "labels": [
+      "package-architecture",
+      "spike",
+      "cjs",
+      "metro"
+    ],
+    "problem": "No decision exists on CJS. Dual packages with React contexts (ThemeProvider/NavProvider) risk the dual-package hazard (two context instances); ESM-only may break jest consumers without transformIgnorePatterns.",
+    "value": "Evidence-based module-format decision before 1.0.0 locks it in.",
+    "scope": [
+      "Build a minimal CJS variant in a scratch dir (not committed to src)",
+      "Test in: Expo SDK 57 Metro (export web + android bundle), jest-expo, vitest, Node 22 require(esm)",
+      "Measure dual-package hazard with a context shared by ThemeProvider",
+      "Write recommendation with required consumer jest config snippet if ESM-only"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Report lists pass/fail per tool x format in a table",
+      "Explicit recommendation (ESM-only | dual) with hazard analysis, ready for human sign-off",
+      "If ESM-only: exact jest-expo transformIgnorePatterns snippet verified against a fixture"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "node scripts used are included in the report appendix"
+    ],
+    "evidence": [
+      "audit/texo-v1/spikes/E14-module-format.md"
+    ],
+    "risks": [
+      "Node 22 require(esm) support differs by minor version"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/spikes/E14-module-format.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-05",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Add bundle-size and tree-shaking measurement harness",
+    "priority": "Medium",
+    "labels": [
+      "package-architecture",
+      "tree-shaking",
+      "performance"
+    ],
+    "problem": "Metro does not tree-shake by default, so root-barrel imports pull every component; there is no measurement of cost of 'import {Button}' vs subpath imports.",
+    "value": "Quantified budgets justify subpath exports and catch regressions.",
+    "scope": [
+      "scripts/bundle-size.mjs: bundle fixture entries (root named import, subpath import, theme-only) with esbuild (already allowed in package.json allowScripts) and report gzip size",
+      "config/size-limits.json with per-entry budgets",
+      "Compare Metro export size for same fixtures in expo consumer (report only)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/bundle-size.mjs --check exits 0 against committed budgets",
+      "Report shows root vs subpath delta",
+      "Budgets file has an entry per subpath in config/exports.json"
+    ],
+    "dependencies": [
+      "E14-02"
+    ],
+    "validation": [
+      "node scripts/bundle-size.mjs --check"
+    ],
+    "evidence": [
+      "size table in PR"
+    ],
+    "risks": [
+      "esbuild tree-shaking != Metro behavior; label results accordingly"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/bundle-size.mjs",
+      "config/size-limits.json"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-06",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Audit module side effects to justify sideEffects:false",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "tree-shaking",
+      "audit"
+    ],
+    "problem": "sideEffects is unset so bundlers must assume every module has side effects; unknown whether Appearance listeners, StyleSheet.create at import, or theme registries exist.",
+    "value": "Safe sideEffects flag; enables dead-code elimination in webpack/Expo web.",
+    "scope": [
+      "Scan src/** for top-level executable statements (module-scope calls, listeners, globals)",
+      "Add test tests/scripts/side-effects.test.ts that imports each entry with a recording shim of react-native and asserts no calls before render",
+      "List any file that must be in a sideEffects allow-list"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Report lists every module with import-time side effects (or states none)",
+      "Test fails when a module-scope Appearance/Dimensions/Platform call is added",
+      "Recommended sideEffects value (false | list) written in the report"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "report + test"
+    ],
+    "risks": [
+      "Dynamic registries added later by E2/E8 can violate the invariant - test guards it"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/spikes/E14-side-effects.md",
+      "tests/scripts/side-effects.test.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E14-07",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Single-source package identity config (no rename)",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "migration-prep",
+      "dx"
+    ],
+    "problem": "The string '@personal-library/react-native-components' is hardcoded in package.json, scripts/release-guard.mjs, scripts/consumer-smoke.mjs, scripts/expo-consumer-smoke.mjs, src/index.ts (PACKAGE_NAME), docs and README; cutover would be a risky grep-replace.",
+    "value": "Cutover becomes a one-file config change; scripts become reusable for the shim.",
+    "scope": [
+      "Create config/package-identity.json {current, legacy:null, shim:{enabled:false}} with the CURRENT name only",
+      "Create scripts/lib/identity.mjs exporting helpers read by all scripts",
+      "Do not edit the consumer scripts here (E15-08 and E17-03 consume the lib)",
+      "Add test asserting identity.current === package.json name"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node -e \"import('./scripts/lib/identity.mjs')\" prints current name equal to package.json name",
+      "tests/scripts/identity.test.ts passes",
+      "git diff shows no change to package.json name"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "test output"
+    ],
+    "risks": [
+      "Config drift if consumers keep hardcoding - tracked by E15-14"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "config/package-identity.json",
+      "scripts/lib/identity.mjs",
+      "tests/scripts/identity.test.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E14-08",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Local development link workflow for consumer apps (Metro watchFolders)",
+    "priority": "Low",
+    "labels": [
+      "dx",
+      "metro",
+      "developer-experience"
+    ],
+    "problem": "Developers testing the lib in a real Expo app must pack/install a tarball; npm link breaks Metro (symlinks, duplicate react).",
+    "value": "Fast inner loop for E1-E8 component work and agents.",
+    "scope": [
+      "scripts/dev-link.mjs: build watch + sync dist to a target app's node_modules (copy mode) with printed metro.config.js snippet",
+      "docs section in docs/expo-rn-metro-troubleshooting.md for watchFolders/unstable_enablePackageExports"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Running the script against an Expo fixture updates the component within one rebuild",
+      "Docs snippet verified against Expo SDK 57 fixture",
+      "Script refuses to run if react is duplicated in target"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "node scripts/dev-link.mjs --help",
+      "manual verify with fixture"
+    ],
+    "evidence": [
+      "recorded terminal log"
+    ],
+    "risks": [
+      "Platform differences (macOS fs watch)"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/dev-link.mjs",
+      "docs/expo-rn-metro-troubleshooting.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-09",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Peer and optional dependency policy for native capabilities",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "dependencies",
+      "adr"
+    ],
+    "problem": "scripts/release-guard.mjs forbids runtime dependencies and package.json has only react/react-native peers; E8 native capabilities (camera, haptics, etc.) need optional peers without breaking the root import.",
+    "value": "Texo stays zero-dependency at root and loads native modules only via './native' subpaths.",
+    "scope": [
+      "Write audit/adr/0010-peer-dependency-policy.md: peers vs peerDependenciesMeta optional vs dependencies; expo-* modules only from ./native; shim deps rule",
+      "Add tests/scripts/optional-peers.test.ts: importing '.' with all optional peers absent does not throw (uses loader to block specifiers)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "ADR states rule per package type with examples",
+      "Test passes with expo-* modules blocked",
+      "Policy states shim declares exactly one dependency: the target package"
+    ],
+    "dependencies": [
+      "E14-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "ADR + test"
+    ],
+    "risks": [
+      "Expo Go lacks some native modules - policy must reference E8 capability tiers"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/adr/0010-peer-dependency-policy.md",
+      "tests/scripts/optional-peers.test.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E14-10",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Subpath resolution matrix script (Node, TS bundler/node16, Metro)",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "exports",
+      "testing"
+    ],
+    "problem": "Nothing verifies that every declared subpath resolves under the resolvers consumers actually use.",
+    "value": "Catches broken exports before consumers do; reused for shim in E15-06.",
+    "scope": [
+      "scripts/subpath-resolution-smoke.mjs: pack tarball, install into temp project, for every subpath in config/exports.json run Node import, tsc under moduleResolution bundler and node16, and metro resolve via expo export on a one-line entry",
+      "Output matrix JSON/markdown",
+      "Accept --package <name> so the shim can reuse it"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script exits non-zero when a subpath is removed from exports",
+      "Matrix covers each subpath x 4 resolvers",
+      "Runs with no network beyond npm install of peers (cache honored)"
+    ],
+    "dependencies": [
+      "E14-02",
+      "E14-03"
+    ],
+    "validation": [
+      "node scripts/subpath-resolution-smoke.mjs"
+    ],
+    "evidence": [
+      "matrix output"
+    ],
+    "risks": [
+      "Long runtime - keep out of default CI path or cache npm"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/subpath-resolution-smoke.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E14-11",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Replace regex API snapshot with TypeScript-compiler per-subpath snapshot",
+    "priority": "High",
+    "labels": [
+      "package-architecture",
+      "api-stability",
+      "tooling"
+    ],
+    "problem": "scripts/public-api-snapshot.mjs parses src/index.ts with regexes: misses 'export *', renamed types, and signature/prop changes; snapshot only has 95 names.",
+    "value": "Reliable API-diff gate for semver and the shim parity tests.",
+    "scope": [
+      "Rewrite using the TypeScript compiler API against dist/*.d.ts per subpath; emit audit/api/snapshots/<subpath>.snapshot with kind, name and prop-shape hash",
+      "Keep 'npm run api:snapshot' / ':check' script names (package.json untouched; scripts invoked unchanged)",
+      "Keep audit/api/public-root-api.snapshot generated for backward diff then deprecate"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Adding a prop to ButtonProps changes the snapshot and --check fails",
+      "export * from is expanded",
+      "Output is deterministic across two runs"
+    ],
+    "dependencies": [
+      "E14-02"
+    ],
+    "validation": [
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "snapshot diff"
+    ],
+    "risks": [
+      "Hash granularity too strict yields noisy diffs - make level (names|shapes) a flag"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/public-api-snapshot.mjs",
+      "audit/api/snapshots/**",
+      "tests/scripts/api-snapshot.test.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  }
+]

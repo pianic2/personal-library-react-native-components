@@ -1,0 +1,2082 @@
+[
+  {
+    "id": "E1-01",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Create machine-readable component maturity manifest",
+    "priority": "High",
+    "labels": [
+      "maturity",
+      "manifest",
+      "ai-native"
+    ],
+    "problem": "No machine-readable record of component maturity; levels live only in prose (docs/components.md) and are inconsistent (TopBar beta vs experimental).",
+    "value": "Single source of truth consumed by CI gate, docs generation and AI/CLI layers (E13).",
+    "scope": [
+      "Add src/meta/components.manifest.ts (internal, not root-exported) with one entry per component dir: name, family, maturity, root export names, propsType, docsPath, examplePaths, testPaths, platforms",
+      "Add JSON schema src/meta/components.manifest.schema.json",
+      "Seed with levels from audit/texo-v1/audit/E1-component-maturity.md (18 demo / 18 prototype)"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "src/meta/components.manifest.ts has exactly 36 entries matching ls src/components",
+      "Every entry validates against the schema in tests/meta/manifest.test.ts",
+      "src/meta is not re-exported from src/index.ts (public-api snapshot unchanged)",
+      "npm run api:snapshot:check passes"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "tests/meta output",
+      "manifest entry count"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/meta/**",
+      "tests/meta/manifest.test.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E1-02",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add maturity checker script validating the demo bar",
+    "priority": "High",
+    "labels": [
+      "maturity",
+      "ci",
+      "script"
+    ],
+    "problem": "Nothing verifies that a component claiming demo has a typed root export, example, docs page, mkdocs nav entry and test.",
+    "value": "Objective, automated definition of the demo bar.",
+    "scope": [
+      "scripts/maturity-check.mjs: for each manifest entry check dir exists, exported from src/index.ts, props type exported, docs page exists and is in mkdocs.yml nav, listed in docs/components.md, example file referencing <Name>, test file referencing name",
+      "Exit non-zero with per-component failure table; flag --json",
+      "Components declared prototype may fail; demo+ must pass"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/maturity-check.mjs exits 0 on current repo with current manifest levels",
+      "Temporarily removing an example reference for a demo component makes it exit 1 (covered by test)",
+      "tests/scripts/maturity-check.test.ts has pass and fail fixtures"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/maturity-check.mjs"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/maturity-check.mjs",
+      "tests/scripts/maturity-check.test.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E1-03",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add token-usage lint: no hex/rgba colors in components",
+    "priority": "Medium",
+    "labels": [
+      "maturity",
+      "ci",
+      "design-tokens"
+    ],
+    "problem": "Hardcoded color (Modal rgba) slipped in; magic numbers are untracked.",
+    "value": "Enforces the 'theme support' leg of the demo bar.",
+    "scope": [
+      "scripts/check-token-usage.mjs scanning src/components/**/*.tsx for hex, rgb(a), hsl, named colors outside boxShadow templates",
+      "Allowlist file scripts/token-usage.allowlist.json with justified entries",
+      "Report (non-failing) count of numeric literals in style objects"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script exits 1 listing Modal.tsx:40 on current main before the Modal ticket lands, 0 after",
+      "Allowlist entries each require a reason string (tested)",
+      "tests/scripts/token-usage.test.ts covers detection and allowlist"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/check-token-usage.mjs"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/check-token-usage.mjs",
+      "scripts/token-usage.allowlist.json",
+      "tests/scripts/token-usage.test.ts"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-04",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Type-check tests and examples; fix Badge smoke test",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "typescript",
+      "bug"
+    ],
+    "problem": "tsconfig include=[src] so tests/ and examples/ are never type-checked; component-smoke.test.tsx passes nonexistent label prop to Badge (lines 129,201), so Badge children are untested.",
+    "value": "Catches invalid usage in tests/examples; makes Badge verification real.",
+    "scope": [
+      "Add tsconfig.tests.json including tests/**/*.tsx and examples/**/*.tsx with path mapping for the package name to src",
+      "Fix Badge usage in tests/components/component-smoke.test.tsx to children and assert rendered text",
+      "Fix any type errors surfaced in tests/examples that live in files this ticket owns; list others in evidence"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npx tsc -p tsconfig.tests.json --noEmit passes",
+      "Smoke test asserts Badge renders its children text",
+      "git grep -n '<Badge label' tests examples returns nothing"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npx tsc -p tsconfig.tests.json --noEmit",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Examples owned by other tickets may fail typecheck; those tickets must fix their own examples (declared in dependencies)"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "tsconfig.tests.json",
+      "tests/components/component-smoke.test.tsx"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-05",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Wire demo-bar gate into npm scripts, release:check and CI",
+    "priority": "High",
+    "labels": [
+      "ci",
+      "maturity",
+      "release"
+    ],
+    "problem": "CI runs only release:check; no maturity or token lint gate and no tests typecheck.",
+    "value": "Regressions below the demo bar fail the build.",
+    "scope": [
+      "package.json scripts: maturity:check, tokens:check, typecheck:tests; append to release:check",
+      "Add a CI step and a published docs/maturity.md page rendered from the manifest (script writes it)",
+      "Add Maturity page to mkdocs.yml nav"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm run maturity:check, tokens:check, typecheck:tests all exist and pass",
+      "release:check string contains all three",
+      "docs/maturity.md lists every component with level and is in mkdocs.yml nav",
+      "CI workflow step runs maturity:check (actionlint-clean)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-02",
+      "E1-03",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run maturity:check",
+      "npm run tokens:check",
+      "npm run typecheck:tests"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "package.json is shared; land after bug tickets that need no script changes"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "package.json",
+      ".github/workflows/ci.yml",
+      "docs/maturity.md",
+      "mkdocs.yml",
+      "scripts/gen-maturity-docs.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E1-06",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add manifest-driven render matrix test for every component",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "maturity"
+    ],
+    "problem": "B, P, Small, Quote, TextGroup, FormField have no render test at all; test list is hand-maintained.",
+    "value": "Every manifest component is rendered in light and dark theme automatically; new components cannot skip tests.",
+    "scope": [
+      "tests/components/render-matrix.test.tsx iterating manifest with a per-component minimal props fixture in tests/helpers/fixtures.tsx",
+      "Render under ThemeProvider light and dark; assert toJSON() non-null and no console.error"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test count equals manifest entries x 2 modes",
+      "Adding a manifest entry without fixture fails the test with a clear message",
+      "B, P, Small, Quote, TextGroup, FormField are covered"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "tests/components/render-matrix.test.tsx",
+      "tests/helpers/fixtures.tsx"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E1-07",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add component docs lint: Import, Props, Usage, Stability",
+    "priority": "Low",
+    "labels": [
+      "docs",
+      "ci",
+      "maturity"
+    ],
+    "problem": "Docs pages have only Import/Props/Notes; just 3 tsx blocks exist across docs/components/**.",
+    "value": "Guarantees every component page has a runnable usage example and stability line matching the manifest.",
+    "scope": [
+      "scripts/check-component-docs.mjs verifying each docs/components/**/<name>.md has ## Import, ## Props, ## Usage with a tsx fence, and Stability label equal to manifest maturity mapping",
+      "Report-only mode flag until family tickets land"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script lists missing sections per page",
+      "--strict exits 1 on any missing section",
+      "tests/scripts/check-component-docs.test.ts covers both modes"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/check-component-docs.mjs",
+      "tests/scripts/check-component-docs.test.ts"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-08",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Sync catalog labels and nav index pages from manifest",
+    "priority": "Medium",
+    "labels": [
+      "docs",
+      "catalog",
+      "bug"
+    ],
+    "problem": "TopBar is beta in docs/components.md but experimental in docs/components/navigation/index.md; labels are hand-written.",
+    "value": "Single consistent stability story in the catalog.",
+    "scope": [
+      "scripts/gen-catalog.mjs regenerating docs/components.md stability lists and docs/components/*/index.md from manifest",
+      "Resolve TopBar label conflict via manifest"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/gen-catalog.mjs --check exits 0 after generation",
+      "grep shows TopBar has one label in docs/",
+      "All 36 components appear in docs/components.md"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "docs/components.md",
+      "docs/components/*/index.md",
+      "scripts/gen-catalog.mjs"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-09",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix Button info variant and pressed-state contrast",
+    "priority": "High",
+    "labels": [
+      "bug",
+      "button",
+      "contrast"
+    ],
+    "problem": "variant='info' maps to transparent bg with textInverted content (Button.tsx:28-30); pressed state sets bg to colors.surface while text stays inverted, producing unreadable states.",
+    "value": "All documented variants are usable in light and dark themes.",
+    "scope": [
+      "Give info a filled bg (colors.info) and border; compute pressed state via opacity/overlay not surface swap",
+      "Add style, testID passthrough props",
+      "Replace fontWeight '600' with theme.typography.fontWeight token"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test renders each of 5 variants and asserts bg color is non-transparent for non-ghost variants",
+      "Pressed state keeps contentColor contrast >= 4.5 against computed bg for default light and dark tokens (test helper)",
+      "ButtonProps accepts style and testID (tests/types contract)",
+      "docs/components/buttons/button.md documents info"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Visual change for ghost/pressed consumers"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Button/**",
+      "tests/components/button.test.tsx",
+      "docs/components/buttons/button.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-10",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix CodeInline discarding computed style when props passed",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "typography"
+    ],
+    "problem": "CodeInline spreads {...props} after its computed style/size so caller style replaces mono font, border and padding (CodeInline.tsx:34-36).",
+    "value": "CodeInline remains styled when callers add style.",
+    "scope": [
+      "Destructure style/size, merge style array with caller style last",
+      "Add test and doc note"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: <CodeInline style={{color:'red'}}> still has fontFamily mono and border from theme",
+      "Test: size prop changes fontSize and lineHeight",
+      "Existing smoke test :245 passes"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/CodeInline/**",
+      "tests/components/code-inline.test.tsx",
+      "docs/components/typography/code-inline.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-11",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix Row dead flex prop and add rowGap on wrap",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "layout"
+    ],
+    "problem": "RowProps.flex is declared but forwarded to View as a non-style prop (no effect); wrapped rows have columnGap but no rowGap.",
+    "value": "Row API does what its types promise.",
+    "scope": [
+      "Apply flex to style when provided",
+      "Set rowGap equal to gap when wrap=true",
+      "Document in row.md"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: flex={1} yields style.flex===1",
+      "Test: wrap adds rowGap equal to theme.space[gap]",
+      "flex is not present in View props (findByType View props.flex undefined)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Row/**",
+      "tests/components/row.test.tsx",
+      "docs/components/layout/row.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-12",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Fix Input label leak, root wrapper and optional label",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "form",
+      "input"
+    ],
+    "problem": "Input passes label to TextInput through ...rest, returns a fragment (no wrapper style/testID), and requires label even inside FormField (duplicate labels).",
+    "value": "Clean DOM/props and composability with FormField.",
+    "scope": [
+      "Destructure label; make it optional (when absent skip label text, require accessibilityLabel in dev warning)",
+      "Wrap in a View accepting containerStyle",
+      "Keep existing token usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "TextInput props contain no 'label' key (test)",
+      "Input renders without label and warns in __DEV__ if no accessibilityLabel (test)",
+      "containerStyle applied to wrapper (test)",
+      "tests/accessibility/core-controls.test.tsx still passes",
+      "tests/theme/input-component-tokens.test.tsx still passes"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Fragment->View root may alter layouts relying on sibling flow"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Input/**",
+      "tests/components/input.test.tsx",
+      "docs/components/form/input.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-13",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix Tooltip timer leak, native behavior and positioning",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "overlay",
+      "tooltip"
+    ],
+    "problem": "Tooltip never clears its timer on unmount, returns bare children on native, uses fallback position top:50/left:50 and a +10px anchor hack; TooltipProps not exported.",
+    "value": "Tooltip is safe and meaningful on all platforms.",
+    "scope": [
+      "useEffect cleanup clearing timer",
+      "Native: long-press shows tooltip via accessibilityHint + visible bubble",
+      "Remove magic positions; use tokens for padding/maxWidth",
+      "Export TooltipProps interface; add accessibilityDescribedBy/role='tooltip' on web"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test with fake timers: unmount before delay does not setState (no warning)",
+      "Test: native long-press opens content",
+      "TooltipProps exported from component index.ts",
+      "docs/components/overlay/tooltip.md updated"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Tooltip/**",
+      "tests/components/tooltip.test.tsx",
+      "docs/components/overlay/tooltip.md"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-14",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Make Popover functional on native and fix nested Pressable",
+    "priority": "High",
+    "labels": [
+      "bug",
+      "overlay",
+      "popover"
+    ],
+    "problem": "On native Popover returns only the trigger (Popover.tsx:33-36) so content never shows; on web the trigger is wrapped in an extra Pressable (nested pressables), no outside-press dismiss, no a11y.",
+    "value": "Popover works on iOS/Android/web.",
+    "scope": [
+      "Native: render content in RN Modal anchored via measureInWindow",
+      "Outside press and Escape (web) dismiss",
+      "Remove double Pressable; trigger receives toggle",
+      "Export PopoverProps; add accessibilityRole/expanded state"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: toggle opens content on Platform.OS ios and web",
+      "Test: backdrop press closes",
+      "PopoverProps exported",
+      "No Pressable nested inside Pressable in rendered tree (test)",
+      "docs updated with native behavior"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Popover/**",
+      "tests/components/popover.test.tsx",
+      "docs/components/overlay/popover.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-15",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Unify SideBar native/web implementations and defaults",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "navigation",
+      "sidebar",
+      "tech-debt"
+    ],
+    "problem": "SideBar.tsx and SideBar.web.tsx duplicate types and logic, default variant differs (embedded vs fixed), web uses position:'fixed' via `as any`, collapse glyphs hardcoded.",
+    "value": "One behavior contract across platforms; less drift.",
+    "scope": [
+      "Extract shared SideBarItem/types to SideBar/shared.tsx",
+      "Single default variant; typed fixed positioning helper without any",
+      "Collapse button gets accessibilityLabel/expanded state",
+      "Add examples/sidebar usage section in navigation docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "grep 'as any' in SideBar dir returns nothing",
+      "Default variant identical in both files (test imports both)",
+      "Collapse button has accessibilityLabel (test)",
+      "Types declared once"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/SideBar/**",
+      "tests/components/sidebar.test.tsx",
+      "docs/components/navigation/side-bar.md"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-16",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Harden FormField: tokenised spacing, color safe, typed props, tests",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "form",
+      "formfield"
+    ],
+    "problem": "FormField concatenates textPrimary+'99', hardcodes margins 16/6/4, types variant/colorScheme as string, and has no test.",
+    "value": "Form composition safe with any theme and verified.",
+    "scope": [
+      "Replace color concat with colors.textMuted; spacing via theme.space",
+      "Type variant/colorScheme to Input-supported unions",
+      "Simplify child prop sniffing helper",
+      "Tests for error/helper/required/aria wiring"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "No '+ \"99\"' string concat in FormField.tsx",
+      "Test: errorText sets error on child Input and shows error text",
+      "Test: required renders asterisk",
+      "Test: helperText renders when no error",
+      "FormFieldProps variant/colorScheme not 'string'"
+    ],
+    "dependencies": [
+      "E1-12"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/FormField/**",
+      "tests/components/form-field.test.tsx",
+      "docs/components/form/form-field.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-17",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Change Text default alignment from justify and apply fontFamily token",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "typography",
+      "text"
+    ],
+    "problem": "Text defaults align='justify' (Text.tsx:25) which is surprising; fontFamily token is not applied; truncate limited to one line.",
+    "value": "Predictable text defaults and token-driven font.",
+    "scope": [
+      "Default align to undefined (platform default)",
+      "Apply theme.typography.fontFamily.regular",
+      "Add numberOfLines prop pass-through precedence and lines option",
+      "Add accessibilityRole prop pass-through documented"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: default Text has no textAlign justify",
+      "Test: fontFamily from theme applied",
+      "tests/theme/* pass",
+      "docs text.md changelog note"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Consumers relying on justify default must opt in"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Text/**",
+      "tests/components/text.test.tsx",
+      "docs/components/typography/text.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-18",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Rework Select: a11y, long lists, Android back, exported types",
+    "priority": "Medium",
+    "labels": [
+      "bug",
+      "form",
+      "select"
+    ],
+    "problem": "Select lacks role/label/disabled, no onRequestClose, no scroll, no selected indicator, glyph 'v', props not exported.",
+    "value": "Select usable and accessible with real option sets.",
+    "scope": [
+      "Export SelectProps/SelectOption",
+      "accessibilityRole='combobox'/button, label, disabled, expanded",
+      "FlatList options with selected check, onRequestClose",
+      "Optional label/helperText/error text"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: 100 options rendered via FlatList (virtualised)",
+      "Test: onRequestClose closes",
+      "Test: selected option has accessibilityState selected",
+      "SelectProps and SelectOption exported from index.ts",
+      "docs select.md updated"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Select/**",
+      "tests/components/select.test.tsx",
+      "docs/components/form/select.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-19",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Layout family to demo: Box, Column, Divider tests, docs, a11y",
+    "priority": "Medium",
+    "labels": [
+      "layout",
+      "docs",
+      "tests"
+    ],
+    "problem": "Box/Column/Divider lack dedicated tests and docs usage; Divider calls useTheme twice and types style as ViewStyle only; Column default flex/gap surprising and undocumented.",
+    "value": "Layout primitives reach demo with verification.",
+    "scope": [
+      "Divider: single hook call, StyleProp<ViewStyle>, orientation prop, accessibilityRole separator on web",
+      "Column: document flex=1 default; test key stability",
+      "Unit tests for Box/Column/Divider",
+      "Add ## Usage tsx blocks to box.md, column.md, divider.md",
+      "Extend examples/layout-primitives.tsx"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Divider accepts style array/StyleProp (type contract)",
+      "Tests for Box bg/radius/shadow token mapping, Column gap, Divider orientation",
+      "docs pages contain ## Usage tsx fences",
+      "examples/layout-primitives.tsx typechecks"
+    ],
+    "dependencies": [
+      "E1-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Box/**",
+      "src/components/Column/**",
+      "src/components/Divider/**",
+      "tests/components/layout.test.tsx",
+      "docs/components/layout/box.md",
+      "docs/components/layout/column.md",
+      "docs/components/layout/divider.md",
+      "examples/layout-primitives.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-20",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Surfaces family to demo: Card example/tests, Badge contrast",
+    "priority": "Medium",
+    "labels": [
+      "surfaces",
+      "docs",
+      "examples"
+    ],
+    "problem": "Card has no example; bgColor raw string bypasses tokens; Android shadow loses color; Badge text uses textPrimary on colored bg without contrast check.",
+    "value": "Card and Badge meet demo bar.",
+    "scope": [
+      "Card: bgColor accepts color token key or string (documented), forwarding shadow props on Android",
+      "Badge: contrast-safe text color per variant, optional accessibilityLabel",
+      "Create examples/surfaces.tsx",
+      "Tests for Card variants (default/elevated/outline) and Badge variants",
+      "Usage in card.md, badge.md"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "examples/surfaces.tsx renders Card 3 variants and Badge 5 variants",
+      "Test: each Card variant produces expected border/shadow",
+      "Badge contrast helper test >= 4.5 on light and dark tokens or documented exceptions",
+      "docs pages have ## Usage"
+    ],
+    "dependencies": [
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Card/**",
+      "src/components/Badge/**",
+      "tests/components/surfaces.test.tsx",
+      "docs/components/surfaces/card.md",
+      "docs/components/surfaces/badge.md",
+      "examples/surfaces.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-21",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Typography family to demo: B, P, Small, Quote, TextGroup, Heading",
+    "priority": "Medium",
+    "labels": [
+      "typography",
+      "docs",
+      "examples",
+      "tests"
+    ],
+    "problem": "B, P, Small, Quote, TextGroup have no example or test; Heading lacks accessibilityRole header and children typed string only; Quote hardcodes border width; TextGroup overlaps Column.",
+    "value": "Typography primitives reach demo.",
+    "scope": [
+      "Heading: accessibilityRole='header', children ReactNode, aria-level on web",
+      "Quote: token border width, accessibilityLabel passthrough",
+      "TextGroup: document as vertical spacing stack for text blocks",
+      "Create examples/typography.tsx covering Heading, P, B, Small, CodeInline, Quote, TextGroup",
+      "Tests per component; ## Usage in each docs page"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "examples/typography.tsx imports all 7 and typechecks",
+      "Test: Heading has accessibilityRole header",
+      "Tests for B weight bold, P align left, Small muted, Quote, TextGroup spacing",
+      "docs pages have ## Usage"
+    ],
+    "dependencies": [
+      "E1-17",
+      "E1-10",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/B/**",
+      "src/components/P/**",
+      "src/components/Small/**",
+      "src/components/Quote/**",
+      "src/components/TextGroup/**",
+      "src/components/Heading/**",
+      "tests/components/typography.test.tsx",
+      "docs/components/typography/b.md",
+      "docs/components/typography/p.md",
+      "docs/components/typography/small.md",
+      "docs/components/typography/quote.md",
+      "docs/components/typography/text-group.md",
+      "docs/components/typography/heading.md",
+      "examples/typography.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-22",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Form toggles to demo: Checkbox, Switch, RadioGroup states and tokens",
+    "priority": "Medium",
+    "labels": [
+      "form",
+      "a11y",
+      "tokens"
+    ],
+    "problem": "Checkbox/Switch/RadioGroup hardcode sizes and opacity, lack error/disabled states (RadioGroup has no disabled), Switch has no animation.",
+    "value": "Complete, token-driven state coverage.",
+    "scope": [
+      "Add theme.components.* tokens or local const tokens for size/opacity (no literals inline)",
+      "RadioGroup: disabled (group and option), group accessibilityLabel",
+      "Checkbox: indeterminate, error",
+      "Switch: animated thumb via Animated, respects reduced motion",
+      "Tests and docs usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Tests for disabled/indeterminate/error states",
+      "RadioGroup option disabled sets accessibilityState disabled",
+      "tests/accessibility/core-controls.test.tsx passes",
+      "docs pages contain ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Checkbox/**",
+      "src/components/Switch/**",
+      "src/components/RadioGroup/**",
+      "tests/components/toggles.test.tsx",
+      "docs/components/form/checkbox.md",
+      "docs/components/form/switch.md",
+      "docs/components/form/radio-group.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-23",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Text inputs to demo: PasswordInput and Textarea",
+    "priority": "Low",
+    "labels": [
+      "form",
+      "input",
+      "i18n"
+    ],
+    "problem": "PasswordInput toggle is unstyled RN Text with hardcoded 'Show'/'Hide'; Textarea has hardcoded minHeight 100; neither has an example.",
+    "value": "Both reach demo with example.",
+    "scope": [
+      "PasswordInput: toggle uses themed Text/Link style, texts from showPasswordLabel/hidePasswordLabel props",
+      "Textarea: minHeight via rows prop and token",
+      "Docs usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Toggle label comes from props (test)",
+      "Textarea rows prop sets minHeight (test)",
+      "Both documented with ## Usage"
+    ],
+    "dependencies": [
+      "E1-12"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/PasswordInput/**",
+      "src/components/Textarea/**",
+      "tests/components/text-inputs.test.tsx",
+      "docs/components/form/password-input.md",
+      "docs/components/form/textarea.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-24",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Form example coverage for all form components",
+    "priority": "Low",
+    "labels": [
+      "examples",
+      "form"
+    ],
+    "problem": "examples/form-controls.tsx omits Select, PasswordInput, Textarea and FormField error states.",
+    "value": "Every form component appears in a consumer example.",
+    "scope": [
+      "Extend examples/form-controls.tsx with Select, PasswordInput, Textarea, FormField error/helper"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references all 9 form components (grep)",
+      "tsc -p tsconfig.tests.json passes",
+      "maturity:check example criterion passes for form family"
+    ],
+    "dependencies": [
+      "E1-18",
+      "E1-16",
+      "E1-23",
+      "E1-22",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/form-controls.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E1-25",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Alert to demo: alert role, contrast, dismiss",
+    "priority": "Medium",
+    "labels": [
+      "feedback",
+      "a11y",
+      "alert"
+    ],
+    "problem": "Alert lacks accessibilityRole='alert'/liveRegion and contrast not validated for warning/info; no dismiss.",
+    "value": "Accessible, announced feedback.",
+    "scope": [
+      "accessibilityRole alert + liveRegion polite",
+      "Contrast-safe text per variant via token",
+      "onDismiss prop with close button",
+      "Tests and docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: role alert present",
+      "Test: onDismiss fires",
+      "Contrast helper test for 5 variants light/dark",
+      "alert.md ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Alert/**",
+      "tests/components/alert.test.tsx",
+      "docs/components/feedback/alert.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-26",
+    "epic": "E6",
+    "type": "Task",
+    "title": "ProgressBar and Spinner to demo: semantics and honest indeterminate",
+    "priority": "Medium",
+    "labels": [
+      "feedback",
+      "a11y",
+      "progress"
+    ],
+    "problem": "ProgressBar renders 30% when progress undefined, has no progressbar role/value, hardcoded height; Spinner has no label and unused theme var; numeric ActivityIndicator size not valid on iOS.",
+    "value": "Correct semantics and sizes.",
+    "scope": [
+      "ProgressBar: accessibilityRole progressbar + accessibilityValue, indeterminate prop (animated), height token, rename color->variant (keep color deprecated alias)",
+      "Spinner: accessibilityLabel/busy, size map to 'small'|'large' on iOS",
+      "Tests and docs usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: progress=40 sets accessibilityValue now=40",
+      "Test: undefined progress with indeterminate false renders 0% not 30%",
+      "Spinner has accessibilityLabel default",
+      "docs progress-bar.md spinner.md ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Default progress change 30->0 is behavioral"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/ProgressBar/**",
+      "src/components/Spinner/**",
+      "tests/components/progress-spinner.test.tsx",
+      "docs/components/feedback/progress-bar.md",
+      "docs/components/feedback/spinner.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-27",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Feedback example covering Alert, ProgressBar, Spinner",
+    "priority": "Low",
+    "labels": [
+      "examples",
+      "feedback"
+    ],
+    "problem": "examples/feedback.tsx omits ProgressBar.",
+    "value": "Example criterion met for feedback family.",
+    "scope": [
+      "Extend examples/feedback.tsx with ProgressBar determinate/indeterminate and Alert dismiss"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references Alert, ProgressBar, Spinner",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-25",
+      "E1-26",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/feedback.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E1-28",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Link to demo: link role, disabled, tokenised styling",
+    "priority": "Medium",
+    "labels": [
+      "navigation",
+      "a11y",
+      "link"
+    ],
+    "problem": "Link has no accessibilityRole link, no disabled state, hardcoded opacity/heights/fontWeight.",
+    "value": "Semantic, themable link.",
+    "scope": [
+      "accessibilityRole link, accessibilityLabel passthrough, disabled prop",
+      "Move opacity/height maps to theme.components.link tokens or typed consts",
+      "Tests and docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: role link present",
+      "Test: disabled blocks onPress/navigate",
+      "No numeric literals for opacity in Link.tsx",
+      "link.md ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Link/**",
+      "tests/components/link.test.tsx",
+      "docs/components/navigation/link.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-29",
+    "epic": "E6",
+    "type": "Task",
+    "title": "TopBar and BottomBar to demo: tokens, safe area, semantics",
+    "priority": "Medium",
+    "labels": [
+      "navigation",
+      "a11y",
+      "layout"
+    ],
+    "problem": "TopBar/BottomBar use absolute positioning with hardcoded heights (40, 60, width 90), no safe-area, no nav landmark or selected state, BottomBar lacks example.",
+    "value": "Bars usable without overlapping content.",
+    "scope": [
+      "Height/width values from tokens; positioning prop (absolute|static)",
+      "Safe-area padding via optional insets prop (no new dependency)",
+      "accessibilityRole tablist/tab or navigation; selected state on active item",
+      "Tests and docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: active item has accessibilityState selected",
+      "position prop 'static' renders without position absolute",
+      "No literals 40/60/90 in files (grep)",
+      "top-bar.md, bottom-bar.md ## Usage"
+    ],
+    "dependencies": [
+      "E1-28"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/TopBar/**",
+      "src/components/BottomBar/**",
+      "tests/components/bars.test.tsx",
+      "docs/components/navigation/top-bar.md",
+      "docs/components/navigation/bottom-bar.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-30",
+    "epic": "E6",
+    "type": "Task",
+    "title": "NavContext and NavBar to demo: hook tests and docs",
+    "priority": "Low",
+    "labels": [
+      "navigation",
+      "tests"
+    ],
+    "problem": "useNavItems/useNavLogo/useNavPathname/useOptionalNav have no tests and are undocumented; NavBar auto layout rule undocumented.",
+    "value": "Navigation context fully verified.",
+    "scope": [
+      "Tests for all hooks incl. error outside provider",
+      "Document auto layout rule and hooks in nav-context.md/nav-bar.md"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: useNav throws outside NavProvider",
+      "Test: useOptionalNav returns null outside",
+      "nav-bar.md documents layout auto"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/NavContext/**",
+      "src/components/NavBar/**",
+      "tests/components/nav-context.test.tsx",
+      "docs/components/navigation/nav-context.md",
+      "docs/components/navigation/nav-bar.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-31",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Navigation example covering NavBar layouts, SideBar and BottomBar",
+    "priority": "Low",
+    "labels": [
+      "examples",
+      "navigation"
+    ],
+    "problem": "examples/navigation.tsx only shows layout='top'.",
+    "value": "Example criterion met for BottomBar and SideBar.",
+    "scope": [
+      "Extend examples/navigation.tsx with bottom and sidebar layouts"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references BottomBar via NavBar layout bottom and SideBar via layout sidebar",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-15",
+      "E1-29",
+      "E1-30",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/navigation.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E1-32",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Modal to demo: export types, token backdrop, modal a11y",
+    "priority": "Medium",
+    "labels": [
+      "overlay",
+      "a11y",
+      "modal"
+    ],
+    "problem": "ModalProps not exported; hardcoded rgba(0,0,0,0.5) at Modal.tsx:40; no accessibilityViewIsModal, title or close affordance.",
+    "value": "Typed, themable, accessible Modal.",
+    "scope": [
+      "Export ModalProps",
+      "Remove hardcoded rgba; use colors.backdrop",
+      "accessibilityViewIsModal, optional title, accessibilityLabel",
+      "Escape key dismiss on web",
+      "Tests and docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "token lint script reports no hit for Modal.tsx",
+      "ModalProps exported (types contract)",
+      "Test: dismissOnBackdrop=false ignores backdrop press",
+      "modal.md ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Modal/**",
+      "tests/components/modal.test.tsx",
+      "docs/components/overlay/modal.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-33",
+    "epic": "E6",
+    "type": "Task",
+    "title": "BottomSheet to demo: export types, remove any, a11y",
+    "priority": "Medium",
+    "labels": [
+      "overlay",
+      "a11y",
+      "bottomsheet"
+    ],
+    "problem": "BottomSheetProps not exported, height cast `as any`, handle size hardcoded, no a11y.",
+    "value": "Typed, accessible sheet.",
+    "scope": [
+      "Export BottomSheetProps",
+      "Typed DimensionValue heights, handle tokens",
+      "accessibilityViewIsModal, close action label",
+      "Tests and docs"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "No 'as any' in BottomSheet.tsx",
+      "BottomSheetProps exported",
+      "Test: snap collapsed vs expanded heights",
+      "bottom-sheet.md ## Usage"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/BottomSheet/**",
+      "tests/components/bottom-sheet.test.tsx",
+      "docs/components/overlay/bottom-sheet.md"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-34",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Overlay example: promote overlays.experimental to full coverage",
+    "priority": "Low",
+    "labels": [
+      "examples",
+      "overlay"
+    ],
+    "problem": "Example is named experimental and not wired to final APIs.",
+    "value": "Overlay family example reflects demo APIs.",
+    "scope": [
+      "Rename examples/overlays.experimental.tsx to examples/overlays.tsx and cover Modal, BottomSheet, Popover, Tooltip, Select"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "examples/overlays.tsx references all 5",
+      "old file removed; no references remain (grep)",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-32",
+      "E1-33",
+      "E1-14",
+      "E1-13",
+      "E1-18",
+      "E1-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/overlays.experimental.tsx",
+      "examples/overlays.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E1-35",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Close root export gaps for prop types and nav hooks",
+    "priority": "Medium",
+    "labels": [
+      "api",
+      "exports",
+      "types"
+    ],
+    "problem": "BottomSheet, Modal, Popover, Tooltip, Select props types and NavContextValue/useNavItems/useNavLogo/useNavPathname/useOptionalNav are missing from src/index.ts.",
+    "value": "Typed consumer API complete for demo bar.",
+    "scope": [
+      "Add type exports to src/index.ts, regenerate audit/api/public-root-api.snapshot, extend tests/types contract"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm run api:snapshot:check passes after regeneration",
+      "tests/types/public-api.contract.ts references each new type",
+      "npm run typecheck:contracts passes"
+    ],
+    "dependencies": [
+      "E1-13",
+      "E1-14",
+      "E1-18",
+      "E1-32",
+      "E1-33",
+      "E1-30"
+    ],
+    "validation": [
+      "npm run typecheck:contracts",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "snapshot diff"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/index.ts",
+      "audit/api/public-root-api.snapshot",
+      "tests/types/public-api.contract.ts"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E1-36",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Extend accessibility tests to all demo components",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "tests"
+    ],
+    "problem": "tests/accessibility covers only Button, Input, Checkbox, Switch, RadioGroup.",
+    "value": "A11y contract verified for Alert, Link, Heading, ProgressBar, Spinner, Select, Modal, BottomSheet, bars.",
+    "scope": [
+      "tests/accessibility/demo-components.test.tsx using assertAccessibilityContract"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Roles asserted: alert, link, header, progressbar, combobox/button, tab/selected",
+      "Test file passes in npm test"
+    ],
+    "dependencies": [
+      "E1-25",
+      "E1-28",
+      "E1-21",
+      "E1-26",
+      "E1-18",
+      "E1-32",
+      "E1-33",
+      "E1-29"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "tests/accessibility/demo-components.test.tsx"
+    ],
+    "size": "S",
+    "semver": "patch"
+  },
+  {
+    "id": "E1-37",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Flip all 36 manifest entries to demo and enable strict gate",
+    "priority": "High",
+    "labels": [
+      "maturity",
+      "release"
+    ],
+    "problem": "Manifest still lists 18 components as prototype after tickets land.",
+    "value": "Demo bar enforced for every component.",
+    "scope": [
+      "Update maturity to demo for each passing component, run maturity:check in strict mode, set CI to fail on prototype"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/maturity-check.mjs --strict exits 0",
+      "manifest has 0 prototype entries",
+      "npm run maturity:check regenerates docs/maturity.md with no diff",
+      "npm run release:check passes"
+    ],
+    "dependencies": [
+      "E1-05",
+      "E1-06",
+      "E1-07",
+      "E1-08",
+      "E1-19",
+      "E1-20",
+      "E1-21",
+      "E1-22",
+      "E1-23",
+      "E1-24",
+      "E1-27",
+      "E1-31",
+      "E1-34",
+      "E1-35",
+      "E1-36",
+      "E1-09",
+      "E1-12",
+      "E1-16",
+      "E1-15"
+    ],
+    "validation": [
+      "node scripts/maturity-check.mjs --strict",
+      "npm run release:check"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/meta/components.manifest.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  }
+]

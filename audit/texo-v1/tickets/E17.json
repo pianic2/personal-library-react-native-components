@@ -1,0 +1,685 @@
+[
+  {
+    "id": "E17-01",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Adopt Changesets with pre-release mode and lockstep fixed group",
+    "priority": "High",
+    "labels": [
+      "release",
+      "changesets",
+      "tooling"
+    ],
+    "problem": "No changelog automation: only audit/migration/migration-changelog.md; versions are bumped by hand and scripts/release-guard.mjs hardcodes an rc regex.",
+    "value": "Per-PR change intent, generated CHANGELOG, consistent rc.N bumps and lockstep with the shim.",
+    "scope": [
+      "Add @changesets/cli devDependency and .changeset/config.json (access public, baseBranch main, fixed/linked group = target + shim)",
+      "Scripts changeset, version, release:publish in package.json (edit scripts/devDependencies only)",
+      "Enter pre mode tag 'rc' for 1.0.0-rc.N; document exit",
+      "Shim version bump handled by a post-version script scripts/sync-shim-version.mjs"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npx changeset status runs clean",
+      "A sample changeset on a branch produces 'changeset version' diff with CHANGELOG.md entry",
+      "sync-shim-version writes the same version into shim generation input"
+    ],
+    "dependencies": [
+      "E14-02"
+    ],
+    "validation": [
+      "npx changeset status",
+      "npx changeset version --snapshot test"
+    ],
+    "evidence": [
+      "dry-run diff"
+    ],
+    "risks": [
+      "Changesets assumes workspaces; single-package mode verified by test",
+      "package.json shared with E14-02: land after it"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".changeset/**",
+      "scripts/sync-shim-version.mjs",
+      "CHANGELOG.md",
+      "package.json"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-02",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Release workflow: npm trusted publishing (OIDC) with provenance",
+    "priority": "High",
+    "labels": [
+      "release",
+      "security",
+      "github-actions"
+    ],
+    "problem": "CI only has a read-only job; publish happens manually (audit/release/plrnui-63-npm-bootstrap-disposition.md) with no provenance.",
+    "value": "Tokenless publish with signed provenance for Texo and shim.",
+    "scope": [
+      "Create .github/workflows/release.yml: permissions id-token write, contents write; triggers on changesets release PR merge via changesets/action pinned by SHA",
+      "npm publish --provenance --access public for target then shim, sequential, shim job needs target job",
+      "GitHub Environment 'npm-publish' with required reviewer (human gate)",
+      "Document one-time npm trusted publisher config for both packages and bootstrap exception for first publish"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "actionlint passes",
+      "Dry run in a fork/branch with --dry-run completes both packages",
+      "npm view <pkg> --json shows dist.attestations after first real publish (post-release verification step in workflow)",
+      "No NPM_TOKEN secret referenced"
+    ],
+    "dependencies": [
+      "E17-01",
+      "E17-03"
+    ],
+    "validation": [
+      "actionlint .github/workflows/release.yml"
+    ],
+    "evidence": [
+      "workflow run link"
+    ],
+    "risks": [
+      "First publish of a brand-new name cannot use trusted publishing until package exists - bootstrap step is human"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".github/workflows/release.yml",
+      "docs/policies/release-process.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-03",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Parameterize release-guard for stable/rc, identity config and shim",
+    "priority": "High",
+    "labels": [
+      "release",
+      "guard",
+      "semver-sensitive"
+    ],
+    "problem": "scripts/release-guard.mjs forbids anything but X.Y.Z-rc.N with dist-tag rc and hardcodes name/repo/peers; cannot validate 1.0.0 stable or the shim.",
+    "value": "Guard remains a safety net across rc, stable and shim releases.",
+    "scope": [
+      "Read names from scripts/lib/identity.mjs; modes --channel rc|latest|shim",
+      "rc: prerelease + tag rc; latest: no prerelease + tag latest + changelog entry present + api snapshot clean + all consumer smoke evidence file present",
+      "shim: only dependency is exact target version, no scripts, files whitelist",
+      "Unit tests for each mode in tests/scripts/release-guard.test.ts"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Guard fails stable version with tag rc and rc version with tag latest",
+      "Guard in shim mode fails if shim has a second dependency or a postinstall",
+      "Existing npm run release:guard still passes on current tree"
+    ],
+    "dependencies": [
+      "E14-07"
+    ],
+    "validation": [
+      "node scripts/release-guard.mjs --channel rc",
+      "npm test"
+    ],
+    "evidence": [
+      "test output"
+    ],
+    "risks": [
+      "Weakening the guard silently - tests mirror every removed rule"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/release-guard.mjs",
+      "tests/scripts/release-guard.test.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-04",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Dist-tag promotion workflow: rc to next to latest with gates",
+    "priority": "High",
+    "labels": [
+      "release",
+      "dist-tag",
+      "github-actions"
+    ],
+    "problem": "Only 'rc' tag exists; no process or automation to promote a verified build to latest or to roll back.",
+    "value": "Promote the exact tested artifact without rebuilding.",
+    "scope": [
+      "scripts/promote-dist-tag.mjs <pkg> <version> <tag> verifying npm view dist.integrity equals the CI-recorded integrity",
+      "Workflow dispatch .github/workflows/promote.yml with environment approval",
+      "Gates: consumer smokes (both modes) green on that version, api snapshot clean",
+      "Rollback input restoring previous tag"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Dry-run mode prints planned npm dist-tag commands",
+      "Refuses when integrity mismatch (test with mocked npm)",
+      "Promotion of shim only allowed after target is latest"
+    ],
+    "dependencies": [
+      "E17-02",
+      "E17-03"
+    ],
+    "validation": [
+      "node --test tests/scripts/promote-dist-tag.test.mjs"
+    ],
+    "evidence": [
+      "dry-run log"
+    ],
+    "risks": [
+      "Wrong ordering strands shim consumers"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/promote-dist-tag.mjs",
+      ".github/workflows/promote.yml",
+      "tests/scripts/promote-dist-tag.test.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-05",
+    "epic": "E17",
+    "type": "Task",
+    "title": "CI matrix: Node, OS, Expo/RN and job split with concurrency",
+    "priority": "High",
+    "labels": [
+      "ci",
+      "support-matrix"
+    ],
+    "problem": "ci.yml is one job on ubuntu with Node 24 only, triggers on every push and PR (duplicate runs), no concurrency control, no Node 22.13 floor test despite engines >=22.13.0.",
+    "value": "Tests the claims in the support matrix and cuts duplicate runs.",
+    "scope": [
+      "Jobs: lint/typecheck, unit (Node 22.13 and 24), build+pack, consumer-smoke, expo consumer (matrix from config/compatibility.json), shim parity (after E15)",
+      "concurrency group cancel-in-progress; trigger push on main + pull_request",
+      "Pin third-party actions by SHA; permissions least privilege per job",
+      "Upload packed tarballs as artifacts reused by promote workflow"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "actionlint passes",
+      "CI shows Node 22.13.0 and 24 unit jobs",
+      "Matrix entries equal config/compatibility.json supported entries (script check)",
+      "Duplicate runs eliminated on PR push"
+    ],
+    "dependencies": [
+      "E17-06"
+    ],
+    "validation": [
+      "actionlint .github/workflows/ci.yml"
+    ],
+    "evidence": [
+      "CI run link"
+    ],
+    "risks": [
+      "Expo smoke is slow - split and cache npm"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".github/workflows/ci.yml"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-06",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Restructure support matrix config for multiple Expo SDK / RN versions",
+    "priority": "High",
+    "labels": [
+      "support-matrix",
+      "docs",
+      "compatibility"
+    ],
+    "problem": "config/compatibility.json holds one validatedConsumer (Expo 57.0.21, RN 0.86.3, React 19.2.3, Expo Go Android); peer range is RN >=0.86.0 <0.87.0 - too narrow for a 1.0.0 claim and iOS/dev client are 'residual'.",
+    "value": "Honest, machine-checked claim per tier (supported, best-effort, unsupported).",
+    "scope": [
+      "Schema: entries {expo, rn, react, platform, runtime, tier, lastVerified, evidence}",
+      "Update scripts/compatibility-docs.mjs to render docs/compatibility.md and platform-support.md tables from it, with --check",
+      "Define tiers; human decides which versions 1.0.0 supports (open decision)",
+      "Keep the current entry as tier 'supported'"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm run docs:compat:check passes",
+      "Adding an entry without evidence fails validation",
+      "tests/compatibility-docs.test.ts updated and green"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run docs:compat:check",
+      "npm test"
+    ],
+    "evidence": [
+      "generated docs diff"
+    ],
+    "risks": [
+      "Widening claims without verification - evidence field required"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "config/compatibility.json",
+      "scripts/compatibility-docs.mjs",
+      "tests/compatibility-docs.test.ts",
+      "docs/compatibility.md",
+      "docs/platform-support.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-07",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Semver, API stability and deprecation policy (ADR 0011 + docs)",
+    "priority": "High",
+    "labels": [
+      "release",
+      "policy",
+      "semver"
+    ],
+    "problem": "ADR 0008 defines breaking-change governance but no version policy for 1.0.0, no deprecation windows, and docs/migration.md says 'stable: currently zero'.",
+    "value": "Contract for consumers and for automated release decisions.",
+    "scope": [
+      "Write audit/adr/0011-semver-and-deprecation-policy.md and docs/policies/versioning.md, stability.md, deprecation.md",
+      "Define: what is public API (subpaths in config/exports.json, props, tokens, a11y behavior); what is breaking (removed export, prop type narrowing, token rename, peer range tightening, minimum Node/Expo floor change); experimental/beta exemptions; deprecation = JSDoc @deprecated + runtime-silent + docs + >= 1 minor and 6 months before removal in a major",
+      "Maturity ladder mapping: prototype/demo -> experimental, stable/production-ready -> semver-covered",
+      "1.0.0 criteria: stable set non-empty and listed, api snapshots committed, support matrix verified"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Policies list breaking/non-breaking examples (>= 10)",
+      "ADR cross-links ADR 0002, 0003, 0008",
+      "docs/policies pages build under mkdocs strict (nav added by E16-02 follow-up)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "ADR + pages"
+    ],
+    "risks": [
+      "Policy values (months) are human decisions - flagged"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/adr/0011-semver-and-deprecation-policy.md",
+      "docs/policies/versioning.md",
+      "docs/policies/stability.md",
+      "docs/policies/deprecation.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-08",
+    "epic": "E17",
+    "type": "Task",
+    "title": "V1 release train plan: rc exit criteria and GA go/no-go checklist",
+    "priority": "High",
+    "labels": [
+      "release",
+      "runbook",
+      "planning"
+    ],
+    "problem": "No defined path from 0.1.0-rc.2 to Texo 1.0.0; version jump (0.1.0-rc.2 -> 1.0.0-rc.0) and tag history unspecified.",
+    "value": "Predictable stabilization with objective gates.",
+    "scope": [
+      "Define rc.N cadence, freeze rules, bug-only policy after rc.1",
+      "GA checklist: all epics' P0 tickets done, stable set listed, a11y gate (E9), consumer smokes incl. shim, size budgets, docs strict build, security audit clean, migration guide tokens resolved",
+      "Decide dist-tag flow rc -> latest (no 'next' unless needed)",
+      "Rollback and hotfix (1.0.1) process"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Checklist items each reference a command or artifact",
+      "Version path explicitly documented",
+      "Go/no-go owner roles named (human)"
+    ],
+    "dependencies": [
+      "E17-07"
+    ],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "audit/texo-v1/runbooks/E17-v1-release-train.md"
+    ],
+    "risks": [
+      "Scope creep delaying GA - freeze rule mitigates"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/runbooks/E17-v1-release-train.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E17-09",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Release notes and public changelog format",
+    "priority": "Medium",
+    "labels": [
+      "release",
+      "changelog",
+      "docs"
+    ],
+    "problem": "Changelog is an audit file (audit/migration/migration-changelog.md); consumers need CHANGELOG with breaking/migration sections.",
+    "value": "Readable release notes auto-categorized.",
+    "scope": [
+      "GitHub .github/release.yml categories",
+      "Changesets changelog generator @changesets/changelog-github",
+      "Release-note template with 'Migration' and 'Deprecations' sections; link from SECURITY supported versions"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Sample release notes generated from fixture changesets include categories",
+      "Template includes Compatibility table link"
+    ],
+    "dependencies": [
+      "E17-01"
+    ],
+    "validation": [
+      "npx changeset version --snapshot"
+    ],
+    "evidence": [
+      "sample"
+    ],
+    "risks": [
+      "Generator needs GITHUB_TOKEN in CI only"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".github/release.yml",
+      "docs/policies/release-notes-template.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E17-10",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Supply-chain hardening: Dependabot, dependency review, SBOM, audit gate",
+    "priority": "Medium",
+    "labels": [
+      "release",
+      "security",
+      "ci"
+    ],
+    "problem": "Only 'npm audit --omit=dev --audit-level=high' runs in release:check; no dependency updates, no SBOM, no scheduled scan.",
+    "value": "Security posture suitable for an OSS 1.0.0.",
+    "scope": [
+      "Add .github/dependabot.yml (npm + github-actions, weekly, grouped)",
+      "Add .github/workflows/security.yml: dependency-review on PR, CodeQL JS/TS, scheduled npm audit",
+      "Generate CycloneDX SBOM attached to releases (npm sbom)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Workflows pass actionlint",
+      "SBOM file produced in dry run",
+      "Dependabot config validated by GitHub (no errors)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "actionlint .github/workflows/security.yml",
+      "npm sbom --sbom-format cyclonedx"
+    ],
+    "evidence": [
+      "run links"
+    ],
+    "risks": [
+      "Alert noise - group updates"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".github/dependabot.yml",
+      ".github/workflows/security.yml"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E17-11",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Pack verification: content, size and entrypoint checks on the tarball",
+    "priority": "High",
+    "labels": [
+      "release",
+      "packaging",
+      "ci"
+    ],
+    "problem": "package:dry-run only runs npm pack --dry-run; nothing asserts which files ship, size budget, absence of src/tests/audit, or that all exports targets exist in the tarball.",
+    "value": "Prevents shipping broken or bloated packages for Texo and shim.",
+    "scope": [
+      "scripts/verify-pack.mjs: npm pack --json, assert file whitelist (dist, README, LICENSE, CHANGELOG), no *.map from src if undesired, every exports target present, unpacked size under config/size-limits budget",
+      "Run for shim tarball too (--dir dist-shim)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script fails when src/ is added to files (fixture test)",
+      "Passes on current tree",
+      "Output lists tarball size and file count"
+    ],
+    "dependencies": [
+      "E14-02"
+    ],
+    "validation": [
+      "node scripts/verify-pack.mjs"
+    ],
+    "evidence": [
+      "output"
+    ],
+    "risks": [
+      "Source maps referencing src that is not shipped - decide explicitly"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/verify-pack.mjs",
+      "tests/scripts/verify-pack.test.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E17-12",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Local registry rehearsal (Verdaccio) of Texo + shim publish, install and deprecate",
+    "priority": "High",
+    "labels": [
+      "release",
+      "rehearsal",
+      "testing"
+    ],
+    "problem": "First publish and deprecation cannot be rehearsed against npmjs; PLRNUI-63 only certified the artifact.",
+    "value": "Dry-run the exact cutover sequence from the E15 runbook end to end.",
+    "scope": [
+      "scripts/rehearsal-verdaccio.mjs: start Verdaccio in temp dir, publish placeholder-named target then shim, install shim in a clean app, npm deprecate legacy range, verify messages and dist-tags, promote rc->latest",
+      "Uses names from identity config or CLI args so it runs with placeholders now"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script exit 0 end to end with placeholder names",
+      "Asserts shim install resolves a single target copy",
+      "Asserts deprecation message visible via npm view"
+    ],
+    "dependencies": [
+      "E17-03"
+    ],
+    "validation": [
+      "node scripts/rehearsal-verdaccio.mjs"
+    ],
+    "evidence": [
+      "transcript"
+    ],
+    "risks": [
+      "Verdaccio version pin; no network after install"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/rehearsal-verdaccio.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E17-13",
+    "epic": "E17",
+    "type": "Task",
+    "title": "Rollback and incident runbook for bad releases",
+    "priority": "Medium",
+    "labels": [
+      "release",
+      "runbook"
+    ],
+    "problem": "No documented response to a broken publish (npm unpublish is restricted; consumers pin rc).",
+    "value": "Fast recovery without unpublishing.",
+    "scope": [
+      "Cover: dist-tag revert, npm deprecate bad version, patch release fast path, advisory publication, comms template, shim implications"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Runbook has command per scenario and decision tree in text",
+      "Reviewed by a maintainer (human)"
+    ],
+    "dependencies": [
+      "E17-08"
+    ],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "audit/texo-v1/runbooks/E17-rollback.md"
+    ],
+    "risks": [
+      "None"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/runbooks/E17-rollback.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  }
+]

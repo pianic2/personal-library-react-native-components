@@ -1,0 +1,508 @@
+[
+  {
+    "id": "E16-01",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Replace CODEOWNERS placeholder owner",
+    "priority": "High",
+    "labels": [
+      "oss-readiness",
+      "governance",
+      "needs-human-input"
+    ],
+    "problem": "CODEOWNERS contains '* @optimus' with a comment 'Replace @optimus with the canonical GitHub owner'; repo owner is pianic2 elsewhere.",
+    "value": "Review routing and branch protection work.",
+    "scope": [
+      "Set real owner handles/teams (human supplies)",
+      "Add path owners for src/, scripts/, .github/, docs/"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "No '@optimus' remains (grep)",
+      "GitHub shows CODEOWNERS valid (gh api repos/{o}/{r}/codeowners/errors empty)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "gh api repos/pianic2/personal-library-react-native-components/codeowners/errors"
+    ],
+    "evidence": [
+      "api output"
+    ],
+    "risks": [
+      "Human must provide handles"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "CODEOWNERS"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-02",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Fix mkdocs config and add strict docs build + deploy workflow",
+    "priority": "High",
+    "labels": [
+      "docs",
+      "oss-readiness",
+      "ci"
+    ],
+    "problem": "mkdocs.yml repo_url points at github.com/niccolo/... while package repo is pianic2/...; nav omits docs/compatibility.md, accessibility-testing.md, components/*.md added since; no docs build in CI.",
+    "value": "Docs cannot silently break or point at the wrong repo.",
+    "scope": [
+      "Correct repo_url from config/package-identity.json value (current repo)",
+      "Add missing nav entries; add mkdocs --strict build",
+      "Create .github/workflows/docs.yml building on PR and deploying on main (GitHub Pages)",
+      "Pin mkdocs version in docs/requirements.txt"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "mkdocs build --strict exits 0",
+      "Every docs/**/*.md is in nav or in explicit not_in_nav list",
+      "Workflow file passes actionlint"
+    ],
+    "dependencies": [
+      "E14-07"
+    ],
+    "validation": [
+      "pip install -r docs/requirements.txt && mkdocs build --strict"
+    ],
+    "evidence": [
+      "build log"
+    ],
+    "risks": [
+      "Pages deployment needs repo settings change (human)"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "mkdocs.yml",
+      "docs/requirements.txt",
+      ".github/workflows/docs.yml"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-03",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Add SECURITY.md, CODE_OF_CONDUCT.md and SUPPORT.md",
+    "priority": "High",
+    "labels": [
+      "oss-readiness",
+      "governance"
+    ],
+    "problem": "No security policy, code of conduct or support channel exists; npm package page and GitHub community profile are incomplete.",
+    "value": "Standard OSS trust signals and private vulnerability reporting.",
+    "scope": [
+      "SECURITY.md: supported versions table (ties to E17 policy), private advisory reporting via GitHub, response targets",
+      "CODE_OF_CONDUCT.md (Contributor Covenant 2.1) with contact (human supplies)",
+      "SUPPORT.md: where to ask, what is supported"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Three files exist and are linked from README via E15-13 or CONTRIBUTING",
+      "GitHub community profile checklist shows them (gh api repos/.../community/profile)",
+      "Contact address placeholder explicitly marked for human"
+    ],
+    "dependencies": [],
+    "validation": [
+      "gh api repos/{o}/{r}/community/profile"
+    ],
+    "evidence": [
+      "profile output"
+    ],
+    "risks": [
+      "Contact email needs human"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "SECURITY.md",
+      "CODE_OF_CONDUCT.md",
+      "SUPPORT.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-04",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Rewrite CONTRIBUTING for external contributors",
+    "priority": "High",
+    "labels": [
+      "oss-readiness",
+      "docs",
+      "dx"
+    ],
+    "problem": "CONTRIBUTING.md states changes are 'managed through PLRNUI tickets' and forbids legacy aliases; unusable by outsiders and not mentioning dev setup, commit style or changesets.",
+    "value": "Lowers barrier to contribution and agent onboarding.",
+    "scope": [
+      "Sections: setup (Node >=22.13), commands (typecheck, test, build, release:check), adding a component checklist (maturity ladder, docs, example, test, catalog), changeset requirement, PR flow, AI-assistant guidance",
+      "Keep internal Jira policy in a collapsed 'maintainers' section",
+      "Link to docs/policies via E17-07"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Every command listed exists in package.json scripts (checked by test tests/scripts/contributing-commands.test.ts)",
+      "Adding-component checklist lists the maturity ladder demo minimum from the brief",
+      "No internal-only Jira key required for external PRs"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "rendered CONTRIBUTING"
+    ],
+    "risks": [
+      "Policy change may conflict with ADR 0008; cite it"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "CONTRIBUTING.md",
+      "tests/scripts/contributing-commands.test.ts"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-05",
+    "epic": "E16",
+    "type": "Task",
+    "title": "PR template and issue forms for external flow",
+    "priority": "Medium",
+    "labels": [
+      "oss-readiness",
+      "github"
+    ],
+    "problem": "Only an Improvement Intake form exists; no PR template, bug/feature split, or checklists for API changes.",
+    "value": "Consistent intake and reviewable PRs.",
+    "scope": [
+      "Add .github/PULL_REQUEST_TEMPLATE.md (changeset, api snapshot, docs, a11y, tests)",
+      "Split issue forms: bug, feature, component-request, docs; keep Improvement Intake linked",
+      "config.yml with security contact link and discussions link"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Templates render in GitHub (YAML valid per check-jsonschema issue-forms schema)",
+      "PR template lists release:check, api:snapshot:check"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npx --yes @action-validator/cli or check-jsonschema on forms"
+    ],
+    "evidence": [
+      "screenshot of new-issue chooser"
+    ],
+    "risks": [
+      "Existing Improvement Intake wording referenced by README - keep file name"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      ".github/PULL_REQUEST_TEMPLATE.md",
+      ".github/ISSUE_TEMPLATE/**"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-06",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Rewrite getting-started and index docs in English with install matrix",
+    "priority": "High",
+    "labels": [
+      "docs",
+      "oss-readiness",
+      "i18n"
+    ],
+    "problem": "docs/getting-started.md mixes Italian ('Installazione', 'Uso minimo'); ADRs are Italian; public OSS docs need one language policy.",
+    "value": "Public docs are coherent and discoverable.",
+    "scope": [
+      "Translate/rewrite docs/getting-started.md and docs/index.md in English",
+      "Install matrix: Expo Go, dev client, bare RN versions from config/compatibility.json",
+      "State language policy: public docs EN, internal audit may be IT",
+      "Snippets are extracted and type-checked (script)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "No Italian stop-words in docs/getting-started.md and docs/index.md (grep list check)",
+      "Snippets compile via scripts/check-doc-snippets.mjs",
+      "Matrix generated from config/compatibility.json (no hand-typed versions)"
+    ],
+    "dependencies": [
+      "E17-06"
+    ],
+    "validation": [
+      "node scripts/check-doc-snippets.mjs"
+    ],
+    "evidence": [
+      "snippet check output"
+    ],
+    "risks": [
+      "Matrix owned by E17-06 format"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "docs/getting-started.md",
+      "docs/index.md",
+      "scripts/check-doc-snippets.mjs"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E16-07",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Examples compile check and run-in-CI",
+    "priority": "Medium",
+    "labels": [
+      "docs",
+      "examples",
+      "ci"
+    ],
+    "problem": "examples/*.tsx import the package specifier but are not type-checked or rendered by any script.",
+    "value": "Examples never rot; they double as agent few-shot context.",
+    "scope": [
+      "tsconfig.examples.json with paths mapping package name to src",
+      "tests/examples/render.test.tsx rendering each example with test renderer",
+      "Document examples naming convention"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "tsc -p tsconfig.examples.json passes",
+      "Each examples/*.tsx renders without error in test",
+      "Adding an example with a bad import fails"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npx tsc -p tsconfig.examples.json --noEmit",
+      "npm test"
+    ],
+    "evidence": [
+      "output"
+    ],
+    "risks": [
+      "Overlaps E11 showcase - examples dir ownership noted"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tsconfig.examples.json",
+      "tests/examples/**"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-08",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Generate API reference from TSDoc",
+    "priority": "Medium",
+    "labels": [
+      "docs",
+      "api-reference",
+      "tooling"
+    ],
+    "problem": "docs/components/*.md are hand-written; props drift from code. No generated API reference.",
+    "value": "Always-correct reference for humans and AI layer (E13).",
+    "scope": [
+      "Choose typedoc + typedoc-plugin-markdown or custom TS API script; generate docs/api/** from dist/*.d.ts per subpath",
+      "Check mode in CI to fail on stale output",
+      "Mark generated files read-only header"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Generated docs list every symbol in audit/api snapshots",
+      "--check fails when a prop is added without regeneration",
+      "Reference linked from mkdocs nav (by E16-02 owner via follow-up note)"
+    ],
+    "dependencies": [
+      "E14-11"
+    ],
+    "validation": [
+      "node scripts/docs-api.mjs --check"
+    ],
+    "evidence": [
+      "generated sample"
+    ],
+    "risks": [
+      "Duplicates E13 manifest generation - share the TS extraction lib"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/docs-api.mjs",
+      "docs/api/**"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E16-09",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Third-party license and NOTICE audit",
+    "priority": "Medium",
+    "labels": [
+      "oss-readiness",
+      "legal",
+      "security"
+    ],
+    "problem": "Package ships MIT LICENSE (c) 2026 Niccolo Piazzi with zero runtime deps today, but future E8/E7 optional peers and bundled assets (fonts, icons) need license checks.",
+    "value": "Avoid incompatible licenses entering the package.",
+    "scope": [
+      "scripts/license-check.mjs: reads lockfile and any vendored assets list, allow-list MIT/Apache-2.0/BSD/ISC",
+      "NOTICE generation if assets bundled",
+      "Document font/icon policy"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script exits non-zero when a GPL-licensed dep is added in fixture test",
+      "Current tree passes",
+      "Policy documented in docs/policies/licensing.md"
+    ],
+    "dependencies": [],
+    "validation": [
+      "node scripts/license-check.mjs"
+    ],
+    "evidence": [
+      "output"
+    ],
+    "risks": [
+      "License holder name in LICENSE for Texo is a human decision"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/license-check.mjs",
+      "docs/policies/licensing.md",
+      "NOTICE"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E16-10",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Review audit/ directory for public release",
+    "priority": "Medium",
+    "labels": [
+      "oss-readiness",
+      "governance",
+      "audit"
+    ],
+    "problem": "audit/ holds internal Jira/Confluence migration material (Italian ADRs, ticket keys, risk dispositions) that will be public with the repo.",
+    "value": "Prevents leaking internal info and clarifies what is normative.",
+    "scope": [
+      "Classify each audit/ subtree: keep public / move to docs/internal / exclude",
+      "Scan for emails, tokens, internal URLs (secretlint run)",
+      "Propose final layout for ADRs under docs/adr with English index"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Report lists every subtree with decision",
+      "secretlint (or gitleaks) run attached and clean",
+      "Human-only decisions flagged"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npx secretlint \"audit/**\""
+    ],
+    "evidence": [
+      "scan output"
+    ],
+    "risks": [
+      "Moving files breaks cross-links; propose only, do not move"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/spikes/E16-audit-publication-review.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  }
+]
