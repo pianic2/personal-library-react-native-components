@@ -53,3 +53,4 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 |---|---|---|
 | PLRNUI-457 (CI fix: npm audit, shell-quote 1.12.0 + targeted braces exemption GHSA-vfj7-8cjw-p6xm until 2027-01-09, PO-approved) | #13 | merged into texo/v1 (ae5c7d5), CI green, review PASS (3 rounds) |
 | PLRNUI-444 (E18-01: ADR 0020 ticket execution protocol) | #12 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-445 (E18-02: skill texo-execute + 6 class templates) | #14 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
