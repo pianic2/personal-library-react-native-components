@@ -1,7 +1,12 @@
 import type {
   AlertProps,
   ButtonProps,
+  CardProps,
   CheckboxProps,
+  DividerProps,
+  InputProps,
+  ProgressBarProps,
+  SpinnerProps,
   FormFieldProps,
   HeadingProps,
   LinkProps,
@@ -13,6 +18,8 @@ import type {
   TextareaProps,
   PasswordInputProps,
 } from "../../src/index";
+import type { BottomSheet, Modal, Popover, Select, Tooltip } from "../../src/index";
+import type { ComponentProps } from "react";
 
 // Every line below must be rejected by the compiler. If one starts to compile, the
 // `@ts-expect-error` becomes an error and `npm run typecheck:contracts` fails.
@@ -62,3 +69,28 @@ export const textareaMultiline: TextareaProps = { label: "Notes", multiline: fal
 export const passwordSecure: PasswordInputProps = { label: "Password", secureTextEntry: false };
 // @ts-expect-error PasswordInput owns rightIcon.
 export const passwordRightIcon: PasswordInputProps = { label: "Password", rightIcon: null };
+
+// Unexported props interfaces are still enforced through the component signature.
+// @ts-expect-error Select requires options and onChange.
+export const selectMissingRequired: ComponentProps<typeof Select> = { placeholder: "Pick" };
+// @ts-expect-error Modal requires visible, onClose and children.
+export const modalMissingRequired: ComponentProps<typeof Modal> = { size: "md" };
+// @ts-expect-error Modal size is a closed union.
+export const modalWrongSize: ComponentProps<typeof Modal> = { visible: true, onClose: () => undefined, children: null, size: "xl" };
+// @ts-expect-error Popover requires renderTrigger.
+export const popoverMissingTrigger: ComponentProps<typeof Popover> = { children: null };
+// @ts-expect-error Tooltip content must be a string.
+export const tooltipWrongContent: ComponentProps<typeof Tooltip> = { content: 1, children: null };
+// @ts-expect-error BottomSheet requires visible and onClose.
+export const bottomSheetMissingRequired: ComponentProps<typeof BottomSheet> = { children: null };
+
+// @ts-expect-error Card variant is a closed union.
+export const cardWrongVariant: CardProps = { variant: "flat" };
+// @ts-expect-error Divider thickness must be a number.
+export const dividerWrongThickness: DividerProps = { thickness: "thin" };
+// @ts-expect-error ProgressBar progress must be a number.
+export const progressWrongValue: ProgressBarProps = { progress: "half" };
+// @ts-expect-error Spinner size is a closed union.
+export const spinnerWrongSize: SpinnerProps = { size: "huge" };
+// @ts-expect-error Input requires label.
+export const inputMissingLabel: InputProps = { value: "x" };

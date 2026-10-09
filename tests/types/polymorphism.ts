@@ -10,7 +10,7 @@ import type {
   TextareaProps,
   Theme,
 } from "../../src/index";
-import type { Stack, Column } from "../../src/index";
+import type { Column, Stack } from "../../src/index";
 import type { Equal, Expect, HasKeys } from "./props-contracts";
 
 // Stack is an alias of Column and must keep the same props.
@@ -43,6 +43,3 @@ export type PasswordFromInput = [
   Expect<Equal<"secureTextEntry" extends keyof PasswordInputProps ? true : false, false>>,
   Expect<HasKeys<PasswordInputProps, "passwordVisible" | "onPasswordVisibilityChange">>,
 ];
-
-// Layout primitives accept layout props and children only through ColumnProps.
-export type ColumnChildren = Expect<HasKeys<ColumnProps, "children" | "gap">>;

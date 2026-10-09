@@ -29,11 +29,30 @@ import type {
   TextGroupProps,
   TextProps,
   TextareaProps,
+  LinkRouterAdapter,
+  NavItem,
+  RadioGroupOption,
+  SideBarVariant,
   Theme,
+  ThemeAppShellProps,
+  ThemeMode,
   ThemeProviderProps,
+  ThemeStorageAdapter,
+  ThemeTokens,
+  TokenPair,
   TopBarProps,
 } from "../../src/index";
-import type { BottomSheet, Modal, Popover, Select, Tooltip } from "../../src/index";
+import type {
+  BottomSheet,
+  Modal,
+  NavProvider,
+  Popover,
+  Select,
+  ThemeAppShell,
+  ThemeProvider,
+  Tooltip,
+  createThemeTokens,
+} from "../../src/index";
 
 /** Compile-time assertion helpers. A failing Expect<...> breaks `npm run typecheck:contracts`. */
 export type Equal<A, B> =
@@ -161,19 +180,66 @@ export type RequiredContracts = [
   Expect<Equal<RequiredKeys<InputProps>, "label">>,
 ];
 
-// Components without a named props export are still pinned through their component signature.
-export type UnnamedPropsStayObjects = [
-  Expect<Not<Equal<ComponentProps<typeof BottomSheet>, never>>>,
-  Expect<Not<Equal<ComponentProps<typeof Modal>, never>>>,
-  Expect<Not<Equal<ComponentProps<typeof Popover>, never>>>,
-  Expect<Not<Equal<ComponentProps<typeof Select>, never>>>,
-  Expect<Not<Equal<ComponentProps<typeof Tooltip>, never>>>,
+// Components whose props interface is not exported are pinned through their component signature.
+export type UnnamedPropsContracts = [
+  Expect<Equal<keyof ComponentProps<typeof Select>, "options" | "value" | "onChange" | "placeholder" | "error">>,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof Select>>, "options" | "onChange">>,
+  Expect<
+    Equal<keyof ComponentProps<typeof Modal>, "visible" | "onClose" | "children" | "size" | "dismissOnBackdrop">
+  >,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof Modal>>, "visible" | "onClose" | "children">>,
+  Expect<
+    Equal<keyof ComponentProps<typeof Popover>, "renderTrigger" | "children" | "placement" | "gap">
+  >,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof Popover>>, "renderTrigger" | "children">>,
+  Expect<Equal<keyof ComponentProps<typeof Tooltip>, "content" | "placement" | "delay" | "children">>,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof Tooltip>>, "content" | "children">>,
+  Expect<
+    Equal<keyof ComponentProps<typeof BottomSheet>, "visible" | "onClose" | "snap" | "header" | "children">
+  >,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof BottomSheet>>, "visible" | "onClose" | "children">>,
 ];
 
 // Theme and provider contracts.
 export type ThemeContracts = [
   Expect<HasKeys<Theme, "space" | "radius" | "typography" | "colors">>,
-  Expect<HasKeys<ThemeProviderProps, "children">>,
+  Expect<
+    Equal<
+      keyof ThemeProviderProps,
+      "initialMode" | "children" | "themeOverrides" | "storage" | "storageKey" | "persistTheme"
+    >
+  >,
+  Expect<Equal<RequiredKeys<ThemeProviderProps>, "children">>,
+  Expect<
+    Equal<
+      keyof ThemeAppShellProps,
+      "children" | "scroll" | "style" | "contentContainerStyle" | "showsVerticalScrollIndicator"
+    >
+  >,
+  Expect<Equal<RequiredKeys<ThemeAppShellProps>, "children">>,
+  Expect<Equal<ThemeMode, "light" | "dark">>,
+  Expect<Equal<keyof ThemeStorageAdapter, "getItem" | "setItem" | "removeItem">>,
+  Expect<Equal<keyof ComponentProps<typeof ThemeAppShell>, keyof ThemeAppShellProps>>,
+  Expect<Equal<keyof ComponentProps<typeof ThemeProvider>, keyof ThemeProviderProps>>,
+];
+
+// Token types.
+export type TokenContracts = [
+  Expect<Equal<keyof TokenPair, "access" | "refresh">>,
+  Expect<Equal<TokenPair["access"], string>>,
+  Expect<HasKeys<ThemeTokens, "typography">>,
+  Expect<Equal<ReturnType<typeof createThemeTokens>, ThemeTokens>>,
+];
+
+// Remaining root type exports.
+export type RootTypeExports = [
+  Expect<Equal<keyof RadioGroupOption, "label" | "value">>,
+  Expect<Equal<SideBarVariant, "fixed" | "embedded">>,
+  Expect<Equal<keyof LinkRouterAdapter, "navigate">>,
+  Expect<HasKeys<NavItem, "label" | "href">>,
+  Expect<Equal<RequiredKeys<NavItem>, "label" | "href">>,
+  Expect<HasKeys<ComponentProps<typeof NavProvider>, "items" | "logo" | "pathname" | "navigate" | "children">>,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof NavProvider>>, "items" | "pathname" | "navigate" | "children">>,
 ];
 
 // Aliases of Text keep following Text.
