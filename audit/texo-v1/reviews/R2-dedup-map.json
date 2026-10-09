@@ -1,0 +1,956 @@
+{
+  "drop": [
+    {
+      "id": "E3-07",
+      "reason": "Duplicate Skeleton",
+      "canonical": "E4-12"
+    },
+    {
+      "id": "E6-21",
+      "reason": "Duplicate Skeleton (presets move to E7-05)",
+      "canonical": "E4-12"
+    },
+    {
+      "id": "E7-17",
+      "reason": "Duplicate Avatar/AvatarGroup",
+      "canonical": "E4-13"
+    },
+    {
+      "id": "E7-29",
+      "reason": "Duplicate Calendar (fold marked dates into E5-15)",
+      "canonical": "E5-15"
+    },
+    {
+      "id": "E6-16",
+      "reason": "Duplicate Accordion/Collapsible",
+      "canonical": "E4-20"
+    },
+    {
+      "id": "E7-28",
+      "reason": "Duplicate stepper",
+      "canonical": "E6-17"
+    },
+    {
+      "id": "E9-09",
+      "reason": "Duplicate useReducedMotion; gating moved into E1-26/E6-02/E6-07",
+      "canonical": "E3-03"
+    },
+    {
+      "id": "E3-13",
+      "reason": "Duplicate haptics adapter",
+      "canonical": "E8-13"
+    },
+    {
+      "id": "E5-07",
+      "reason": "Duplicate useKeyboard",
+      "canonical": "E8-10"
+    },
+    {
+      "id": "E6-22",
+      "reason": "Duplicate useKeyboard; avoiding screen = Screen keyboardAvoiding",
+      "canonical": "E8-10"
+    },
+    {
+      "id": "E6-23",
+      "reason": "Duplicate safe-area adapter",
+      "canonical": "E8-11"
+    },
+    {
+      "id": "E10-07",
+      "reason": "Duplicate safe-area adapter (ThemeAppShell prop folded into E8-11)",
+      "canonical": "E8-11"
+    },
+    {
+      "id": "E7-06",
+      "reason": "Duplicate EmptyState",
+      "canonical": "E6-20"
+    },
+    {
+      "id": "E7-07",
+      "reason": "Duplicate ErrorState",
+      "canonical": "E6-20"
+    },
+    {
+      "id": "E7-01",
+      "reason": "Duplicate ListItem",
+      "canonical": "E4-21"
+    },
+    {
+      "id": "E10-13",
+      "reason": "Duplicate max-width container",
+      "canonical": "E4-10"
+    },
+    {
+      "id": "E10-09",
+      "reason": "Duplicate responsive grid",
+      "canonical": "E4-09"
+    },
+    {
+      "id": "E3-12",
+      "reason": "Duplicate PullToRefresh",
+      "canonical": "E6-31"
+    },
+    {
+      "id": "E5-24",
+      "reason": "Duplicate expo picker adapters",
+      "canonical": "E8-21"
+    }
+  ],
+  "merge": [
+    {
+      "id": "E9-03",
+      "into": [
+        "E1-13",
+        "E1-14",
+        "E1-32",
+        "E1-33"
+      ],
+      "reason": "Overlay a11y semantics belong with the E1 owner tickets of those files"
+    },
+    {
+      "id": "E9-04",
+      "into": [
+        "E1-25",
+        "E1-26",
+        "E1-20"
+      ],
+      "reason": "Feedback a11y semantics belong with E1 owners"
+    },
+    {
+      "id": "E9-05",
+      "into": [
+        "E1-15",
+        "E1-28",
+        "E1-29",
+        "E1-30"
+      ],
+      "reason": "Navigation a11y semantics belong with E1 owners"
+    },
+    {
+      "id": "E9-06",
+      "into": [
+        "E1-16",
+        "E1-18",
+        "E1-23"
+      ],
+      "reason": "Form a11y semantics belong with E1 owners"
+    },
+    {
+      "id": "E1-36",
+      "into": [
+        "E9-02"
+      ],
+      "reason": "Same deliverable: a11y contract over all components"
+    },
+    {
+      "id": "E9-10",
+      "into": [
+        "E2-11"
+      ],
+      "reason": "Same contrast util; E2-11 also validates presets"
+    },
+    {
+      "id": "E12-05",
+      "into": [
+        "E14-05"
+      ],
+      "reason": "Tree-shaking check is part of the bundle measurement harness"
+    },
+    {
+      "id": "E12-09",
+      "into": [
+        "E14-05"
+      ],
+      "reason": "Size budget gate duplicates config/size-limits.json"
+    },
+    {
+      "id": "E12-12",
+      "into": [
+        "E17-05"
+      ],
+      "reason": "Same .github/workflows/ci.yml job split"
+    },
+    {
+      "id": "E16-07",
+      "into": [
+        "E1-04"
+      ],
+      "reason": "Examples compile config duplicates tsconfig.tests.json"
+    },
+    {
+      "id": "E13-15",
+      "into": [
+        "E11-14",
+        "E11-15"
+      ],
+      "reason": "Second templates tree (ai/templates) duplicates templates/ and recipes/"
+    }
+  ],
+  "rescope": [
+    {
+      "id": "E7-05",
+      "change": "Presets only (SkeletonList/Card/Profile) on E4-12; filesTouched -> src/components/SkeletonPresets/**"
+    },
+    {
+      "id": "E6-01",
+      "change": "Remove Portal; OverlayHost/useOverlay on E4-11; filesTouched -> src/components/OverlayHost/**"
+    },
+    {
+      "id": "E6-25",
+      "change": "Remove Screen; AppShell only; filesTouched -> src/components/AppShell/**"
+    },
+    {
+      "id": "E6-14",
+      "change": "Remove multi-select (E5-20); follow-up after E1-18"
+    },
+    {
+      "id": "E6-15",
+      "change": "Remove SegmentedTabs (E5-13)"
+    },
+    {
+      "id": "E8-05",
+      "change": "Re-export useReducedMotion from E3-03; keep transparency/screen-reader/font-scale"
+    },
+    {
+      "id": "E8-14",
+      "change": "useHapticPress hook only, composed with Touchable"
+    },
+    {
+      "id": "E8-21",
+      "change": "Drop ImagePickerField UI; adapter + hook feed FileField (E5-23)"
+    },
+    {
+      "id": "E8-22",
+      "change": "Drop DocumentPickerField UI; adapter + hook feed FileField (E5-23)"
+    },
+    {
+      "id": "E3-06",
+      "change": "PressableScale built on Touchable (E4-03)"
+    },
+    {
+      "id": "E3-15",
+      "change": "Remove src/haptics barrel and dropped items (Skeleton, PullToRefresh)"
+    },
+    {
+      "id": "E10-02",
+      "change": "useOrientation from E8-08; keep useWindowSizeClass"
+    },
+    {
+      "id": "E10-06",
+      "change": "Rename component away from `Container`"
+    },
+    {
+      "id": "E10-12",
+      "change": "Large-text layout switching only; useFontScale from E8-05"
+    },
+    {
+      "id": "E4-16",
+      "change": "Rename to BulletList; filesTouched -> src/components/BulletList/**"
+    },
+    {
+      "id": "E13-05",
+      "change": "Define superset colocated <Name>.catalog.ts schema (catalog + AI fields); ai/meta generated"
+    },
+    {
+      "id": "E11-01",
+      "change": "Registry generated from E1-01 manifest + *.catalog.ts sidecars, not hand-seeded"
+    },
+    {
+      "id": "E12-07",
+      "change": "Narrow filesTouched tests/native/** -> tests/native-visual/** (collides with every E8 ticket)"
+    },
+    {
+      "id": "E12-04",
+      "change": "Narrow filesTouched tests/types/** to named files (collides with E1-35, E2-06, E15-05)"
+    },
+    {
+      "id": "E6-32",
+      "change": "Consume useSwipe (E3-10); split"
+    }
+  ],
+  "split": [
+    {
+      "id": "E6-05",
+      "into": [
+        "Add toast store, queue and imperative toast() API",
+        "Add ToastViewport rendering, swipe-dismiss and live-region a11y"
+      ]
+    },
+    {
+      "id": "E6-07",
+      "into": [
+        "Add BottomSheet snap points and drag gesture",
+        "Add BottomSheet keyboard, safe-area, reduce-motion and a11y"
+      ]
+    },
+    {
+      "id": "E6-25",
+      "into": [
+        "Add AppShell layout slots (header, nav region, banner, overlay host) on Screen",
+        "Add AppShell responsive sidebar region and screen presets"
+      ]
+    },
+    {
+      "id": "E6-32",
+      "into": [
+        "Add SwipeActions row on useSwipe with left/right actions",
+        "Add SwipeActions a11y custom actions, web fallback and tests"
+      ]
+    },
+    {
+      "id": "E8-27",
+      "into": [
+        "Add native smoke: clean Expo app and web export",
+        "Add native smoke: Expo Go compatibility run",
+        "Add native smoke: bare React Native app"
+      ]
+    },
+    {
+      "id": "E11-12",
+      "into": [
+        "Create dashboard starter template",
+        "Create settings starter template",
+        "Create onboarding starter template"
+      ]
+    },
+    {
+      "id": "E11-13",
+      "into": [
+        "Create e-commerce starter template",
+        "Create social feed starter template"
+      ]
+    }
+  ],
+  "addDeps": [
+    {
+      "id": "E1-05",
+      "dependsOn": [
+        "E16-02",
+        "E13-01"
+      ]
+    },
+    {
+      "id": "E1-37",
+      "dependsOn": [
+        "E9-02"
+      ]
+    },
+    {
+      "id": "E2-05",
+      "dependsOn": [
+        "E1-19",
+        "E1-20"
+      ]
+    },
+    {
+      "id": "E3-06",
+      "dependsOn": [
+        "E4-03"
+      ]
+    },
+    {
+      "id": "E3-15",
+      "dependsOn": [
+        "E4-12",
+        "E6-31",
+        "E8-13"
+      ]
+    },
+    {
+      "id": "E4-07",
+      "dependsOn": [
+        "E8-11",
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E4-09",
+      "dependsOn": [
+        "E10-03"
+      ]
+    },
+    {
+      "id": "E4-10",
+      "dependsOn": [
+        "E10-01"
+      ]
+    },
+    {
+      "id": "E4-12",
+      "dependsOn": [
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E4-22",
+      "dependsOn": [
+        "E1-05",
+        "E1-08",
+        "E1-35"
+      ]
+    },
+    {
+      "id": "E5-05",
+      "dependsOn": [
+        "E1-16"
+      ]
+    },
+    {
+      "id": "E5-08",
+      "dependsOn": [
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E5-29",
+      "dependsOn": [
+        "E8-10",
+        "E8-21",
+        "E14-02",
+        "E8-02"
+      ]
+    },
+    {
+      "id": "E6-01",
+      "dependsOn": [
+        "E4-11",
+        "E8-18"
+      ]
+    },
+    {
+      "id": "E6-02",
+      "dependsOn": [
+        "E1-32",
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E6-03",
+      "dependsOn": [
+        "E1-25"
+      ]
+    },
+    {
+      "id": "E6-07",
+      "dependsOn": [
+        "E8-10",
+        "E1-33",
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E6-10",
+      "dependsOn": [
+        "E1-14"
+      ]
+    },
+    {
+      "id": "E6-11",
+      "dependsOn": [
+        "E1-13"
+      ]
+    },
+    {
+      "id": "E6-14",
+      "dependsOn": [
+        "E1-18"
+      ]
+    },
+    {
+      "id": "E6-24",
+      "dependsOn": [
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E6-25",
+      "dependsOn": [
+        "E4-07",
+        "E8-10",
+        "E8-11"
+      ]
+    },
+    {
+      "id": "E6-26",
+      "dependsOn": [
+        "E1-30"
+      ]
+    },
+    {
+      "id": "E6-28",
+      "dependsOn": [
+        "E8-11",
+        "E1-29"
+      ]
+    },
+    {
+      "id": "E6-29",
+      "dependsOn": [
+        "E8-11",
+        "E1-29",
+        "E1-30"
+      ]
+    },
+    {
+      "id": "E6-30",
+      "dependsOn": [
+        "E1-15"
+      ]
+    },
+    {
+      "id": "E6-32",
+      "dependsOn": [
+        "E3-10"
+      ]
+    },
+    {
+      "id": "E7-02",
+      "dependsOn": [
+        "E4-21"
+      ]
+    },
+    {
+      "id": "E7-05",
+      "dependsOn": [
+        "E4-12"
+      ]
+    },
+    {
+      "id": "E7-14",
+      "dependsOn": [
+        "E4-21"
+      ]
+    },
+    {
+      "id": "E7-22",
+      "dependsOn": [
+        "E6-20"
+      ]
+    },
+    {
+      "id": "E7-30",
+      "dependsOn": [
+        "E4-21",
+        "E5-15"
+      ]
+    },
+    {
+      "id": "E7-33",
+      "dependsOn": [
+        "E4-21",
+        "E6-20"
+      ]
+    },
+    {
+      "id": "E8-02",
+      "dependsOn": [
+        "E14-02"
+      ]
+    },
+    {
+      "id": "E8-04",
+      "dependsOn": [
+        "E2-08"
+      ]
+    },
+    {
+      "id": "E8-05",
+      "dependsOn": [
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E8-14",
+      "dependsOn": [
+        "E4-03"
+      ]
+    },
+    {
+      "id": "E8-17",
+      "dependsOn": [
+        "E6-26"
+      ]
+    },
+    {
+      "id": "E8-21",
+      "dependsOn": [
+        "E5-23"
+      ]
+    },
+    {
+      "id": "E8-22",
+      "dependsOn": [
+        "E5-23"
+      ]
+    },
+    {
+      "id": "E9-02",
+      "dependsOn": [
+        "E1-35"
+      ]
+    },
+    {
+      "id": "E9-07",
+      "dependsOn": [
+        "E1-09",
+        "E1-22"
+      ]
+    },
+    {
+      "id": "E9-08",
+      "dependsOn": [
+        "E8-05",
+        "E2-03",
+        "E1-09",
+        "E1-12",
+        "E1-17",
+        "E9-07"
+      ]
+    },
+    {
+      "id": "E10-02",
+      "dependsOn": [
+        "E8-08"
+      ]
+    },
+    {
+      "id": "E10-11",
+      "dependsOn": [
+        "E6-29",
+        "E6-30"
+      ]
+    },
+    {
+      "id": "E10-12",
+      "dependsOn": [
+        "E8-05"
+      ]
+    },
+    {
+      "id": "E10-14",
+      "dependsOn": [
+        "E8-11",
+        "E4-09",
+        "E4-10"
+      ]
+    },
+    {
+      "id": "E11-01",
+      "dependsOn": [
+        "E1-01",
+        "E13-05"
+      ]
+    },
+    {
+      "id": "E11-07",
+      "dependsOn": [
+        "E1-19",
+        "E1-20",
+        "E1-21",
+        "E1-27"
+      ]
+    },
+    {
+      "id": "E11-16",
+      "dependsOn": [
+        "E1-24",
+        "E1-31",
+        "E1-34"
+      ]
+    },
+    {
+      "id": "E12-01",
+      "dependsOn": [
+        "E14-02"
+      ]
+    },
+    {
+      "id": "E12-03",
+      "dependsOn": [
+        "E12-01"
+      ]
+    },
+    {
+      "id": "E12-13",
+      "dependsOn": [
+        "E17-05"
+      ]
+    },
+    {
+      "id": "E12-14",
+      "dependsOn": [
+        "E1-01"
+      ]
+    },
+    {
+      "id": "E13-01",
+      "dependsOn": [
+        "E12-03"
+      ]
+    },
+    {
+      "id": "E13-12",
+      "dependsOn": [
+        "E11-09",
+        "E11-14",
+        "E11-15"
+      ]
+    },
+    {
+      "id": "E13-19",
+      "dependsOn": [
+        "E17-03"
+      ]
+    },
+    {
+      "id": "E13-23",
+      "dependsOn": [
+        "E11-14",
+        "E11-15"
+      ]
+    },
+    {
+      "id": "E13-34",
+      "dependsOn": [
+        "E5-29"
+      ]
+    },
+    {
+      "id": "E14-11",
+      "dependsOn": [
+        "E13-02"
+      ]
+    },
+    {
+      "id": "E15-05",
+      "dependsOn": [
+        "E12-04"
+      ]
+    },
+    {
+      "id": "E15-08",
+      "dependsOn": [
+        "E12-08",
+        "E12-11"
+      ]
+    },
+    {
+      "id": "E15-14",
+      "dependsOn": [
+        "E1-37",
+        "E2-20",
+        "E3-15",
+        "E4-22",
+        "E5-29",
+        "E10-14",
+        "E11-07",
+        "E11-16",
+        "E13-19",
+        "E17-05"
+      ]
+    },
+    {
+      "id": "E16-08",
+      "dependsOn": [
+        "E13-02"
+      ]
+    },
+    {
+      "id": "E17-01",
+      "dependsOn": [
+        "E1-05"
+      ]
+    },
+    {
+      "id": "E17-05",
+      "dependsOn": [
+        "E1-05"
+      ]
+    }
+  ],
+  "serialiseFiles": [
+    {
+      "file": "package.json",
+      "mode": "hard-deps + config indirection",
+      "order": [
+        "E14-02",
+        "E12-01",
+        "E12-03",
+        "E13-01",
+        "E1-05",
+        "E17-01",
+        "E8-02",
+        "E5-29",
+        "E15-14"
+      ],
+      "fix": "E14-02 generates exports from config/exports.json; E8-02/E5-29 edit config/exports.json (not package.json) after E14-02. Script-only additions serialised in the listed order."
+    },
+    {
+      "file": "mkdocs.yml",
+      "mode": "hard-deps",
+      "order": [
+        "E16-02",
+        "E1-05",
+        "E4-22",
+        "E5-29",
+        "E13-34"
+      ],
+      "fix": "E16-02 restructures nav first; area wiring tickets append nav in order."
+    },
+    {
+      "file": "docs/components.md",
+      "mode": "hard-deps",
+      "order": [
+        "E1-08",
+        "E4-22",
+        "E5-29"
+      ],
+      "fix": "Generated from manifest by E1-08; wiring tickets regenerate."
+    },
+    {
+      "file": "src/index.ts + audit/api/public-root-api.snapshot",
+      "mode": "hard-deps",
+      "order": [
+        "E1-35",
+        "E4-22",
+        "E5-29",
+        "E15-14"
+      ],
+      "fix": "Single barrel chain. E2-20/E3-15/E10-14/E6/E7 must declare src/index.ts if they add root exports (currently undeclared)."
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "mode": "hard-deps",
+      "order": [
+        "E1-05",
+        "E17-05",
+        "E12-13"
+      ],
+      "fix": "E12-12 merged into E17-05."
+    },
+    {
+      "file": "examples/**",
+      "mode": "hard-deps",
+      "order": [
+        "E1-19",
+        "E1-20",
+        "E1-21",
+        "E1-24",
+        "E1-27",
+        "E1-31",
+        "E1-34",
+        "E11-07",
+        "E11-16",
+        "E15-14"
+      ],
+      "fix": "E1 example edits land before E11 converts examples to stories; E15-14 last."
+    },
+    {
+      "file": "src/components/<Existing>/**",
+      "mode": "hard-deps",
+      "order": [
+        "E1-x (demo)",
+        "E6-x (upgrade)",
+        "E9-07",
+        "E9-08"
+      ],
+      "fix": "E1 owner first, E6 upgrade second, cross-cutting E9-07 then E9-08 (both touch Button.tsx)."
+    },
+    {
+      "file": "src/components/Box|Card/**",
+      "mode": "hard-deps",
+      "order": [
+        "E1-19",
+        "E1-20",
+        "E2-05"
+      ],
+      "fix": "Elevation resolver after demo work."
+    },
+    {
+      "file": "scripts/consumer-smoke.mjs, scripts/expo-consumer-smoke.mjs",
+      "mode": "hard-deps",
+      "order": [
+        "E12-08",
+        "E12-11",
+        "E15-08"
+      ],
+      "fix": "Shim mode added after smoke hardening."
+    },
+    {
+      "file": "tests/types/**",
+      "mode": "narrow-glob",
+      "order": [
+        "E12-04",
+        "E15-05"
+      ],
+      "fix": "E12-04 lists exact files; E15-05 after E12-04."
+    },
+    {
+      "file": "tests/native/**",
+      "mode": "narrow-glob",
+      "order": [
+        "E12-07"
+      ],
+      "fix": "E12-07 uses tests/native-visual/**."
+    },
+    {
+      "file": "scripts/release-guard.mjs",
+      "mode": "hard-deps",
+      "order": [
+        "E17-03",
+        "E13-19"
+      ],
+      "fix": "AI artifacts guard added after parameterisation."
+    },
+    {
+      "file": "tsconfig.build.json",
+      "mode": "hard-deps",
+      "order": [
+        "E14-03",
+        "E8-02"
+      ],
+      "fix": "E8-02 after E14-03."
+    }
+  ],
+  "missingTickets": [
+    {
+      "gap": "No catalog stories for ~120 new components (E3-E10)",
+      "proposal": "Add E11 tickets: 'Populate catalog stories: E4 primitives', '...E5 inputs', '...E6 overlays/nav', '...E7 data display', '...E10 responsive' (each depends on the area wiring ticket) or make *.catalog.ts sidecar a DoD item everywhere"
+    },
+    {
+      "gap": "No wiring/barrel ticket for E6 and E7",
+      "proposal": "Add 'Wire E6 exports, API snapshot, docs nav' and 'Wire E7 exports...' at the end of each stream, in the src/index.ts serial chain"
+    },
+    {
+      "gap": "New components not registered in maturity manifest",
+      "proposal": "DoD rule: every new component adds a manifest entry at 'demo'; extend E1-02 checker to fail on unregistered component dirs"
+    },
+    {
+      "gap": "AI meta only for existing 36 components",
+      "proposal": "Generate from sidecars (rescope E13-05) or add E13 meta tickets per new area"
+    },
+    {
+      "gap": "Skills gap",
+      "proposal": "Add skills: texo-native-capabilities, texo-data-display, texo-overlays-feedback, texo-migration"
+    },
+    {
+      "gap": "Behavior tests only for existing components",
+      "proposal": "Per-ticket tests already required in E4/E5 scope; enforce for E6-E8 via coverage matrix E12-14 gate"
+    },
+    {
+      "gap": "Presets in visual regression",
+      "proposal": "Add preset x mode axis to E12-06 (or E12-15 theme-matrix) acceptance"
+    },
+    {
+      "gap": "Shim coverage for new subpaths/AI files",
+      "proposal": "Add acceptance to E15-03: decision on ai/ artifacts in shim"
+    }
+  ],
+  "stats": {
+    "tickets": 363,
+    "afterDedup": 333,
+    "collisionsBefore": 163,
+    "collisionsAfter": 0,
+    "cyclesAfter": 0
+  }
+}
