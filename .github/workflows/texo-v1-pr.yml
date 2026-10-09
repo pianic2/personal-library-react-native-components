@@ -1,0 +1,132 @@
+name: Texo V1 PR
+
+# Fast checks for pull requests into texo/v1 (ADR 0020, PLRNUI-452).
+# Required checks and branch protection: docs/policies/branching.md, section "Branch protection".
+
+on:
+  pull_request:
+    branches:
+      - texo/v1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: texo-v1-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  fast-checks:
+    name: fast-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Script tests
+        run: node --import tsx --test tests/scripts/*.test.ts
+
+      - name: Build
+        run: npm run build
+
+      - name: Docs check
+        run: npm run docs:compat:check
+
+  commit-and-ownership:
+    name: commit-and-ownership
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -uo pipefail
+          status=0
+          shas="$(git rev-list --reverse "$BASE_SHA..$HEAD_SHA")"
+          for sha in $shas; do
+            git log -1 --format=%B "$sha" > "$RUNNER_TEMP/commit-msg.txt"
+            if ! node scripts/check-commit-msg.mjs "$RUNNER_TEMP/commit-msg.txt"; then
+              echo "::error::commit $sha does not follow add|fix|chore(PLRNUI-<n>): <message>"
+              status=1
+            fi
+          done
+          exit "$status"
+
+      - name: File ownership
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -uo pipefail
+          if [[ ! "$HEAD_REF" =~ ^texo/(PLRNUI-[0-9]+)-[a-z0-9][a-z0-9-]*$ ]]; then
+            echo "::error::branch name must be texo/PLRNUI-<n>-<slug>"
+            exit 1
+          fi
+          ticket="${BASH_REMATCH[1]}"
+          # Files added to a ticket by an explicit PO decision. The backlog JSON is generated and not hand-edited,
+          # so these exceptions live here and are listed in docs/policies/branching.md.
+          exceptions=""
+          case "$ticket" in
+            PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
+            PLRNUI-452) exceptions="docs/policies/branching.md" ;;
+          esac
+          # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
+          code=0
+          output="$(node scripts/check-ownership.mjs "$ticket" "$BASE_SHA" 2>&1)" || code=$?
+          echo "$output"
+          if [ "$code" -eq 0 ]; then exit 0; fi
+          if [ "$code" -ne 1 ]; then exit "$code"; fi
+          parsed="$(printf '%s\n' "$output" | sed -n 's/^- //p')"
+          if [ -z "$parsed" ]; then
+            echo "::error::check-ownership exited 1 without listing any violating file"
+            exit 1
+          fi
+          remaining=""
+          while IFS= read -r path; do
+            if [ -z "$path" ]; then continue; fi
+            allowed=0
+            for exception in $exceptions; do
+              if [ "$path" = "$exception" ]; then allowed=1; fi
+            done
+            if [ "$allowed" -eq 0 ]; then remaining="$remaining $path"; fi
+          done <<< "$parsed"
+          if [ -n "$remaining" ]; then
+            echo "::error::files outside the ownership of $ticket:$remaining"
+            exit 1
+          fi
+          echo "only PO-approved exceptions remain for $ticket"
