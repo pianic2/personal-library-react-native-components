@@ -149,6 +149,16 @@ describe("PLRNUI-449 matcher parity with the backlog validator", () => {
 });
 
 describe("PLRNUI-449 hardening", () => {
+  it("matches an exact path that contains brackets (E11-03: apps/catalog/app/c/[name].tsx)", () => {
+    setFilesTouched(["apps/catalog/app/c/[name].tsx"]);
+    write("apps/catalog/app/c/[name].tsx");
+    commit("change");
+    assert.equal(run("E99-01", "base").status, 0);
+    write("apps/catalog/app/c/n.tsx");
+    commit("another file");
+    assert.equal(run("E99-01", "base").status, 1);
+  });
+
   it("rejects a base that looks like a git option (no fail-open)", () => {
     write("src/other.ts");
     commit("change");

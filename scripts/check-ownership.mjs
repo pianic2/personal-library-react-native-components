@@ -39,6 +39,9 @@ function translate(pattern) {
 }
 
 function matchesPattern(pattern, path) {
+  // An exact path always matches itself. fnmatch alone would read the brackets of a literal path such as
+  // apps/catalog/app/c/[name].tsx (E11-03) as a character class and reject the ticket's own file.
+  if (pattern === path) return true;
   if (pattern.endsWith("/**")) {
     const base = pattern.slice(0, -3);
     return path === base || path.startsWith(`${base}/`);
