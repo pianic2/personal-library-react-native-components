@@ -1,0 +1,1326 @@
+[
+  {
+    "id": "E4-01",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Slot primitive for asChild prop-merging composition",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "composition",
+      "as-child"
+    ],
+    "problem": "Components cannot be re-skinned without wrapper nesting; each one re-implements prop forwarding, so agents write boilerplate.",
+    "value": "asChild lets Touchable, Link, Chip, ListItem render a consumer element while keeping behavior; single merge routine for style/ref/handlers.",
+    "scope": [
+      "Create src/components/Slot/{Slot.tsx,index.ts,Slot.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Slot {...props}>{child}</Slot>; export mergeProps(slotProps, childProps) and type SlotProps = ViewProps & {children: ReactElement}. Merge rules: style arrays concatenated (child last wins), handlers chained (child first, then slot), refs merged via useMergedRefs, accessibility* props child wins unless undefined.",
+      "States/variants: Throws descriptive __DEV__ error when children is not exactly one valid element; Fragment child rejected.",
+      "Accessibility: Never drops accessibilityRole/State from either side; documents that asChild child must be pressable for onPress to work.",
+      "Theme tokens used (read-only, no new token keys): none (pure behavioral)",
+      "Tests: tests/components/Slot.test.tsx covering style/handler/ref merge order; invalid children dev error; accessibility prop precedence",
+      "Catalog: src/components/Slot/Slot.catalog.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Slot.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Slot/index.ts exports Slot and SlotProps",
+      "npm test passes including tests/components/Slot.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Slot returns no hardcoded colors",
+      "Slot renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "cloneElement semantics differ with memoized children; document limitation"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Slot/**",
+      "tests/components/Slot.test.tsx",
+      "docs/components/layout/Slot.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-02",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add useControllableState and useMergedRefs hooks",
+    "priority": "High",
+    "labels": [
+      "hook",
+      "primitive",
+      "controlled-uncontrolled"
+    ],
+    "problem": "Every input re-implements controlled/uncontrolled value handling inconsistently (Input, Select, Switch, RadioGroup).",
+    "value": "One audited implementation reused by all new inputs (Slider, OTP, Rating, SegmentedControl, Accordion, Collapsible).",
+    "scope": [
+      "API: useControllableState<T>({value?, defaultValue, onChange?}): [T, (next: T | ((p:T)=>T)) => void]; useMergedRefs<T>(...refs: Ref<T>[]): RefCallback<T>.",
+      "Behavior: Warns in __DEV__ when switching controlled<->uncontrolled; onChange fires only on real change; functional updates supported.",
+      "Accessibility/platform notes: n/a",
+      "Tests: controlled never mutates internal state; uncontrolled updates and notifies; switch warning; ref merge of callback+object refs"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "Both hooks have JSDoc and are exported from their own files (barrel export is done by E4-22)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "None significant"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/hooks/useControllableState.ts",
+      "src/hooks/useMergedRefs.ts",
+      "tests/hooks/useControllableState.test.tsx",
+      "tests/hooks/useMergedRefs.test.tsx",
+      "docs/components/layout/useControllableState.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-03",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Touchable pressable primitive with feedback, hit slop and focus ring",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "interaction",
+      "pressable"
+    ],
+    "problem": "Button, Chip, ListItem, Link each hand-roll Pressable styling, 44pt targets and disabled/pressed opacity (see src/components/Button/Button.tsx).",
+    "value": "Single source of truth for press feedback, minimum target, loading/disabled semantics, web focus-visible; all pressable components become thin.",
+    "scope": [
+      "Create src/components/Touchable/{Touchable.tsx,index.ts,Touchable.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Touchable onPress onLongPress disabled loading feedback='opacity'|'scale'|'ripple'|'none' (default 'opacity') minTarget={44} hitSlop haptic?: 'light'|'medium'|false (adapter, no-op if absent) role='button'|'link'|'tab'|'checkbox'|'radio'|'switch'|'menuitem' asChild accessibilityLabel style={StyleProp | (state)=>StyleProp} />; Touchable.defaultFeedback via theme.components?.touchable not required.",
+      "States/variants: default, pressed, focused (web focus ring using colors.primary), disabled (opacity from theme.components.button.opacity.disabled), loading (blocks presses, accessibilityState.busy).",
+      "Accessibility: Maps role to accessibilityRole; accessibilityState {disabled, busy, selected, checked}; enforces >=44x44 via minHeight/minWidth+hitSlop; label required when no text child (__DEV__ warn).",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.surface, colors.disabled; theme.components.button.opacity.pressed/disabled; theme.space; theme.radius",
+      "Tests: tests/components/Touchable.test.tsx covering onPress blocked when disabled/loading; accessibilityState reflects props; minTarget style applied; asChild forwards props to child (Slot); feedback variants set expected pressed style; missing label dev warning",
+      "Catalog: src/components/Touchable/Touchable.catalog.ts exporting {name, category:'buttons', status:'demo', summary, props, example}; docs/components/buttons/Touchable.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Touchable/index.ts exports Touchable and TouchableProps",
+      "npm test passes including tests/components/Touchable.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Touchable returns no hardcoded colors",
+      "Touchable renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Ripple needs android_ripple config; iOS/web fall back to opacity",
+      "Haptics adapter must not add a hard dependency"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Touchable/**",
+      "tests/components/Touchable.test.tsx",
+      "docs/components/buttons/Touchable.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-04",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Icon component with pluggable icon-set registry",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "icon",
+      "adapter"
+    ],
+    "problem": "Button/Input accept ComponentType<{size,color}> ad hoc; no shared icon API, sizing scale or decorative/labelled rule.",
+    "value": "One Icon API unifying @expo/vector-icons, react-native-svg paths and custom components; theme-sized and colored.",
+    "scope": [
+      "Create src/components/Icon/{Icon.tsx,index.ts,Icon.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Icon name='check' size='xs'|'sm'|'md'|'lg'|number color={colorToken|string} label?: string set?: string />; <IconProvider sets={{ default: IconSetAdapter }}/>; type IconSetAdapter = { render(name,{size,color}): ReactElement | null; names?: string[] }; createIconSet(map: Record<string,ComponentType<{size:number;color:string}>>): IconSetAdapter; createSvgIconSet(paths: Record<string,string>) (lazy-requires react-native-svg, optional peer); helper iconFromComponent(Comp).",
+      "States/variants: unknown name renders null + __DEV__ warn; label absent => decorative (accessibilityElementsHidden + importantForAccessibility=no-hide-descendants); label present => role image.",
+      "Accessibility: Decorative by default; label makes it an image with accessibilityLabel; never receives focus.",
+      "Theme tokens used (read-only, no new token keys): theme.size.icon if present else fixed 12/16/20/24 scale; colors.* by key (default textPrimary)",
+      "Tests: tests/components/Icon.test.tsx covering registry resolves default and named sets; decorative vs labelled a11y props; unknown name warns and renders null; size token mapping; createSvgIconSet throws helpful error without react-native-svg",
+      "Catalog: src/components/Icon/Icon.catalog.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/Icon.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Icon/index.ts exports Icon and IconProps",
+      "npm test passes including tests/components/Icon.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Icon returns no hardcoded colors",
+      "Icon renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "react-native-svg must stay an optional peer; Metro resolves lazily via try/require guarded"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Icon/**",
+      "tests/components/Icon.test.tsx",
+      "docs/components/typography/Icon.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-05",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Ship a minimal built-in glyph set for Icon (about 30 UI icons)",
+    "priority": "Medium",
+    "labels": [
+      "icon",
+      "assets",
+      "svg-paths"
+    ],
+    "problem": "Components needing chevron, check, close, eye, search, plus, minus, star cannot render them without a consumer icon library.",
+    "value": "Zero-config PasswordInput/Select/Checkbox/Rating/SearchBar/Accordion visuals; no font loading.",
+    "scope": [
+      "Create src/components/IconGlyphs/{IconGlyphs.tsx,index.ts,IconGlyphs.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: export const glyphs: Record<GlyphName,string> (24x24 SVG path d strings, MIT/own-drawn); export const glyphIconSet = createSvgIconSet(glyphs); GlyphName union; Icon falls back to glyphIconSet when no provider (wired via IconProvider default in this dir).",
+      "States/variants: Path-based, stroke/fill driven by color; names: check, close, plus, minus, chevron-up/down/left/right, search, eye, eye-off, calendar, clock, star, star-outline, info, alert, error, success, upload, trash, edit, copy, menu, more-horizontal, user, image, file, arrow-left, arrow-right, clear.",
+      "Accessibility: Decorative by default via Icon.",
+      "Theme tokens used (read-only, no new token keys): color passthrough only",
+      "Tests: tests/components/IconGlyphs.test.tsx covering every GlyphName has a non-empty path; names list stable (snapshot); no duplicate paths",
+      "Catalog: src/components/IconGlyphs/IconGlyphs.catalog.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/IconGlyphs.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/IconGlyphs/index.ts exports IconGlyphs and IconGlyphsProps",
+      "npm test passes including tests/components/IconGlyphs.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/IconGlyphs returns no hardcoded colors",
+      "IconGlyphs renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Icon licensing: draw originals or use permissive Lucide/Feather paths with attribution in docs"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/IconGlyphs/**",
+      "tests/components/IconGlyphs.test.tsx",
+      "docs/components/typography/IconGlyphs.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-06",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Surface with semantic elevation levels and dark-mode tinting",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "surface",
+      "elevation"
+    ],
+    "problem": "Box/Card/Alert/Popover each pick shadow and bg independently; shadows are invisible in dark mode so cards lose separation.",
+    "value": "Semantic elevation (0-4) mapping to shadow in light and tint+border in dark; base for Card, Popover, BottomSheet, ListItem groups, Accordion.",
+    "scope": [
+      "Create src/components/Surface/{Surface.tsx,index.ts,Surface.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Surface level={0|1|2|3|4} tone='default'|'muted'|'inverted' radius={RadiusKey} bordered padding={SpaceKey} material?: 'solid'|'glass' asChild style />. Implemented by composing Box. glass uses theme.materials.glass when expo-blur available else solid fallback.",
+      "States/variants: level 0 flat; 1-4 increasing; dark mode: level adds colors.surfaceElevated and border instead of shadow; glass fallback.",
+      "Accessibility: No role by default (grouping only); optional accessible/accessibilityRole pass-through.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.surfaceElevated, colors.border, theme.shadows, theme.radius, theme.space, theme.materials.glass",
+      "Tests: tests/components/Surface.test.tsx covering level to shadow mapping; dark mode uses border not shadow; glass fallback to solid; radius/padding token mapping",
+      "Catalog: src/components/Surface/Surface.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Surface.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Surface/index.ts exports Surface and SurfaceProps",
+      "npm test passes including tests/components/Surface.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Surface returns no hardcoded colors",
+      "Surface renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Overlap with Box; keep Surface strictly semantic and implemented on Box to avoid divergence"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Surface/**",
+      "tests/components/Surface.test.tsx",
+      "docs/components/surfaces/Surface.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-07",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Screen: safe-area, scroll, status bar and keyboard-aware page root",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "layout",
+      "safe-area"
+    ],
+    "problem": "Every screen repeats SafeAreaView + ScrollView + padding + StatusBar + KeyboardAvoidingView (globalStyles.safeArea exists but no component).",
+    "value": "One root component for each screen; removes ~20 lines of boilerplate per screen and agent tokens.",
+    "scope": [
+      "Create src/components/Screen/{Screen.tsx,index.ts,Screen.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Screen scroll? edges={['top','bottom','left','right']} padding={SpaceKey} bg={colorKey} keyboardAvoiding statusBar='auto'|'light'|'dark' refreshing onRefresh header?: ReactNode footer?: ReactNode (sticky) contentContainerStyle />; useScreenInsets(): {top,bottom,left,right}; safe-area source via adapter: uses react-native-safe-area-context if resolvable else RN SafeAreaView / zeros.",
+      "States/variants: scroll vs static; sticky footer respects bottom inset and keyboard; pull-to-refresh; landscape insets.",
+      "Accessibility: Does not trap focus; header/footer rendered in reading order; refresh control has accessibility label.",
+      "Theme tokens used (read-only, no new token keys): colors.background, theme.space, theme.globalStyles.safeArea/content/scrollContent",
+      "Tests: tests/components/Screen.test.tsx covering edges select applied insets (mocked adapter); scroll prop swaps container; footer rendered outside scroll content; falls back without safe-area-context",
+      "Catalog: src/components/Screen/Screen.catalog.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Screen.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Screen/index.ts exports Screen and ScreenProps",
+      "npm test passes including tests/components/Screen.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Screen returns no hardcoded colors",
+      "Screen renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Optional peer resolution under Metro; use guarded require and test both branches",
+      "KeyboardAvoidingView behaviour differs iOS/Android; document values"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Screen/**",
+      "tests/components/Screen.test.tsx",
+      "docs/components/layout/Screen.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-08",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Spacer for token gaps and flex push in Row/Column",
+    "priority": "Low",
+    "labels": [
+      "primitive",
+      "layout"
+    ],
+    "problem": "Pushing items apart in Row requires ad-hoc <View style={{flex:1}}/> and margins.",
+    "value": "Tiny declarative primitive; token-sized so no magic numbers.",
+    "scope": [
+      "Create src/components/Spacer/{Spacer.tsx,index.ts,Spacer.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Spacer size={SpaceKey|number} axis?: 'vertical'|'horizontal' /> and <Spacer flex /> (flex:1).",
+      "States/variants: fixed vs flexible; axis inferred from parent unsupported so axis defaults vertical.",
+      "Accessibility: accessibilityElementsHidden, importantForAccessibility no-hide-descendants.",
+      "Theme tokens used (read-only, no new token keys): theme.space",
+      "Tests: tests/components/Spacer.test.tsx covering size token maps to height/width; flex fills",
+      "Catalog: src/components/Spacer/Spacer.catalog.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Spacer.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Spacer/index.ts exports Spacer and SpacerProps",
+      "npm test passes including tests/components/Spacer.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Spacer returns no hardcoded colors",
+      "Spacer renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Low value on its own; keep tiny"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Spacer/**",
+      "tests/components/Spacer.test.tsx",
+      "docs/components/layout/Spacer.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-09",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Grid with responsive column counts and token gaps",
+    "priority": "Medium",
+    "labels": [
+      "layout",
+      "responsive",
+      "grid"
+    ],
+    "problem": "No way to lay out equal-width wrapping items responsively without manual width math.",
+    "value": "Galleries, dashboards, settings tiles, form columns adapt phone->tablet->web using existing useBreakpoint.",
+    "scope": [
+      "Create src/components/Grid/{Grid.tsx,index.ts,Grid.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Grid columns={number | Partial<Record<Breakpoint, number>>} gap={SpaceKey} rowGap columnGap>{children}</Grid>; <Grid.Item span={number|breakpoint map} />. Flex-wrap implementation with computed percentage widths; no CSS grid.",
+      "States/variants: span clamps to columns; remainder row left-aligned; columns change on breakpoint.",
+      "Accessibility: Pure layout; children order preserved; no role.",
+      "Theme tokens used (read-only, no new token keys): theme.space; useBreakpoint from src/hooks",
+      "Tests: tests/components/Grid.test.tsx covering width math for 2/3/4 columns with gap; breakpoint map selects columns (mock useBreakpoint); span clamps",
+      "Catalog: src/components/Grid/Grid.catalog.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Grid.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Grid/index.ts exports Grid and GridProps",
+      "npm test passes including tests/components/Grid.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Grid returns no hardcoded colors",
+      "Grid renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Percentage + gap rounding; use onLayout-free flexBasis calc and test"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Grid/**",
+      "tests/components/Grid.test.tsx",
+      "docs/components/layout/Grid.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-10",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Container: max-width centered content with responsive gutters",
+    "priority": "Medium",
+    "labels": [
+      "layout",
+      "responsive"
+    ],
+    "problem": "Content stretches edge to edge on tablets/web; each app invents max widths.",
+    "value": "Consistent readable column and gutters; foundation for E10 adaptive layouts.",
+    "scope": [
+      "Create src/components/Container/{Container.tsx,index.ts,Container.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Container size='sm'|'md'|'lg'|'xl'|'full' gutter={SpaceKey | breakpoint map} center />; widths 480/720/960/1200 as exported constants CONTAINER_WIDTHS.",
+      "States/variants: narrow screens full width minus gutter; wide screens capped and centered.",
+      "Accessibility: No role.",
+      "Theme tokens used (read-only, no new token keys): theme.space",
+      "Tests: tests/components/Container.test.tsx covering caps width at size; gutters per breakpoint",
+      "Catalog: src/components/Container/Container.catalog.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Container.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Container/index.ts exports Container and ContainerProps",
+      "npm test passes including tests/components/Container.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Container returns no hardcoded colors",
+      "Container renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Container/**",
+      "tests/components/Container.test.tsx",
+      "docs/components/layout/Container.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-11",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Portal and PortalHost for in-tree overlay layering",
+    "priority": "High",
+    "labels": [
+      "primitive",
+      "overlay",
+      "portal"
+    ],
+    "problem": "Popover/Tooltip/Select dropdowns clip inside overflow:hidden parents and rely on native Modal, losing theme context and web behavior.",
+    "value": "Shared layering primitive for Combobox, DatePicker sheet, Toast, Tooltip, MultiSelect; theme context preserved.",
+    "scope": [
+      "Create src/components/Portal/{Portal.tsx,index.ts,Portal.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <PortalProvider> wraps app (ThemeAppShell can include later); <Portal host?: string>{children}</Portal> mounts children into <PortalHost name?>; usePortal(): {mount(key,node), update, unmount}; Portal content inherits ThemeProvider and NavProvider via re-wrapping context captured at Portal call site.",
+      "States/variants: multiple portals stack in mount order; unmount cleans up; host missing => __DEV__ error and inline fallback.",
+      "Accessibility: Optional accessibilityViewIsModal prop on portal layer (iOS); onBackdropPress/back-handler delegated to consumers; focus not moved by Portal itself.",
+      "Theme tokens used (read-only, no new token keys): theme.zIndex",
+      "Tests: tests/components/Portal.test.tsx covering mount/unmount/update ordering; context (theme) available inside portal; missing host fallback warning",
+      "Catalog: src/components/Portal/Portal.catalog.ts exporting {name, category:'overlay', status:'demo', summary, props, example}; docs/components/overlay/Portal.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Portal/index.ts exports Portal and PortalProps",
+      "npm test passes including tests/components/Portal.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Portal returns no hardcoded colors",
+      "Portal renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Context re-provisioning design must not leak stale values; document that Modal remains for full-screen blocking"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Portal/**",
+      "tests/components/Portal.test.tsx",
+      "docs/components/overlay/Portal.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-12",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Skeleton loading placeholder with text/circle/rect presets",
+    "priority": "Medium",
+    "labels": [
+      "feedback",
+      "loading",
+      "motion"
+    ],
+    "problem": "Only Spinner exists for loading; list/card loading causes layout shift.",
+    "value": "Perceived-performance placeholder reused by Avatar, Card, ListItem, future lists/tables.",
+    "scope": [
+      "Create src/components/Skeleton/{Skeleton.tsx,index.ts,Skeleton.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Skeleton width height radius shape='rect'|'circle'|'text' lines? animated={true} /> plus <SkeletonGroup loading>{content}</SkeletonGroup> showing placeholders when loading. Animated opacity pulse via Animated + useNativeDriver; respects reduced motion (AccessibilityInfo.isReduceMotionEnabled) => static.",
+      "States/variants: animated/static, shape variants, text lines last line 60% width.",
+      "Accessibility: Group exposes accessibilityState busy and a single label \"Loading\"; individual bars hidden from screen readers.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.border, theme.radius",
+      "Tests: tests/components/Skeleton.test.tsx covering reduced motion disables animation; busy state on group; lines count and last-line width",
+      "Catalog: src/components/Skeleton/Skeleton.catalog.ts exporting {name, category:'feedback', status:'demo', summary, props, example}; docs/components/feedback/Skeleton.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Skeleton/index.ts exports Skeleton and SkeletonProps",
+      "npm test passes including tests/components/Skeleton.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Skeleton returns no hardcoded colors",
+      "Skeleton renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Overlaps with E3 motion helpers; consume useReducedMotion if it lands first"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Skeleton/**",
+      "tests/components/Skeleton.test.tsx",
+      "docs/components/feedback/Skeleton.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-13",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Avatar with image, initials fallback and status dot",
+    "priority": "High",
+    "labels": [
+      "display",
+      "avatar"
+    ],
+    "problem": "No user/entity identity primitive; apps rebuild circular images with fallbacks.",
+    "value": "Used in ListItem, TopBar, comments, AvatarGroup, menus.",
+    "scope": [
+      "Create src/components/Avatar/{Avatar.tsx,index.ts,Avatar.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Avatar source?: ImageSourcePropType name?: string size='xs'|'sm'|'md'|'lg'|'xl'|number shape='circle'|'rounded' status?: 'online'|'offline'|'busy'|'away' icon?: IconName onPress? />. Initials from name (max 2, locale-safe), deterministic bg color from name hash over theme palette tokens.",
+      "States/variants: image loaded, loading (Skeleton circle), error => initials, no name => icon fallback.",
+      "Accessibility: accessibilityRole image, label = name or alt; status announced in label (\"online\"); pressable variant uses Touchable.",
+      "Theme tokens used (read-only, no new token keys): colors.primary/secondary/accent/info/success, colors.textInverted, theme.radius, theme.size",
+      "Tests: tests/components/Avatar.test.tsx covering initials extraction (unicode, single word, empty); image error falls back; deterministic color; status in accessibility label",
+      "Catalog: src/components/Avatar/Avatar.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Avatar.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Avatar/index.ts exports Avatar and AvatarProps",
+      "npm test passes including tests/components/Avatar.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Avatar returns no hardcoded colors",
+      "Avatar renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-03",
+      "E4-04",
+      "E4-12"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Avatar/**",
+      "tests/components/Avatar.test.tsx",
+      "docs/components/surfaces/Avatar.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-14",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add AvatarGroup overlapping stack with +N overflow",
+    "priority": "Low",
+    "labels": [
+      "display",
+      "avatar"
+    ],
+    "problem": "Shared-participant displays need overlapped avatars with overflow count.",
+    "value": "Common collaboration pattern at small cost; reuses Avatar.",
+    "scope": [
+      "Create src/components/AvatarGroup/{AvatarGroup.tsx,index.ts,AvatarGroup.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <AvatarGroup max={3} size spacing={-8} total?: number>{<Avatar/>...}</AvatarGroup>; overflow chip '+N'.",
+      "States/variants: fewer than max; exactly max; overflow.",
+      "Accessibility: Group label \"N people\" via accessibilityLabel on container; children hidden individually when overflow.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.border, theme.space",
+      "Tests: tests/components/AvatarGroup.test.tsx covering overflow count math; respects total prop",
+      "Catalog: src/components/AvatarGroup/AvatarGroup.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/AvatarGroup.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/AvatarGroup/index.ts exports AvatarGroup and AvatarGroupProps",
+      "npm test passes including tests/components/AvatarGroup.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/AvatarGroup returns no hardcoded colors",
+      "AvatarGroup renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/AvatarGroup/**",
+      "tests/components/AvatarGroup.test.tsx",
+      "docs/components/surfaces/AvatarGroup.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-15",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Chip: selectable, removable, icon-capable filter/input chip",
+    "priority": "High",
+    "labels": [
+      "interaction",
+      "chip",
+      "tag"
+    ],
+    "problem": "Badge is static; no selectable/removable token for filters, multi-select values, tags.",
+    "value": "Underpins MultiSelect, Combobox tokens, filter bars, ToggleGroup visuals.",
+    "scope": [
+      "Create src/components/Chip/{Chip.tsx,index.ts,Chip.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Chip label selected onSelectedChange onPress onRemove variant='filled'|'outline'|'soft' size='sm'|'md' color='primary'|'secondary'|'success'|'warning'|'error'|'neutral' leftIcon avatar disabled />.",
+      "States/variants: default, selected, pressed, disabled, removable (trailing close hit area 44pt via hitSlop).",
+      "Accessibility: role checkbox when selectable else button; accessibilityState selected/disabled; remove control labelled \"Remove <label>\" with action.",
+      "Theme tokens used (read-only, no new token keys): colors.primary/secondary/success/warning/error, colors.surface, colors.border, colors.textInverted, theme.radius, theme.space",
+      "Tests: tests/components/Chip.test.tsx covering select toggles and notifies; onRemove independent from onPress; a11y role/state; color variants resolve tokens",
+      "Catalog: src/components/Chip/Chip.catalog.ts exporting {name, category:'buttons', status:'demo', summary, props, example}; docs/components/buttons/Chip.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Chip/index.ts exports Chip and ChipProps",
+      "npm test passes including tests/components/Chip.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Chip returns no hardcoded colors",
+      "Chip renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-03",
+      "E4-05"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Chip/**",
+      "tests/components/Chip.test.tsx",
+      "docs/components/buttons/Chip.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-16",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add List and ListItemText for bulleted, numbered and checklist content",
+    "priority": "Medium",
+    "labels": [
+      "typography",
+      "content"
+    ],
+    "problem": "No semantic list typography; docs/content screens fake bullets with text.",
+    "value": "Readable content primitives for legal, onboarding, help screens.",
+    "scope": [
+      "Create src/components/List/{List.tsx,index.ts,List.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <List type='bullet'|'number'|'check'|'none' gap={SpaceKey} start?: number marker?: ReactNode><List.Item>text</List.Item></List>; nested lists indent.",
+      "States/variants: nested depth up to 3, custom marker.",
+      "Accessibility: Container role list, items role listitem (web), native uses accessibilityLabel \"item N of M\" fallback.",
+      "Theme tokens used (read-only, no new token keys): theme.space, theme.typography.fontSize, colors.textPrimary/textSecondary, Text/P components",
+      "Tests: tests/components/List.test.tsx covering numbering with start; nested indent; marker types",
+      "Catalog: src/components/List/List.catalog.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/List.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/List/index.ts exports List and ListProps",
+      "npm test passes including tests/components/List.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/List returns no hardcoded colors",
+      "List renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/List/**",
+      "tests/components/List.test.tsx",
+      "docs/components/typography/List.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-17",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add ExpandableText with read more/less toggle",
+    "priority": "Medium",
+    "labels": [
+      "typography",
+      "interaction"
+    ],
+    "problem": "Truncating long text with a toggle is repeatedly hand-built and needs onTextLayout detection.",
+    "value": "Common in descriptions/reviews/feeds.",
+    "scope": [
+      "Create src/components/ExpandableText/{ExpandableText.tsx,index.ts,ExpandableText.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <ExpandableText numberOfLines={3} expanded? defaultExpanded onExpandedChange moreLabel='Read more' lessLabel='Show less' size>{string}</ExpandableText>; toggle hidden when text not truncated.",
+      "States/variants: collapsed, expanded, not truncatable.",
+      "Accessibility: Toggle is a button with accessibilityState expanded.",
+      "Theme tokens used (read-only, no new token keys): colors.primary, P typography",
+      "Tests: tests/components/ExpandableText.test.tsx covering toggle appears only when truncated (simulated onTextLayout); controlled/uncontrolled",
+      "Catalog: src/components/ExpandableText/ExpandableText.catalog.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/ExpandableText.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/ExpandableText/index.ts exports ExpandableText and ExpandableTextProps",
+      "npm test passes including tests/components/ExpandableText.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/ExpandableText returns no hardcoded colors",
+      "ExpandableText renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-02",
+      "E4-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/ExpandableText/**",
+      "tests/components/ExpandableText.test.tsx",
+      "docs/components/typography/ExpandableText.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-18",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add CodeBlock with horizontal scroll, line numbers and copy hook",
+    "priority": "Low",
+    "labels": [
+      "typography",
+      "code"
+    ],
+    "problem": "CodeInline exists but docs/dev screens need multi-line code.",
+    "value": "Needed by showcase/docs apps (E11); no syntax highlighter dependency.",
+    "scope": [
+      "Create src/components/CodeBlock/{CodeBlock.tsx,index.ts,CodeBlock.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <CodeBlock code language? showLineNumbers wrap onCopy?: (code)=>void />; copy action rendered only if onCopy supplied (no clipboard dependency).",
+      "States/variants: scrollable, wrapped, line numbers.",
+      "Accessibility: Container labelled \"Code, <language>\"; line numbers hidden from screen reader.",
+      "Theme tokens used (read-only, no new token keys): colors.codeBg/codeBorder/codeText, theme.radius, theme.space",
+      "Tests: tests/components/CodeBlock.test.tsx covering line numbering; copy button conditional",
+      "Catalog: src/components/CodeBlock/CodeBlock.catalog.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/CodeBlock.md with usage example"
+    ],
+    "outOfScope": [
+      "Syntax highlighting (considered mediocre value vs bundle size)",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/CodeBlock/index.ts exports CodeBlock and CodeBlockProps",
+      "npm test passes including tests/components/CodeBlock.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/CodeBlock returns no hardcoded colors",
+      "CodeBlock renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/CodeBlock/**",
+      "tests/components/CodeBlock.test.tsx",
+      "docs/components/typography/CodeBlock.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-19",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Collapsible animated expand/collapse region",
+    "priority": "Medium",
+    "labels": [
+      "surface",
+      "motion",
+      "disclosure"
+    ],
+    "problem": "No disclosure primitive; Accordion/FAQ/filters need animated height.",
+    "value": "Base for Accordion, ExpandableText variants, advanced filters.",
+    "scope": [
+      "Create src/components/Collapsible/{Collapsible.tsx,index.ts,Collapsible.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Collapsible open? defaultOpen onOpenChange duration animated><Collapsible.Trigger asChild/><Collapsible.Content/></Collapsible>; content measured via onLayout, animates height via Animated (LayoutAnimation not used).",
+      "States/variants: open, closed (unmounted or hidden via keepMounted), animating, reduced-motion instant.",
+      "Accessibility: Trigger accessibilityState expanded; closed content hidden from screen readers (importantForAccessibility).",
+      "Theme tokens used (read-only, no new token keys): theme.space; motion duration constant 200ms until E3 tokens exist",
+      "Tests: tests/components/Collapsible.test.tsx covering toggle open state controlled/uncontrolled; content hidden when closed; reduced motion instant",
+      "Catalog: src/components/Collapsible/Collapsible.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Collapsible.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Collapsible/index.ts exports Collapsible and CollapsibleProps",
+      "npm test passes including tests/components/Collapsible.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Collapsible returns no hardcoded colors",
+      "Collapsible renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-01",
+      "E4-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Collapsible/**",
+      "tests/components/Collapsible.test.tsx",
+      "docs/components/surfaces/Collapsible.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-20",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Accordion (single/multiple) built on Collapsible",
+    "priority": "Medium",
+    "labels": [
+      "surface",
+      "disclosure"
+    ],
+    "problem": "FAQ/settings groupings have no accordion.",
+    "value": "Standard pattern; thin because of Collapsible.",
+    "scope": [
+      "Create src/components/Accordion/{Accordion.tsx,index.ts,Accordion.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <Accordion type='single'|'multiple' collapsible value defaultValue onValueChange><Accordion.Item value><Accordion.Header>title</Accordion.Header><Accordion.Panel/></Accordion.Item></Accordion>.",
+      "States/variants: single (optionally collapsible), multiple, disabled item.",
+      "Accessibility: Header role button with expanded state; panel labelled by header.",
+      "Theme tokens used (read-only, no new token keys): colors.border, colors.surface, theme.space, Surface",
+      "Tests: tests/components/Accordion.test.tsx covering single mode closes others; multiple mode independent; disabled item",
+      "Catalog: src/components/Accordion/Accordion.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Accordion.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Accordion/index.ts exports Accordion and AccordionProps",
+      "npm test passes including tests/components/Accordion.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Accordion returns no hardcoded colors",
+      "Accordion renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-19",
+      "E4-06",
+      "E4-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/Accordion/**",
+      "tests/components/Accordion.test.tsx",
+      "docs/components/surfaces/Accordion.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-21",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add ListItem row with leading/trailing slots and press feedback",
+    "priority": "High",
+    "labels": [
+      "surface",
+      "list",
+      "row"
+    ],
+    "problem": "Settings, menus and pickers all hand-build 3-slot rows (leading icon, title/subtitle, trailing control/chevron).",
+    "value": "Row primitive for settings lists, Select options, menu items, Combobox options; FlatList integration stays in E7.",
+    "scope": [
+      "Create src/components/ListItem/{ListItem.tsx,index.ts,ListItem.catalog.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E4 wiring ticket)",
+      "API: <ListItem title subtitle leading={ReactNode} trailing={ReactNode} chevron onPress selected disabled divider='inset'|'full'|'none' size='md'|'lg' />; leading/trailing may be Icon, Avatar, Switch.",
+      "States/variants: default, pressed, selected, disabled, with/without press.",
+      "Accessibility: Pressable row role button, label = title+subtitle; nested interactive trailing control keeps own role; min height 44.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.border, colors.textPrimary/textSecondary, colors.primary, theme.space",
+      "Tests: tests/components/ListItem.test.tsx covering press only when onPress given; label composition; selected state; divider variants",
+      "Catalog: src/components/ListItem/ListItem.catalog.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/ListItem.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/ListItem/index.ts exports ListItem and ListItemProps",
+      "npm test passes including tests/components/ListItem.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/ListItem returns no hardcoded colors",
+      "ListItem renders under ThemeProvider in light and dark mode in tests with no console.error/warn"
+    ],
+    "dependencies": [
+      "E4-03",
+      "E4-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/components/ListItem/**",
+      "tests/components/ListItem.test.tsx",
+      "docs/components/surfaces/ListItem.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E4-22",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Wire E4 exports, API snapshot, docs nav and mkdocs entries",
+    "priority": "Medium",
+    "labels": [
+      "integration",
+      "exports"
+    ],
+    "problem": "Per-component tickets deliberately avoid shared barrels to stay parallel.",
+    "value": "Single place for src/index.ts exports and public API snapshot so merges never conflict.",
+    "scope": [
+      "API: Add export lines for every E4 component/hook/type to src/index.ts and src/hooks/index.ts; regenerate audit/api/public-root-api.snapshot via npm run api:snapshot; add nav entries to mkdocs.yml and docs/components.md.",
+      "Behavior: Runs after all E4 component tickets merged; additive only.",
+      "Accessibility/platform notes: n/a",
+      "Tests: api:snapshot:check passes; consumer:smoke passes"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "Every E4 component directory is exported from src/index.ts with its Props type",
+      "npm run api:snapshot:check passes after snapshot update with explicit minor-semver diff"
+    ],
+    "dependencies": [
+      "E4-01",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E4-05",
+      "E4-06",
+      "E4-07",
+      "E4-08",
+      "E4-09",
+      "E4-10",
+      "E4-11",
+      "E4-12",
+      "E4-13",
+      "E4-14",
+      "E4-15",
+      "E4-16",
+      "E4-17",
+      "E4-18",
+      "E4-19",
+      "E4-20",
+      "E4-21"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run api:snapshot:check",
+      "npm run consumer:smoke",
+      "npm run build"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Serialize with E5 wiring ticket (E5-29 depends on this one) to avoid barrel conflicts"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/index.ts",
+      "src/hooks/index.ts",
+      "audit/api/public-root-api.snapshot",
+      "mkdocs.yml",
+      "docs/components.md"
+    ],
+    "size": "S",
+    "semver": "minor"
+  }
+]

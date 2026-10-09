@@ -25,7 +25,7 @@
     "outOfScope": [
       "Concrete capability adapters",
       "package.json/exports changes (E8-02)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "useCapability returns a noop api with status 'noop' when no provider is mounted (test)",
@@ -88,7 +88,7 @@
     "outOfScope": [
       "Writing adapters",
       "Choosing final entry naming for Texo cutover (E15)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "npm pack --dry-run lists dist/native/** files",
@@ -152,7 +152,7 @@
     ],
     "outOfScope": [
       "Real device tests",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Every CapabilityMap key has a mock (type-level exhaustiveness test)",
@@ -214,7 +214,7 @@
     "outOfScope": [
       "Changing ThemeProvider props (E2 owns theme)",
       "expo-system-ui (E8-12)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Hook reacts to Appearance change listener (test with mock)",
@@ -276,7 +276,7 @@
     "outOfScope": [
       "Implementing motion behaviors (E3)",
       "Changing Text component (E4)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Each hook subscribes and unsubscribes to the AccessibilityInfo event (test with mock emitter)",
@@ -336,7 +336,7 @@
     ],
     "outOfScope": [
       "Navigation focus (router-owned)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Callbacks fire only on transitions (test)",
@@ -398,7 +398,7 @@
     ],
     "outOfScope": [
       "Offline queue / retry (app concern)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Unknown state is null not false (test)",
@@ -460,7 +460,7 @@
     "outOfScope": [
       "Responsive layout primitives (E10)",
       "Editing src/hooks/useBreakpoint.ts",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Orientation derived from Dimensions change (test with mock)",
@@ -520,7 +520,7 @@
     ],
     "outOfScope": [
       "Replacing src/utils/platform.ts (E14)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Without adapter, enriched fields are null and core fields are filled (test)",
@@ -581,7 +581,7 @@
     ],
     "outOfScope": [
       "Third-party react-native-keyboard-controller (rejected, see proposals)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "useKeyboard reflects show/hide mock events incl. iOS keyboardWillShow (test)",
@@ -642,7 +642,7 @@
     "outOfScope": [
       "Modifying ThemeAppShell (E6 consumes this)",
       "Adding react-native-safe-area-context to package.json",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Without adapter useInsets returns zeros and status 'noop' (test)",
@@ -702,7 +702,7 @@
     ],
     "outOfScope": [
       "Edge-to-edge config (app.json, consumer)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "ThemedStatusBar maps dark mode to 'light-content' (render test)",
@@ -763,7 +763,7 @@
     ],
     "outOfScope": [
       "Pressable integration (E8-14)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Semantic call maps to expected expo-haptics method (mock table test)",
@@ -823,7 +823,7 @@
     ],
     "outOfScope": [
       "Editing src/components/** (E1)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Haptic fires once per press on configured phase (test)",
@@ -885,7 +885,7 @@
     "outOfScope": [
       "CopyButton visual component (E1/E4)",
       "Any package.json change (PLRNUI-39 forbids expo-clipboard in all sections)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Core files contain no 'expo-clipboard' string except src/native/clipboard/expo.ts using structural injection",
@@ -945,7 +945,7 @@
     ],
     "outOfScope": [
       "File sharing (expo-sharing)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Maps RN dismissedAction to 'dismissed' (test)",
@@ -1007,7 +1007,7 @@
     "outOfScope": [
       "Router implementation (expo-router stays consumer-owned)",
       "Editing src/components/Link",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Disallowed schemes (javascript:) rejected (test)",
@@ -1068,7 +1068,7 @@
     ],
     "outOfScope": [
       "Editing overlay components (E6)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Highest priority handler wins, others not called (test)",
@@ -1132,7 +1132,7 @@
     "outOfScope": [
       "Concrete Expo adapters (E8-20)",
       "Permission rationale UI component",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "mapExpoPermission table test: granted/denied+canAskAgain/denied+!canAskAgain->blocked/limited",
@@ -1193,7 +1193,7 @@
     ],
     "outOfScope": [
       "Camera view / location tracking / notification scheduling (rejected)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Each adapter maps module responses via mapExpoPermission (mock test)",
@@ -1256,7 +1256,7 @@
     "outOfScope": [
       "Cropping/editing UI",
       "Upload logic",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Cancel returns {cancelled:true} without error (test)",
@@ -1317,7 +1317,7 @@
     ],
     "outOfScope": [
       "Uploads, previews",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Normalizes {canceled, assets} to library shape (test)",
@@ -1380,7 +1380,7 @@
     "outOfScope": [
       "Encryption library",
       "Modifying ThemeProvider",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Each adapter passes a shared conformance suite run against mock backends",
@@ -1442,7 +1442,7 @@
     "outOfScope": [
       "Credential storage (E8-23)",
       "WebAuthn",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Error codes mapped from module result table (test)",
@@ -1503,7 +1503,7 @@
     ],
     "outOfScope": [
       "Font loading implementation (consumer passes expo-font task)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Splash hide called exactly once after tasks resolve (test)",
@@ -1565,7 +1565,7 @@
     "outOfScope": [
       "Adding peers",
       "Auto-requesting permissions at startup",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "With all modules mocked, report lists them available (test)",
@@ -1639,7 +1639,7 @@
     ],
     "outOfScope": [
       "Release pipeline (E17)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "Matrix file lists every capability from CapabilityMap",
@@ -1697,7 +1697,7 @@
     ],
     "outOfScope": [
       "Showcase UI (E11)",
-      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+      "Adding any native package to package.json (native-dependency-gate.md)"
     ],
     "acceptance": [
       "capabilities.json validates against its JSON schema and lists all CapabilityMap ids",
