@@ -12,14 +12,38 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ALWAYS_ALLOWED = ["audit/texo-v1/STATE.md"];
 
 // Same semantics as pmatch() in audit/texo-v1/scripts/reconcile.py: "dir/**" is a prefix match,
-// anything else is an fnmatch pattern where "*" also matches "/".
+// anything else is a case-sensitive fnmatch pattern where "*" also matches "/".
+// translate() follows Python's fnmatch.translate for [...] classes (an unterminated "[" is a literal).
+function translate(pattern) {
+  let out = "";
+  for (let i = 0; i < pattern.length; i += 1) {
+    const c = pattern[i];
+    if (c === "*") out += ".*";
+    else if (c === "?") out += ".";
+    else if (c === "[") {
+      let j = i + 1;
+      if (pattern[j] === "!") j += 1;
+      if (pattern[j] === "]") j += 1;
+      while (j < pattern.length && pattern[j] !== "]") j += 1;
+      if (j >= pattern.length) out += "\\[";
+      else {
+        let stuff = pattern.slice(i + 1, j).replace(/\\/g, "\\\\").replace(/\[/g, "\\[").replace(/\]/g, "\\]");
+        if (stuff[0] === "!") stuff = `^${stuff.slice(1)}`;
+        else if (stuff[0] === "^") stuff = `\\${stuff}`;
+        out += `[${stuff}]`;
+        i = j;
+      }
+    } else out += c.replace(/[.+^${}()|\\\]\/]/g, "\\$&");
+  }
+  return new RegExp(`^${out}$`, "s");
+}
+
 function matchesPattern(pattern, path) {
   if (pattern.endsWith("/**")) {
     const base = pattern.slice(0, -3);
     return path === base || path.startsWith(`${base}/`);
   }
-  const source = pattern.replace(/[.+^${}()|\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".").replace(/\[!/g, "[^");
-  return new RegExp(`^${source}$`).test(path);
+  return translate(pattern).test(path);
 }
 
 function findViolations(files, patterns) {
@@ -51,7 +75,7 @@ function parseArgs(argv) {
 function main() {
   const { positional, options } = parseArgs(process.argv.slice(2));
   const [ticketId, base = "origin/texo/v1"] = positional;
-  if (!ticketId) {
+  if (!ticketId || base.startsWith("-")) {
     console.error("usage: check-ownership.mjs <ticket-id> [base] [--backlog-dir <dir>] [--jira-map <file>]");
     return 2;
   }
@@ -64,16 +88,21 @@ function main() {
     console.error(`cannot read backlog: ${error.message}`);
     return 2;
   }
-  if (!ticket || !Array.isArray(ticket.filesTouched) || ticket.filesTouched.length === 0) {
-    console.error(`unknown ticket or no filesTouched: ${ticketId}`);
+  const isStrings = (value) => Array.isArray(value) && value.every((item) => typeof item === "string" && item.length > 0);
+  if (!ticket || !isStrings(ticket.filesTouched) || ticket.filesTouched.length === 0) {
+    console.error(`unknown ticket or invalid filesTouched: ${ticketId}`);
+    return 2;
+  }
+  if (ticket.allowGenerated !== undefined && !isStrings(ticket.allowGenerated)) {
+    console.error(`invalid allowGenerated for ${ticketId}: expected an array of strings`);
     return 2;
   }
   // Optional per-ticket allow-list of generated files; the current backlog schema has no such field.
   const patterns = [...ticket.filesTouched, ...(ticket.allowGenerated ?? []), ...ALWAYS_ALLOWED];
   let files;
   try {
-    const output = execFileSync("git", ["diff", "--name-only", "--no-renames", `${base}...HEAD`], { encoding: "utf8" });
-    files = output.split("\n").filter(Boolean);
+    const output = execFileSync("git", ["diff", "-z", "--name-only", "--no-renames", `${base}...HEAD`, "--"], { encoding: "utf8" });
+    files = output.split("\0").filter(Boolean);
   } catch (error) {
     console.error(`git diff against ${base} failed: ${error.message}`);
     return 2;
@@ -87,4 +116,12 @@ function main() {
   return 0;
 }
 
-process.exit(main());
+let code;
+try {
+  code = main();
+} catch (error) {
+  // An unexpected crash must not look like "violations found" (exit 1).
+  console.error(`check-ownership failed: ${error.message}`);
+  code = 2;
+}
+process.exit(code);
