@@ -33,6 +33,10 @@ updates:
         update-types:
           - version-update:semver-major
           - version-update:semver-minor
+      - dependency-name: react-test-renderer
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
       - dependency-name: "@types/react"
         update-types:
           - version-update:semver-major
