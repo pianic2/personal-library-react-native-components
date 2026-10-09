@@ -18,6 +18,7 @@ Files changed: <one path per line, or a diff summary>. Outside filesTouched: the
 
 Commands (exit code):
 - <command> <exit code> (<short result: n pass, n fail>)
+- <manual check, for example "inspection"> n/a (no exit code): <what was inspected and the result>
 - CI package-baseline: <green|red> on <commit sha>
 
 Test output: <the validation commands' summary lines>
@@ -37,8 +38,8 @@ Not verified, known limits and deviations: <list, or none>.
 | Field | Source |
 |---|---|
 | PR link, merge sha | the merged PR |
-| Files changed | `git diff --name-only <base>...HEAD`, same list the ownership check uses |
-| Commands and exit codes | the ticket `validation` commands, exactly as run |
+| Files changed | `git diff --name-only <base>...<head sha>` taken BEFORE the merge (or the file list of the PR), same list the ownership check uses; after the merge `<base>` and `HEAD` can both be the merge commit and the diff is empty |
+| Commands and exit codes | the ticket `validation` commands, exactly as run; a manual validation entry (for example "inspection") has no exit code: write `n/a` and what was checked |
 | Test output | summary lines of the test runs |
 | Acceptance criteria | the ticket `acceptance` array, one line each |
 | Ticket evidence entries | the ticket `evidence` array: each entry MUST appear as its own line, verbatim. This is the contract that covers every kind of entry used in the backlog (92 distinct texts when this page was written); entries already held by Files changed or Test output point to them instead of repeating |
