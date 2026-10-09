@@ -3,19 +3,18 @@
 Used by ticket sessions (ADR 0020, `audit/adr/0020-ticket-execution-protocol.md`) to report a finished ticket. The evidence goes in ONE Jira comment, posted after the PR is merged into `texo/v1`.
 
 ## Rules
-- Never skip, disable or quarantine a test to get green. A red test is reported with its output, never hidden.
+- Never skip, disable or quarantine a test to get green, and never weaken an assertion or edit a test to match a bug. A red test is reported with its output, never hidden.
 - One comment per ticket, written from facts you ran or read in this session; do not describe what you did not run.
-- Status transitions: only the ones the PO policy allows, set in `ALLOWED_TRANSITIONS` below (default: none). Never `Approvato`, never `po-approved`.
-- Say what was NOT verified or not reviewed (for example changes made after the last independent review).
+- Status transitions: ADR 0020 says sessions never change a Jira status, and ADR 0020 wins over this page. `ALLOWED_TRANSITIONS` below is the parameter for a future PO decision: a non-empty value is valid only together with a matching amendment of ADR 0020. It is a list of transition names and never contains `Approvato`; `po-approved` is never applied by a session.
 
-`ALLOWED_TRANSITIONS`: none (the PO has not allowed sessions to move tickets; change this line only on a PO decision).
+`ALLOWED_TRANSITIONS`: none (the PO has not allowed sessions to move tickets).
 
 ## Template
 
 ```
 Evidence PLRNUI-<n> (<local id>), PR <link> merged into texo/v1 (<merge sha>).
 
-Files changed: <one path per line, or a diff summary>. Outside filesTouched (only if ADR 0020 allows): <STATE.md row>.
+Files changed: <one path per line, or a diff summary>. Outside filesTouched: the `STATE.md` Execution log row (the only exception allowed by ADR 0020).
 
 Commands (exit code):
 - <command> <exit code> (<short result: n pass, n fail>)
@@ -24,13 +23,14 @@ Commands (exit code):
 Test output: <the validation commands' summary lines>
 
 Acceptance criteria:
-- [x|  ] <criterion text> - <how it was checked: command, grep, test name>
+- [x] <criterion text> - <how it was checked: command, grep, test name>
+- [ ] <unmet criterion> - <reason it is unmet>
 
-Ticket evidence entries (one line per entry of the ticket's `evidence` array, verbatim):
-- <entry text>: <path, link or pasted output that satisfies it>
+Ticket evidence entries (EVERY entry of the ticket's `evidence` array as its own line, verbatim):
+- <entry text>: <path, link or pasted output that satisfies it, or "see Files changed" / "see Test output" when a dedicated field above already holds it>
 
 Independent review: <verdict, number of rounds, blockers/majors fixed>. Changes after the last review: <none|list>.
-Known limits / deviations: <list, or none>.
+Not verified, known limits and deviations: <list, or none>.
 ```
 
 ## Field reference
@@ -41,11 +41,12 @@ Known limits / deviations: <list, or none>.
 | Commands and exit codes | the ticket `validation` commands, exactly as run |
 | Test output | summary lines of the test runs |
 | Acceptance criteria | the ticket `acceptance` array, one line each |
-| Ticket evidence entries | the ticket `evidence` array, verbatim: this covers every kind of entry used in the backlog (diff summary, file list, test output, generated artifact path, snapshot or story description, catalog entry path, and so on) |
+| Ticket evidence entries | the ticket `evidence` array: each entry MUST appear as its own line, verbatim. This is the contract that covers every kind of entry used in the backlog (92 distinct texts today); entries already held by Files changed or Test output point to them instead of repeating |
 | Independent review | the reviewer session verdict (ADR 0020, Roles) |
 
 ## Procedure
 1. Merge the PR into `texo/v1` only with green checks and a passing review (ADR 0020, Branching).
 2. Fill the template from the ticket JSON in `audit/texo-v1/backlog/`, not from the Jira description.
 3. Post it as one Jira comment on the ticket.
-4. Apply a status transition only if `ALLOWED_TRANSITIONS` lists it; otherwise leave the status unchanged.
+4. Leave the status unchanged unless `ALLOWED_TRANSITIONS` lists a transition AND ADR 0020 has been amended to allow it (see Rules).
+5. If the merge cannot happen (red check, failed review, open blocker), post no evidence comment: report the blocker on the PR and to the PO, and stop.
