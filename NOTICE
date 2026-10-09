@@ -1,0 +1,13 @@
+@personal-library/react-native-components
+Copyright (c) 2026 Niccolò Piazzi
+Licensed under the MIT License (see LICENSE).
+
+Third-party notices
+
+This package bundles no third-party fonts, icons or other vendored assets, and it declares no runtime
+dependencies: its only peer dependencies are react and react-native, which the consuming application installs.
+Development tooling is not distributed with the package.
+
+If a vendored asset is ever added, list it in assets/licenses.json (path, license, source) and add its path,
+author and license text or link below; `node scripts/license-check.mjs` fails when an asset is missing from this file.
+See docs/policies/licensing.md.
