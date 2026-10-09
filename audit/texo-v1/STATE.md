@@ -86,3 +86,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-147 (E17-06: support matrix schema v2 with tiers and evidence, generated docs) | #41 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-161 (E16-10: audit/ public-release review, secretlint scan, subtree classification) | #40 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-130 (E13-02: TS-compiler-API component props extractor scripts/ai/lib/extract-props.mjs) | #44 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-190 (E14-01: subpath export contract config/exports.json, validator, ADR 0009) | #43 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-155 (E17-07: ADR 0011 semver/stability/deprecation policy pages) | #42 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
