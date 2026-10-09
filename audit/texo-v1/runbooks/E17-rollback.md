@@ -45,7 +45,7 @@ For every scenario, the first move is the same: `npm view <pkg> dist-tags --json
 
 ### C. Security vulnerability
 
-1. Contain: apply the containment steps of A, B or E with the **neutral** deprecation wording only ("Do not use, see the advisory soon" is not allowed either: use "Deprecated, update to the latest version" once `<FIX>` exists and nothing before). Treat any leaked credential as compromised and rotate it first.
+1. Contain: apply the containment steps of A, B or E with a **neutral** deprecation wording only: nothing public until `<FIX>` is installable, and then only "Deprecated, update to the latest version" (never the nature of the vulnerability) until the advisory is published. Treat any leaked credential as compromised and rotate it first.
 2. Do not discuss exploit details in public issues. Use the private channel of `SECURITY.md` (GitHub private vulnerability reporting, or info@theopificium.it). Develop the fix in a temporary private fork of the advisory when possible.
 3. Create a draft GitHub Security Advisory for the repository, with affected and patched version ranges; request a CVE through the advisory if appropriate.
 4. Publish the patch release (section 4). Publish the advisory **after** the fixed version is installable (`npm view <TEXO>@<FIX> version`), so that the advisory points to a fix.
