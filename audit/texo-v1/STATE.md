@@ -48,6 +48,11 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 3. Optional hardening pass: re-send mangled descriptions as ADF; tighten flagged acceptance criteria; fix E4-16.
 4. When execution begins, first tickets on the critical path: E1-15 -> E14-03 (ESM) -> E2-01 -> E2-06 -> API-conventions ADR.
 
+## Wave progress
+One row per closed wave, added by the closing ticket (docs/policies/checkpoint.md). Empty until the first wave closes.
+| Wave | Merged | Total | Closed by |
+|---|---|---|---|
+
 ## Execution log (ticket sessions)
 | Ticket | PR | Result |
 |---|---|---|
