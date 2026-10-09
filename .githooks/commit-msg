@@ -1,0 +1,3 @@
+#!/bin/sh
+# Validates the commit subject (ADR 0020). Install: git config core.hooksPath .githooks
+exec node "$(git rev-parse --show-toplevel)/scripts/check-commit-msg.mjs" "$1"
