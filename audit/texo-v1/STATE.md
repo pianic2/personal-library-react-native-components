@@ -23,7 +23,7 @@ A new orchestrator can resume from here without redoing the audit.
 - PLRNUI-77 (GitHub Pages showcase, already Approvato) is a dependency of E11 tickets; do not duplicate it.
 
 ## PO decisions 2026-10-09
-See DECISIONS.md section "PO decisions". Backlog regenerated: 361 tickets, 0 post-1.0, 2 blocked (E16-01 CODEOWNERS, E16-09 license), E18 harness epic PLRNUI-443 (13 tickets). Jira labels synced for 52 tickets; new tickets/links for E18 and 52 new dependency links pending/created by agent (check `jira-map.json` for E18 keys). Ticket approval waits for the open items in DECISIONS.md.
+See DECISIONS.md section "PO decisions". Backlog regenerated: 361 tickets, 0 post-1.0, 2 blocked (E16-01 CODEOWNERS, E16-09 license), E18 harness epic PLRNUI-443 (13 tickets). Jira labels synced for 52 tickets; E18 tickets PLRNUI-444…456 created and all 52 new dependency links created. Ticket approval waits for the open items in DECISIONS.md.
 
 ## Numbers
 348 tickets: S 160 / M 188 / L 0. 325 `ready`, 23 `blocked-decision`, 33 `post-1.0`. 17 waves. Validator: 0 schema violations, 0 unresolved deps, 0 cycles, 0 unordered file collisions.
