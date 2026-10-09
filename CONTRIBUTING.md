@@ -52,8 +52,8 @@ Checklist for a new or changed component:
    type tests in `tests/types/` for the public props).
 4. Add a documentation page under `docs/components/` and an example under
    `examples/`.
-5. List the component in the component catalog, `docs/components.md` (the map of
-   root-exported components).
+5. Register the component in the catalog: add it to `docs/components.md` (the map
+   of root-exported components) and to the navigation list in `mkdocs.yml`.
 6. Make sure any stability label you give it (stable, beta, experimental,
    internal) matches the component stability classification in
    `audit/adr/0003-component-stability-classification.md`. The maturity ladder

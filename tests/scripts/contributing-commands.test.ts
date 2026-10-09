@@ -6,8 +6,8 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
 const pkg = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 const scripts = new Set(Object.keys(pkg.scripts));
-// npm built-ins that are valid without a package.json script.
-const BUILTINS = new Set(["ci", "install"]);
+// npm commands that are valid without "run": real npm built-ins only (a package script needs "npm run").
+const BUILTINS = new Set(["ci", "install", "test", "start"]);
 
 /** Commands written as "npm run <script>" or "npm <builtin>" inside fenced code blocks or inline code. */
 export function listedNpmCommands(markdown: string): string[] {
@@ -28,7 +28,7 @@ export function unknownCommands(markdown: string): string[] {
     const kind = entry.slice(0, sep);
     const name = entry.slice(sep + 1);
     if (kind === "run") return !scripts.has(name);
-    return !BUILTINS.has(name) && !scripts.has(name);
+    return !BUILTINS.has(name);
   });
 }
 
@@ -49,6 +49,7 @@ describe("PLRNUI-125 CONTRIBUTING commands", () => {
   it("detects a command that does not exist", () => {
     assert.deepEqual(unknownCommands("```sh\nnpm run definitely-not-a-script\n```"), ["run:definitely-not-a-script"]);
     assert.deepEqual(unknownCommands("Use `npm run nope` now."), ["run:nope"]);
+    assert.deepEqual(unknownCommands("```sh\nnpm build\n```"), ["builtin:build"]);
     assert.deepEqual(unknownCommands("```sh\nnpm run typecheck && npm run missing-one\n```"), ["run:missing-one"]);
   });
 
