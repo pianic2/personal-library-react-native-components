@@ -1,2 +1,2 @@
-export { Column, Stack } from "./Column";
-export type { ColumnProps } from "./Column";
+export { Column, Stack } from "./Column.js";
+export type { ColumnProps } from "./Column.js";

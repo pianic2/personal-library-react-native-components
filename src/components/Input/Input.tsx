@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { TextInput, TextInputProps } from "react-native";
-import { P } from "../P/P";
-import { Small } from "../Small/Small";
-import { useTheme } from "../../theme/useTheme";
-import { Box } from "../Box/Box";
-import { Row } from "../Row/Row";
+import { P } from "../P/P.js";
+import { Small } from "../Small/Small.js";
+import { useTheme } from "../../theme/useTheme.js";
+import { Box } from "../Box/Box.js";
+import { Row } from "../Row/Row.js";
 
 export interface InputProps extends TextInputProps {
   label: string;

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { View, ViewProps } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "../../theme/useTheme.js";
 
 type SpaceKey = keyof ReturnType<typeof useTheme>["theme"]["space"];
 

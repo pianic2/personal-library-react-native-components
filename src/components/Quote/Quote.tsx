@@ -2,8 +2,8 @@
 
 import React from "react";
 import { View } from "react-native";
-import { Text } from "../Text/Text";
-import { useTheme } from "../../theme/useTheme";
+import { Text } from "../Text/Text.js";
+import { useTheme } from "../../theme/useTheme.js";
 
 export interface QuoteProps {
   children: React.ReactNode;

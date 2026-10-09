@@ -1,2 +1,2 @@
-export { TextGroup } from "./TextGroup";
-export type { TextGroupProps } from "./TextGroup";
+export { TextGroup } from "./TextGroup.js";
+export type { TextGroupProps } from "./TextGroup.js";

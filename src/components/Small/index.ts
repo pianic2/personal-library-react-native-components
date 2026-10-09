@@ -1,2 +1,2 @@
-export { Small } from "./Small";
-export type { SmallProps } from "./Small";
+export { Small } from "./Small.js";
+export type { SmallProps } from "./Small.js";

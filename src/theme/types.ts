@@ -1,13 +1,13 @@
 // src/theme/types.ts
 
-import type { Colors } from "../tokens/colors.base";
-import type { spacing, space } from "../tokens/spacing.base";
-import type { radius } from "../tokens/radius.base";
-import type { typography } from "../tokens/typography.base";
-import type { shadows } from "../tokens/shadows.base";
-import type { Shadow } from "../tokens/shadows.base";
-import type { zIndex } from "../tokens/zIndex.base";
-import { size } from "../tokens/size.base";
+import type { Colors } from "../tokens/colors.base.js";
+import type { spacing, space } from "../tokens/spacing.base.js";
+import type { radius } from "../tokens/radius.base.js";
+import type { typography } from "../tokens/typography.base.js";
+import type { shadows } from "../tokens/shadows.base.js";
+import type { Shadow } from "../tokens/shadows.base.js";
+import type { zIndex } from "../tokens/zIndex.base.js";
+import { size } from "../tokens/size.base.js";
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 type ThemeStyle = ViewStyle | TextStyle | ImageStyle;

@@ -1,8 +1,8 @@
 // ui/components/form/Textarea.tsx
 
-import { Input } from "../Input/Input";
-import { useTheme } from "../../theme/useTheme";
-import type { InputProps } from "../Input/Input";
+import { Input } from "../Input/Input.js";
+import { useTheme } from "../../theme/useTheme.js";
+import type { InputProps } from "../Input/Input.js";
 
 export interface TextareaProps
   extends Omit<InputProps, "multiline" | "textAlignVertical"> {}

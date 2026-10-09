@@ -9,9 +9,9 @@ import React, {
   useEffect,
 } from "react";
 
-import { createBaseTheme } from "./defaultTheme";
-import { createTheme } from "./createTheme";
-import type { Theme, ThemeMode, ThemeStorageAdapter } from "./types";
+import { createBaseTheme } from "./defaultTheme.js";
+import { createTheme } from "./createTheme.js";
+import type { Theme, ThemeMode, ThemeStorageAdapter } from "./types.js";
 
 const DEFAULT_THEME_STORAGE_KEY = "personal-library.theme";
 

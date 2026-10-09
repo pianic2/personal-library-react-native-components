@@ -1,2 +1,2 @@
-export { SideBar } from "./SideBar";
-export type { SideBarProps, SideBarVariant } from "./SideBar";
+export { SideBar } from "./SideBar.js";
+export type { SideBarProps, SideBarVariant } from "./SideBar.js";

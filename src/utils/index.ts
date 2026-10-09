@@ -1,3 +1,3 @@
-export * from "./mergeStyles";
-export * from "./cn";
-export * from "./platform";
+export * from "./mergeStyles.js";
+export * from "./cn.js";
+export * from "./platform.js";

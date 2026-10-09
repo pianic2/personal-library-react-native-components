@@ -2,7 +2,7 @@
 
 import React from "react";
 import { View, type DimensionValue } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "../../theme/useTheme.js";
 
 type Variant = "primary" | "info" | "success" | "warning" | "error";
 

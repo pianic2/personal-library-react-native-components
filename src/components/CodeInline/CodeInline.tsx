@@ -1,8 +1,8 @@
 // ui/components/typography/CodeInline.tsx
 
 import React from "react";
-import { Text } from "../Text/Text";
-import { useTheme } from "../../theme/useTheme";
+import { Text } from "../Text/Text.js";
+import { useTheme } from "../../theme/useTheme.js";
 import type { ComponentProps } from "react";
 
 export type CodeInlineProps = ComponentProps<typeof Text>;

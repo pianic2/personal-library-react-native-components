@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "../../theme/useTheme.js";
 
 type Size = "sm" | "md" | "lg";
 

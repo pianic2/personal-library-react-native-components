@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { Pressable, Text } from "react-native";
 
-import { Input } from "../Input/Input";
-import type { InputProps } from "../Input/Input";
+import { Input } from "../Input/Input.js";
+import type { InputProps } from "../Input/Input.js";
 
 export interface PasswordInputProps
   extends Omit<InputProps, "rightIcon" | "secureTextEntry"> {

@@ -2,13 +2,13 @@
 
 import React from "react";
 
-import { useTheme } from "../../theme/useTheme";
-import { Box } from "../Box";
-import { Column } from "../Column";
-import { Row } from "../Row";
-import { Text } from "../Text";
-import { Link } from "../Link";
-import { useOptionalNav } from "../NavContext";
+import { useTheme } from "../../theme/useTheme.js";
+import { Box } from "../Box/index.js";
+import { Column } from "../Column/index.js";
+import { Row } from "../Row/index.js";
+import { Text } from "../Text/index.js";
+import { Link } from "../Link/index.js";
+import { useOptionalNav } from "../NavContext/index.js";
 
 export interface BottomBarProps {
   maxItems?: number;

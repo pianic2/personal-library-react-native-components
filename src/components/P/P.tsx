@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "../Text/Text";
+import { Text } from "../Text/Text.js";
 import type { ComponentProps } from "react";
 
 export type PProps = ComponentProps<typeof Text>;

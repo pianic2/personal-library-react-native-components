@@ -1,7 +1,7 @@
 // src/theme/createTheme.ts
 
-import { defaultTheme } from "./defaultTheme";
-import type { Theme } from "./types";
+import { defaultTheme } from "./defaultTheme.js";
+import type { Theme } from "./types.js";
 
 type PlainObject = Record<string, unknown>;
 

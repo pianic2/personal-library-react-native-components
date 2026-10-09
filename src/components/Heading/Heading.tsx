@@ -1,7 +1,7 @@
 // ui/components/typography/Heading.tsx
 
-import { Text } from "../Text/Text";
-import { useTheme } from "../../theme/useTheme";
+import { Text } from "../Text/Text.js";
+import { useTheme } from "../../theme/useTheme.js";
 import type { ComponentProps } from "react";
 
 type Level = 1 | 2 | 3 | 4 | 5 | 6;

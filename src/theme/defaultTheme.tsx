@@ -1,13 +1,13 @@
 // src/theme/defaultTheme.ts
 
-import { spacing, space } from "../tokens/spacing.base";
-import { radius } from "../tokens/radius.base";
-import { typography } from "../tokens/typography.base";
-import { shadows } from "../tokens/shadows.base";
-import { zIndex } from "../tokens/zIndex.base";
-import { size } from "../tokens/size.base";
-import { resolveColors } from "../tokens/colors.base";
-import type { Theme, ThemeMode } from "./types";
+import { spacing, space } from "../tokens/spacing.base.js";
+import { radius } from "../tokens/radius.base.js";
+import { typography } from "../tokens/typography.base.js";
+import { shadows } from "../tokens/shadows.base.js";
+import { zIndex } from "../tokens/zIndex.base.js";
+import { size } from "../tokens/size.base.js";
+import { resolveColors } from "../tokens/colors.base.js";
+import type { Theme, ThemeMode } from "./types.js";
 
 
 export function createBaseTheme(mode: ThemeMode): Theme {

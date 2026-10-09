@@ -6,5 +6,5 @@ export {
   useNavPathname,
   useNavigate,
   useOptionalNav,
-} from "./NavContext";
-export type { NavContextValue, NavItem } from "./NavContext";
+} from "./NavContext.js";
+export type { NavContextValue, NavItem } from "./NavContext.js";

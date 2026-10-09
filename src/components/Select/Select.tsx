@@ -6,8 +6,8 @@ import {
   View,
   Modal,
 } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { Text } from "../Text";
+import { useTheme } from "../../theme/useTheme.js";
+import { Text } from "../Text/index.js";
 
 interface Option {
   label: string;

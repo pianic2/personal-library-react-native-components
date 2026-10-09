@@ -1,2 +1,2 @@
-export { BottomBar } from "./BottomBar";
-export type { BottomBarProps } from "./BottomBar";
+export { BottomBar } from "./BottomBar.js";
+export type { BottomBarProps } from "./BottomBar.js";

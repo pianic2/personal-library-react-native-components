@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { Platform, Pressable, ScrollView, View, type ViewStyle } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { Link } from "../Link";
-import { Text } from "../Text";
-import { useOptionalNav, type NavItem } from "../NavContext";
+import { useTheme } from "../../theme/useTheme.js";
+import { Link } from "../Link/index.js";
+import { Text } from "../Text/index.js";
+import { useOptionalNav, type NavItem } from "../NavContext/index.js";
 
 export type SideBarVariant = "fixed" | "embedded";
 

@@ -6,9 +6,9 @@ import {
   StyleProp,
   Platform,
 } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import type { Theme } from "../../theme";
-import { Shadow } from "../../tokens/shadows.base";
+import { useTheme } from "../../theme/useTheme.js";
+import type { Theme } from "../../theme/index.js";
+import { Shadow } from "../../tokens/shadows.base.js";
 
 export interface CardProps {
   children?: React.ReactNode;

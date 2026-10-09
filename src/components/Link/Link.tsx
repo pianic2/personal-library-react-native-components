@@ -9,8 +9,8 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { useOptionalNav } from "../NavContext";
+import { useTheme } from "../../theme/useTheme.js";
+import { useOptionalNav } from "../NavContext/index.js";
 
 type LinkVariant = "text" | "button";
 type LinkSize = "sm" | "md" | "lg";

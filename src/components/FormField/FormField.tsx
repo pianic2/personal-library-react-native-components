@@ -1,9 +1,9 @@
 import React, { useId } from "react";
 import { View, StyleSheet, ViewStyle } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { P } from "../P/P";
-import { Small } from "../Small/Small";
-import { B } from "../B/B";
+import { useTheme } from "../../theme/useTheme.js";
+import { P } from "../P/P.js";
+import { Small } from "../Small/Small.js";
+import { B } from "../B/B.js";
 
 
 type FormStatus = "default" | "error" | "success" | "warning";
