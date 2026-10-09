@@ -2,6 +2,7 @@ import type { ComponentProps } from "react";
 import type {
   AlertProps,
   BProps,
+  Breakpoint,
   BadgeProps,
   BottomBarProps,
   BoxProps,
@@ -52,6 +53,10 @@ import type {
   ThemeProvider,
   Tooltip,
   createThemeTokens,
+  isAndroid,
+  isIOS,
+  isWeb,
+  useBreakpoint,
 } from "../../src/index";
 
 /** Compile-time assertion helpers. A failing Expect<...> breaks `npm run typecheck:contracts`. */
@@ -248,4 +253,13 @@ export type TextAliasContracts = [
   Expect<Equal<PProps, TextProps>>,
   Expect<Equal<SmallProps, TextProps>>,
   Expect<Equal<CodeInlineProps, TextProps>>,
+];
+
+// Hooks and platform flags.
+export type HookAndUtilContracts = [
+  Expect<Equal<Breakpoint, "base" | "sm" | "md" | "lg" | "xl">>,
+  Expect<Equal<ReturnType<typeof useBreakpoint>, Breakpoint>>,
+  Expect<Equal<typeof isWeb, boolean>>,
+  Expect<Equal<typeof isIOS, boolean>>,
+  Expect<Equal<typeof isAndroid, boolean>>,
 ];
