@@ -72,7 +72,7 @@ describe("PLRNUI-448 ticket prompt", () => {
     assert.match(byKey.stdout, /^# PLRNUI-9000 \(E99-01\) Title of E99-01/);
     assert.match(byKey.stdout, /Execute Jira PLRNUI-9000\. Owned files: src\/a\.ts, tests\/a\.test\.ts/);
     assert.match(byKey.stdout, /Validation: npm run typecheck; npm test/);
-    assert.match(byKey.stderr, /estimated tokens: \d+/);
+    assert.match(byKey.stderr, /estimated tokens \(characters \/ 4\): \d+/);
   });
 
   it("is deterministic: same input, same sha256", () => {
@@ -131,6 +131,37 @@ describe("PLRNUI-448 ticket prompt", () => {
     const result = run("--all");
     assert.equal(result.status, 1);
     assert.match(result.stderr, /failed to render: E99-77/);
+  });
+
+  it("copies ticket text literally: replacement patterns and braces are not interpreted", () => {
+    writeBacklog([ticket("E99-01", { problem: "uses $& and $1 and {ticket} and {owned_files}" })]);
+    const out = run("E99-01").stdout;
+    assert.match(out, /Problem: uses \$& and \$1 and \{ticket\} and \{owned_files\}/);
+  });
+
+  it("fails closed when a mapped label points to a missing template, and on bad options or ticket data", () => {
+    writeFileSync(join(dir, "references", "class-map.json"), JSON.stringify({ ignore: [], map: { theme: "ghost" } }));
+    assert.equal(run("E99-01").status, 2);
+    assert.equal(spawnSync("node", [SCRIPT, "E99-01", "--backlog-dir"], { encoding: "utf8" }).status, 2);
+    assert.equal(run("--all", "E99-01").status, 2);
+    writeFileSync(join(dir, "references", "class-map.json"), JSON.stringify({ ignore: [], map: { theme: "component" } }));
+    writeBacklog([ticket("E99-01", { filesTouched: [] })]);
+    const result = run("E99-01");
+    assert.equal(result.status, 2);
+    assert.match(result.stderr, /unknown ticket/);
+  });
+
+  it("an unmapped ticket needs a template that can carry the UNMAPPED marker", () => {
+    writeBacklog([ticket("E99-01", { labels: ["e7"] })]);
+    writeFileSync(join(dir, "references", "component.md"), "No class line here {ticket}\n");
+    assert.equal(run("E99-01").status, 2);
+  });
+
+  it("--all lists tickets without a class mapping", () => {
+    writeBacklog([ticket("E99-01", { labels: ["e7"] }), ticket("E99-02")]);
+    const result = run("--all");
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /no class mapping .*: E99-01/);
   });
 
   it("fails closed when templates are missing", () => {

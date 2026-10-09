@@ -20,7 +20,10 @@ function parseArgs(argv) {
   const positional = [];
   const options = {};
   for (let i = 0; i < argv.length; i += 1) {
-    if (["--backlog-dir", "--jira-map", "--references-dir"].includes(argv[i])) options[argv[i]] = argv[++i];
+    if (["--backlog-dir", "--jira-map", "--references-dir"].includes(argv[i])) {
+      options[argv[i]] = argv[++i];
+      if (!options[argv[i - 1]]) options.invalid = true;
+    }
     else if (argv[i] === "--all") options.all = true;
     else positional.push(argv[i]);
   }
@@ -55,7 +58,9 @@ function adrIds(ticket) {
 function pickClass(ticket, classMap, templates) {
   for (const label of ticket.labels ?? []) {
     const template = classMap[label];
-    if (template && templates.has(template)) return template;
+    if (!template) continue;
+    if (!templates.has(template)) throw new Error(`label ${label} maps to missing template ${template}`);
+    return template;
   }
   return undefined;
 }
@@ -67,9 +72,13 @@ function bullets(items) {
 export function renderPrompt(ticket, jiraKey, data) {
   const className = pickClass(ticket, data.classMap, data.templates);
   // Generic template body is reused for an unmapped ticket, with the class line replaced by a stop instruction.
-  let template = data.templates.get(className ?? [...data.templates.keys()].sort()[0]);
+  const fallback = [...new Set(Object.values(data.classMap))].filter((name) => data.templates.has(name)).sort()[0];
+  let template = data.templates.get(className ?? fallback);
+  if (template === undefined) throw new Error("no class template available");
   if (!className) {
-    template = template.replace(/^Class:.*$/m, "Class: UNMAPPED. No label of this ticket maps to a class template: stop and ask the PO before implementing.");
+    const marked = template.replace(/^Class:.*$/m, "Class: UNMAPPED. No label of this ticket maps to a class template: stop and ask the PO before implementing.");
+    if (marked === template) throw new Error("template without a Class: line cannot carry the UNMAPPED marker");
+    template = marked;
   }
   const fill = {
     ticket: jiraKey,
@@ -93,12 +102,15 @@ export function renderPrompt(ticket, jiraKey, data) {
 function resolve(arg, data) {
   const local = data.byKey.get(arg) ?? arg;
   const ticket = data.tickets.get(local);
-  return ticket ? { ticket, jiraKey: data.keys[ticket.id] ?? arg } : undefined;
+  if (!ticket) return undefined;
+  const strings = (value) => Array.isArray(value) && value.length > 0 && value.every((item) => typeof item === "string");
+  if (!strings(ticket.filesTouched) || typeof ticket.title !== "string" || typeof ticket.problem !== "string") return undefined;
+  return { ticket, jiraKey: data.keys[ticket.id] ?? arg };
 }
 
 function main() {
   const { positional, options } = parseArgs(process.argv.slice(2));
-  if (!options.all && positional.length !== 1) {
+  if (options.invalid || (options.all ? positional.length !== 0 : positional.length !== 1)) {
     console.error("usage: ticket-prompt.mjs <PLRNUI-n|E18-05> | --all [--backlog-dir d] [--jira-map f] [--references-dir d]");
     return 2;
   }
@@ -118,7 +130,7 @@ function main() {
     const prompt = renderPrompt(found.ticket, found.jiraKey, data);
     const tokens = estimateTokens(prompt);
     process.stdout.write(prompt);
-    console.error(`estimated tokens: ${tokens}${tokens > BUDGET_TOKENS ? ` - OVER the ${BUDGET_TOKENS} budget, consider splitting ${found.ticket.id}` : ""}`);
+    console.error(`estimated tokens (characters / 4): ${tokens}${tokens > BUDGET_TOKENS ? ` - OVER the ${BUDGET_TOKENS} budget, consider splitting ${found.ticket.id}` : ""}`);
     return 0;
   }
   const index = readJson(join(options["--backlog-dir"] ?? join(REPO_ROOT, "audit", "texo-v1", "backlog"), "_index.json"));
@@ -158,4 +170,4 @@ try {
   console.error(`ticket-prompt failed: ${error.message}`);
   code = 2;
 }
-process.exit(code);
+process.exitCode = code;
