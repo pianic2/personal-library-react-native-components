@@ -1,0 +1,155 @@
+name: Security
+
+# Supply-chain checks (PLRNUI-248): dependency review on pull requests, CodeQL, a scheduled
+# npm audit and a CycloneDX SBOM that is attached to published releases.
+# The repository must have the dependency graph and code scanning available
+# (public repository or GitHub Advanced Security) for dependency-review and CodeQL to run.
+
+on:
+  pull_request:
+    branches:
+      - texo/v1
+      - main
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-review:
+    name: dependency-review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+  codeql:
+    name: codeql
+    if: github.event_name != 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:javascript-typescript
+
+  npm-audit:
+    name: npm-audit
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      # The audit gate runs `npm audit --omit=dev --audit-level=high` and applies the owner-approved,
+      # time-boxed exceptions of scripts/audit-gate-lib.mjs (the same gate as `npm run release:security`).
+      - name: Audit production dependencies
+        run: node scripts/audit-gate.mjs
+
+  sbom:
+    name: sbom
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      - name: Generate CycloneDX SBOM
+        run: npm sbom --sbom-format cyclonedx --omit dev > sbom.cdx.json
+
+      - name: Check SBOM is not empty
+        run: node -e "const s=JSON.parse(require('fs').readFileSync('sbom.cdx.json','utf8')); if (s.bomFormat !== 'CycloneDX' || !Array.isArray(s.components)) process.exit(1)"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
+          if-no-files-found: error
+
+  sbom-release:
+    name: sbom-release
+    if: github.event_name == 'release'
+    needs: sbom
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download SBOM
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom-cyclonedx
+
+      - name: Attach SBOM to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+          REPO: ${{ github.repository }}
+        run: gh release upload "$TAG" sbom.cdx.json --repo "$REPO" --clobber
