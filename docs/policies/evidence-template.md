@@ -30,7 +30,7 @@ Acceptance criteria:
 Ticket evidence entries (EVERY entry of the ticket's `evidence` array as its own line, verbatim):
 - <entry text>: <path, link or pasted output that satisfies it, or "see Files changed" / "see Test output" when a dedicated field above already holds it>
 
-Independent review: <verdict, number of rounds, blockers/majors fixed>. Changes after the last review: <none|list each change, named as one of the two kinds below>. Any change after a PASS needs a new independent review of the new head, and the Independent review field then reports the verdict on that head, except two kinds: a clean merge of `texo/v1` into the branch (no conflict-resolution edits), and a wording fix answering a finding the independent reviewer classed as minor. A fix to a blocker or a major always needs the new review.
+Independent review: <verdict, number of rounds, blockers/majors fixed>. Changes after the last review: <none|list each change>. Any change after a PASS needs a new independent review of the new head (`skills/texo-review/SKILL.md`), and the Independent review field then reports the verdict on that head. If a change was merged without the new review, say so under "Not verified" below: the merge is then outside the protocol, and the PO decides whether to accept it.
 Not verified, known limits and deviations: <list, or none>.
 ```
 
