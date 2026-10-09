@@ -46,7 +46,7 @@ Each item names the command or artifact that proves it. "Available" means it exi
 | 14 | Security audit clean or excepted | `npm run release:security` (`scripts/audit-gate.mjs`; exceptions with expiry in `scripts/audit-gate-lib.mjs`); Dependabot and SBOM (E17-10, needs the repository security features enabled) | Available |
 | 15 | Licenses and NOTICE | `node scripts/license-check.mjs` and `NOTICE` (`docs/policies/licensing.md`) | Available (not in `release:check`) |
 | 16 | Token usage | `node scripts/check-token-usage.mjs` (currently reports `src/components/Modal/Modal.tsx`) | Available; must pass or be allowlisted with a reason |
-| 17 | API conventions | `node scripts/check-api-conventions.mjs` and its baseline (E14-13) | Available once merged |
+| 17 | API conventions | `node scripts/check-api-conventions.mjs` and its baseline (E14-13) | Available |
 | 18 | Compatibility matrix | `npm run docs:compat:check`; supported entry with evidence in `config/compatibility.json` | Available |
 | 19 | Package identity | `config/package-identity.json` valid (`scripts/lib/identity.mjs`); name and repository decision H1 applied (E15-01, E15-10) | Name decided, cutover pending |
 | 20 | Migration guide tokens resolved | No placeholder token left in the migration guide (E15-12, E15-10) | Planned |
@@ -54,7 +54,7 @@ Each item names the command or artifact that proves it. "Available" means it exi
 | 22 | Release notes and changelog | Format of E17-09; notes for `1.0.0` | Planned |
 | 23 | Publishing path | Release workflow with npm trusted publishing and provenance (E17-02); tags and GitHub Release created by the release operator, never by an agent | Planned |
 | 24 | Rollback runbook exists | E17-13 | Planned |
-| 25 | Open human decisions closed | No `HUMAN REVIEW REQUIRED` marker left in the ADRs that gate the release (ADR 0009, ADR 0012); `grep -rn "HUMAN REVIEW" audit/adr` | Open today |
+| 25 | Open human decisions closed | No `HUMAN REVIEW REQUIRED` marker left in the ADRs that gate the release (ADR 0009, ADR 0002); `grep -rn "HUMAN REVIEW" audit/adr` | Open today |
 
 ## 4. Go/no-go
 
@@ -76,7 +76,6 @@ A single failed row without a PO-accepted exception is a no-go. Planned items wh
 
 ## 6. Open points for the PO
 
-- Confirm that no public `rc` is published and the rehearsal stays on a local registry (H6 consequence).
 - Confirm the freeze rules and the checklist rows that are blocking (all rows) versus advisory.
 - Name the release operator and the npm scope that will hold Texo (`@theopificium`).
 - Decide the dated go/no-go meeting and who attends besides the PO.
