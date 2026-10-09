@@ -1,0 +1,41 @@
+name: Component request
+description: Ask for a new component or for a missing variant, state or prop of an existing one.
+title: "[Component] "
+labels:
+  - enhancement
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Component name
+      description: The new component, or the existing component you want changed.
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+      description: Where would you use it and what do existing components not cover?
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: Suggested props and states
+      description: Props, variants and states (loading, disabled, error) you expect.
+    validations:
+      required: false
+  - type: textarea
+    id: accessibility
+    attributes:
+      label: Accessibility expectations
+      description: Role, label and keyboard or screen reader behavior.
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to similar components or design guidelines.
+    validations:
+      required: false

@@ -36,6 +36,10 @@ import {
   TopBar,
 } from "../../src";
 
+// Host components of the react-native test shim are plain strings ("View", "Text", ...); the cast keeps
+// findByType type-checked under tsconfig.tests.json without changing what is matched.
+const host = (name: string) => name as unknown as React.ElementType;
+
 function renderWithTheme(element: React.ReactElement) {
   let renderer: TestRenderer.ReactTestRenderer | undefined;
 
@@ -126,7 +130,7 @@ describe("component smoke render baseline", () => {
     },
     {
       name: "Badge",
-      element: <Badge label="New" />,
+      element: <Badge>New</Badge>,
     },
     {
       name: "Input",
@@ -198,7 +202,7 @@ describe("component smoke render baseline", () => {
         <Box padding="sm">
           <Row gap="sm">
             <Button label="Save" onPress={() => undefined} />
-            <Badge label="New" />
+            <Badge>New</Badge>
           </Row>
         </Box>
         <Divider />
@@ -228,10 +232,18 @@ describe("component smoke render baseline", () => {
   });
 });
 
+describe("PLRNUI-185 Badge children", () => {
+  it("renders the children text", () => {
+    const renderer = renderWithTheme(<Badge>New</Badge>);
+    const textNodes = renderer.root.findAllByType(host("Text"));
+    assert.ok(textNodes.some((node) => node.children.includes("New")), "Badge must render its children text");
+  });
+});
+
 describe("PLRNUI-21 component blocker remediation coverage", () => {
   it("applies clamped ProgressBar fill width", () => {
     const renderer = renderWithTheme(<ProgressBar progress={150} />);
-    const views = renderer.root.findAllByType("View");
+    const views = renderer.root.findAllByType(host("View"));
 
     const fill = views.find((node) => {
       const style = flattenStyle(node.props.style);
@@ -244,7 +256,7 @@ describe("PLRNUI-21 component blocker remediation coverage", () => {
 
   it("uses a resolved CodeInline size for lineHeight", () => {
     const renderer = renderWithTheme(<CodeInline>inline code</CodeInline>);
-    const textNodes = renderer.root.findAllByType("Text");
+    const textNodes = renderer.root.findAllByType(host("Text"));
 
     const codeText = textNodes.find((node) => node.children.includes("inline code"));
 
@@ -257,7 +269,7 @@ describe("PLRNUI-21 component blocker remediation coverage", () => {
     const renderer = renderWithTheme(
       <Textarea label="Message" value="Hello" onChangeText={() => undefined} />
     );
-    const input = renderer.root.findByType("TextInput");
+    const input = renderer.root.findByType(host("TextInput"));
 
     assert.equal(input.props.multiline, true);
     assert.equal(input.props.textAlignVertical, "top");
@@ -272,7 +284,7 @@ describe("PLRNUI-21 component blocker remediation coverage", () => {
       />
     );
 
-    const input = renderer.root.findByType("TextInput");
+    const input = renderer.root.findByType(host("TextInput"));
     assert.equal(input.props.secureTextEntry, true);
 
     const toggle = renderer.root.findByProps({
@@ -285,7 +297,7 @@ describe("PLRNUI-21 component blocker remediation coverage", () => {
       toggle.props.onPress();
     });
 
-    const updatedInput = renderer.root.findByType("TextInput");
+    const updatedInput = renderer.root.findByType(host("TextInput"));
     assert.equal(updatedInput.props.secureTextEntry, false);
     assert.equal(
       renderer.root.findByProps({ accessibilityLabel: "Hide password" }).props
@@ -305,7 +317,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
 
   it("renders TopBar without consumer-facing placeholder text when slots are missing", () => {
     const renderer = renderWithTheme(<TopBar />);
-    const textNodes = renderer.root.findAllByType("Text");
+    const textNodes = renderer.root.findAllByType(host("Text"));
 
     assert.equal(
       textNodes.some((node) => node.children.includes("a")),
@@ -323,7 +335,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
         bottomMaxItems={2}
       />
     );
-    const textNodes = renderer.root.findAllByType("Text");
+    const textNodes = renderer.root.findAllByType(host("Text"));
     const labels = textNodes.flatMap((node) => node.children);
 
     assert.ok(labels.includes("Home"));
@@ -350,7 +362,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
 
   it("does not crash Link without router adapter or onPress", () => {
     const renderer = renderWithTheme(<Link href="/safe">Safe link</Link>);
-    const pressable = renderer.root.findByType("Pressable");
+    const pressable = renderer.root.findByType(host("Pressable"));
 
     act(() => {
       pressable.props.onPress();
@@ -368,7 +380,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
         Safe link
       </Link>
     );
-    const pressable = renderer.root.findByType("Pressable");
+    const pressable = renderer.root.findByType(host("Pressable"));
 
     act(() => {
       pressable.props.onPress();
@@ -391,7 +403,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
         Adapter link
       </Link>
     );
-    const pressable = renderer.root.findByType("Pressable");
+    const pressable = renderer.root.findByType(host("Pressable"));
 
     act(() => {
       pressable.props.onPress();
@@ -409,7 +421,7 @@ describe("PLRNUI-22 navigation component coverage", () => {
         layout="sidebar"
       />
     );
-    const textNodes = renderer.root.findAllByType("Text");
+    const textNodes = renderer.root.findAllByType(host("Text"));
     const labels = textNodes.flatMap((node) => node.children);
 
     assert.ok(renderer.toJSON());
