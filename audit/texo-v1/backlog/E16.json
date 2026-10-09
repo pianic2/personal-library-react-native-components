@@ -9,8 +9,8 @@
       "texo-v1",
       "oss-readiness",
       "governance",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "CODEOWNERS contains '* @optimus' with a comment 'Replace @optimus with the canonical GitHub owner'; repo owner is pianic2 elsewhere.",
     "value": "Review routing and branch protection work.",
@@ -34,8 +34,7 @@
       "api output"
     ],
     "risks": [
-      "Human must provide handles",
-      "BLOCKED on H1: License choice (open source, well-structured) and CODEOWNERS handle(s). Name @theopificium/texo, repo theopificium/texo and contact info@theopificium.it are DECIDED.. Unblock condition: Human picks the license (recommendation: MIT + SPDX headers + THIRD_PARTY_NOTICES + DCO, or Apache-2.0 + NOTICE) and gives CODEOWNERS GitHub handle(s)."
+      "Human must provide handles"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -50,10 +49,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -251,8 +248,8 @@
       "oss-readiness",
       "legal",
       "security",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Package ships MIT LICENSE (c) 2026 Niccolo Piazzi with zero runtime deps today, but future E8/E7 optional peers and bundled assets (fonts, icons) need license checks.",
     "value": "Avoid incompatible licenses entering the package.",
@@ -278,8 +275,7 @@
       "output"
     ],
     "risks": [
-      "License holder name in LICENSE for Texo is a human decision",
-      "BLOCKED on H1: License choice (open source, well-structured) and CODEOWNERS handle(s). Name @theopificium/texo, repo theopificium/texo and contact info@theopificium.it are DECIDED.. Unblock condition: Human picks the license (recommendation: MIT + SPDX headers + THIRD_PARTY_NOTICES + DCO, or Apache-2.0 + NOTICE) and gives CODEOWNERS GitHub handle(s)."
+      "License holder name in LICENSE for Texo is a human decision"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -296,10 +292,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

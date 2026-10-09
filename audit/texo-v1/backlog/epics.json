@@ -1050,6 +1050,7 @@
           0
         ],
         "tickets": [
+          "E16-01",
           "E16-03",
           "E16-04"
         ]
@@ -1060,12 +1061,12 @@
         "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
         "waves": [
           0,
-          1
+          0
         ],
         "tickets": [
           "E16-05",
-          "E16-10",
-          "E16-02"
+          "E16-09",
+          "E16-10"
         ]
       },
       {
@@ -1077,20 +1078,10 @@
           14
         ],
         "tickets": [
+          "E16-02",
           "E16-06",
           "E16-08",
           "E8-28"
-        ]
-      },
-      {
-        "order": 4,
-        "title": "Blocked on human decisions",
-        "decisions": [
-          "H1"
-        ],
-        "tickets": [
-          "E16-01",
-          "E16-09"
         ]
       }
     ]
@@ -1158,20 +1149,20 @@
   },
   {
     "key": "E18",
-    "title": "Agent execution harness (zero-cost)",
-    "goal": "Run the approved backlog with local or free models under a hard zero-cost rule: ticket queue, ticket branches, validation, independent review and gated merge into texo/v1.",
+    "title": "Execution kit: Jira-driven targeted prompts and skills (zero cost)",
+    "goal": "No harness (PO decision 2026-10-09): execute the approved backlog with targeted prompts and skills driven by Jira, branch per ticket into texo/v1, independent review in a separate session, minimal tokens.",
     "successCriteria": [
-      "Harness refuses paid providers by default",
-      "A reference ticket goes queue -> branch -> validation -> review -> merge into texo/v1 without human steps",
-      "main is never pushed or merged by the harness",
-      "Benchmark report with routing table exists"
+      "A ticket can be executed from a starter prompt of <= 120 tokens using the texo-execute skill",
+      "Ownership and commit conventions are enforced mechanically (local hook and CI)",
+      "Independent review runs from the texo-review skill in a separate session",
+      "Token-economy report exists for 5 reference tickets"
     ],
     "ticketCount": 13,
     "v1TicketCount": 13,
     "milestones": [
       {
         "order": 1,
-        "title": "Architecture, providers, queue",
+        "title": "Protocol, skill and JQL",
         "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
         "waves": [
           0,
@@ -1186,31 +1177,31 @@
       },
       {
         "order": 2,
-        "title": "Git, context, edits, validation",
+        "title": "Conventions, guards and CI",
         "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
         "waves": [
           1,
-          3
+          2
         ],
         "tickets": [
-          "E18-05",
           "E18-06",
           "E18-07",
-          "E18-08"
+          "E18-10",
+          "E18-05"
         ]
       },
       {
         "order": 3,
-        "title": "Review, merge gate, state, benchmark, runbook",
+        "title": "Review skill, evidence, checkpoint, tuning, runbook",
         "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
         "waves": [
-          3,
+          2,
           6
         ],
         "tickets": [
-          "E18-10",
-          "E18-11",
+          "E18-08",
           "E18-09",
+          "E18-11",
           "E18-13",
           "E18-12"
         ]

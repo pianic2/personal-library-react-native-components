@@ -843,7 +843,7 @@
     "id": "E17-14",
     "epic": "E17",
     "type": "Task",
-    "title": "Define the 1.0 stable bar checklist and stable set",
+    "title": "Define the release maturity tiers (draft, beta, stable) and the stable/beta bar",
     "priority": "High",
     "labels": [
       "texo-v1",
@@ -856,17 +856,21 @@
     "problem": "The plan's own 1.0 gate requires a non-empty stable set but no ticket defines the stable bar or promotes anything (R1 B1).",
     "value": "An operational, script-checked definition of 'stable' and the list of components that must meet it for 1.0.",
     "scope": [
-      "docs/policies/stable-bar.md checklist: ADR 0014 check clean with no baseline entry, a11y contract row green (E9-02), device protocol run (E9-14), docs Usage/Stability present (E1-07), per-subpath snapshot frozen (E14-11), no `as any`",
-      "config/stable-set.json with the ADR-R10 proposal (Text, Heading, Box, Row, Column, Divider, Touchable, Button, Icon, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field/Label, Card/Surface, Badge, Spinner, ProgressBar, Alert, Screen, ThemeProvider/TexoProvider, useTheme, tokens)",
-      "scripts/check-stable-bar.mjs verifying each listed item"
+      "docs/policies/stable-bar.md: tiers draft (not published), beta (published, flagged @beta) and stable (semver guaranteed)",
+      "Beta bar (PO 2026-10-09): shown in the example/catalog app with all states, tests green (render + a11y contract row), deeply integrated in the system (TexoProvider, tokens, API conventions ADR 0014, wiring done, docs and meta present) and ZERO known bugs: no open bug ticket, no TODO/FIXME, no skipped or disabled test",
+      "Stable bar = beta bar plus: ADR 0014 check clean with no baseline entry, a11y contract row green (E9-02), device protocol run (E9-14), docs Usage/Stability present (E1-07), per-subpath snapshot frozen (E14-11), no `as any`",
+      "config/stable-set.json holds the ADR-R10 floor set (Text, Heading, Box, Row, Column, Divider, Touchable, Button, Icon, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field/Label, Card/Surface, Badge, Spinner, ProgressBar, Alert, Screen, ThemeProvider/TexoProvider, useTheme, tokens); any other component that passes the stable bar at release time is stable too; components that fail the beta bar stay draft and are not published",
+      "scripts/check-stable-bar.mjs with --tier beta|stable verifying each component and printing the computed tier"
     ],
     "outOfScope": [
       "Renaming package, repo or imports (Texo cutover is E15)"
     ],
     "acceptance": [
-      "node scripts/check-stable-bar.mjs --validate exits 0 and config/stable-set.json lists exactly the H3-confirmed set",
-      "node scripts/check-stable-bar.mjs exits 1 for a fixture component containing `as any` (tests/scripts/check-stable-bar.test.ts)",
-      "docs/policies/stable-bar.md lists the 6 checklist items (grep -c '^- ' >= 6)"
+      "node scripts/check-stable-bar.mjs --validate exits 0 and config/stable-set.json lists the ADR-R10 floor set",
+      "node scripts/check-stable-bar.mjs --tier stable exits 1 for a fixture component containing `as any` (tests/scripts/check-stable-bar.test.ts)",
+      "node scripts/check-stable-bar.mjs --tier beta exits 1 for a fixture component with a skipped test or a FIXME comment (tests/scripts/check-stable-bar.test.ts)",
+      "docs/policies/stable-bar.md defines the draft, beta and stable tiers and lists the stable checklist items (grep -c '^- ' >= 6)",
+      "The script prints the computed tier for every exported component (output captured as evidence)"
     ],
     "dependencies": [
       "E1-07",

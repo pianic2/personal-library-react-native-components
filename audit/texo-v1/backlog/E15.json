@@ -907,10 +907,11 @@
     "problem": "Hardcoded names remain after E14-07/E15-08 (package.json name/repository, release-guard, src/index.ts PACKAGE_NAME, mkdocs, docs).",
     "value": "The actual rename done mechanically from config, in one reviewable PR.",
     "scope": [
-      "Set identity config target=final, legacy=old name, shim.enabled=true",
+      "Set identity config target=final (@theopificium/texo, repo theopificium/texo), legacy=old name, shim.enabled=true",
       "Update package.json name, repository, homepage; src/index.ts PACKAGE_NAME per ADR 0013",
       "Update docs imports via codemod run on docs/ and examples/",
-      "Run full release:check + consumer smokes incl. --via-shim"
+      "Run full release:check + consumer smokes incl. --via-shim",
+      "PO decision 2026-10-09: the GitHub repository is transferred from pianic2/personal-library-react-native-components to theopificium and renamed texo AT CUTOVER (PO performs the transfer; GitHub redirects keep old URLs working); after the transfer update repository URLs, CODEOWNERS handles and the session GitHub scope"
     ],
     "outOfScope": [
       "Renaming the package, repo or imports",

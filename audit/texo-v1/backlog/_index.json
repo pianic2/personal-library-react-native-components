@@ -298,12 +298,12 @@
       "texo-v1",
       "oss-readiness",
       "governance",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E16-03",
@@ -368,12 +368,12 @@
       "oss-readiness",
       "legal",
       "security",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E16-10",
@@ -450,12 +450,12 @@
   {
     "id": "E18-01",
     "epic": "E18",
-    "title": "ADR 0020: zero-cost agent harness architecture and provider policy",
+    "title": "ADR 0020: Jira-driven ticket execution protocol (targeted prompts and skills, zero cost)",
     "size": "S",
     "wave": 0,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
       "adr",
       "ready",
@@ -746,14 +746,15 @@
   {
     "id": "E18-02",
     "epic": "E18",
-    "title": "Harness provider layer: OpenAI-compatible client, local and free-tier routing, cost guard",
+    "title": "Skill texo-execute: execute one Jira ticket with targeted prompt templates per ticket class",
     "size": "M",
     "wave": 1,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "providers",
+      "skill",
+      "prompts",
       "ready",
       "awaiting-po-approval"
     ],
@@ -766,14 +767,14 @@
   {
     "id": "E18-03",
     "epic": "E18",
-    "title": "Harness ticket queue: approved, unblocked tickets in dependency order with file locks",
-    "size": "M",
+    "title": "Jira JQL set for ticket selection (ready queue, by wave, blocked, in review)",
+    "size": "S",
     "wave": 1,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "queue",
+      "jira",
       "ready",
       "awaiting-po-approval"
     ],
@@ -786,12 +787,12 @@
   {
     "id": "E18-04",
     "epic": "E18",
-    "title": "Harness git manager: ticket branches, commit convention, PR to texo/v1, push guards",
-    "size": "M",
+    "title": "Branch and commit conventions: commit-msg check, branch naming, no-main guard",
+    "size": "S",
     "wave": 1,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
       "git",
       "ready",
@@ -804,16 +805,16 @@
     "blocked": false
   },
   {
-    "id": "E18-05",
+    "id": "E18-06",
     "epic": "E18",
-    "title": "Harness context pack builder: minimal ticket context under a token budget",
-    "size": "M",
+    "title": "File-ownership guard: a branch diff may touch only the ticket's owned files",
+    "size": "S",
     "wave": 1,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "context",
+      "guard",
       "ready",
       "awaiting-po-approval"
     ],
@@ -824,17 +825,37 @@
     "blocked": false
   },
   {
-    "id": "E18-06",
+    "id": "E18-07",
     "epic": "E18",
-    "title": "Harness edit protocol and sandbox: structured edits, path ownership, command allowlist",
-    "size": "M",
+    "title": "Evidence template and Jira evidence comment procedure",
+    "size": "S",
     "wave": 1,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "edits",
-      "safety",
+      "jira",
+      "evidence",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-10",
+    "epic": "E18",
+    "title": "Checkpoint and resume protocol: STATE.md per wave and Jira progress comments",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "execution-kit",
+      "zero-cost",
+      "state",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1174,21 +1195,65 @@
     "blocked": false
   },
   {
-    "id": "E18-07",
+    "id": "E18-05",
     "epic": "E18",
-    "title": "Harness validation loop: run ticket checks, retry policy, evidence capture",
+    "title": "scripts/ticket-prompt.mjs: render a minimal execution prompt for a Jira key",
     "size": "M",
     "wave": 2,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "validation",
+      "prompts",
+      "script",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
-      "E18-02",
+      "E18-01",
+      "E18-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-08",
+    "epic": "E18",
+    "title": "Skill texo-review: independent review checklist run in a separate session",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "execution-kit",
+      "zero-cost",
+      "skill",
+      "review",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01",
+      "E18-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-09",
+    "epic": "E18",
+    "title": "CI on texo/v1 PRs: fast checks, ownership and commit checks, branch protection docs",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "execution-kit",
+      "zero-cost",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-04",
       "E18-06"
     ],
     "postV1": false,
@@ -1874,67 +1939,46 @@
     "blocked": false
   },
   {
-    "id": "E18-08",
-    "epic": "E18",
-    "title": "Harness independent review stage with a different model and a rubric",
-    "size": "M",
-    "wave": 3,
-    "labels": [
-      "texo-v1",
-      "harness",
-      "zero-cost",
-      "review",
-      "ready",
-      "awaiting-po-approval"
-    ],
-    "deps": [
-      "E18-02",
-      "E18-07"
-    ],
-    "postV1": false,
-    "blocked": false
-  },
-  {
-    "id": "E18-10",
-    "epic": "E18",
-    "title": "Harness run state, resume, kill switch, run log and Jira evidence comments",
-    "size": "M",
-    "wave": 3,
-    "labels": [
-      "texo-v1",
-      "harness",
-      "zero-cost",
-      "state",
-      "ready",
-      "awaiting-po-approval"
-    ],
-    "deps": [
-      "E18-03",
-      "E18-04",
-      "E18-07"
-    ],
-    "postV1": false,
-    "blocked": false
-  },
-  {
     "id": "E18-11",
     "epic": "E18",
-    "title": "Local model qualification: benchmark a 27B-class model on reference tickets",
+    "title": "Token-economy pass: trim prompts and skills on 5 reference tickets",
     "size": "M",
     "wave": 3,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
-      "benchmark",
+      "tokens",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E18-02",
+      "E18-05"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-13",
+    "epic": "E18",
+    "title": "Execution runbook: copy-paste starter prompts for author, reviewer, resume",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "execution-kit",
+      "zero-cost",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-02",
+      "E18-03",
       "E18-05",
-      "E18-06",
-      "E18-07"
+      "E18-08",
+      "E18-10"
     ],
     "postV1": false,
     "blocked": false
@@ -3130,49 +3174,6 @@
     "deps": [
       "E14-10",
       "E15-03"
-    ],
-    "postV1": false,
-    "blocked": false
-  },
-  {
-    "id": "E18-09",
-    "epic": "E18",
-    "title": "Merge gate: CI on texo/v1 PRs and merge only on green CI plus passed review",
-    "size": "S",
-    "wave": 4,
-    "labels": [
-      "texo-v1",
-      "harness",
-      "zero-cost",
-      "ci",
-      "merge",
-      "ready",
-      "awaiting-po-approval"
-    ],
-    "deps": [
-      "E18-04",
-      "E18-08"
-    ],
-    "postV1": false,
-    "blocked": false
-  },
-  {
-    "id": "E18-13",
-    "epic": "E18",
-    "title": "Harness runbook: setup on a local GPU machine and with free-tier keys",
-    "size": "S",
-    "wave": 4,
-    "labels": [
-      "texo-v1",
-      "harness",
-      "zero-cost",
-      "docs",
-      "ready",
-      "awaiting-po-approval"
-    ],
-    "deps": [
-      "E18-10",
-      "E18-11"
     ],
     "postV1": false,
     "blocked": false
@@ -4677,12 +4678,12 @@
   {
     "id": "E18-12",
     "epic": "E18",
-    "title": "Zero-cost AI eval runner on the harness provider layer (for E13-31)",
+    "title": "Minimal in-session AI eval procedure for E13-31 (10 tasks, 2 arms)",
     "size": "S",
     "wave": 6,
     "labels": [
       "texo-v1",
-      "harness",
+      "execution-kit",
       "zero-cost",
       "evals",
       "ready",
@@ -4690,7 +4691,7 @@
     ],
     "deps": [
       "E13-30",
-      "E18-02"
+      "E18-01"
     ],
     "postV1": false,
     "blocked": false
@@ -7575,7 +7576,7 @@
   {
     "id": "E17-14",
     "epic": "E17",
-    "title": "Define the 1.0 stable bar checklist and stable set",
+    "title": "Define the release maturity tiers (draft, beta, stable) and the stable/beta bar",
     "size": "M",
     "wave": 11,
     "labels": [

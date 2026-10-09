@@ -66,3 +66,18 @@ Nothing here renames the package/repo/imports; all choices keep the future cutov
 5. Confirm: stable set is a floor and unfinished components stay draft (H3 reading above).
 6. Where the harness runs: PO machine with a local model (GPU/VRAM or Apple unified memory?) or only CI with free-tier providers.
 7. H6 consequence: confirm no public `rc` publishes (1.0.0 straight, rehearsed on a local registry).
+
+## PO decisions — round 2 (2026-10-09, answers to the 7 open items)
+
+| # | Decision (PO) | Effect |
+|---|---|---|
+| 1 | License **MIT** | E16-09 unblocked. Implementation per recommendation: SPDX headers, THIRD_PARTY_NOTICES, DCO sign-off |
+| 2 | CODEOWNERS handle **pianic2** | E16-01 unblocked (use `@pianic2`) |
+| 3 | Repository transfer/rename (pianic2/personal-library-react-native-components -> theopificium/texo) **at cutover** | Added to E15-14 scope; PO performs the GitHub transfer |
+| 4 | `texo/v1` -> `main` stays with the PO | Confirmed |
+| 5 | Stable is a floor; **beta** components are also published but must be shown in the example app, have tests, be deeply integrated in the system and have **no known bugs or problems**; anything else stays draft (unpublished) | E17-14 rewritten: tiers draft / beta / stable with explicit beta bar and `check-stable-bar.mjs --tier` |
+| 6 | **No harness** (too heavy): only targeted prompts and targeted skills, using Jira | E18 reduced to an execution kit (skill texo-execute, skill texo-review, prompt templates, JQL set, commit/ownership guards, CI on texo/v1, runbook); same 13 ticket ids, no ticket deleted. Stale Blocks links from the old E18 design remain in Jira (no tool to delete links); they only over-constrain order slightly and create no cycle |
+| 7 | **1.0.0** straight and **local registry rehearsal** | No public rc publishes; E17-12 (Verdaccio) is the rehearsal |
+
+Open (low stakes, defaults apply unless changed): 2.4 permission mode, 2.5 allowed Jira transitions for sessions, 2.6 silence = default after N days, 2.7 scheduled runs.
+Backlog after round 2: 361 tickets, 361 ready, 0 blocked, 0 post-1.0, 19 waves, validator clean. Ticket approval (`po-approved`) is the PO's step and can now happen.

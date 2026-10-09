@@ -25,6 +25,9 @@ A new orchestrator can resume from here without redoing the audit.
 ## PO decisions 2026-10-09
 See DECISIONS.md section "PO decisions". Backlog regenerated: 361 tickets, 0 post-1.0, 2 blocked (E16-01 CODEOWNERS, E16-09 license), E18 harness epic PLRNUI-443 (13 tickets). Jira labels synced for 52 tickets; E18 tickets PLRNUI-444…456 created and all 52 new dependency links created. Ticket approval waits for the open items in DECISIONS.md.
 
+## PO decisions round 2 (2026-10-09)
+All 7 open items answered (see DECISIONS.md). 361 tickets, 361 ready, 0 blocked. E18 is now an execution kit (skills + prompts, no harness). Jira sync for 17 tickets + epic PLRNUI-443 + 11 links delegated to one agent. Next: PO applies `po-approved` (JQL in the PO guide), then execute Wave 0 with the texo-execute skill once E18-01/02 exist (bootstrap: execute E18-01..04 first, by hand).
+
 ## Numbers
 348 tickets: S 160 / M 188 / L 0. 325 `ready`, 23 `blocked-decision`, 33 `post-1.0`. 17 waves. Validator: 0 schema violations, 0 unresolved deps, 0 cycles, 0 unordered file collisions.
 Baseline: 36 components = 18 demo / 18 prototype / 0 stable.
