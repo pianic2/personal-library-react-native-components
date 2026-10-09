@@ -55,12 +55,10 @@ export function assertMinimumTouchTarget(
   style: Record<string, unknown>,
   minimum: number | TouchPlatform = 44,
 ) {
-  if (typeof minimum !== "number") {
-    minimum = platformMinimumTouchTarget(minimum);
-  }
+  const min = typeof minimum === "number" ? minimum : platformMinimumTouchTarget(minimum);
   const minWidth = Number(style.minWidth ?? style.width ?? 0);
   const minHeight = Number(style.minHeight ?? style.height ?? 0);
-  assert.ok(minWidth >= minimum && minHeight >= minimum, `touch target must be at least ${minimum}x${minimum}`);
+  assert.ok(minWidth >= min && minHeight >= min, `touch target must be at least ${min}x${min}`);
 }
 
 export function platformMinimumTouchTarget(platform: TouchPlatform): number {
@@ -80,12 +78,12 @@ export function assertAccessibilityHint(props: AccessibilityProps, expected?: st
 export function assertNotAccessible(props: AccessibilityProps) {
   const hidden =
     props.accessibilityElementsHidden === true ||
-    props.importantForAccessibility === "no-hide-descendants" ||
-    props.accessible === false;
+    props.importantForAccessibility === "no" ||
+    props.importantForAccessibility === "no-hide-descendants";
   assert.ok(hidden, "node must be hidden from assistive technology");
 }
 
-export function assertLiveRegion(props: AccessibilityProps, expected: "polite" | "assertive") {
+export function assertLiveRegion(props: AccessibilityProps, expected: "none" | "polite" | "assertive") {
   assert.equal(props.accessibilityLiveRegion, expected, "accessibilityLiveRegion mismatch");
 }
 

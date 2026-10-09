@@ -44,11 +44,16 @@ test("accessibility hint helper requires a non-empty hint", () => {
 test("hidden helper accepts hidden nodes and rejects exposed ones", () => {
   assert.doesNotThrow(() => assertNotAccessible({ accessibilityElementsHidden: true }));
   assert.doesNotThrow(() => assertNotAccessible({ importantForAccessibility: "no-hide-descendants" }));
+  assert.doesNotThrow(() => assertNotAccessible({ importantForAccessibility: "no" }));
   assert.throws(() => assertNotAccessible({ accessibilityLabel: "Visible" }), /hidden from assistive/);
+  assert.throws(() => assertNotAccessible({ accessibilityElementsHidden: false }), /hidden from assistive/);
+  assert.throws(() => assertNotAccessible({ importantForAccessibility: "auto" }), /hidden from assistive/);
+  assert.throws(() => assertNotAccessible({ accessible: false }), /hidden from assistive/);
 });
 
 test("live region helper checks the announced politeness", () => {
   assert.doesNotThrow(() => assertLiveRegion({ accessibilityLiveRegion: "polite" }, "polite"));
+  assert.doesNotThrow(() => assertLiveRegion({ accessibilityLiveRegion: "none" }, "none"));
   assert.throws(() => assertLiveRegion({ accessibilityLiveRegion: "polite" }, "assertive"), /LiveRegion mismatch/);
 });
 
@@ -69,4 +74,8 @@ test("collectInteractiveNodes finds pressables and interactive roles", () => {
   };
   assert.equal(collectInteractiveNodes(tree).length, 2);
   assert.equal(collectInteractiveNodes({}).length, 0);
+  assert.equal(collectInteractiveNodes({ children: [] }).length, 0);
+  assert.equal(collectInteractiveNodes({ props: { onPress: "not a function" } }).length, 0);
+  const nested = { props: { accessibilityRole: "button" }, children: [{ children: [{ props: { accessibilityRole: "link" } }] }] };
+  assert.equal(collectInteractiveNodes(nested).length, 2);
 });
