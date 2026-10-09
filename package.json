@@ -48,7 +48,7 @@
     "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
     "clean": "rm -rf dist *.tgz",
     "release:guard": "node scripts/release-guard.mjs",
-    "release:security": "npm audit --omit=dev --audit-level=high",
+    "release:security": "node scripts/audit-gate.mjs",
     "prepack": "npm run build:prod && npm run release:guard",
     "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
     "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
