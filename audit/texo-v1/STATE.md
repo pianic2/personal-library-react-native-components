@@ -84,3 +84,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-215 (E14-07: single-source package identity config/package-identity.json, scripts/lib/identity.mjs) | #39 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-212 (E14-06: import-time side-effects audit, test and sideEffects recommendation) | #38 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-161 (E16-10: audit/ public-release review, secretlint scan, subtree classification) | #40 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-155 (E17-07: ADR 0011 semver/stability/deprecation policy pages) | #42 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
