@@ -19,7 +19,7 @@ A new orchestrator can resume from here without redoing the audit.
 - Epics PLRNUI-78…94 = E1…E17. 348 Tasks created as children (E8-28 = PLRNUI-442).
 - Status policy: all in `Da fare`; labels `texo-v1`, `ready` | `blocked-decision`, `awaiting-po-approval`, `wave-N`, `size-S|M`, `epic-eN`, `post-1.0`.
   READY = complete body + `ready` label. `po-approved` / `Approvato` is the PO gate: NEVER set by the orchestrator.
-- Dependencies = Jira links type Blocks (createIssueLink inwardIssue = blocker, outwardIssue = blocked; on the blocked issue Jira shows `inwardIssue` = its blocker). All 1,248 links created (idempotent calls; spot-checked PLRNUI-166, 156, 211, 310). To re-derive: `jira-map.json` + backlog `dependencies`.
+- Dependencies = Jira links type Blocks (createIssueLink inwardIssue = blocker, outwardIssue = blocked; on the blocked issue Jira shows `inwardIssue` = its blocker). All 1,248 links created and each pair confirmed by a successful createIssueLink call in this session (the 235 pairs first logged in unreliable progress files were re-run; calls are idempotent, no duplicates; spot-checked PLRNUI-166, 156, 211, 310). To re-derive: `jira-map.json` + backlog `dependencies`.
 - PLRNUI-77 (GitHub Pages showcase, already Approvato) is a dependency of E11 tickets; do not duplicate it.
 
 ## Numbers
