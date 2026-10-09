@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "decision": "D7 / ADR-R6, recorded in audit/adr/0009-subpath-exports.md",
+  "rootReexports": [
+    "./theme",
+    "./tokens"
+  ],
+  "subpaths": {
+    ".": {
+      "stability": "stable",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": []
+      },
+      "conditions": {
+        "types": "./dist/index.d.ts",
+        "react-native": "./dist/index.js",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+      },
+      "symbols": [
+        "type:AlertProps",
+        "type:BProps",
+        "type:BadgeProps",
+        "type:BottomBarProps",
+        "type:BoxProps",
+        "type:Breakpoint",
+        "type:ButtonProps",
+        "type:CardProps",
+        "type:CheckboxProps",
+        "type:CodeInlineProps",
+        "type:ColumnProps",
+        "type:DividerProps",
+        "type:FormFieldProps",
+        "type:HeadingProps",
+        "type:InputProps",
+        "type:LinkProps",
+        "type:LinkRouterAdapter",
+        "type:NavBarProps",
+        "type:NavItem",
+        "type:PProps",
+        "type:PasswordInputProps",
+        "type:ProgressBarProps",
+        "type:QuoteProps",
+        "type:RadioGroupOption",
+        "type:RadioGroupProps",
+        "type:RowProps",
+        "type:SideBarProps",
+        "type:SideBarVariant",
+        "type:SmallProps",
+        "type:SpinnerProps",
+        "type:SwitchProps",
+        "type:TextGroupProps",
+        "type:TextProps",
+        "type:TextareaProps",
+        "type:TopBarProps",
+        "value:Alert",
+        "value:B",
+        "value:Badge",
+        "value:BottomBar",
+        "value:BottomSheet",
+        "value:Box",
+        "value:Button",
+        "value:Card",
+        "value:Checkbox",
+        "value:CodeInline",
+        "value:Column",
+        "value:Divider",
+        "value:FormField",
+        "value:Heading",
+        "value:Input",
+        "value:Link",
+        "value:Modal",
+        "value:NavBar",
+        "value:NavProvider",
+        "value:P",
+        "value:PACKAGE_NAME",
+        "value:PasswordInput",
+        "value:Popover",
+        "value:ProgressBar",
+        "value:Quote",
+        "value:RadioGroup",
+        "value:Row",
+        "value:Select",
+        "value:SideBar",
+        "value:Small",
+        "value:Spinner",
+        "value:Stack",
+        "value:Switch",
+        "value:Text",
+        "value:TextGroup",
+        "value:Textarea",
+        "value:Tooltip",
+        "value:TopBar",
+        "value:isAndroid",
+        "value:isIOS",
+        "value:isMobile",
+        "value:isWeb",
+        "value:mergeStyles",
+        "value:useBreakpoint",
+        "value:useDebounce",
+        "value:useNav",
+        "value:useNavigate",
+        "value:useToggle"
+      ]
+    },
+    "./theme": {
+      "stability": "stable",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": []
+      },
+      "conditions": {
+        "types": "./dist/theme/index.d.ts",
+        "react-native": "./dist/theme/index.js",
+        "import": "./dist/theme/index.js",
+        "default": "./dist/theme/index.js"
+      },
+      "symbols": [
+        "type:Theme",
+        "type:ThemeAppShellProps",
+        "type:ThemeMode",
+        "type:ThemeProviderProps",
+        "type:ThemeStorageAdapter",
+        "value:ThemeAppShell",
+        "value:ThemeProvider",
+        "value:useTheme"
+      ]
+    },
+    "./tokens": {
+      "stability": "stable",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": []
+      },
+      "conditions": {
+        "types": "./dist/tokens/index.d.ts",
+        "react-native": "./dist/tokens/index.js",
+        "import": "./dist/tokens/index.js",
+        "default": "./dist/tokens/index.js"
+      },
+      "symbols": [
+        "type:ThemeTokens",
+        "type:TokenPair",
+        "value:createThemeTokens",
+        "value:defaultThemeTokens"
+      ]
+    },
+    "./native": {
+      "stability": "beta",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": []
+      },
+      "conditions": {
+        "types": "./dist/native/index.d.ts",
+        "react-native": "./dist/native/index.js",
+        "import": "./dist/native/index.js",
+        "default": "./dist/native/index.js"
+      },
+      "symbols": []
+    },
+    "./native/expo": {
+      "stability": "beta",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": [
+          "expo"
+        ]
+      },
+      "conditions": {
+        "types": "./dist/native/expo/index.d.ts",
+        "react-native": "./dist/native/expo/index.js",
+        "import": "./dist/native/expo/index.js",
+        "default": "./dist/native/expo/index.js"
+      },
+      "symbols": []
+    },
+    "./adapters/*": {
+      "stability": "beta",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": [
+          "@react-navigation/native",
+          "expo-router"
+        ]
+      },
+      "conditions": {
+        "types": "./dist/adapters/*/index.d.ts",
+        "react-native": "./dist/adapters/*/index.js",
+        "import": "./dist/adapters/*/index.js",
+        "default": "./dist/adapters/*/index.js"
+      },
+      "symbols": []
+    },
+    "./testing": {
+      "stability": "beta",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": [
+          "react-test-renderer"
+        ]
+      },
+      "conditions": {
+        "types": "./dist/testing/index.d.ts",
+        "react-native": "./dist/testing/index.js",
+        "import": "./dist/testing/index.js",
+        "default": "./dist/testing/index.js"
+      },
+      "symbols": []
+    },
+    "./meta": {
+      "stability": "beta",
+      "sideEffects": false,
+      "peers": {
+        "required": [
+          "react",
+          "react-native"
+        ],
+        "optional": []
+      },
+      "conditions": {
+        "types": "./dist/meta/index.d.ts",
+        "react-native": "./dist/meta/index.js",
+        "import": "./dist/meta/index.js",
+        "default": "./dist/meta/index.js"
+      },
+      "symbols": []
+    },
+    "./package.json": {
+      "file": "./package.json"
+    }
+  }
+}
