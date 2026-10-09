@@ -6,4 +6,4 @@ Class: wiring. Change only the glue named in the owned files (exports, providers
 Validation (run all): {validation}
 Stop rule: {stop_rule}
 Evidence: {evidence}
-Commit as add|fix|chore({ticket}): <message>. Never apply po-approved, publish, tag, touch main, skip tests, or rename package/repo/imports.
+Commit as add|fix|chore({ticket}): <message>. Never apply po-approved, change the Jira status, post more than one Jira comment, publish, tag, touch main, skip tests, or rename package/repo/imports.

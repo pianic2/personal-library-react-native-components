@@ -9,6 +9,7 @@ const fail = (message) => errors.push(message);
 
 const skill = readFileSync(join(skillDir, "SKILL.md"), "utf8");
 const front = /^---\n([\s\S]*?)\n---\n/.exec(skill)?.[1] ?? "";
+if (/^description:\s*[>|]/m.test(front)) fail("description must be a single-line value");
 const field = (key) => new RegExp(`^${key}:\\s*(.*)$`, "m").exec(front)?.[1]?.trim();
 const folder = skillDir.split("/").pop();
 if (field("name") !== folder) fail(`frontmatter name "${field("name")}" must equal folder "${folder}"`);
@@ -25,12 +26,16 @@ for (const file of templates) {
   const text = readFileSync(join(refs, file), "utf8");
   const tokens = Math.ceil(text.length / 4);
   if (tokens > 400) fail(`${file}: ~${tokens} tokens > 400`);
-  for (const placeholder of ["{ticket}", "{owned_files}", "{validation}", "{stop_rule}"]) {
+  for (const placeholder of ["{ticket}", "{owned_files}", "{adr_ids}", "{validation}", "{stop_rule}", "{evidence}"]) {
     if (!text.includes(placeholder)) fail(`${file}: missing ${placeholder}`);
   }
 }
 
 const { ignore, map } = JSON.parse(readFileSync(join(refs, "class-map.json"), "utf8"));
+// Meta labels that are not ticket classes. Hardcoded on purpose: the ignore list in the JSON must not be able to hide a class.
+const META = ["texo-v1", "ready", "awaiting-po-approval", "e7"];
+if (JSON.stringify([...ignore].sort()) !== JSON.stringify([...META].sort())) fail(`class-map ignore list must be exactly ${META.join(", ")}`);
+for (const label of ignore) if (label in map) fail(`label ${label} is both ignored and mapped`);
 const known = new Set(templates.map((f) => f.replace(/\.md$/, "")));
 for (const [label, template] of Object.entries(map)) {
   if (!known.has(template)) fail(`label ${label} maps to missing template ${template}`);
