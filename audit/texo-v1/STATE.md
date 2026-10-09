@@ -80,3 +80,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-129 (E15-02: ADR 0013 legacy shim policy, Pending H4 section) | #32 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-185 (E1-04: tsconfig.tests.json, Badge smoke fix, examples render test) | #35 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-153 (E16-09: license check scripts/license-check.mjs, NOTICE, docs/policies/licensing.md) | #36 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-212 (E14-06: import-time side-effects audit, test and sideEffects recommendation) | #38 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
