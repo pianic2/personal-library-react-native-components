@@ -52,9 +52,18 @@ Checklist for a new or changed component:
    type tests in `tests/types/` for the public props).
 4. Add a documentation page under `docs/components/` and an example under
    `examples/`.
-5. Make sure the stability level you claim matches the component stability
-   classification in `audit/adr/0003-component-stability-classification.md`.
-6. Run the commands above.
+5. List the component in the component catalog, `docs/components.md` (the map of
+   root-exported components).
+6. Make sure any stability label you give it (stable, beta, experimental,
+   internal) matches the component stability classification in
+   `audit/adr/0003-component-stability-classification.md`. The maturity ladder
+   above describes how complete the component is; the stability label describes
+   what compatibility you promise. They are different axes.
+7. Run the commands above, and the script tests:
+
+```sh
+node --import tsx --test tests/scripts/*.test.ts
+```
 
 ## Release notes (changesets)
 
@@ -69,7 +78,8 @@ major) in the pull request description.
 2. Make a focused change; keep unrelated refactors out of the pull request.
 3. Write commit messages as `add: ...`, `fix: ...` or `chore: ...`, optionally
    with a scope such as `fix(button): ...`. An internal ticket key is not
-   required for external pull requests.
+   required for external pull requests; the ticket-key convention and commit
+   hook described under Maintainers apply only to maintainer pull requests.
 4. Open the pull request and describe what changed and how you verified it.
    Wait for the automated checks to pass.
 

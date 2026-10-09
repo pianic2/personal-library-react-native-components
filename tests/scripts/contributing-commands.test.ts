@@ -15,9 +15,8 @@ export function listedNpmCommands(markdown: string): string[] {
   const spans = [...markdown.matchAll(/```[^\n]*\n([\s\S]*?)```/g)].map((m) => m[1]);
   const inline = [...markdown.replace(/```[\s\S]*?```/g, "").matchAll(/`([^`\n]+)`/g)].map((m) => m[1]);
   for (const chunk of [...spans, ...inline]) {
-    for (const line of chunk.split("\n")) {
-      const match = line.trim().match(/^npm\s+(run\s+)?([A-Za-z0-9:_-]+)/);
-      if (match) found.push(match[1] ? `run:${match[2]}` : `builtin:${match[2]}`);
+    for (const match of chunk.matchAll(/(?:^|[\s;&|$])npm\s+(run\s+)?([A-Za-z0-9:_-]+)/gm)) {
+      found.push(match[1] ? `run:${match[2]}` : `builtin:${match[2]}`);
     }
   }
   return found;
@@ -50,6 +49,7 @@ describe("PLRNUI-125 CONTRIBUTING commands", () => {
   it("detects a command that does not exist", () => {
     assert.deepEqual(unknownCommands("```sh\nnpm run definitely-not-a-script\n```"), ["run:definitely-not-a-script"]);
     assert.deepEqual(unknownCommands("Use `npm run nope` now."), ["run:nope"]);
+    assert.deepEqual(unknownCommands("```sh\nnpm run typecheck && npm run missing-one\n```"), ["run:missing-one"]);
   });
 
   it("states the Node version required by package.json engines", () => {
