@@ -21,7 +21,7 @@ The future Texo package will replace `@personal-library/react-native-components`
 
 ## PACKAGE_NAME
 
-`PACKAGE_NAME` is `@deprecated`. Its runtime value is `"@personal-library/react-native-components"`, the value declared in `src/index.ts` today. The export stays in place with a `@deprecated` JSDoc tag while the legacy name is supported; consumers must not branch on it. The identity configuration, not this constant, is the source of the package name used by tooling. Removal belongs to the deprecation timeline in "Pending H4".
+`PACKAGE_NAME` is `@deprecated`. Its runtime value today is `"@personal-library/react-native-components"` (`src/index.ts`). The value follows the package identity: it changes with the package rename at the cutover (E15), and the shim re-exports whatever the Texo package exports. The export keeps a `@deprecated` JSDoc tag; consumers must not branch on it. Removal belongs to the deprecation timeline in "Pending H4".
 
 ## Pending H4
 
@@ -34,7 +34,7 @@ Recorded owner answer (H4, 2026-10-09, default accepted): the shim sunset is **1
 - Legacy consumers upgrade to the shim version without code changes.
 - Duplicate installs of Texo and the shim cannot split provider state.
 - The shim carries no behavior of its own, so parity tests (export parity, type parity, compat suite) are the safety net.
-- The caret range lets Texo patch and minor releases reach legacy consumers without republishing the shim, while lockstep versions keep the published pair predictable.
+- The caret range avoids pinning one exact Texo version in the shim; the shim is still republished at every Texo version to keep the lockstep numbers.
 
 ## References
 
