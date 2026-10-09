@@ -166,7 +166,7 @@ function auditPackages(lockfile, nodeModulesDir, exceptions = EXCEPTIONS) {
 /** True when NOTICE mentions the path as a whole token (not as part of a longer path or name). */
 function mentionsPath(text, path) {
   const escaped = path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`(^|[\\s\`'"(\\[<])${escaped}($|[\\s\`'",.;:)\\]>])`, "m").test(text);
+  return new RegExp(`(^|[\\s\`'"(\\[<])${escaped}($|[\\s\`'",;:)\\]>]|\\.(?=\\s|$))`, "m").test(text);
 }
 
 /** Audit vendored assets (fonts, icons) and make sure NOTICE mentions each one. */
@@ -231,6 +231,8 @@ function selfTest() {
   expect("GPL asset fails", auditAssets([{ path: "assets/f.ttf", license: "GPL-3.0-only", source: "x" }], "assets/f.ttf").length === 1);
   expect("OFL asset passes when listed in NOTICE", auditAssets([{ path: "assets/f.ttf", license: "OFL-1.1", source: "x" }], "- assets/f.ttf (SIL OFL)").length === 0);
   expect("asset missing from NOTICE fails", auditAssets([{ path: "assets/f.ttf", license: "OFL-1.1", source: "x" }], "nothing").length === 1);
+  expect("a longer file name does not satisfy an extension-less asset path", auditAssets([{ path: "assets/f", license: "OFL-1.1", source: "x" }], "assets/f.ttf").length === 1);
+  expect("a sentence-final dot is allowed after the asset path", auditAssets([{ path: "assets/f.ttf", license: "OFL-1.1", source: "x" }], "See assets/f.ttf.").length === 0);
   expect("asset path must match as a whole token", auditAssets([{ path: "a.ttf", license: "OFL-1.1", source: "x" }], "assets/data.ttf").length === 1);
 
   // Installed-tree behavior and process-level exit codes, in a temporary directory.
@@ -240,14 +242,19 @@ function selfTest() {
     mkdirSync(join(nm, "installed"), { recursive: true });
     writeFileSync(join(nm, "installed", "package.json"), JSON.stringify({ license: "GPL-3.0-only" }));
     expect("installed license is used when the lockfile has none", run({ "node_modules/installed": {} }, scope, nm).length === 1);
-    expect("an exception never covers an installed package", run({ "node_modules/@x/y": {} }, scope, nm).length === 0 && (mkdirSync(join(nm, "@x", "y"), { recursive: true }), writeFileSync(join(nm, "@x", "y", "package.json"), "{}"), run({ "node_modules/@x/y": {} }, scope, nm).length === 1));
+    expect("an exception covers a package that is not installed", run({ "node_modules/@x/y": {} }, scope, nm).length === 0);
+    mkdirSync(join(nm, "@x", "y"), { recursive: true });
+    writeFileSync(join(nm, "@x", "y", "package.json"), "{}");
+    expect("an exception never covers an installed package", run({ "node_modules/@x/y": {} }, scope, nm).length === 1);
     expect("a path leaving node_modules is rejected", run({ "node_modules/../../outside": {} }, undefined, nm).length === 1);
     const notice = join(dir, "NOTICE");
     writeFileSync(notice, "notice");
+    const noAssets = join(dir, "assets.json");
+    writeFileSync(noAssets, "[]");
     const exitCode = (packages) => {
       const file = join(dir, "lock.json");
       writeFileSync(file, JSON.stringify(lock(packages)));
-      return spawnSync(process.execPath, [fileURLToPath(import.meta.url), "--lockfile", file, "--node-modules", nm, "--notice", notice], { encoding: "utf8" }).status;
+      return spawnSync(process.execPath, [fileURLToPath(import.meta.url), "--lockfile", file, "--node-modules", nm, "--notice", notice, "--assets", noAssets], { encoding: "utf8" }).status;
     };
     expect("process exits 0 for an allowed lockfile", exitCode({ "node_modules/a": { license: "MIT" } }) === 0);
     expect("process exits 1 for a GPL dependency", exitCode({ "node_modules/a": { license: "GPL-3.0-only" } }) === 1);

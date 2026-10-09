@@ -12,6 +12,7 @@ Allowed SPDX licenses: `MIT`, `Apache-2.0`, `BSD-2-Clause`, `BSD-3-Clause`, `ISC
 - Anything else fails: GPL, AGPL, LGPL, SSPL, CC-BY-NC, CC-BY-SA, "UNLICENSED" and "SEE LICENSE IN ..." until a person approves them.
 - A package with no license information fails. The check first uses the lockfile, then the installed `package.json` under `node_modules`. The only exceptions are listed with a reason in the script (`EXCEPTIONS`) and apply only to optional platform binaries that are **not installed** on the host: the `@esbuild/*` scope and the single package `fsevents` (an exception for one package never covers a longer name, and never covers an installed package).
 - About a fifth of the lockfile entries have no `license` field, so the check needs an installed tree: run `npm ci` first. Without `node_modules` it reports those packages as having no license information.
+- The `license` field in the lockfile is the source of truth; the installed `package.json` is only read when the lockfile has none.
 - The lockfile must be npm lockfile version 2 or 3 and list at least one package, otherwise the check exits 2.
 - Adding a license to the allow-list or an exception needs a ticket and a reason in the change.
 
