@@ -17,6 +17,7 @@ One session executes one ticket, with minimal context, following this page. Star
 - Ready queue (JQL):
   `project = PLRNUI AND labels = "texo-v1" AND labels = "po-approved" AND labels = "ready" AND statusCategory != Done`
   Practical rule: pick the lowest wave among tickets with labels `po-approved` and `ready` whose Blocks-dependencies are already merged into `texo/v1`.
+- Jira status is never changed by sessions, so a merged ticket keeps its labels. The completion marker is the repo: a ticket with a row in the `Execution log` of `audit/texo-v1/STATE.md` (or whose PR is merged into `texo/v1`) is done and must be skipped by the queue.
 - If `po-approved` is missing, stop and report to the PO. Never add it.
 - The ticket body is read from the repo backlog JSON (`audit/texo-v1/backlog/E*.json`, local id via `audit/texo-v1/jira-map.json`), not from the Jira description (Jira markdown alters some characters).
 
@@ -25,7 +26,7 @@ One session executes one ticket, with minimal context, following this page. Star
 - One branch per ticket: `texo/PLRNUI-<n>-<slug>`, created from `texo/v1`.
 - Touch only the files in the ticket `filesTouched`.
 - Commit messages: `add(PLRNUI-<n>): ...`, `fix(PLRNUI-<n>): ...` or `chore(PLRNUI-<n>): ...`.
-- Open a PR to `texo/v1` with the acceptance-criteria checklist. Merge into `texo/v1` only with green CI (job `package-baseline`) and a passing independent review.
+- Open a PR to `texo/v1` with the acceptance-criteria checklist. Merge into `texo/v1` only when every configured integration check on the PR is green (`package-baseline` and, once E18-09 adds them, the commit-message and file-ownership checks) and the independent review passed.
 - Merging `texo/v1` into `main` belongs to the PO.
 - After merge, post ONE Jira comment with evidence (commands, exit codes, files, PR link). Do not change the ticket status.
 
@@ -37,7 +38,7 @@ One session executes one ticket, with minimal context, following this page. Star
 
 ## Roles
 
-- Author session: implements, validates, commits, opens the PR.
+- Author session: implements, validates, commits, opens the PR; after a passing review and green checks it performs the guarded merge into `texo/v1`, posts the Jira evidence comment and adds the `STATE.md` row.
 - Reviewer session (separate, empty context, see E18-08): receives only ticket, diff and acceptance criteria; returns blocker/major/minor and a verdict. Blockers are fixed by the author and the review repeated.
 
 ## Forbidden actions
