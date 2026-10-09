@@ -47,3 +47,9 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 2. Ask owner for H1–H8; PO approval (`po-approved`) of Wave 0–2 tickets (E1-15, E14-03, E2-01, E2-06, E14-13, E6-01, E4-03, E8-01, E14-12, …) so execution can start.
 3. Optional hardening pass: re-send mangled descriptions as ADF; tighten flagged acceptance criteria; fix E4-16.
 4. When execution begins, first tickets on the critical path: E1-15 -> E14-03 (ESM) -> E2-01 -> E2-06 -> API-conventions ADR.
+
+## Execution log (ticket sessions)
+| Ticket | PR | Result |
+|---|---|---|
+| PLRNUI-457 (CI fix: npm audit, shell-quote 1.12.0 + targeted braces exemption GHSA-vfj7-8cjw-p6xm until 2027-01-09, PO-approved) | #13 | merged into texo/v1 (ae5c7d5), CI green, review PASS (3 rounds) |
+| PLRNUI-444 (E18-01: ADR 0020 ticket execution protocol) | #12 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
