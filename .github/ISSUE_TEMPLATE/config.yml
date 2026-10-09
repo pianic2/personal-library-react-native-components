@@ -1,2 +1,8 @@
 blank_issues_enabled: false
-contact_links: []
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/pianic2/personal-library-react-native-components/security/advisories/new
+    about: Report security problems privately. Do not open a public issue.
+  - name: Support and questions
+    url: https://github.com/pianic2/personal-library-react-native-components/blob/main/SUPPORT.md
+    about: Where to ask questions and what is supported.
