@@ -95,3 +95,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-318 (E14-13: ADR 0014 API conventions, prop-convention check, baseline and type tests) | #47 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-270 (E15-12: migration guide to Texo with placeholder tokens, doc-token gate) | #51 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-275 (E15-15: runbook for Texo and shim publish and npm deprecate sequence) | #50 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-99 (E9-11: screen-reader reading-order helper getAccessibleTree and tests) | #56 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
