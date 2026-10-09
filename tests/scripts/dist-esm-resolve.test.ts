@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -51,15 +51,34 @@ describe("PLRNUI-201 built output", () => {
     assert.equal(result.status, 0, result.stderr);
   });
 
+  /** Errors that tsc reports for files under dist/ (library noise from node_modules is not part of this contract). */
+  function distErrors(resolution: "bundler" | "node16"): string[] {
+    const fixture = join(out, `fixture-${resolution}.ts`);
+    writeFileSync(fixture, `import { Button, ThemeProvider } from "./dist/index.js";\nexport const parts = [Button, ThemeProvider];\n`);
+    const module = resolution === "node16" ? "node16" : "esnext";
+    const result = spawnSync(process.execPath, [tsc, "--noEmit", "--strict", "--jsx", "react-jsx", "--module", module, "--moduleResolution", resolution, "--target", "es2022", fixture], { cwd: out, encoding: "utf8" });
+    return `${result.stdout}${result.stderr}`.split("\n").filter((line) => /(^|[\\/])(dist|fixture-[a-z0-9]+\.ts)[\\/(]/.test(line) || line.startsWith("fixture-") || line.startsWith("dist/"));
+  }
+
   for (const resolution of ["bundler", "node16"] as const) {
     it(`declarations resolve under moduleResolution ${resolution}`, () => {
-      const fixture = join(out, `fixture-${resolution}.ts`);
-      writeFileSync(fixture, `import { Button, ThemeProvider } from "./dist/index.js";\nexport const parts = [Button, ThemeProvider];\n`);
-      const module = resolution === "node16" ? "node16" : "esnext";
-      const result = spawnSync(process.execPath, [tsc, "--noEmit", "--strict", "--jsx", "react-jsx", "--skipLibCheck", "--module", module, "--moduleResolution", resolution, "--target", "es2022", fixture], { cwd: out, encoding: "utf8" });
-      assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+      assert.deepEqual(distErrors(resolution), []);
     });
   }
+
+  it("the node16 check does fail when a declaration has an extensionless relative specifier", () => {
+    const index = join(dist, "index.d.ts");
+    const original = readFileSync(index, "utf8");
+    const mutated = original.replace(/(from "\.\/components\/Button)\/index\.js"/, '$1"');
+    assert.notEqual(mutated, original, "expected a Button re-export in dist/index.d.ts");
+    writeFileSync(index, mutated);
+    try {
+      const errors = distErrors("node16");
+      assert.ok(errors.some((line) => /TS2834|TS2835/.test(line)), `expected TS2834/TS2835, got: ${errors.join("\n")}`);
+    } finally {
+      writeFileSync(index, original);
+    }
+  });
 
   it("cleans up", () => {
     rmSync(out, { recursive: true, force: true });
