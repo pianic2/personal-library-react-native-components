@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -62,6 +63,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -75,7 +77,8 @@ jobs:
         run: |
           set -uo pipefail
           status=0
-          for sha in $(git rev-list --reverse "$BASE_SHA..$HEAD_SHA"); do
+          shas="$(git rev-list --reverse "$BASE_SHA..$HEAD_SHA")"
+          for sha in $shas; do
             git log -1 --format=%B "$sha" > "$RUNNER_TEMP/commit-msg.txt"
             if ! node scripts/check-commit-msg.mjs "$RUNNER_TEMP/commit-msg.txt"; then
               echo "::error::commit $sha does not follow add|fix|chore(PLRNUI-<n>): <message>"
@@ -108,6 +111,11 @@ jobs:
           echo "$output"
           if [ "$code" -eq 0 ]; then exit 0; fi
           if [ "$code" -ne 1 ]; then exit "$code"; fi
+          parsed="$(printf '%s\n' "$output" | sed -n 's/^- //p')"
+          if [ -z "$parsed" ]; then
+            echo "::error::check-ownership exited 1 without listing any violating file"
+            exit 1
+          fi
           remaining=""
           while IFS= read -r path; do
             if [ -z "$path" ]; then continue; fi
@@ -116,7 +124,7 @@ jobs:
               if [ "$path" = "$exception" ]; then allowed=1; fi
             done
             if [ "$allowed" -eq 0 ]; then remaining="$remaining $path"; fi
-          done < <(printf '%s\n' "$output" | sed -n 's/^- //p')
+          done <<< "$parsed"
           if [ -n "$remaining" ]; then
             echo "::error::files outside the ownership of $ticket:$remaining"
             exit 1
