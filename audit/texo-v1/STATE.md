@@ -65,3 +65,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-453 (E18-10: checkpoint and resume protocol docs/policies/checkpoint.md) | #19 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-448 (E18-05: scripts/ticket-prompt.mjs minimal execution prompt) | #20 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-451 (E18-08: skill texo-review) | #21 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-456 (E18-13: execution runbook docs/policies/execution-runbook.md) | #22 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
