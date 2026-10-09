@@ -8,7 +8,9 @@
 //  - accessible={false} makes a node transparent: its descendants are considered on their own;
 //  - Text, TextInput, Switch and Pressable are accessible elements by default; a Text nested in a Text belongs to the
 //    outer element.
-// It is a model of the platform rules for tests, not a replacement for a device check.
+// It is a union model: the iOS and Android props are applied together (a real device honours only its own platform's
+// props), so a test passes when either platform's prop is set. Not modelled: importantForAccessibility "yes"/"auto" (treated
+// as unset), aria-label, aria-labelledby, role and the string form aria-hidden="true". It is not a replacement for a device check.
 
 export type HostNode = {
   type: string;

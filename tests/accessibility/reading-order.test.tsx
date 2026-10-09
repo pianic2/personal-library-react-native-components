@@ -88,7 +88,7 @@ test("FormField announces the label only once", { todo: "FormField renders its l
       <Input label="Email" value="" onChangeText={() => undefined} />
     </FormField>,
   );
-  const labels = accessibleTexts(r).filter((text) => text === "Email");
+  const labels = getAccessibleTree(r).filter((n) => n.type === "Text" && n.text === "Email");
   assert.equal(labels.length, 1);
 });
 
