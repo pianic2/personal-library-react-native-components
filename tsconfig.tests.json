@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "paths": {
+      "@personal-library/react-native-components": ["./src/index.ts"]
+    }
+  },
+  "include": ["src", "tests/**/*.tsx", "examples/**/*.tsx"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    // Known type errors in test files owned by other tickets (PLRNUI-185 evidence lists them). Remove an entry
+    // when its owner fixes the file; new test files are checked automatically.
+    "tests/accessibility/core-controls.test.tsx",
+    "tests/shims/react-native.tsx",
+    "tests/theme/base-theme-dark-mode.test.tsx",
+    "tests/theme/button-component-tokens.test.tsx",
+    "tests/theme/card-component-tokens.test.tsx",
+    "tests/theme/input-component-tokens.test.tsx",
+    "tests/theme/theme-app-shell.test.tsx",
+    "tests/theme/theme-overrides.test.tsx"
+  ]
+}
