@@ -3,7 +3,7 @@
 Used by ticket sessions (ADR 0020, `audit/adr/0020-ticket-execution-protocol.md`) to report a finished ticket. The evidence goes in ONE Jira comment, posted after the PR is merged into `texo/v1`.
 
 ## Rules
-- Never skip, disable or quarantine a test to get green, and never weaken an assertion or edit a test to match a bug. A red test is reported with its output, never hidden.
+- The guard: never skip, disable or quarantine a test to get green, and never weaken an assertion or edit a test to match a bug. A red test is reported with its output, never hidden.
 - One comment per ticket, written from facts you ran or read in this session; do not describe what you did not run.
 - Status transitions: ADR 0020 says sessions never change a Jira status, and ADR 0020 wins over this page. `ALLOWED_TRANSITIONS` below is the parameter for a future PO decision: a non-empty value is valid only together with a matching amendment of ADR 0020. It is a list of transition names and never contains `Approvato`; `po-approved` is never applied by a session.
 
@@ -41,7 +41,7 @@ Not verified, known limits and deviations: <list, or none>.
 | Commands and exit codes | the ticket `validation` commands, exactly as run |
 | Test output | summary lines of the test runs |
 | Acceptance criteria | the ticket `acceptance` array, one line each |
-| Ticket evidence entries | the ticket `evidence` array: each entry MUST appear as its own line, verbatim. This is the contract that covers every kind of entry used in the backlog (92 distinct texts today); entries already held by Files changed or Test output point to them instead of repeating |
+| Ticket evidence entries | the ticket `evidence` array: each entry MUST appear as its own line, verbatim. This is the contract that covers every kind of entry used in the backlog (92 distinct texts when this page was written); entries already held by Files changed or Test output point to them instead of repeating |
 | Independent review | the reviewer session verdict (ADR 0020, Roles) |
 
 ## Procedure
