@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted by orchestrator decision D11 (`audit/texo-v1/DECISIONS.md`, 2026-10-09, based on `reviews/R1-architecture-review.md` ADR-R11).
+Accepted, pending owner sign-off. Decision D11 (`audit/texo-v1/DECISIONS.md`, adopted by the orchestrator 2026-10-09, based on `audit/texo-v1/reviews/R1-architecture-review.md` ADR-R11).
 
 Owner sign-off (name and date): **pending**. The product owner records it here before any dependent ticket of PLRNUI-127 starts:
 
@@ -29,7 +29,7 @@ The library needs animation and gesture primitives (tokens for duration and easi
 
 - No install-time or native-config cost for consumers of the core animation features.
 - Animations that depend on the UI-thread worklet model (gesture-driven continuous interactions, shared-value based effects) are out of core scope until the adapter ADR exists.
-- `LayoutAnimation` needs an explicit enable call on older Android architectures; the motion helper ticket must document it.
+- On the legacy Android architecture `LayoutAnimation` needs `UIManager.setLayoutAnimationEnabledExperimental(true)`; this is a no-op on the New Architecture used by the baseline, but the motion helper ticket must still document it.
 - Dependent tickets (E3 motion tokens, provider, primitives, presence, press feedback, shimmer, layout helper) can rely on `Animated` only and must not add dependencies.
 - Haptics call sites receive an adapter; a missing adapter means no haptics, never an error.
 
@@ -37,9 +37,9 @@ The library needs animation and gesture primitives (tokens for duration and easi
 
 | Alternative | Verdict | Reason |
 | --- | --- | --- |
-| Animated-only (chosen) | Accepted | Zero dependencies, runs everywhere including Expo Go and web, enough for the planned primitives. |
-| Reanimated as optional peer | Rejected for 1.0 | Needs a Babel plugin and native module; `peerDependenciesMeta` optional peers would still shape the root install story and break the root-only export contract. Reconsider through the `MotionEngine` adapter in a separate entry point. |
-| Reanimated required | Rejected | Native dependency for every consumer; breaks Expo Go version-lock assumptions and non-Expo setups; violates the native dependency gate. |
+| Animated-only (chosen) | Accepted | Zero dependencies, works in Expo Go, managed, prebuild, bare and web (on web `useNativeDriver` is not available and `Animated` falls back to the JS driver), enough for the planned primitives. |
+| Reanimated as optional peer | Rejected for 1.0 | Allowing `peerDependenciesMeta` optional peers is a human-only decision (H2 in `DECISIONS.md`) and the peer policy permits it only after an approved optional-peer decision; it needs a Babel/worklets setup and a native module, and core code must not `require()` optional packages (D6). Reconsider through the `MotionEngine` adapter in a separate entry point. |
+| Reanimated required | Rejected | Hard native dependency for every consumer, forces SDK-matched versions and the Babel/worklets setup, and violates the native dependency gate. |
 
 ## References
 
