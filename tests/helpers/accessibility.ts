@@ -92,7 +92,13 @@ export function assertNotAccessible(props: AccessibilityProps) {
   assert.ok(hidden, "node must be hidden from assistive technology");
 }
 
-export function assertLiveRegion(props: AccessibilityProps, expected: "none" | "polite" | "assertive") {
+/** accessibilityLiveRegion is Android-only in React Native, so iOS calls are rejected. */
+export function assertLiveRegion(
+  props: AccessibilityProps,
+  expected: "none" | "polite" | "assertive",
+  platform: TouchPlatform = "android",
+) {
+  assert.notEqual(platform, "ios", "accessibilityLiveRegion is Android-only; it is not announced on iOS");
   assert.equal(props.accessibilityLiveRegion, expected, "accessibilityLiveRegion mismatch");
 }
 

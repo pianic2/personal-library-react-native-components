@@ -60,6 +60,7 @@ test("hidden helper accepts hidden nodes and rejects exposed ones", () => {
 test("live region helper checks the announced politeness", () => {
   assert.doesNotThrow(() => assertLiveRegion({ accessibilityLiveRegion: "polite" }, "polite"));
   assert.doesNotThrow(() => assertLiveRegion({ accessibilityLiveRegion: "none" }, "none"));
+  assert.throws(() => assertLiveRegion({ accessibilityLiveRegion: "polite" }, "polite", "ios"), /Android-only/);
   assert.throws(() => assertLiveRegion({ accessibilityLiveRegion: "polite" }, "assertive"), /LiveRegion mismatch/);
 });
 
