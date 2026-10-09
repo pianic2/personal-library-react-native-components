@@ -117,6 +117,30 @@ describe("PLRNUI-130 props extractor on fixtures", () => {
     assert.equal("default" in components.A.props.gap, false);
   });
 
+  it("fails closed on a broken tsconfig, an empty result, and a flag used as a value", () => {
+    const broken = fixture({ "index.ts": `export { A } from "./c";`, "c.tsx": `export function A() { return null; }` });
+    writeFileSync(join(broken, "tsconfig.json"), JSON.stringify({ extends: "./missing.json" }));
+    assert.throws(() => extractProps({ root: broken }), /tsconfig\.json/);
+    const empty = fixture({ "index.ts": `export const X = 1;` });
+    assert.throws(() => extractProps({ root: empty }), /no components extracted/);
+    const out = spawnSync(process.execPath, [script, "--root", "--entry", "x"], { encoding: "utf8" });
+    assert.equal(out.status, 2);
+  });
+
+  it("skips non-object first parameters and class components visibly", () => {
+    const dir = fixture({
+      "index.ts": `export { Helper, Real, Klass } from "./c";`,
+      "c.tsx": `import React from "react";
+        export function Helper(a: number) { return a; }
+        export function Real({ x = 1 }: { x?: number }) { return null; }
+        export class Klass extends React.Component<{ y?: string }> { render() { return null; } }`,
+    });
+    const result = extractProps({ root: dir });
+    assert.deepEqual(Object.keys(result.components), ["Real"]);
+    assert.match(result.skipped.Helper, /not an object/);
+    assert.match(result.skipped.Klass, /class/);
+  });
+
   it("fails on a missing entry and on an unknown CLI argument", () => {
     assert.throws(() => extractProps({ root, entry: "src/nope.ts" }), /entry not found/);
     const out = spawnSync(process.execPath, [script, "--bogus", "x"], { encoding: "utf8" });

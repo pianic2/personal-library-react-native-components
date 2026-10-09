@@ -26,6 +26,7 @@ function compilerOptions(root) {
   const read = ts.readConfigFile(file, ts.sys.readFile);
   if (read.error) throw new Error(ts.flattenDiagnosticMessageText(read.error.messageText, '\n'));
   const parsed = ts.parseJsonConfigFileContent(read.config, ts.sys, root);
+  if (parsed.errors.length > 0) throw new Error(`tsconfig.json: ${parsed.errors.map((e) => ts.flattenDiagnosticMessageText(e.messageText, '\n')).join('; ')}`);
   return { ...parsed.options, noEmit: true };
 }
 
@@ -113,7 +114,11 @@ export function extractProps({ root = process.cwd(), entry = 'src/index.ts' } = 
     if (!declaration) { skipped[name] = 'no declaration'; continue; }
     const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
     const signature = type.getCallSignatures()[0];
-    if (!signature) continue; // constants and non-callable values are not components
+    if (!signature) {
+      // constants are not components; classes are not supported and must not vanish silently
+      if (symbol.flags & ts.SymbolFlags.Class) skipped[name] = 'class component (not supported)';
+      continue;
+    }
 
     const fn = functionLike(declaration);
     const defaults = destructuringDefaults(fn);
@@ -122,6 +127,10 @@ export function extractProps({ root = process.cwd(), entry = 'src/index.ts' } = 
     let propsTypeName = null;
     if (paramSymbol) {
       const paramType = checker.getTypeOfSymbolAtLocation(paramSymbol, declaration);
+      if (paramType.flags & (ts.TypeFlags.Primitive | ts.TypeFlags.Any | ts.TypeFlags.Unknown)) {
+        skipped[name] = 'first parameter is not an object type';
+        continue;
+      }
       const named = paramType.aliasSymbol?.name ?? paramType.symbol?.name;
       propsTypeName = named && !named.startsWith('__') ? named : null;
       for (const prop of checker.getPropertiesOfType(paramType)) {
@@ -151,6 +160,7 @@ export function extractProps({ root = process.cwd(), entry = 'src/index.ts' } = 
       propsTypeExported: propsTypeName !== null && exportedNames.has(propsTypeName),
     };
   }
+  if (Object.keys(components).length === 0) throw new Error(`no components extracted from ${entry} (skipped: ${Object.keys(skipped).length})`);
   return { entry, components, skipped };
 }
 
@@ -171,7 +181,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const args = process.argv.slice(2);
     const opts = {};
     for (let i = 0; i < args.length; i += 2) {
-      if (!['--root', '--entry'].includes(args[i]) || args[i + 1] === undefined) throw new Error(`unknown or incomplete argument: ${args[i]}`);
+      if (!['--root', '--entry'].includes(args[i]) || args[i + 1] === undefined || args[i + 1].startsWith('--')) throw new Error(`unknown or incomplete argument: ${args[i]}`);
       opts[args[i].slice(2)] = args[i + 1];
     }
     process.stdout.write(serialize(extractProps(opts)));
