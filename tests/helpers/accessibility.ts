@@ -31,6 +31,9 @@ const INTERACTIVE_ROLES = new Set([
   "menuitem",
   "adjustable",
   "search",
+  "imagebutton",
+  "combobox",
+  "spinbutton",
 ]);
 
 export function assertAccessibilityContract(
@@ -48,6 +51,12 @@ export function assertAccessibilityContract(
   }
   if (expected.accessibilityValue !== undefined) {
     assert.deepEqual(props.accessibilityValue, expected.accessibilityValue, "accessibilityValue mismatch");
+  }
+  if (expected.accessibilityHint !== undefined) {
+    assert.equal(props.accessibilityHint, expected.accessibilityHint, "accessibilityHint mismatch");
+  }
+  if (expected.accessibilityLiveRegion !== undefined) {
+    assert.equal(props.accessibilityLiveRegion, expected.accessibilityLiveRegion, "accessibilityLiveRegion mismatch");
   }
 }
 
@@ -90,17 +99,23 @@ export function assertLiveRegion(props: AccessibilityProps, expected: "none" | "
 export function assertTouchTargetWithHitSlop(
   style: Record<string, unknown>,
   hitSlop: number | Insets | undefined,
-  platform: TouchPlatform = "ios",
+  platform: TouchPlatform,
+  parent?: { width: number; height: number },
 ) {
   const minimum = platformMinimumTouchTarget(platform);
   const slop: Insets =
     typeof hitSlop === "number"
       ? { top: hitSlop, right: hitSlop, bottom: hitSlop, left: hitSlop }
       : (hitSlop ?? {});
-  const width =
+  let width =
     Number(style.minWidth ?? style.width ?? 0) + Number(slop.left ?? 0) + Number(slop.right ?? 0);
-  const height =
+  let height =
     Number(style.minHeight ?? style.height ?? 0) + Number(slop.top ?? 0) + Number(slop.bottom ?? 0);
+  // hitSlop never extends past the parent bounds, so clamp when the parent is known.
+  if (parent) {
+    width = Math.min(width, parent.width);
+    height = Math.min(height, parent.height);
+  }
   assert.ok(
     width >= minimum && height >= minimum,
     `touch target with hitSlop must be at least ${minimum}x${minimum} on ${platform}`,
