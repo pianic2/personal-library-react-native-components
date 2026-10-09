@@ -74,3 +74,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-118 (E16-03: SECURITY.md, CODE_OF_CONDUCT.md, SUPPORT.md) | #29 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-110 (E16-01: CODEOWNERS owner @pianic2 and path owners) | #28 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-127 (E3-02: ADR 0012 motion engine and optional peers, motion-dependency-strategy) | #31 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-125 (E16-04: CONTRIBUTING rewrite for external contributors, commands test) | #30 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
