@@ -67,4 +67,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-451 (E18-08: skill texo-review) | #21 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-456 (E18-13: execution runbook docs/policies/execution-runbook.md) | #22 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-454 (E18-11: token-economy measurements docs/policies/token-economy.md) | #24 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-450 (E18-07: evidence template docs/policies/evidence-template.md, link from texo-execute skill) | #18 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (E18-09: texo-v1-pr workflow, branch protection docs) | #23 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |

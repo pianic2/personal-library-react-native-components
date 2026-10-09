@@ -16,7 +16,7 @@ Protocol: `audit/adr/0020-ticket-execution-protocol.md` (read it once; do not re
 6. **Implement, then run every `validation` command.** At most 3 attempts; then stop and report the cause. Never skip or disable a test.
 7. **Commit** `add|fix|chore(PLRNUI-<n>): ...`, push, open a PR to `texo/v1` with the acceptance-criteria checklist.
 8. **Independent review**: a separate session with empty context receives only ticket, diff and acceptance criteria (skill `texo-review` when available) and returns blocker/major/minor and a verdict. Fix blockers and repeat.
-9. **Before merging**, commit your `STATE.md` Execution log row on the ticket branch (ADR 0020 Branching). **Merge** into `texo/v1` only when every configured check is green and the review passed. Then post ONE Jira comment with evidence (commands, exit codes, files, PR link).
+9. **Before merging**, commit your `STATE.md` Execution log row on the ticket branch (ADR 0020 Branching). **Merge** into `texo/v1` only when every configured check is green and the review passed. Then post ONE Jira comment with evidence (commands, exit codes, files, PR link) using `docs/policies/evidence-template.md`.
 
 ## Never
 Apply `po-approved`, transition a ticket to Approvato or change its Jira status in any way, publish to npm, create tags or Releases, push or merge `main`, skip tests, edit files outside `filesTouched`, rename package/repo/imports.
