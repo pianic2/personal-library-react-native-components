@@ -1,0 +1,10 @@
+#!/bin/sh
+# Refuses any push that updates or deletes main (ADR 0020: main is merged by the PO only).
+# git passes lines "<local ref> <local sha> <remote ref> <remote sha>" on stdin.
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "pre-push: pushing to main is not allowed (merge texo/v1 -> main is done by the PO)." >&2
+    exit 1
+  fi
+done
+exit 0
