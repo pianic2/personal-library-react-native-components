@@ -35,7 +35,7 @@
     ],
     "risks": [
       "Human must provide handles",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+      "BLOCKED on H1: License choice (open source, well-structured) and CODEOWNERS handle(s). Name @theopificium/texo, repo theopificium/texo and contact info@theopificium.it are DECIDED.. Unblock condition: Human picks the license (recommendation: MIT + SPDX headers + THIRD_PARTY_NOTICES + DCO, or Apache-2.0 + NOTICE) and gives CODEOWNERS GitHub handle(s)."
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -69,8 +69,8 @@
       "texo-v1",
       "oss-readiness",
       "governance",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "No security policy, code of conduct or support channel exists; npm package page and GitHub community profile are incomplete.",
     "value": "Standard OSS trust signals and private vulnerability reporting.",
@@ -96,8 +96,7 @@
       "profile output"
     ],
     "risks": [
-      "Contact email needs human",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+      "Contact email needs human"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -114,10 +113,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -282,7 +279,7 @@
     ],
     "risks": [
       "License holder name in LICENSE for Texo is a human decision",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+      "BLOCKED on H1: License choice (open source, well-structured) and CODEOWNERS handle(s). Name @theopificium/texo, repo theopificium/texo and contact info@theopificium.it are DECIDED.. Unblock condition: Human picks the license (recommendation: MIT + SPDX headers + THIRD_PARTY_NOTICES + DCO, or Apache-2.0 + NOTICE) and gives CODEOWNERS GitHub handle(s)."
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -319,8 +316,8 @@
       "oss-readiness",
       "governance",
       "audit",
-      "blocked-decision",
-      "needs-h7"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "audit/ holds internal Jira/Confluence migration material (Italian ADRs, ticket keys, risk dispositions) that will be public with the repo.",
     "value": "Prevents leaking internal info and clarifies what is normative.",
@@ -346,8 +343,7 @@
       "scan output"
     ],
     "risks": [
-      "Moving files breaks cross-links; propose only, do not move",
-      "BLOCKED on H7: Public/private fate of audit/ and Jira-internal CONTRIBUTING. Unblock condition: Human decides publication of audit/ in E16-10 review."
+      "Moving files breaks cross-links; propose only, do not move"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -362,10 +358,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H7"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

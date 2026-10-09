@@ -2278,7 +2278,6 @@
       "texo-v1",
       "navigation",
       "breadcrumb",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2338,7 +2337,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 6,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -3308,7 +3307,6 @@
       "texo-v1",
       "overlay",
       "context-menu",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -3367,7 +3365,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 9,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],

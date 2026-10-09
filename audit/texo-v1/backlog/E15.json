@@ -10,8 +10,8 @@
       "decision",
       "human-only",
       "migration",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Final naming is unresolved (ADR 0001 status 'Proposto'; npm name 'da definire'). Every cutover step depends on it.",
     "value": "Unblocks E15-10,13,14,16 and E17 first publish.",
@@ -37,8 +37,7 @@
       "ADR 0017"
     ],
     "risks": [
-      "Name squatting between decision and first publish - reserve with a 0.0.1 placeholder only if human approves",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+      "Name squatting between decision and first publish - reserve with a 0.0.1 placeholder only if human approves"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -53,10 +52,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -72,8 +69,8 @@
       "texo-v1",
       "decision",
       "migration",
-      "blocked-decision",
-      "needs-h4"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Shim policy is mostly deducible (D10/ADR-R9); only the sunset/deprecation window is a human decision (H4).",
     "value": "Shim build (E15-03) and parity work can proceed on a written policy.",
@@ -97,8 +94,7 @@
       "ADR 0013"
     ],
     "risks": [
-      "Pinning exact forces shim republish on every Texo patch - automation in E17-02 must handle",
-      "BLOCKED on H4: Support matrix for 1.0 (Expo 57 only vs 56-57) and deprecation/sunset windows. Unblock condition: Human records support matrix in config/compatibility.json and sunset months in ADR 0011/0013."
+      "Pinning exact forces shim republish on every Texo patch - automation in E17-02 must handle"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -113,10 +109,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H4"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -512,9 +506,8 @@
     "labels": [
       "texo-v1",
       "codemod",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h8"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Engine needs final specifiers and a distribution channel (npx package, bin of Texo, or part of texo CLI).",
     "value": "Ships the usable migration tool.",
@@ -543,9 +536,7 @@
       "PR diffs of sample apps"
     ],
     "risks": [
-      "Public sample apps may not exist; use examples/ + internal apps",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
-      "BLOCKED on H8: Codemod channel naming (npx <name>-codemod vs texo migrate). Unblock condition: Human picks the channel after H1."
+      "Public sample apps may not exist; use examples/ + internal apps"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -561,11 +552,8 @@
     "semver": "none",
     "wave": 2,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1",
-      "H8"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -581,8 +569,8 @@
       "texo-v1",
       "docs",
       "readme",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "README still presents 0.1.0-rc.2 under the legacy name; after cutover the legacy package page on npm shows this README.",
     "value": "Consumers landing on either npm page see the correct package and migration path.",
@@ -611,8 +599,7 @@
       "rendered README"
     ],
     "risks": [
-      "Badge URLs depend on final repo",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+      "Badge URLs depend on final repo"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -628,10 +615,8 @@
     "semver": "none",
     "wave": 2,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -916,9 +901,8 @@
       "texo-v1",
       "cutover",
       "semver-sensitive",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h6"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Hardcoded names remain after E14-07/E15-08 (package.json name/repository, release-guard, src/index.ts PACKAGE_NAME, mkdocs, docs).",
     "value": "The actual rename done mechanically from config, in one reviewable PR.",
@@ -949,6 +933,7 @@
       "E14-14",
       "E14-15",
       "E14-18",
+      "E14-19",
       "E15-01",
       "E15-02",
       "E15-04",
@@ -966,9 +951,7 @@
       "PR + grep output"
     ],
     "risks": [
-      "Shared files with many tickets: land last, rebase others first",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
-      "BLOCKED on H6: Version line: Texo starts at 1.0.0-rc.0; legacy name jumps to shim 1.0.0. Unblock condition: Human confirms version line in E17-08 release train plan."
+      "Shared files with many tickets: land last, rebase others first"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -983,13 +966,10 @@
     ],
     "size": "M",
     "semver": "minor",
-    "wave": 15,
+    "wave": 17,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1",
-      "H6"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1005,9 +985,8 @@
       "texo-v1",
       "release",
       "human-only",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h6"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Final publication and deprecation are irreversible-ish public actions requiring human authorization.",
     "value": "Completes the migration for consumers.",
@@ -1038,9 +1017,7 @@
       "terminal transcript"
     ],
     "risks": [
-      "Wrong dist-tag impacts all current users",
-      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
-      "BLOCKED on H6: Version line: Texo starts at 1.0.0-rc.0; legacy name jumps to shim 1.0.0. Unblock condition: Human confirms version line in E17-08 release train plan."
+      "Wrong dist-tag impacts all current users"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -1053,13 +1030,10 @@
     ],
     "size": "S",
     "semver": "none",
-    "wave": 16,
+    "wave": 18,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H1",
-      "H6"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

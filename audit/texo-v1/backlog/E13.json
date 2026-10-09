@@ -1520,8 +1520,8 @@
       "texo-v1",
       "ai-native",
       "evals",
-      "blocked-decision",
-      "needs-h5"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Harness needs tasks covering selection, forms, nav, a11y, tokens, responsive.",
     "value": "Documented evidence of uplift (pass rate, hallucinated props, context tokens).",
@@ -1542,7 +1542,8 @@
       "E13-22",
       "E13-23",
       "E13-25",
-      "E13-30"
+      "E13-30",
+      "E18-12"
     ],
     "validation": [
       "node scripts/ai/eval.mjs --report"
@@ -1551,8 +1552,7 @@
       "Command output / generated artifact path attached to the Jira ticket"
     ],
     "risks": [
-      "Needs paid agent runs; time-box",
-      "BLOCKED on H5: Eval budget and reference agent/model for AI-uplift proof. Unblock condition: Human names budget owner, run count and reference model."
+      "Needs paid agent runs; time-box"
     ],
     "dod": [
       "Acceptance verified by command",
@@ -1567,10 +1567,8 @@
     "semver": "none",
     "wave": 9,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H5"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1587,7 +1585,6 @@
       "ai-native",
       "mcp",
       "optional",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1631,7 +1628,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 9,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -2030,7 +2027,6 @@
       "ai-native",
       "cli",
       "optional",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2075,7 +2071,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 11,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],

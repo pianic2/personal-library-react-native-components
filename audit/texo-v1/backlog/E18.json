@@ -1,0 +1,852 @@
+[
+  {
+    "id": "E18-01",
+    "epic": "E18",
+    "type": "Task",
+    "title": "ADR 0020: zero-cost agent harness architecture and provider policy",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "adr",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "PO decision 2026-10-09: no spend-limit increase, budget 0, build a harness instead. Execution of ~350 tickets must run on free/local models, but no architecture or provider policy exists.",
+    "value": "One decided design lets every other harness ticket proceed in parallel and keeps the zero-cost rule enforceable.",
+    "scope": [
+      "Write audit/adr/0020-agent-harness.md: goals, non-goals, components (queue, provider layer, context packs, edit protocol, validation loop, review stage, merge gate, state), run location (user machine with local model; CI with free-tier APIs; cloud sessions cannot reach a local model)",
+      "Provider policy: OpenAI-compatible protocol only; classes local (Ollama, llama.cpp server, LM Studio, vLLM) and free-tier (verified at implementation time, quotas recorded in the ADR); paid endpoints refused unless the user passes an explicit --allow-paid flag",
+      "Secrets policy: provider keys only from environment variables, never in repo, never in logs",
+      "Define commit convention add(PLRNUI-<n>): msg, fix(PLRNUI-<n>): msg, chore(PLRNUI-<n>): msg and branch convention texo/PLRNUI-<n>-<slug> targeting integration branch texo/v1"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "audit/adr/0020-agent-harness.md exists with Status Accepted and headings Decision, Providers, Secrets, Run location, Git conventions, Alternatives (grep)",
+      "The ADR lists the exact environment variable names read for provider keys (grep 'HARNESS_')",
+      "The ADR states that main is never pushed or merged by the harness (grep)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Free-tier quotas change; record the verification date and re-verify in E18-11"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "audit/adr/0020-agent-harness.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-02",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness provider layer: OpenAI-compatible client, local and free-tier routing, cost guard",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "providers",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No way to call a local or free model uniformly, to fail over on rate limits, or to guarantee that nothing paid is called.",
+    "value": "Any ticket can run on whichever free/local model is available, with a hard zero-cost guarantee.",
+    "scope": [
+      "tools/harness/src/providers/: client for /v1/chat/completions with streaming off, timeouts, retries with exponential backoff and Retry-After handling",
+      "providers.config schema (name, baseUrl, apiKeyEnv, model, cost: local|free|paid, rpm, tpm, contextWindow) validated at load",
+      "Router: ordered fallback list, per-provider rate limiter, circuit breaker after 3 consecutive failures",
+      "Cost guard: any provider with cost 'paid' or unknown baseUrl is refused unless --allow-paid is set",
+      "Token ledger per run (prompt/completion tokens per provider) written to the run log"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Unit test: a provider marked paid is refused without --allow-paid and accepted with it",
+      "Unit test: 429 with Retry-After pauses that provider and the router falls over to the next one",
+      "Unit test: config without apiKeyEnv for a free-tier provider fails validation with a clear message",
+      "Integration test against a local mock OpenAI-compatible server (started in the test) returns a completion end to end",
+      "No API key appears in any log line in the test output (grep for the test key)"
+    ],
+    "dependencies": [
+      "E18-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Provider behaviours differ (tool calling, JSON mode); keep the protocol to plain chat completions"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/providers/**",
+      "tools/harness/tests/providers/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-03",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness ticket queue: approved, unblocked tickets in dependency order with file locks",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "queue",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Nothing selects which approved ticket can run next without conflicting on files.",
+    "value": "The harness runs the highest-priority ticket whose blockers are done and whose owned files are free.",
+    "scope": [
+      "Read tickets from audit/texo-v1/backlog/*.json joined with jira-map.json; read status/labels from Jira when credentials are available, else from a local snapshot",
+      "A ticket is runnable when: labelled po-approved, not blocked-decision, every dependency is Done or merged into texo/v1, no running ticket owns an overlapping filesTouched path",
+      "Output a deterministic ordered queue; support --wave N and --ticket ID filters",
+      "Never selects a ticket without po-approved (hard rule)"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test with fixture tickets: a ticket whose dependency is not merged is not returned",
+      "Test: two tickets with overlapping filesTouched are never returned together",
+      "Test: a ticket without po-approved is never returned even when all other conditions hold",
+      "Queue order is identical across two runs on the same input (test)"
+    ],
+    "dependencies": [
+      "E18-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Jira credentials are optional; offline snapshot must stay supported"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/queue/**",
+      "tools/harness/tests/queue/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-04",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness git manager: ticket branches, commit convention, PR to texo/v1, push guards",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "git",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Ticket work needs isolated branches, a fixed commit convention, and a guarantee that main is never touched.",
+    "value": "Parallel tickets never collide and history reads add/fix/chore(PLRNUI-n).",
+    "scope": [
+      "git worktree per ticket on branch texo/PLRNUI-<n>-<slug> created from texo/v1",
+      "Commit message validator and commit-msg hook: ^(add|fix|chore)\\(PLRNUI-[0-9]+\\): .+",
+      "Open PR to texo/v1 with the ticket body checklist; refuse any push or PR whose base is main",
+      "Clean up worktrees on success or failure"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: a commit message 'feat: x' is rejected, 'add(PLRNUI-12): x' accepted",
+      "Test: attempting to push or open a PR with base main exits non-zero and changes nothing",
+      "Test: two tickets get two separate worktrees and branches with the expected names",
+      "Worktree directory is removed after a simulated failure (test)"
+    ],
+    "dependencies": [
+      "E18-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Branch names must stay unique after retries; suffix with attempt number"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/git/**",
+      "tools/harness/tests/git/**",
+      ".githooks/commit-msg"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-05",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness context pack builder: minimal ticket context under a token budget",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "context",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Small local models cannot take large documentation; token use must be minimal.",
+    "value": "Each run gets only what the ticket needs, which is the main lever for making a 27B-class model succeed.",
+    "scope": [
+      "Build a pack from: ticket body, owned files (current content), imports they depend on (signatures only), relevant ADRs by id, DECISIONS.md excerpt, API conventions summary",
+      "Hard token budget per provider contextWindow with ordered truncation (examples first, ADR text last)",
+      "When E13 component cards exist, include the cards of referenced components instead of full docs",
+      "Emit a pack manifest listing every included file and its token estimate"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: pack for a fixture ticket stays below the configured budget and includes the ticket body and owned files",
+      "Test: when over budget, truncation removes the lowest-priority sections first and the manifest records them",
+      "Pack generation is deterministic (same input, same output hash)",
+      "Pack never includes files outside filesTouched plus read-only references (test)"
+    ],
+    "dependencies": [
+      "E18-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Token estimates differ per model; use a conservative tokenizer and 15 percent margin"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/context/**",
+      "tools/harness/tests/context/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-06",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness edit protocol and sandbox: structured edits, path ownership, command allowlist",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "edits",
+      "safety",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Models must change files safely without touching other tickets' files or running arbitrary commands.",
+    "value": "Edits are small, verifiable and confined to the ticket's owned files.",
+    "scope": [
+      "Edit format: JSON list of {path, op: create|replace|patch, content or unified diff}; strict parser with repair of common formatting errors",
+      "Reject any edit outside the ticket's filesTouched globs (hard error)",
+      "Command runner with allowlist (npm run typecheck|test|build, node scripts/*, npx tsc, git status|diff) and timeout; no network except configured providers",
+      "Dry-run mode printing the diff without writing"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: an edit to a path outside filesTouched is rejected and nothing is written",
+      "Test: a command not on the allowlist is refused (e.g. curl, rm -rf)",
+      "Test: malformed JSON edit with a trailing comma is repaired and applied, unrecoverable input fails with a clear error",
+      "Test: patch op applies a unified diff and fails cleanly on a context mismatch"
+    ],
+    "dependencies": [
+      "E18-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Allowlist too strict blocks legitimate scripts; keep it in a reviewed config file"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/edits/**",
+      "tools/harness/tests/edits/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-07",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness validation loop: run ticket checks, retry policy, evidence capture",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "A run is only useful if the ticket's validation commands pass and evidence is recorded.",
+    "value": "Tickets finish with proof, and failures change strategy instead of looping.",
+    "scope": [
+      "Run the ticket validation commands; parse failures into a short repair prompt",
+      "Retry policy: up to 3 repair attempts, then switch provider or strategy once, then stop and mark blocked with the failure summary (no infinite loop)",
+      "Collect evidence required by the ticket (command output, changed-file list) into a markdown report attached to the PR",
+      "Never skip, disable or quarantine a test to get green (guard: diff scan for .skip/.only/xit/disabled additions)"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: after 3 failed repairs the run stops with status blocked and a failure summary",
+      "Test: a diff that adds test.skip makes the run fail with an explicit reason",
+      "Evidence report contains the ticket id, commands, exit codes and changed files (test)",
+      "Test: a passing first attempt performs no repair step"
+    ],
+    "dependencies": [
+      "E18-02",
+      "E18-06"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Flaky tests can mimic model failures; re-run a failing test once before repairing"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/validate/**",
+      "tools/harness/tests/validate/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-08",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness independent review stage with a different model and a rubric",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "review",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agent output must be reviewed independently before merge, and the reviewer must not be the author.",
+    "value": "Catches wrong or out-of-scope changes without paid models.",
+    "scope": [
+      "Reviewer runs with a different provider or model than the author when available, else a different prompt and fresh context",
+      "Rubric from the ticket: each acceptance criterion marked pass/fail with evidence, out-of-scope changes, API conventions (ADR 0014), no hard-coded colors, a11y obligations",
+      "Output structured findings (blocker, major, minor); any blocker or failed criterion blocks merge and returns to E18-07 with the findings",
+      "Review report attached to the PR"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: a diff touching a file outside filesTouched yields a blocker finding",
+      "Test: a diff that fails an acceptance criterion yields a failed criterion and blocks merge",
+      "Test: reviewer provider differs from author provider when two are configured",
+      "Review output validates against a JSON schema (test)"
+    ],
+    "dependencies": [
+      "E18-02",
+      "E18-07"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Small models give weak reviews; combine the rubric with deterministic checks (E18-06, lint scripts)"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/review/**",
+      "tools/harness/tests/review/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-10",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness run state, resume, kill switch, run log and Jira evidence comments",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "state",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Long unattended runs must survive interruptions and be stoppable.",
+    "value": "Work resumes after a crash and nothing runs away.",
+    "scope": [
+      "State file per run (ticket, attempt, stage, provider) with atomic writes; resume continues from the last completed stage",
+      "Kill switch: a STOP file or SIGINT finishes the current stage and exits cleanly; max-tickets and max-runtime flags",
+      "JSONL run log with no secrets",
+      "Optional Jira comment with the evidence summary and PR link when credentials are present; never transitions to Approvato"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: killing the process mid-run and restarting resumes at the recorded stage without redoing completed stages",
+      "Test: creating the STOP file ends the loop after the current ticket",
+      "Run log contains no value of any *_API_KEY environment variable in the test (grep)",
+      "Test: Jira comment helper is a no-op without credentials"
+    ],
+    "dependencies": [
+      "E18-03",
+      "E18-04",
+      "E18-07"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Concurrent harness instances on the same repo; use a lock file"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/state/**",
+      "tools/harness/tests/state/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-11",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Local model qualification: benchmark a 27B-class model on reference tickets",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "benchmark",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "It is unknown which ticket classes a local 27B-class model can complete; PO suggested Qwen 27B locally or free-tier providers.",
+    "value": "A measured routing table decides which tickets go to local models and which need a stronger free model or manual work.",
+    "scope": [
+      "Select 10 reference tickets across classes (docs/ADR, config/scripts, small component, hook, test-only, refactor)",
+      "Run each with every configured provider (local and free-tier) using the harness; record pass rate, attempts, tokens, wall time",
+      "Produce tools/harness/BENCHMARK.md with a routing table (ticket class -> provider) and known limits; re-verify free-tier quotas"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "BENCHMARK.md lists 10 tickets x each provider with pass/fail and attempts",
+      "Routing table covers every ticket label class used in the backlog (script check against _index.json labels)",
+      "Report states hardware, model name/quantization and server used",
+      "At least one provider reaches >= 70 percent pass on the docs/config class, or the report states the gap and the fallback"
+    ],
+    "dependencies": [
+      "E18-02",
+      "E18-05",
+      "E18-06",
+      "E18-07"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Needs the user's hardware for local runs; free-tier runs can happen in CI"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/BENCHMARK.md",
+      "tools/harness/bench/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-09",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Merge gate: CI on texo/v1 PRs and merge only on green CI plus passed review",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "ci",
+      "merge",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Merging into the integration branch must require green CI and a passed review, and main must stay protected.",
+    "value": "Parallel tickets land safely without human merges into texo/v1.",
+    "scope": [
+      ".github/workflows/harness-pr.yml: on pull_request to texo/v1 run the release:check subset that is fast (typecheck, tests, build, docs lint) using only free GitHub-hosted runners",
+      "Merge step in the harness: merge only when required checks are green and the review report status is pass; squash with the commit convention",
+      "Document required branch protection for texo/v1 (checks required) and main (PR only, no harness bypass)"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "actionlint passes on harness-pr.yml",
+      "Test: merge is refused when a required check is red (mocked API)",
+      "Test: merge is refused when the review report status is not pass",
+      "Docs list the exact branch protection settings (grep)"
+    ],
+    "dependencies": [
+      "E18-04",
+      "E18-08"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Free CI minutes are finite; keep the workflow fast and cache dependencies"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      ".github/workflows/harness-pr.yml",
+      "tools/harness/src/merge/**",
+      "tools/harness/tests/merge/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-13",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Harness runbook: setup on a local GPU machine and with free-tier keys",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Without a runbook the harness cannot be started by the PO.",
+    "value": "The PO can start unattended runs in minutes without paying for tokens.",
+    "scope": [
+      "docs/harness.md: hardware needs for a 27B-class model (quantization options), installing Ollama or llama.cpp server, loading the model, configuring providers.config, setting API key environment variables, first dry run, start/stop, troubleshooting",
+      "Safety section: what the harness may and may not do (main protected, no publish, no po-approved)",
+      "Link from README developer section"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Every command in the runbook is in a fenced block and the harness doctor command (E18-10) is referenced",
+      "Doc states that cloud sessions cannot reach a local model and that the harness must run on the PO machine or in CI (grep)",
+      "Links resolve (link check)"
+    ],
+    "dependencies": [
+      "E18-10",
+      "E18-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Hardware specifics vary; document minimum and recommended"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "docs/harness.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E18-12",
+    "epic": "E18",
+    "type": "Task",
+    "title": "Zero-cost AI eval runner on the harness provider layer (for E13-31)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "evals",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "E13-31 assumed paid agent runs; budget is 0.",
+    "value": "Skill uplift can be measured with local or free models.",
+    "scope": [
+      "Eval runner that executes E13-30 harness tasks through the E18-02 provider layer with arms baseline / skills",
+      "Runs N repetitions per arm and writes evals/ai/results/<date>.md with pass rate, invalid-prop count and mean context tokens",
+      "States the model, server and date in the report; refuses paid providers"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Test: runner against the mock provider produces a report with all three metrics",
+      "Test: report header contains model, server and date",
+      "Paid provider is refused (test)"
+    ],
+    "dependencies": [
+      "E13-30",
+      "E18-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Small models may show noisy uplift; report confidence honestly"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "tools/harness/src/evals/**",
+      "tools/harness/tests/evals/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  }
+]

@@ -247,12 +247,12 @@
       "decision",
       "human-only",
       "migration",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E15-02",
@@ -264,12 +264,12 @@
       "texo-v1",
       "decision",
       "migration",
-      "blocked-decision",
-      "needs-h4"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E15-09",
@@ -315,12 +315,12 @@
       "texo-v1",
       "oss-readiness",
       "governance",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E16-04",
@@ -386,12 +386,12 @@
       "oss-readiness",
       "governance",
       "audit",
-      "blocked-decision",
-      "needs-h7"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E17-06",
@@ -422,12 +422,12 @@
       "release",
       "policy",
       "semver",
-      "blocked-decision",
-      "needs-h4"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E17-10",
@@ -440,6 +440,24 @@
       "release",
       "security",
       "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-01",
+    "epic": "E18",
+    "title": "ADR 0020: zero-cost agent harness architecture and provider policy",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "adr",
       "ready",
       "awaiting-po-approval"
     ],
@@ -726,6 +744,107 @@
     "blocked": false
   },
   {
+    "id": "E18-02",
+    "epic": "E18",
+    "title": "Harness provider layer: OpenAI-compatible client, local and free-tier routing, cost guard",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "providers",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-03",
+    "epic": "E18",
+    "title": "Harness ticket queue: approved, unblocked tickets in dependency order with file locks",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "queue",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-04",
+    "epic": "E18",
+    "title": "Harness git manager: ticket branches, commit convention, PR to texo/v1, push guards",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "git",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-05",
+    "epic": "E18",
+    "title": "Harness context pack builder: minimal ticket context under a token budget",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "context",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-06",
+    "epic": "E18",
+    "title": "Harness edit protocol and sandbox: structured edits, path ownership, command allowlist",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "edits",
+      "safety",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
     "id": "E1-01",
     "epic": "E1",
     "title": "Define ComponentMeta, colocated <Name>.meta.ts loader and ADR 0016 (single metadata source)",
@@ -984,9 +1103,8 @@
     "labels": [
       "texo-v1",
       "codemod",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h8"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E15-01",
@@ -994,7 +1112,7 @@
       "E15-11"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E15-13",
@@ -1006,15 +1124,15 @@
       "texo-v1",
       "docs",
       "readme",
-      "blocked-decision",
-      "needs-h1"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E15-01",
       "E15-12"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E17-12",
@@ -1051,6 +1169,27 @@
     ],
     "deps": [
       "E17-08"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-07",
+    "epic": "E18",
+    "title": "Harness validation loop: run ticket checks, retry policy, evidence capture",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-02",
+      "E18-06"
     ],
     "postV1": false,
     "blocked": false
@@ -1542,14 +1681,13 @@
       "biometrics",
       "adapter",
       "security",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E8-01"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -1564,14 +1702,13 @@
       "splash",
       "app-shell",
       "adapter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E8-01"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -1732,6 +1869,72 @@
     ],
     "deps": [
       "E14-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-08",
+    "epic": "E18",
+    "title": "Harness independent review stage with a different model and a rubric",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "review",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-02",
+      "E18-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-10",
+    "epic": "E18",
+    "title": "Harness run state, resume, kill switch, run log and Jira evidence comments",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "state",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-03",
+      "E18-04",
+      "E18-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-11",
+    "epic": "E18",
+    "title": "Local model qualification: benchmark a 27B-class model on reference tickets",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "benchmark",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-02",
+      "E18-05",
+      "E18-06",
+      "E18-07"
     ],
     "postV1": false,
     "blocked": false
@@ -2097,7 +2300,6 @@
       "texo-v1",
       "primitive",
       "layout",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2106,7 +2308,7 @@
       "E2-06",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -2140,7 +2342,6 @@
       "texo-v1",
       "typography",
       "code",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2149,7 +2350,7 @@
       "E2-06",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -2587,7 +2788,6 @@
       "video",
       "media",
       "adapter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2596,7 +2796,7 @@
       "E2-06",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -2631,7 +2831,6 @@
       "e7",
       "markdown",
       "richtext",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2640,7 +2839,7 @@
       "E2-06",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -2865,14 +3064,13 @@
       "texo-v1",
       "templates",
       "starter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E11-09"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -2932,6 +3130,49 @@
     "deps": [
       "E14-10",
       "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-09",
+    "epic": "E18",
+    "title": "Merge gate: CI on texo/v1 PRs and merge only on green CI plus passed review",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "ci",
+      "merge",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-04",
+      "E18-08"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-13",
+    "epic": "E18",
+    "title": "Harness runbook: setup on a local GPU machine and with free-tier keys",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E18-10",
+      "E18-11"
     ],
     "postV1": false,
     "blocked": false
@@ -3434,7 +3675,6 @@
       "e7",
       "audio",
       "media",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -3444,7 +3684,7 @@
       "E7-19",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -3459,7 +3699,6 @@
       "adapter",
       "media",
       "dependencies",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -3469,7 +3708,7 @@
       "E7-19",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -3591,14 +3830,13 @@
       "responsive",
       "tablet",
       "foldable",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E10-02"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -3612,7 +3850,6 @@
       "responsive",
       "tablet",
       "layout",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -3624,7 +3861,7 @@
       "E10-06",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -3637,14 +3874,13 @@
       "texo-v1",
       "templates",
       "starter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
     "deps": [
       "E11-12"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -3657,7 +3893,6 @@
       "texo-v1",
       "templates",
       "starter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -3665,7 +3900,7 @@
       "E7-15",
       "E11-12"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -4012,7 +4247,6 @@
       "texo-v1",
       "forms",
       "rating",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -4024,7 +4258,7 @@
       "E4-05",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -4118,7 +4352,6 @@
       "texo-v1",
       "navigation",
       "breadcrumb",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -4128,7 +4361,7 @@
       "E6-26",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -4302,6 +4535,8 @@
       "E10-03",
       "E10-04",
       "E10-05",
+      "E10-08",
+      "E10-10",
       "E10-12"
     ],
     "postV1": false,
@@ -4435,6 +4670,27 @@
       "E8-01",
       "E10-05",
       "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E18-12",
+    "epic": "E18",
+    "title": "Zero-cost AI eval runner on the harness provider layer (for E13-31)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "harness",
+      "zero-cost",
+      "evals",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-30",
+      "E18-02"
     ],
     "postV1": false,
     "blocked": false
@@ -5067,7 +5323,6 @@
       "theme",
       "preset",
       "premium",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -5079,7 +5334,7 @@
       "E2-05",
       "E2-11"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -5118,7 +5373,6 @@
       "theme",
       "preset",
       "consumer",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -5130,7 +5384,7 @@
       "E2-05",
       "E2-11"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -5144,7 +5398,6 @@
       "theme",
       "preset",
       "editorial",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -5156,7 +5409,7 @@
       "E2-05",
       "E2-11"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -5170,7 +5423,6 @@
       "theme",
       "preset",
       "ecommerce",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -5182,7 +5434,7 @@
       "E2-05",
       "E2-11"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -5221,7 +5473,6 @@
       "theme",
       "preset",
       "social",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -5233,7 +5484,7 @@
       "E2-05",
       "E2-11"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -5960,8 +6211,13 @@
       "E2-10",
       "E2-11",
       "E2-12",
+      "E2-13",
       "E2-14",
-      "E2-18"
+      "E2-15",
+      "E2-16",
+      "E2-17",
+      "E2-18",
+      "E2-19"
     ],
     "postV1": false,
     "blocked": false
@@ -6002,8 +6258,8 @@
       "icon",
       "adapter",
       "optional-peer",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E4-04",
@@ -6011,7 +6267,7 @@
       "E14-09"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E5-13",
@@ -6146,7 +6402,6 @@
       "texo-v1",
       "overlay",
       "context-menu",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6156,7 +6411,7 @@
       "E6-12",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6297,9 +6552,8 @@
       "chart",
       "adapter",
       "dependencies",
-      "post-1.0",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-01",
@@ -6307,8 +6561,8 @@
       "E7-22",
       "E14-13"
     ],
-    "postV1": true,
-    "blocked": true
+    "postV1": false,
+    "blocked": false
   },
   {
     "id": "E8-31",
@@ -6322,8 +6576,8 @@
       "safe-area",
       "adapter",
       "optional-peer",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E8-02",
@@ -6331,7 +6585,7 @@
       "E14-09"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E9-07",
@@ -6425,17 +6679,18 @@
       "texo-v1",
       "ai-native",
       "evals",
-      "blocked-decision",
-      "needs-h5"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E13-22",
       "E13-23",
       "E13-25",
-      "E13-30"
+      "E13-30",
+      "E18-12"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E13-33",
@@ -6448,7 +6703,6 @@
       "ai-native",
       "mcp",
       "optional",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6457,7 +6711,7 @@
       "E13-11",
       "E13-12"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6535,15 +6789,15 @@
       "forms",
       "adapter",
       "native-module",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E5-16",
       "E5-17"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E5-20",
@@ -6603,14 +6857,14 @@
       "list",
       "adapter",
       "dependencies",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E7-02"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E7-09",
@@ -6669,7 +6923,6 @@
       "texo-v1",
       "e7",
       "tree",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6680,7 +6933,7 @@
       "E7-02",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6694,7 +6947,6 @@
       "e7",
       "gallery",
       "media",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6706,7 +6958,7 @@
       "E7-16",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6720,9 +6972,8 @@
       "e7",
       "chart",
       "adapter",
-      "post-1.0",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-01",
@@ -6731,8 +6982,8 @@
       "E7-25",
       "E14-13"
     ],
-    "postV1": true,
-    "blocked": true
+    "postV1": false,
+    "blocked": false
   },
   {
     "id": "E7-32",
@@ -6746,7 +6997,6 @@
       "chat",
       "list",
       "performance",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6757,7 +7007,7 @@
       "E7-31",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6863,7 +7113,6 @@
       "texo-v1",
       "templates",
       "starter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -6871,7 +7120,7 @@
       "E7-02",
       "E11-09"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -6969,13 +7218,16 @@
       "E4-04",
       "E4-05",
       "E4-06",
+      "E4-08",
       "E4-09",
       "E4-15",
       "E4-16",
       "E4-17",
+      "E4-18",
       "E4-19",
       "E4-20",
       "E4-23",
+      "E4-24",
       "E10-14",
       "E14-11",
       "E14-12"
@@ -7065,7 +7317,6 @@
       "e7",
       "calendar",
       "list",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -7077,7 +7328,7 @@
       "E7-03",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -7091,7 +7342,6 @@
       "e7",
       "notifications",
       "list",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -7103,7 +7353,7 @@
       "E7-03",
       "E14-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -7148,7 +7398,6 @@
       "texo-v1",
       "templates",
       "starter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -7156,7 +7405,7 @@
       "E7-02",
       "E11-13"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -7236,7 +7485,6 @@
       "ai-native",
       "cli",
       "optional",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -7244,7 +7492,7 @@
       "E13-10",
       "E13-19"
     ],
-    "postV1": true,
+    "postV1": false,
     "blocked": false
   },
   {
@@ -7305,9 +7553,11 @@
       "E5-15",
       "E5-16",
       "E5-17",
+      "E5-18",
       "E5-19",
       "E5-20",
       "E5-21",
+      "E5-22",
       "E5-23",
       "E5-25",
       "E5-26",
@@ -7333,8 +7583,8 @@
       "release",
       "stability",
       "stable-bar",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-07",
@@ -7345,7 +7595,7 @@
       "E17-07"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E1-37",
@@ -7467,9 +7717,11 @@
       "E6-10",
       "E6-11",
       "E6-12",
+      "E6-13",
       "E6-14",
       "E6-15",
       "E6-17",
+      "E6-18",
       "E6-19",
       "E6-20",
       "E6-21",
@@ -7504,8 +7756,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-11",
@@ -7517,7 +7769,7 @@
       "E17-14"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E1-39",
@@ -7530,8 +7782,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-12",
@@ -7546,7 +7798,7 @@
       "E17-14"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E1-40",
@@ -7559,8 +7811,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-20",
@@ -7570,7 +7822,7 @@
       "E17-14"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E1-41",
@@ -7583,8 +7835,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-20",
@@ -7597,7 +7849,7 @@
       "E17-14"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   },
   {
     "id": "E8-29",
@@ -7683,19 +7935,31 @@
       "E7-01",
       "E7-02",
       "E7-03",
+      "E7-04",
       "E7-08",
       "E7-09",
       "E7-10",
       "E7-11",
       "E7-12",
       "E7-13",
+      "E7-14",
       "E7-15",
       "E7-16",
       "E7-17",
+      "E7-18",
+      "E7-19",
+      "E7-20",
+      "E7-21",
       "E7-22",
       "E7-23",
       "E7-24",
+      "E7-25",
+      "E7-26",
       "E7-27",
+      "E7-30",
+      "E7-31",
+      "E7-32",
+      "E7-33",
       "E14-16"
     ],
     "postV1": false,
@@ -7762,6 +8026,8 @@
       "E8-21",
       "E8-22",
       "E8-23",
+      "E8-24",
+      "E8-25",
       "E8-26",
       "E14-17"
     ],
@@ -7813,18 +8079,38 @@
     "blocked": false
   },
   {
+    "id": "E14-19",
+    "epic": "E14",
+    "title": "Wave wiring post-1.0: exports, snapshot and nav for deferred components",
+    "size": "M",
+    "wave": 16,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-34",
+      "E14-18"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
     "id": "E15-14",
     "epic": "E15",
     "title": "Cutover: apply final identity to package.json, scripts, repo URLs and docs",
     "size": "M",
-    "wave": 15,
+    "wave": 17,
     "labels": [
       "texo-v1",
       "cutover",
       "semver-sensitive",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h6"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E1-37",
@@ -7838,6 +8124,7 @@
       "E14-14",
       "E14-15",
       "E14-18",
+      "E14-19",
       "E15-01",
       "E15-02",
       "E15-04",
@@ -7849,29 +8136,6 @@
       "E17-05"
     ],
     "postV1": false,
-    "blocked": true
-  },
-  {
-    "id": "E14-19",
-    "epic": "E14",
-    "title": "Wave wiring post-1.0: exports, snapshot and nav for deferred components",
-    "size": "M",
-    "wave": 16,
-    "labels": [
-      "texo-v1",
-      "integration",
-      "exports",
-      "wave-wiring",
-      "post-1.0",
-      "ready",
-      "awaiting-po-approval"
-    ],
-    "deps": [
-      "E13-34",
-      "E14-18",
-      "E15-14"
-    ],
-    "postV1": true,
     "blocked": false
   },
   {
@@ -7879,14 +8143,13 @@
     "epic": "E15",
     "title": "Execute cutover publish: shim release and npm deprecate of legacy versions",
     "size": "S",
-    "wave": 16,
+    "wave": 18,
     "labels": [
       "texo-v1",
       "release",
       "human-only",
-      "blocked-decision",
-      "needs-h1",
-      "needs-h6"
+      "ready",
+      "awaiting-po-approval"
     ],
     "deps": [
       "E15-14",
@@ -7895,6 +8158,6 @@
       "E17-04"
     ],
     "postV1": false,
-    "blocked": true
+    "blocked": false
   }
 ]

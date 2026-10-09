@@ -40,3 +40,29 @@ Nothing here renames the package/repo/imports; all choices keep the future cutov
 ## Process rules
 - Jira "READY" = ticket body complete (problem, value, scope, AC, deps, out-of-scope, validation, evidence, risks, DoD) + labels `texo-v1`, `ready`, `awaiting-po-approval`, status stays `Da fare`. The orchestrator never applies `po-approved` nor moves to `Approvato` (PO gate, Confluence page 13).
 - Tickets with an unresolved human decision: label `blocked-decision`, NOT `ready`; body states the decision and the unblock condition.
+
+## PO decisions — 2026-10-09 (authoritative; override defaults above)
+
+| # | Decision (PO) | Effect |
+|---|---|---|
+| P1 | **Do not raise the spend limit; build a harness instead.** Budget for execution and evals is 0 (local model such as a ~27B Qwen, or free-tier providers). | New Epic E18 "Agent execution harness (zero-cost)" PLRNUI-443, 13 tickets. Cloud sessions cannot reach a local model: the harness runs on the PO machine or in CI with free providers. Subagent fan-out by the orchestrator is minimised. |
+| P2 | **Tickets are approved only after all decisions are taken.** | No `po-approved` anywhere until the open items below are answered. |
+| P3 | **Git model A:** one branch per ticket `texo/PLRNUI-<n>-<slug>`, PR to integration branch `texo/v1`; the agent merges into `texo/v1` only with green CI + independent review; merge `texo/v1` -> `main` is the PO's (interpretation, to confirm). Commit messages: `add(PLRNUI-<n>): ...`, `fix(PLRNUI-<n>): ...`, `chore(PLRNUI-<n>): ...`. | Authorises branch/PR creation and merge into `texo/v1` for approved tickets only. E18-04 enforces the convention. |
+| H1 | npm package **`@theopificium/texo`** (bare `texo` is taken on npm; `@theopificium/texo` returned 404 = free on 2026-10-09), repo **`theopificium/texo`**, security contact **info@theopificium.it**, PO is owner of the `@personal-library` npm scope. License: open source "well done", **not yet chosen** (currently MIT). | Unblocks E15-01, E15-10, E15-13, E15-14, E15-16, E16-03. Still blocked: E16-01 (CODEOWNERS handle), E16-09 (license). |
+| H2 | **Yes** to optional adapters (`peerDependenciesMeta`, `./adapters/*`). | Unblocks E4-24, E5-18, E7-04, E7-25, E7-26, E8-31. |
+| H3 | **Everything that was planned is in scope; nothing is "post-1.0".** Everything must work, then publish; whatever is not ready stays in draft (unpublished) while work continues. | `postV1` list emptied: all 33 deferred tickets are V1 (ordered by dependencies). Stable set (ADR-R10) becomes a *floor*, not a ceiling: components that pass the stable bar at release time are published stable; others stay draft. Unblocks E1-38..41, E17-14. |
+| H4 | Default accepted: Expo 57 / RN 0.86 only for 1.0; shim sunset 12 months; deprecated aliases through 1.x. | Unblocks E15-02, E17-07. |
+| H5 | Budget **0**; local model (e.g. Qwen 27B) or free-tier token providers. | E13-31 now depends on E18-12 (zero-cost eval runner). |
+| H6 | Launch as **1.0.0** (not an rc line). | E15-14/E15-16 and E17 release plan must target 1.0.0 directly; keep dist-tag `next`/`rc` rehearsal on a local registry (E17-12) instead of public rc publishes. |
+| H7 | Default accepted. | Unblocks E16-10. |
+| H8 | Default accepted (standalone codemod in the same scope + `migrate` alias evaluated). | Unblocks E15-10. |
+| Env | PO reports the environment configuration (section 4 of the owner guide) as done. | Not verifiable from this session: repo `theopificium/texo` is not visible to the GitHub integration. |
+
+### Still open (needed before the PO approves tickets)
+1. License choice (recommendation: MIT + SPDX headers + THIRD_PARTY_NOTICES + DCO sign-off; Apache-2.0 + NOTICE if a patent grant is wanted).
+2. CODEOWNERS GitHub handle(s).
+3. Repo move: transfer `pianic2/personal-library-react-native-components` to `theopificium` and rename to `texo` now, at cutover (E15-14, recommended), or create a fresh `theopificium/texo`? The session's GitHub scope must include the target repo.
+4. Confirm: `texo/v1` -> `main` merges stay with the PO.
+5. Confirm: stable set is a floor and unfinished components stay draft (H3 reading above).
+6. Where the harness runs: PO machine with a local model (GPU/VRAM or Apple unified memory?) or only CI with free-tier providers.
+7. H6 consequence: confirm no public `rc` publishes (1.0.0 straight, rehearsed on a local registry).

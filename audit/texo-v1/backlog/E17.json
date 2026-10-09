@@ -76,8 +76,8 @@
       "release",
       "policy",
       "semver",
-      "blocked-decision",
-      "needs-h4"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "ADR 0008 defines breaking-change governance but no version policy for 1.0.0, no deprecation windows, and docs/migration.md says 'stable: currently zero'.",
     "value": "Contract for consumers and for automated release decisions.",
@@ -104,8 +104,7 @@
       "ADR + pages"
     ],
     "risks": [
-      "Policy values (months) are human decisions - flagged",
-      "BLOCKED on H4: Support matrix for 1.0 (Expo 57 only vs 56-57) and deprecation/sunset windows. Unblock condition: Human records support matrix in config/compatibility.json and sunset months in ADR 0011/0013."
+      "Policy values (months) are human decisions - flagged"
     ],
     "dod": [
       "All acceptance criteria verified",
@@ -123,10 +122,8 @@
     "semver": "none",
     "wave": 0,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H4"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -853,8 +850,8 @@
       "release",
       "stability",
       "stable-bar",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "The plan's own 1.0 gate requires a non-empty stable set but no ticket defines the stable bar or promotes anything (R1 B1).",
     "value": "An operational, script-checked definition of 'stable' and the list of components that must meet it for 1.0.",
@@ -888,8 +885,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "Scope creep in the stable set delays 1.0; anything not listed ships @experimental",
-      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+      "Scope creep in the stable set delays 1.0; anything not listed ships @experimental"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -906,10 +902,8 @@
     "semver": "none",
     "wave": 11,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H3"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

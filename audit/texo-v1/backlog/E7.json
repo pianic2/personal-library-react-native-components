@@ -251,7 +251,6 @@
       "video",
       "media",
       "adapter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -314,7 +313,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 4,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -410,7 +409,6 @@
       "e7",
       "markdown",
       "richtext",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -472,7 +470,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 4,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -491,7 +489,6 @@
       "e7",
       "audio",
       "media",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -552,7 +549,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 5,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -572,7 +569,6 @@
       "adapter",
       "media",
       "dependencies",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -634,7 +630,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 5,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1361,9 +1357,8 @@
       "chart",
       "adapter",
       "dependencies",
-      "post-1.0",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Lines/areas/curves cannot be drawn faithfully with Views.",
     "value": "Production-grade line/area charts as opt-in subpath.",
@@ -1408,8 +1403,7 @@
       "screenshot or render snapshot of main states, light and dark"
     ],
     "risks": [
-      "react-native-svg version alignment with Expo SDK 56",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "react-native-svg version alignment with Expo SDK 56"
     ],
     "dod": [
       "Acceptance met",
@@ -1428,11 +1422,9 @@
     "size": "M",
     "semver": "minor",
     "wave": 9,
-    "postV1": true,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1531,8 +1523,8 @@
       "list",
       "adapter",
       "dependencies",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "FlashList gives large perf wins but must not become a core dependency.",
     "value": "Opt-in high-perf list without touching core peers.",
@@ -1569,8 +1561,7 @@
       "screenshot or render snapshot of main states, light and dark"
     ],
     "risks": [
-      "FlashList v2 API differences; pin compatible range in E14",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "FlashList v2 API differences; pin compatible range in E14"
     ],
     "dod": [
       "Acceptance met",
@@ -1586,10 +1577,8 @@
     "semver": "minor",
     "wave": 10,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1774,7 +1763,6 @@
       "texo-v1",
       "e7",
       "tree",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1838,7 +1826,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 10,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1857,7 +1845,6 @@
       "e7",
       "gallery",
       "media",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1921,7 +1908,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 10,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1940,9 +1927,8 @@
       "e7",
       "chart",
       "adapter",
-      "post-1.0",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Proportions need arcs.",
     "value": "Segmented donut with center label.",
@@ -1983,8 +1969,7 @@
       "screenshot or render snapshot of main states, light and dark"
     ],
     "risks": [
-      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
     ],
     "dod": [
       "Acceptance met",
@@ -2003,11 +1988,9 @@
     "size": "S",
     "semver": "minor",
     "wave": 10,
-    "postV1": true,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -2025,7 +2008,6 @@
       "chat",
       "list",
       "performance",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2090,7 +2072,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 10,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -2190,7 +2172,6 @@
       "e7",
       "calendar",
       "list",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2253,7 +2234,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 11,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -2272,7 +2253,6 @@
       "e7",
       "notifications",
       "list",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -2336,7 +2316,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 11,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],

@@ -542,7 +542,6 @@
       "responsive",
       "tablet",
       "foldable",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -591,7 +590,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 5,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -610,7 +609,6 @@
       "responsive",
       "tablet",
       "layout",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -670,7 +668,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 5,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -715,6 +713,8 @@
       "E10-03",
       "E10-04",
       "E10-05",
+      "E10-08",
+      "E10-10",
       "E10-12"
     ],
     "validation": [

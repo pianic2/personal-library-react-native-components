@@ -31,7 +31,7 @@ LIST_FIELDS = ["scope", "outOfScope", "acceptance", "validation", "evidence", "r
 REQUIRED_NONEMPTY = ["scope", "outOfScope", "acceptance", "validation", "evidence", "risks", "dod", "filesTouched"]
 REQUIRED = ["id", "epic", "type", "title", "priority", "labels", "problem", "value", "scope", "outOfScope",
             "acceptance", "dependencies", "validation", "evidence", "risks", "dod", "filesTouched", "size", "semver"]
-EPICS = ["E%d" % i for i in range(1, 18)]
+EPICS = ["E%d" % i for i in range(1, 19)]
 ID_RE = re.compile(r"^E(\d+)-(\d+)$")
 EXT_RE = re.compile(r"^PLRNUI-\d+$")
 PREFIX_RE = re.compile(r"^\(from (E\d+-\d+)\) ")

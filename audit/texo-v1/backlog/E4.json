@@ -381,7 +381,6 @@
       "texo-v1",
       "primitive",
       "layout",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -442,7 +441,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 4,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -538,7 +537,6 @@
       "texo-v1",
       "typography",
       "code",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -600,7 +598,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 4,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1396,8 +1394,8 @@
       "icon",
       "adapter",
       "optional-peer",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Injection (createSvgIconSet(Svg, paths)) works everywhere, but consumers want a zero-wiring adapter that statically imports react-native-svg (D6).",
     "value": "One-line SVG icons for apps that already depend on react-native-svg.",
@@ -1427,8 +1425,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "react-native-svg version alignment with Expo SDK 57",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "react-native-svg version alignment with Expo SDK 57"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1444,10 +1441,8 @@
     "semver": "minor",
     "wave": 9,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

@@ -1011,7 +1011,6 @@
       "biometrics",
       "adapter",
       "security",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1065,7 +1064,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 3,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1085,7 +1084,6 @@
       "splash",
       "app-shell",
       "adapter",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1138,7 +1136,7 @@
     "size": "M",
     "semver": "minor",
     "wave": 3,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -1598,8 +1596,8 @@
       "safe-area",
       "adapter",
       "optional-peer",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "E8-11 accepts an injected react-native-safe-area-context module; apps that already use it want a static-import adapter (D6).",
     "value": "Zero-wiring accurate insets for the most common Expo setup.",
@@ -1629,8 +1627,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "Provider must wrap the app; document in docs/adapters/safe-area-context.md",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "Provider must wrap the app; document in docs/adapters/safe-area-context.md"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1646,10 +1643,8 @@
     "semver": "minor",
     "wave": 9,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

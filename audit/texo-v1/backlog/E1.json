@@ -1527,8 +1527,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Text, Heading, Box, Row, Column, Divider and Icon are proposed stable for 1.0 (ADR-R10) but remain demo.",
     "value": "Non-empty stable set for the 1.0 gate.",
@@ -1561,8 +1561,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "Promotion freezes API; any later break needs a major",
-      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+      "Promotion freezes API; any later break needs a major"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1582,10 +1581,8 @@
     "semver": "none",
     "wave": 13,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H3"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1602,8 +1599,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Touchable, Button, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field and Label are proposed stable (ADR-R10) but remain demo.",
     "value": "Stable form and control surface for 1.0.",
@@ -1639,8 +1636,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "onChange -> onValueChange aliases must be in place before freezing",
-      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+      "onChange -> onValueChange aliases must be in place before freezing"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1663,10 +1659,8 @@
     "semver": "none",
     "wave": 13,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H3"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1683,8 +1677,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Badge, Spinner, ProgressBar and Alert are proposed stable (ADR-R10) but remain demo.",
     "value": "Stable feedback primitives for 1.0.",
@@ -1715,8 +1709,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "ProgressBar color -> tone alias must exist before freezing",
-      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+      "ProgressBar color -> tone alias must exist before freezing"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1733,10 +1726,8 @@
     "semver": "none",
     "wave": 13,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H3"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
@@ -1753,8 +1744,8 @@
       "maturity",
       "stable",
       "promotion",
-      "blocked-decision",
-      "needs-h3"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Card, Surface, Screen, ThemeProvider/TexoProvider, useTheme and tokens are proposed stable (ADR-R10) but remain demo.",
     "value": "Stable app roots and surfaces for 1.0.",
@@ -1788,8 +1779,7 @@
       "Diff summary of files touched"
     ],
     "risks": [
-      "TexoProvider order becomes frozen",
-      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+      "TexoProvider order becomes frozen"
     ],
     "dod": [
       "All acceptance criteria verified by the listed commands",
@@ -1806,10 +1796,8 @@
     "semver": "none",
     "wave": 13,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H3"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],

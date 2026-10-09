@@ -1230,7 +1230,6 @@
       "texo-v1",
       "forms",
       "rating",
-      "post-1.0",
       "ready",
       "awaiting-po-approval"
     ],
@@ -1294,7 +1293,7 @@
     "size": "S",
     "semver": "minor",
     "wave": 6,
-    "postV1": true,
+    "postV1": false,
     "blocked": false,
     "decisionsNeeded": [],
     "absorbs": [],
@@ -2227,8 +2226,8 @@
       "forms",
       "adapter",
       "native-module",
-      "blocked-decision",
-      "needs-h2"
+      "ready",
+      "awaiting-po-approval"
     ],
     "problem": "Some apps prefer OS-native date/time dialogs; native module must stay optional.",
     "value": "Opt-in native UI without making it a dependency of the core package.",
@@ -2262,8 +2261,7 @@
       "Catalog entry path"
     ],
     "risks": [
-      "Expo Go version compatibility; list tested versions in docs/compatibility.md via E14",
-      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+      "Expo Go version compatibility; list tested versions in docs/compatibility.md via E14"
     ],
     "dod": [
       "Code merged with passing typecheck and tests",
@@ -2279,10 +2277,8 @@
     "semver": "minor",
     "wave": 10,
     "postV1": false,
-    "blocked": true,
-    "decisionsNeeded": [
-      "H2"
-    ],
+    "blocked": false,
+    "decisionsNeeded": [],
     "absorbs": [],
     "splitFrom": null,
     "splitInto": [],
