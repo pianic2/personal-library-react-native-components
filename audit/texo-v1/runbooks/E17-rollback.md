@@ -34,7 +34,7 @@ For every scenario, the first move is the same: `npm view <pkg> dist-tags --json
 
 1. Move `latest` of **Texo** back so plain installs get the good version: `npm dist-tag add "<TEXO>@<GOOD>" latest --otp=<code>`. There is no `<GOOD>` for the very first release: skip this step. Do the same for `<LEGACY>` only if the shim itself is bad (scenario E); a Texo-only defect does not move the shim, because its previous versions are the deprecated 0.x line.
 2. Deprecate the bad version neutrally first: `npm deprecate "<TEXO>@<BAD>" "Broken release, do not use. A fixed version follows." --otp=<code>`. When `<FIX>` is installable, replace the message with `"Broken release: <reason>. Use <FIX>."`.
-3. Patch release (fast path, section 4) as `<FIX>`, published first under a temporary dist-tag and then promoted to `latest` when the checks pass. The temporary tag (for example `hotfix`) is an exception to the no-rc/next rule of H6 for incidents only and is removed afterwards with `npm dist-tag rm <TEXO> hotfix --otp=<code>`.
+3. Patch release (fast path, section 4) as `<FIX>`, published first under a temporary dist-tag (`npm publish --tag hotfix --otp=<code>`) and promoted when the checks pass (`npm dist-tag add "<TEXO>@<FIX>" latest --otp=<code>`). The temporary tag (for example `hotfix`) is an exception to the no-rc/next rule of H6 for incidents only and is removed afterwards with `npm dist-tag rm <TEXO> hotfix --otp=<code>`.
 4. Verify: `npm view <TEXO> dist-tags --json`, `npm view "<TEXO>@<BAD>" deprecated`, a clean install of `<TEXO>@latest` in the consumer smoke project.
 
 ### B. Package is broken for some consumers
@@ -45,7 +45,7 @@ For every scenario, the first move is the same: `npm view <pkg> dist-tags --json
 
 ### C. Security vulnerability
 
-1. Contain: apply the containment steps of A, B or E with a **neutral** deprecation wording only: nothing public until `<FIX>` is installable, and then only "Deprecated, update to the latest version" (never the nature of the vulnerability) until the advisory is published. Treat any leaked credential as compromised and rotate it first.
+1. Contain: for a vulnerability skip step 2 of scenario A until `<FIX>` is installable; apply the containment steps of A, B or E with a **neutral** deprecation wording only: nothing public until `<FIX>` is installable, and then only "Deprecated, update to the latest version" (never the nature of the vulnerability) until the advisory is published. Treat any leaked credential as compromised and rotate it first.
 2. Do not discuss exploit details in public issues. Use the private channel of `SECURITY.md` (GitHub private vulnerability reporting, or info@theopificium.it). Develop the fix in a temporary private fork of the advisory when possible.
 3. Create a draft GitHub Security Advisory for the repository, with affected and patched version ranges; request a CVE through the advisory if appropriate.
 4. Publish the patch release (section 4). Publish the advisory **after** the fixed version is installable (`npm view <TEXO>@<FIX> version`), so that the advisory points to a fix.
@@ -80,7 +80,7 @@ For every scenario, the first move is the same: `npm view <pkg> dist-tags --json
 
 1. If `npm publish` failed before anything was published, nothing is wrong on the registry: fix the cause and re-run; check `npm view <pkg> versions --json` first so a version is never published twice.
 2. A publish without provenance is a deviation: it needs the PO's approval and the incident note records it. Do not work around a failed OIDC step by pasting a long-lived token into the workflow.
-3. A registry outage is waited out; do not publish elsewhere. If Texo was published and the shim step failed (half-published lockstep), retry the shim publish; if it cannot be published, deprecate the new Texo version with a neutral message only if consumers are affected, otherwise leave it and complete the shim as soon as the registry recovers.
+3. A registry outage is waited out; do not publish elsewhere. If Texo was published and the shim step failed (half-published lockstep), retry the shim publish; if it cannot be published, deprecate the new Texo version with a neutral message only if consumers are affected (the RO decides with the PO), otherwise leave it and complete the shim as soon as the registry recovers.
 
 ## 4. Patch release fast path
 
