@@ -1,0 +1,7 @@
+{
+  "current": "@personal-library/react-native-components",
+  "legacy": null,
+  "shim": {
+    "enabled": false
+  }
+}
