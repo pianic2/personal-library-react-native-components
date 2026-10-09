@@ -54,6 +54,21 @@ describe("PLRNUI-215 package identity", () => {
     assert.equal(result.stdout.trim(), pkg.name);
   });
 
+  it("importing the module from another script prints nothing", () => {
+    const dir = mkdtempSync(join(tmpdir(), "identity-main-"));
+    dirs.push(dir);
+    const main = join(dir, "main.mjs");
+    writeFileSync(main, `import { packageName } from ${JSON.stringify(join(root, "scripts", "lib", "identity.mjs"))};\nif (typeof packageName() !== "string") process.exit(1);\n`);
+    const result = spawnSync(process.execPath, [main], { encoding: "utf8" });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, "");
+  });
+
+  it("rejects a __proto__ key and keeps the last of duplicate keys (documented limit)", () => {
+    assert.throws(() => readIdentity(writeTemp("proto.json", '{"current":"@s/p","legacy":null,"shim":{"enabled":false},"__proto__":{}}')), /unknown key/);
+    assert.equal(readIdentity(writeTemp("dup.json", '{"current":"@a/b","current":"@c/d","legacy":null,"shim":{"enabled":false}}')).current, "@c/d");
+  });
+
   it("the identity is frozen", () => {
     assert.ok(Object.isFrozen(identity) && Object.isFrozen(identity.shim));
   });

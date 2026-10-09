@@ -6,7 +6,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 // hardcoding it, so the cutover changes one file. This file only holds the CURRENT name today: nothing is renamed.
 // Config: config/package-identity.json { current, legacy, shim: { enabled } }.
 // Importing this module loads and validates the default config and throws when it is invalid (fail-closed).
-// Running it directly prints the current name (non-zero exit when the config is invalid).
+// Running it directly prints the current name. With an invalid config the import throws, so Node exits non-zero
+// with the validation error (no helper can be imported when the config is broken).
+// Limits: JSON.parse keeps the last of duplicate keys (the file is small and reviewed); names are validated against
+// the rules for NEW npm packages (lowercase, no leading "." or "_"), so a legacy name with uppercase letters would be
+// rejected; npm-reserved names such as core module names are not blacklisted.
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const DEFAULT_IDENTITY_FILE = join(REPO_ROOT, "config", "package-identity.json");
@@ -90,11 +94,4 @@ function isMain() {
   }
 }
 
-if (isMain()) {
-  try {
-    console.log(packageName());
-  } catch (error) {
-    console.error(`identity error: ${error.message}`);
-    process.exitCode = 2;
-  }
-}
+if (isMain()) console.log(packageName());
