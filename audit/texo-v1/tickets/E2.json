@@ -1,0 +1,1294 @@
+[
+  {
+    "id": "E2-01",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Define Theme contract v2 and token layer skeleton",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "tokens",
+      "contract"
+    ],
+    "problem": "Theme mixes primitive and semantic colors in one flat object and has no slots for semantic roles, text styles, elevation, motion, density or breakpoints (src/theme/types.ts).",
+    "value": "One additive contract lets all other tickets fill token files in parallel without editing types.ts or defaultTheme.tsx.",
+    "scope": [
+      "Add to Theme: semantic, textStyles, elevation, motion, density, breakpoints, borderWidth, opacity, preset (all additive)",
+      "Define ThemePreference ('light'|'dark'|'system'), ThemePreset, DeepPartial<Theme>, DensityLevel in src/theme/contract.ts",
+      "Create skeleton token files with values reproducing current look so nothing regresses: semantic.base.ts, textStyles.base.ts, motion.base.ts, density.base.ts, breakpoints.base.ts",
+      "Wire skeletons into createBaseTheme; keep theme.colors derived and unchanged"
+    ],
+    "outOfScope": [
+      "Final color/type/motion values (later tickets)",
+      "Provider behaviour changes",
+      "Root index.ts exports"
+    ],
+    "acceptance": [
+      "Theme type contains every listed slot; existing tests in tests/theme still pass unchanged",
+      "ThemeMode remains 'light'|'dark'; ThemePreference includes 'system'",
+      "createBaseTheme('light') and ('dark') return objects satisfying Theme with no optional-slot casts",
+      "tests/theme/theme-contract-v2.test.tsx asserts every slot is defined and frozen-shape stable (keys snapshot)",
+      "tsc -p tsconfig.type-tests.json passes"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Public Theme type growth is semver-minor but consumers constructing full Theme literals break: keep new slots required only in createBaseTheme output and document",
+      "Skeleton files are refined by E2-02/03/04, E3-01, E10-01 which depend on this ticket"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/types.ts",
+      "src/theme/contract.ts",
+      "src/theme/defaultTheme.tsx",
+      "src/tokens/semantic.base.ts",
+      "src/tokens/textStyles.base.ts",
+      "src/tokens/motion.base.ts",
+      "src/tokens/density.base.ts",
+      "src/tokens/breakpoints.base.ts",
+      "tests/theme/theme-contract-v2.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-02",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add palette ramps and semantic color roles with state layers",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "tokens",
+      "color",
+      "dark-mode"
+    ],
+    "problem": "Dark surface, surfaceElevated and background are all #020617; there are no on-colors, containers, state layers or focus-ring roles (src/tokens/colors.base.ts).",
+    "value": "Mature role-based color system; fixes unreadable elevation in dark; basis for presets and contrast checks.",
+    "scope": [
+      "Primitive ramps 50..950 for neutral, brand, success, warning, error, info in src/tokens/palette.ts",
+      "Semantic roles per mode: surface tiers 0..3, onSurface/onSurfaceMuted, primary/onPrimary/primaryContainer/onPrimaryContainer (same for secondary, error), outline, outlineVariant, focusRing, scrim, stateLayer opacities (hover .08, pressed .12, focus .12, selected .16, dragged .16)",
+      "Derive legacy theme.colors from semantic roles, keep every existing key and value-compatible mapping (normalize textPrimary 8-digit hex)",
+      "Rebase themeTokens.ts on semantic layer"
+    ],
+    "outOfScope": [
+      "Component migration to semantic roles (E1)",
+      "Preset values"
+    ],
+    "acceptance": [
+      "Dark mode: background, surface tiers 1..3 are pairwise distinct (test)",
+      "Every on* role has contrast >= 4.5:1 vs its pair in light and dark (test using inline ratio helper or E2-11 once available)",
+      "All keys of previous lightColors/darkColors still present on theme.colors",
+      "themeTokens.ts compiles and createThemeTokens output keys unchanged",
+      "tests/theme/base-theme-dark-mode.test.tsx updated and passing"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Changing dark surface values is visible: flag in breaking-change register as visual change"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/colors.base.ts",
+      "src/tokens/palette.ts",
+      "src/tokens/semantic.base.ts",
+      "src/tokens/themeTokens.ts",
+      "tests/theme/semantic-colors.test.tsx",
+      "tests/theme/base-theme-dark-mode.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-03",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add text style roles, font family slots and Dynamic Type policy",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "tokens",
+      "typography",
+      "a11y"
+    ],
+    "problem": "Typography is only sizes/weights/line-height multipliers with System font; Button hardcodes fontWeight; no roles, letterSpacing, font fallback stacks or maxFontSizeMultiplier policy (src/tokens/typography.base.ts).",
+    "value": "Components and presets consume named roles; text scales with OS settings predictably.",
+    "scope": [
+      "textStyles roles: display, headline, title, body, bodySmall, label, caption, code, price, each with fontSize, lineHeight (absolute px), fontWeight, letterSpacing, fontFamily slot, maxFontSizeMultiplier",
+      "fontFamily slots display/body/mono, each a fallback stack string; consumer overrides after loading fonts",
+      "Keep fontSize/lineHeight/fontWeight exports unchanged",
+      "Helper resolveTextStyle(theme, role) returning TextStyle plus allowFontScaling props"
+    ],
+    "outOfScope": [
+      "Changing Text/Heading components (E4)",
+      "Bundling font files"
+    ],
+    "acceptance": [
+      "All roles defined with absolute lineHeight >= fontSize (test)",
+      "maxFontSizeMultiplier set for every role (<=2 for body, <=1.3 for display/label in controls)",
+      "Existing typography exports are unchanged (token-public-api test passes)",
+      "resolveTextStyle unit tested for every role"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Absolute line heights may clip on large font scale: test with fontScale 2 in E9"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/typography.base.ts",
+      "src/tokens/textStyles.base.ts",
+      "tests/theme/typography-tokens.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-04",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Complete spacing, radius, size, border and opacity scales",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "tokens",
+      "spacing"
+    ],
+    "problem": "Spacing scale 0,4,8,12,20,30,80 jumps (no 16, 24, 32, 48); no borderWidth/opacity tokens; Card uses literal border width 1 (src/tokens/spacing.base.ts, Card.tsx).",
+    "value": "A complete 4pt grid and shared border/opacity tokens remove hardcoded values.",
+    "scope": [
+      "Add spacing steps 16,24,32,40,48,64 and aliases; keep existing keys and values",
+      "borderWidth {none,hairline,thin,medium}, opacity {disabled,pressed,hover,scrim} in src/tokens/border.base.ts",
+      "size: add control heights xl and icon sizes; density multipliers table {compact .875, comfortable 1, spacious 1.125} in density.base.ts",
+      "Keep radius keys; add 'pill' alias for full"
+    ],
+    "outOfScope": [
+      "DensityProvider runtime (E2-09)",
+      "Component migration"
+    ],
+    "acceptance": [
+      "Existing spacing, space, radius, size keys retain values (token-public-api test passes)",
+      "New steps present and monotonic (test)",
+      "density.base.ts exports three levels with multipliers",
+      "Zero hardcoded numbers in new files outside the tables"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/spacing.base.ts",
+      "src/tokens/radius.base.ts",
+      "src/tokens/size.base.ts",
+      "src/tokens/border.base.ts",
+      "tests/theme/scale-tokens.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-05",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Unify cross-platform elevation resolver and dark tonal surfaces",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "elevation",
+      "cross-platform"
+    ],
+    "problem": "applyShadow is duplicated in Card.tsx and Box.tsx with hardcoded rgba(0,0,0,..), ignoring shadowColor; md shadow offset x=3; no dark-mode elevation.",
+    "value": "Single source of truth for elevation across iOS, Android and web.",
+    "scope": [
+      "resolveElevation(theme, level 0..5) in src/theme/elevation.ts returning ViewStyle per Platform.OS (iOS shadow*, Android elevation, web boxShadow)",
+      "Shadow color as token; fix md/lg offsets to y-only",
+      "In dark mode add tonal overlay via semantic surface tiers",
+      "Replace private applyShadow in Card.tsx and Box.tsx with the resolver, keeping existing `shadow` prop values (none|sm|md|lg) working"
+    ],
+    "outOfScope": [
+      "New Card/Box props",
+      "Preset-specific shadows"
+    ],
+    "acceptance": [
+      "grep applyShadow in src returns no matches",
+      "Resolver unit tests cover ios, android, web via Platform mock and 'none' level",
+      "Card/Box visual props unchanged: tests/theme/card-component-tokens.test.tsx and component tests pass",
+      "No literal rgba( in Card.tsx or Box.tsx"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Card.tsx and Box.tsx are also targets of E1 maturity work: schedule before or coordinate"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/shadows.base.ts",
+      "src/theme/elevation.ts",
+      "src/components/Card/Card.tsx",
+      "src/components/Box/Box.tsx",
+      "tests/theme/elevation.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-06",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Implement recipe/variant API (defineRecipe, useRecipe)",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "variants",
+      "dx"
+    ],
+    "problem": "Variants are hand-coded ternaries per component (Button has 'info' variant with no color mapping; Card uses a different mechanism).",
+    "value": "Declarative, typed, themable variants cut boilerplate and let presets/consumers override without forking.",
+    "scope": [
+      "defineRecipe((theme)=>({slots, base, variants, states, compoundVariants, defaultVariants})) in src/theme/recipe.ts",
+      "useRecipe(recipe, variantProps, stateFlags) returning memoized per-slot RN style objects",
+      "Inferred prop types RecipeProps<typeof recipe>",
+      "Consumer override via theme.recipes[name] deep-merged",
+      "Reference buttonRecipe in src/theme/recipes/button.recipe.ts (not wired into Button.tsx)",
+      "Spec of design in audit/texo-v1/audit/E2-design-system.md section 3.3 is the contract"
+    ],
+    "outOfScope": [
+      "Migrating Button or any component (E1 uses this API)",
+      "CSS-in-JS runtime, new dependencies"
+    ],
+    "acceptance": [
+      "Type test: invalid variant value fails to compile (tests/types/recipe.types.ts, tsc -p tsconfig.type-tests.json)",
+      "Unit tests: base+variant+compound+state merge order, defaultVariants, theme change recomputes, memoization returns same object for same inputs",
+      "Override via theme.recipes changes output and is typed",
+      "useRecipe renders under Expo Go (JS only): no native imports (grep)"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Type inference complexity: keep generics shallow, add type tests",
+      "Adding theme.recipes slot requires E2-01 contract to include it (include in E2-01 DeepPartial recipes?: Record<string, unknown>)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/recipe.ts",
+      "src/theme/useRecipe.ts",
+      "src/theme/recipes/button.recipe.ts",
+      "tests/theme/recipe.test.tsx",
+      "tests/types/recipe.types.ts"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-07",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add defineTheme composition and strict createTheme merge",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "composition",
+      "overrides"
+    ],
+    "problem": "createTheme silently ignores arrays and wrong-typed overrides; Partial<Theme> is shallow; one override applies to both modes (src/theme/createTheme.ts).",
+    "value": "Predictable, type-safe theme extension and per-mode overrides.",
+    "scope": [
+      "createTheme accepts DeepPartial<Theme>; arrays replace; type mismatch throws in __DEV__ and is ignored in prod with console.warn",
+      "defineTheme({extends?: ThemePreset|Theme, light?, dark?}) returning ThemePreset",
+      "mergeThemes(...layers) pure helper",
+      "Update tests/theme/theme-overrides.test.tsx"
+    ],
+    "outOfScope": [
+      "ThemeProvider API changes (E2-08)",
+      "Nested scope (E2-08)"
+    ],
+    "acceptance": [
+      "defineTheme with only dark override leaves light untouched (test)",
+      "Mismatch override logs warning in dev and does not mutate base (test)",
+      "Existing override tests pass without edits to assertions",
+      "createTheme(undefined) returns equal-by-value default theme"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/createTheme.ts",
+      "src/theme/defineTheme.ts",
+      "tests/theme/define-theme.test.tsx",
+      "tests/theme/theme-overrides.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-08",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add system color scheme, preset prop, ThemeScope and honest persistence",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "provider",
+      "dark-mode",
+      "persistence"
+    ],
+    "problem": "No 'system' mode; persistence stores only resolved mode, `ready` is hardcoded true so first paint can flash; no nested theme scope (src/theme/ThemeProvider.tsx).",
+    "value": "Light/dark/system, flash-free startup and sectional theming.",
+    "scope": [
+      "ThemeProvider props: preference ('light'|'dark'|'system'), preset?: ThemePreset, density?; keep initialMode, themeOverrides, storage, storageKey, persistTheme",
+      "Resolve system via react-native useColorScheme and follow live changes",
+      "Persist JSON {preference, presetId, density}; read legacy plain 'light'|'dark' values",
+      "ready false until storage read resolves (when persistTheme); useTheme exposes preference, resolved mode, ready",
+      "ThemeScope component for sub-tree override",
+      "Update theme-persistence-strategy doc (still adapter-based, no AsyncStorage import)"
+    ],
+    "outOfScope": [
+      "Presets content (E2-12..19)",
+      "Bundling AsyncStorage"
+    ],
+    "acceptance": [
+      "With preference 'system' and mocked useColorScheme 'dark', mode === 'dark'; changing mock updates mode (test)",
+      "Legacy stored value 'dark' restores correctly (test)",
+      "ready is false then true on slow adapter (test); adapter error leaves defaults and ready true",
+      "ThemeScope override affects only descendants (test)",
+      "grep -r async-storage src returns nothing; tests/theme/theme-storage-adapter.test.tsx passes"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-07"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "`ready` semantics change; default must stay non-breaking for apps not using persistTheme (ready true)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/ThemeProvider.tsx",
+      "src/theme/useTheme.ts",
+      "src/theme/ThemeScope.tsx",
+      "audit/dependencies/theme-persistence-strategy.md",
+      "tests/theme/system-mode.test.tsx",
+      "tests/theme/theme-storage-adapter.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-09",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add density runtime (useDensity, DensityProvider)",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "density"
+    ],
+    "problem": "No density axis; only fixed size.height.",
+    "value": "Compact/comfortable/spacious regions (e.g. dashboard tables) without per-component props.",
+    "scope": [
+      "DensityProvider and useDensity() returning {level, scale(n), control(sizeKey)} in src/theme",
+      "Density multiplies height, padding and gap but never below 44pt hit target nor font size",
+      "Provider default taken from theme.density.level"
+    ],
+    "outOfScope": [
+      "Adopting density in components (E1/E4/E5)"
+    ],
+    "acceptance": [
+      "scale(40) at compact === 35, spacious === 45 (test)",
+      "Hit target helper never returns < 44 (test)",
+      "Nested DensityProvider overrides outer (test)",
+      "Works without DensityProvider (falls back to theme)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/DensityProvider.tsx",
+      "src/theme/useDensity.ts",
+      "tests/theme/density.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-10",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Export design tokens manifest (DTCG JSON) per preset and mode",
+    "priority": "Medium",
+    "labels": [
+      "tokens",
+      "tooling",
+      "ai-native"
+    ],
+    "problem": "No machine-readable token output; docs/tokens is prose and E13 AI manifests need data.",
+    "value": "Single generated artifact for docs, Figma/style tooling and agent context (cuts token usage).",
+    "scope": [
+      "src/tokens/manifest.ts builds W3C DTCG-shaped tree from a Theme",
+      "scripts/export-tokens.mjs writes dist-independent JSON to a given --out dir for each mode and each registered preset; --check mode diff-fails on drift",
+      "Deterministic key order"
+    ],
+    "outOfScope": [
+      "Figma plugin",
+      "npm script wiring (E14)"
+    ],
+    "acceptance": [
+      "node scripts/export-tokens.mjs --out <tmp> produces default-light.json and default-dark.json with $type/$value entries",
+      "--check exits 1 when a token changes and 0 otherwise (test)",
+      "Output byte-identical across two runs (test)",
+      "No runtime dependency added"
+    ],
+    "dependencies": [
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/export-tokens.mjs --check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "scripts/export-tokens.mjs",
+      "src/tokens/manifest.ts",
+      "tests/scripts/export-tokens.test.ts"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-11",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add WCAG contrast validation util and CI script for themes",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "tooling",
+      "a11y"
+    ],
+    "problem": "No automated contrast gate; presets could ship below AA.",
+    "value": "Every preset and mode is verified against AA for text and UI components.",
+    "scope": [
+      "src/theme/contrast.ts: relativeLuminance, contrastRatio, composites rgba over background",
+      "scripts/validate-theme-contrast.mjs checks pairs: onSurface/surface tiers, onPrimary/primary, onError/error, outline vs surface (3:1), focusRing vs surface (3:1) for each mode and each registered preset; exit 1 on failure with table",
+      "Pair list is data, extendable by presets"
+    ],
+    "outOfScope": [
+      "APCA",
+      "Auto-fixing colors"
+    ],
+    "acceptance": [
+      "contrastRatio('#000','#fff') === 21 and ('#777','#fff') ~ 4.48 (test)",
+      "Script exits 0 for default theme both modes",
+      "Script exits 1 and names the pair when a fixture theme has a failing pair (test)",
+      "Handles 8-digit hex and rgba()"
+    ],
+    "dependencies": [
+      "E2-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/validate-theme-contrast.mjs"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/contrast.ts",
+      "scripts/validate-theme-contrast.mjs",
+      "tests/theme/contrast.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-12",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'minimal' preset theme",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "preset",
+      "minimal"
+    ],
+    "problem": "No Minimal visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Minimal look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/minimal.ts exports a ThemePreset (id 'minimal') with light and dark deltas only",
+      "Palette: ink primary #111827, link accent #2563EB, bg #FFFFFF/#0A0A0A, 1px borders instead of shadows",
+      "Radii: radii 2/4/6/8/12",
+      "Type: System, base 15, ratio 1.2, weights 400/500",
+      "Elevation: no shadows, hairline borders",
+      "Density default: comfortable",
+      "Motion: 120/180ms ease-out, no springs",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/minimal.ts",
+      "tests/theme/presets/minimal.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-13",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'premium' preset theme",
+    "priority": "Low",
+    "labels": [
+      "theme",
+      "preset",
+      "premium"
+    ],
+    "problem": "No Premium visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Premium look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/premium.ts exports a ThemePreset (id 'premium') with light and dark deltas only",
+      "Palette: ivory #FAF8F5/#0B0B0F, gold primary #B8935A, deep green accent #1F4D3A",
+      "Radii: radii 2/6/10/16/28",
+      "Type: serif display stack plus System body, tracking +0.5, uppercase labels +1.2",
+      "Elevation: long soft shadows y12 blur32 warm tint, dark tonal ramp",
+      "Density default: spacious",
+      "Motion: 280/420ms cubic-bezier(.2,.8,.2,1), gentle spring stiffness 120 damping 22, stagger 60ms",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/premium.ts",
+      "tests/theme/presets/premium.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-14",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'saas' preset theme",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "preset",
+      "saas"
+    ],
+    "problem": "No SaaS visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent SaaS look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/saas.ts exports a ThemePreset (id 'saas') with light and dark deltas only",
+      "Palette: indigo #4F46E5/#818CF8, slate neutrals, bg #FFFFFF/#0B1020",
+      "Radii: radii 4/6/8/12/16",
+      "Type: System, base 14, ratio 1.125, tabular numerals",
+      "Elevation: sm shadow plus 1px ring, popovers lg",
+      "Density default: comfortable (compact opt-in)",
+      "Motion: 150/200ms standard, snappy spring stiffness 300 damping 30",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/saas.ts",
+      "tests/theme/presets/saas.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-15",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'consumer' preset theme",
+    "priority": "Low",
+    "labels": [
+      "theme",
+      "preset",
+      "consumer"
+    ],
+    "problem": "No Consumer visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Consumer look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/consumer.ts exports a ThemePreset (id 'consumer') with light and dark deltas only",
+      "Palette: coral #FF5A5F, teal #00C2A8, warm bg #FFF9F5 / #14121A",
+      "Radii: radii 8/12/16/24/32 plus pill buttons",
+      "Type: rounded sans stack, base 16, headings 700",
+      "Elevation: md with primary-tinted shadow",
+      "Density default: comfortable, min target 48",
+      "Motion: bouncy spring stiffness 220 damping 14, 220/320ms, stagger 40ms, press scale .96",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/consumer.ts",
+      "tests/theme/presets/consumer.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-16",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'editorial' preset theme",
+    "priority": "Low",
+    "labels": [
+      "theme",
+      "preset",
+      "editorial"
+    ],
+    "problem": "No Editorial visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Editorial look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/editorial.ts exports a ThemePreset (id 'editorial') with light and dark deltas only",
+      "Palette: paper #FBFAF7/#121212, text #1A1A1A, crimson accent #B91C1C, rules #D6D3CD",
+      "Radii: radii 0/0/2/2/4",
+      "Type: serif body base 18 line-height 1.6, tight headings 1.1, size.measure 680",
+      "Elevation: none, 1px and 3px double rules",
+      "Density default: spacious",
+      "Motion: 100/160ms fade only, no translate or scale",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/editorial.ts",
+      "tests/theme/presets/editorial.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-17",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'ecommerce' preset theme",
+    "priority": "Low",
+    "labels": [
+      "theme",
+      "preset",
+      "ecommerce"
+    ],
+    "problem": "No E-commerce visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent E-commerce look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/ecommerce.ts exports a ThemePreset (id 'ecommerce') with light and dark deltas only",
+      "Palette: CTA ink #0F172A, sale red #DC2626, success #15803D, surface #F5F5F4",
+      "Radii: radii 4/6/8/12/20",
+      "Type: System base 15, price role bold tabular, strike-through role",
+      "Elevation: sm cards, sticky buy bar level 5",
+      "Density default: comfortable",
+      "Motion: 160/240ms, press scale .97, add-to-cart spring stiffness 260 damping 18, shimmer 1200ms",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/ecommerce.ts",
+      "tests/theme/presets/ecommerce.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-18",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'dashboard' preset theme",
+    "priority": "Medium",
+    "labels": [
+      "theme",
+      "preset",
+      "dashboard"
+    ],
+    "problem": "No Dashboard visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Dashboard look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/dashboard.ts exports a ThemePreset (id 'dashboard') with light and dark deltas only",
+      "Palette: bg #F3F4F6/#0F1115, primary #3B82F6, 8-color categorical data palette, borders #E5E7EB/#272B33",
+      "Radii: radii 2/4/6/8/12",
+      "Type: System plus mono figures, base 13, ratio 1.1, tabular numerals",
+      "Elevation: borders-first, no shadows, dark tonal surfaces 0..3",
+      "Density default: compact (0.875)",
+      "Motion: 100/150ms, chart enter 400ms ease-out, no springs",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/dashboard.ts",
+      "tests/theme/presets/dashboard.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-19",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add 'social' preset theme",
+    "priority": "Low",
+    "labels": [
+      "theme",
+      "preset",
+      "social"
+    ],
+    "problem": "No Social visual theme exists; consumers must hand-build overrides.",
+    "value": "One-line adoption of a coherent Social look from the shared primitives.",
+    "scope": [
+      "src/theme/presets/social.ts exports a ThemePreset (id 'social') with light and dark deltas only",
+      "Palette: sky #0EA5E9, like #F43F5E, bg #FFFFFF/#000000 OLED, dividers #EFF3F4/#2F3336",
+      "Radii: radii 4/8/12/16/24 plus full avatars",
+      "Type: System base 15, names 700, handles muted 400",
+      "Elevation: flat with dividers, sheets md",
+      "Density default: comfortable",
+      "Motion: like-pop spring stiffness 400 damping 10, 150/250ms, feed layout transition",
+      "Document intent and fallback font stacks in file header comment"
+    ],
+    "outOfScope": [
+      "Bundling font files",
+      "New token keys (contract is fixed by E2-01)",
+      "Registry export (E2-20)"
+    ],
+    "acceptance": [
+      "Preset validates against Theme contract (type check, no casts)",
+      "node scripts/validate-theme-contrast.mjs passes for this preset in light and dark (test calls contrast util)",
+      "Test renders ThemeProvider with preset and asserts radius, primary, motion.duration and density default values listed in scope",
+      "Differs from default theme in >= 15 token paths (test counts)",
+      "Preset file imports only from src/tokens and src/theme (no components)"
+    ],
+    "dependencies": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed",
+      "Contrast script output for this preset"
+    ],
+    "risks": [
+      "Hex values are hints; contrast gate may force adjustments",
+      "Motion values rely on E3-01 token shape"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/social.ts",
+      "tests/theme/presets/social.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E2-20",
+    "epic": "E2",
+    "type": "Task",
+    "title": "Add preset registry, barrels, docs and ADR 0004 update",
+    "priority": "High",
+    "labels": [
+      "theme",
+      "preset",
+      "docs"
+    ],
+    "problem": "Presets need a discoverable registry and docs; theme and token barrels do not export new APIs; docs/theme.md is stale (references tokens/ exports that are not public).",
+    "value": "Consumers can import presets by name; docs and ADR reflect the layered architecture.",
+    "scope": [
+      "src/theme/presets/index.ts exporting all presets and `presets` map plus getPreset(id)",
+      "Update src/theme/index.ts and src/tokens/index.ts barrels with E2 outputs (recipe, defineTheme, ThemeScope, DensityProvider, contrast, elevation, presets, tokens)",
+      "Rewrite docs/theme.md; add docs/theme/presets.md with the preset table from audit/texo-v1/audit/E2-design-system.md section 4; add examples/theme-presets.tsx",
+      "Amend ADR 0004: layers, contract v2, recipe API, open decisions",
+      "Deprecate TokenPair in docs"
+    ],
+    "outOfScope": [
+      "Root src/index.ts and api snapshot (E14)",
+      "Catalog gallery (E11)"
+    ],
+    "acceptance": [
+      "Every preset file is exported and `presets` has 8 keys + default (test)",
+      "tsc builds barrels with no circular import warnings (madge-free check: node script or test importing barrels)",
+      "docs/theme.md snippets compile (examples/theme-presets.tsx passes typecheck)",
+      "ADR 0004 contains sections Layers, Contract v2, Recipes, Decisions"
+    ],
+    "dependencies": [
+      "E2-06",
+      "E2-07",
+      "E2-08",
+      "E2-09",
+      "E2-10",
+      "E2-11",
+      "E2-12",
+      "E2-13",
+      "E2-14",
+      "E2-15",
+      "E2-16",
+      "E2-17",
+      "E2-18",
+      "E2-19"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run docs:compat:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Last in chain: blocked by all presets; root export wiring left to E14"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/theme/presets/index.ts",
+      "src/theme/index.ts",
+      "src/tokens/index.ts",
+      "docs/theme.md",
+      "docs/theme/presets.md",
+      "examples/theme-presets.tsx",
+      "audit/adr/0004-theme-token-architecture.md",
+      "tests/theme/preset-registry.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  }
+]

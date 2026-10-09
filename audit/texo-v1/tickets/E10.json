@@ -1,0 +1,802 @@
+[
+  {
+    "id": "E10-01",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Unify useBreakpoint: width-based on all platforms, breakpoint tokens, ResponsiveContext",
+    "priority": "High",
+    "labels": [
+      "responsive",
+      "breakpoints",
+      "bug"
+    ],
+    "problem": "Public hooks/useBreakpoint returns 'base' for every native device (tablets get phone layout); a second diverging copy exists in src/utils/useBreakpoint.ts with different thresholds (480 vs 640).",
+    "value": "Correct, single breakpoint source; foundation for all responsive work.",
+    "scope": [
+      "Fill src/tokens/breakpoints.base.ts: xs 0, sm 480, md 768, lg 1024, xl 1280 (document change from 640)",
+      "hooks/useBreakpoint.ts resolves from useWindowDimensions width on every platform; return type keeps Breakpoint string for BC, add useBreakpointInfo() returning {bp, width, height, isAtLeast(bp), isBelow(bp)}",
+      "Delete duplicate utils/useBreakpoint.ts (not exported publicly)",
+      "src/responsive/context.ts ResponsiveContext {breakpoints, orientationLock?} with defaults",
+      "tests/helpers/dimensions.ts to mock window size",
+      "Breaking-change register entry text in PR description (behavioral change on native)"
+    ],
+    "outOfScope": [
+      "Provider component (E10-05)",
+      "Container queries"
+    ],
+    "acceptance": [
+      "Width 820 on ios mock returns 'md' (previously 'base') (test)",
+      "Boundary widths 479/480/767/768 resolve correctly (test)",
+      "grep -rn utils/useBreakpoint src returns nothing",
+      "'base' kept as alias for below sm in the Breakpoint type or documented rename"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Behavior change on tablets/large phones: needs migration note and BC entry",
+      "Breakpoint type 'base' vs 'xs' naming mismatch must be settled (owner)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/breakpoints.base.ts",
+      "src/hooks/useBreakpoint.ts",
+      "src/utils/useBreakpoint.ts",
+      "src/responsive/context.ts",
+      "tests/helpers/dimensions.ts",
+      "tests/responsive/breakpoint.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-02",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add useWindowSizeClass and useOrientation",
+    "priority": "High",
+    "labels": [
+      "responsive",
+      "orientation",
+      "size-class"
+    ],
+    "problem": "No orientation or semantic size classes; apps branch on raw widths.",
+    "value": "Material-style window size classes drive adaptive layouts consistently.",
+    "scope": [
+      "useWindowSizeClass(): {width: 'compact'|'medium'|'expanded', height: same} using 600/840 (width) and 480/900 (height)",
+      "useOrientation(): 'portrait'|'landscape' from window dimensions (not device sensor), updates on rotation",
+      "Thresholds overridable through ResponsiveContext"
+    ],
+    "outOfScope": [
+      "Foldable posture (E10-08)"
+    ],
+    "acceptance": [
+      "599/600/839/840 width boundaries (test)",
+      "Rotation mock changes orientation (test)",
+      "Context override changes classes (test)",
+      "No new dependencies (no expo-screen-orientation)"
+    ],
+    "dependencies": [
+      "E10-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/useWindowSizeClass.ts",
+      "src/responsive/useOrientation.ts",
+      "tests/responsive/size-class.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-03",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add responsive value resolver and useResponsiveValue",
+    "priority": "High",
+    "labels": [
+      "responsive",
+      "dx"
+    ],
+    "problem": "No way to express 'padding md on tablets' declaratively; consumers write if-chains.",
+    "value": "Mobile-first responsive props with minimal boilerplate.",
+    "scope": [
+      "resolveResponsive({base, sm, md, lg, xl}, bp) pure function with mobile-first fallback to nearest smaller key",
+      "useResponsiveValue(map) hook",
+      "Type ResponsiveValue<T> = T | Partial<Record<Breakpoint,T>> exported for component props"
+    ],
+    "outOfScope": [
+      "Applying responsive props to components (E4/E1)"
+    ],
+    "acceptance": [
+      "Fallback to nearest smaller defined key (test table)",
+      "Plain value returns itself (test)",
+      "Type test: ResponsiveValue<number> accepts both forms (tests/types)",
+      "Referentially stable result for unchanged inputs"
+    ],
+    "dependencies": [
+      "E10-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/resolve.ts",
+      "src/responsive/useResponsiveValue.ts",
+      "tests/responsive/resolve.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-04",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add Show, Hide and Responsive components",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "components"
+    ],
+    "problem": "No declarative conditional rendering by breakpoint/size class.",
+    "value": "Readable adaptive UI without hooks in every screen.",
+    "scope": [
+      "<Show above|below|only|at='md'> and <Hide ...> by breakpoint, plus sizeClass prop",
+      "<Responsive base={...} md={...}> renders the matching node by mobile-first fallback",
+      "Unmount (not display none) by default; keepMounted option",
+      "Web: no hydration mismatch guard documented"
+    ],
+    "outOfScope": [
+      "Media-query CSS on web"
+    ],
+    "acceptance": [
+      "Show above='md' renders at 768 not 767 (test)",
+      "Hide inverse (test)",
+      "Responsive picks nearest smaller key (test)",
+      "Children unmounted when hidden (test)"
+    ],
+    "dependencies": [
+      "E10-02",
+      "E10-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/Show.tsx",
+      "src/responsive/Responsive.tsx",
+      "tests/responsive/show-hide.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-05",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add ResponsiveProvider for breakpoint and size class overrides",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "provider"
+    ],
+    "problem": "Breakpoints are constants; apps with different design grids cannot override.",
+    "value": "Configurable thresholds without forking and without coupling to Theme.",
+    "scope": [
+      "<ResponsiveProvider breakpoints sizeClasses> filling ResponsiveContext",
+      "Validate ascending thresholds (throw in __DEV__)",
+      "Nested providers merge"
+    ],
+    "outOfScope": [
+      "Theme integration (breakpoints slot is read-only default from E2-01)"
+    ],
+    "acceptance": [
+      "Custom md=900 changes hook results beneath provider only (test)",
+      "Non-ascending thresholds throw in dev (test)",
+      "Works without provider (defaults)"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E10-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/ResponsiveProvider.tsx",
+      "tests/responsive/provider.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-06",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add container-aware hooks: useContainerSize and Container",
+    "priority": "High",
+    "labels": [
+      "responsive",
+      "container-query"
+    ],
+    "problem": "Components in split panes/sidebars cannot adapt to their own width; only window width is available.",
+    "value": "Container-query-like adaptation on native via onLayout.",
+    "scope": [
+      "<Container> View measuring via onLayout, providing context {width, height}",
+      "useContainerSize() and useContainerBreakpoint(map?) reading nearest Container, falling back to window",
+      "Debounce/epsilon to avoid layout loops (ignore < 1px changes)",
+      "Initial render uses window width to avoid flash (document first-layout caveat)"
+    ],
+    "outOfScope": [
+      "CSS @container on web"
+    ],
+    "acceptance": [
+      "onLayout updates context and consumers re-render (test)",
+      "Sub-1px change does not re-render (test)",
+      "Nested Containers use nearest (test)",
+      "Fallback to window size outside a Container (test)"
+    ],
+    "dependencies": [
+      "E10-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Layout feedback loops if children change container size: documented guard"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/Container.tsx",
+      "src/responsive/useContainerSize.ts",
+      "tests/responsive/container.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-07",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add safe-area adapter: SafeAreaAdapterProvider, useSafeInsets, ThemeAppShell safeArea prop",
+    "priority": "High",
+    "labels": [
+      "responsive",
+      "safe-area",
+      "adapter"
+    ],
+    "problem": "Safe-area support is absent by design (safe-area-provider-dependency-contract.md); apps with notches/home indicators need insets without a core native dependency.",
+    "value": "Opt-in insets using consumer-owned react-native-safe-area-context while keeping core free of it.",
+    "scope": [
+      "SafeAreaAdapter {useInsets(): {top,right,bottom,left}} context; useSafeInsets() returns zeros without adapter",
+      "Document 5-line adapter using react-native-safe-area-context's useSafeAreaInsets (docs only, no import in src)",
+      "ThemeAppShell gets safeArea?: boolean|edges applying padding from insets",
+      "Update safe-area contract doc with the new adapter decision"
+    ],
+    "outOfScope": [
+      "Importing react-native-safe-area-context",
+      "ThemeProvider changes"
+    ],
+    "acceptance": [
+      "grep -r safe-area-context src returns nothing",
+      "Insets {top:44,bottom:34} produce matching padding in ThemeAppShell (test)",
+      "Without adapter padding is 0 and existing theme-app-shell test passes",
+      "Contract doc updated with adapter section"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Needs owner OK for new adapter concept per native-dependency-gate.md (ADR not required: no dependency change)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/safeArea.tsx",
+      "src/theme/ThemeAppShell.tsx",
+      "audit/dependencies/safe-area-provider-dependency-contract.md",
+      "tests/theme/theme-app-shell.test.tsx",
+      "tests/responsive/safe-area.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-08",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add useDeviceClass and foldable posture adapter",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "tablet",
+      "foldable"
+    ],
+    "problem": "No phone/tablet/foldable distinction; hooks assume phone on native.",
+    "value": "Tablet-first and foldable-aware layouts without native modules.",
+    "scope": [
+      "useDeviceClass(): 'phone'|'tablet'|'desktop' from shortest side >= 600dp and Platform.isPad, web by pointer/width",
+      "useAspectPosture(): 'normal'|'wide'|'square-ish' heuristic from window aspect ratio (unfolded foldable detection)",
+      "FoldAdapter {useFoldState(): {isFolded, hingeBounds?}} optional context for consumer-supplied native posture info",
+      "Document limitations"
+    ],
+    "outOfScope": [
+      "Native hinge detection module"
+    ],
+    "acceptance": [
+      "Dimensions 800x1280 => 'tablet', 390x844 => 'phone' (test)",
+      "Platform.isPad forces 'tablet' (test)",
+      "Adapter values flow through hook (test)",
+      "No native imports"
+    ],
+    "dependencies": [
+      "E10-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/useDeviceClass.ts",
+      "src/responsive/FoldAdapter.tsx",
+      "tests/responsive/device-class.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-09",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add AdaptiveGrid with breakpoint-driven columns",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "layout",
+      "grid"
+    ],
+    "problem": "Row/Column exist but no wrapping responsive grid; consumers compute widths manually.",
+    "value": "Card galleries and dashboards adapt columns by container/window.",
+    "scope": [
+      "<AdaptiveGrid columns={{base:1, md:2, lg:4}} gap minItemWidth> using flexWrap and computed widths",
+      "Uses nearest Container width when present else window",
+      "Gap from theme.space tokens",
+      "Supports minItemWidth auto-fit mode"
+    ],
+    "outOfScope": [
+      "Virtualized grid (E7)"
+    ],
+    "acceptance": [
+      "Column counts follow map at 400/800/1100 widths (test)",
+      "minItemWidth 160 in 500px container gives 3 columns (test)",
+      "Gap applied between items only (test)",
+      "Light/dark irrelevant (layout only) noted"
+    ],
+    "dependencies": [
+      "E10-03",
+      "E10-06"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/AdaptiveGrid.tsx",
+      "tests/responsive/adaptive-grid.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-10",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add SplitView master-detail layout for tablets",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "tablet",
+      "layout"
+    ],
+    "problem": "No master-detail pattern; tablets show stretched phone screens.",
+    "value": "Tablet split view that collapses to a single pane on compact widths.",
+    "scope": [
+      "<SplitView primary secondary showSecondary onBack ratio minPrimary maxPrimary>",
+      "Expanded/medium width: side-by-side with divider using semantic tokens; compact: stack showing one pane based on showSecondary",
+      "Primary width clamp (e.g. 320-420) from props",
+      "Uses useContainerSize when inside Container"
+    ],
+    "outOfScope": [
+      "Draggable divider",
+      "Navigation integration"
+    ],
+    "acceptance": [
+      "Width 1024 renders both panes; width 400 renders only primary or secondary per prop (test)",
+      "Pane widths respect min/max (test)",
+      "accessibilityRole and order: primary before secondary (test)",
+      "Divider color from theme in light and dark"
+    ],
+    "dependencies": [
+      "E10-02",
+      "E10-06",
+      "E2-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/SplitView.tsx",
+      "tests/responsive/split-view.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-11",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add AdaptiveNav: bottom bar on compact, rail/sidebar on larger",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "navigation"
+    ],
+    "problem": "BottomBar and SideBar exist separately; apps hand-switch them.",
+    "value": "One navigation spec renders the right pattern per size class.",
+    "scope": [
+      "<AdaptiveNav items active onChange>{content}</AdaptiveNav> choosing BottomBar (compact) or SideBar (medium/expanded) by size class",
+      "Maps items to both components via adapter, no changes to those components' files",
+      "Preserves accessibility roles/labels from each",
+      "Optional `forceVariant`"
+    ],
+    "outOfScope": [
+      "Router integration",
+      "Changing BottomBar/SideBar (E6)"
+    ],
+    "acceptance": [
+      "Compact renders BottomBar, expanded SideBar (test)",
+      "Active item preserved across resize (test)",
+      "Imports BottomBar and SideBar only via their public index files",
+      "a11y tests from tests/accessibility pass for both modes"
+    ],
+    "dependencies": [
+      "E10-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "BottomBar/SideBar prop shapes may change in E6: depend on their final API"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/AdaptiveNav.tsx",
+      "tests/responsive/adaptive-nav.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-12",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add useFontScale and large-text layout switching",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "a11y",
+      "dynamic-type"
+    ],
+    "problem": "Layouts do not respond to OS font scale; large text clips in rows.",
+    "value": "Rows can switch to stacked layout when text is scaled (WCAG 1.4.4/1.4.10).",
+    "scope": [
+      "useFontScale() from PixelRatio.getFontScale with change detection via Dimensions 'change'",
+      "useIsLargeText(threshold=1.3)",
+      "<StackOnLargeText> switching Row to Column when large",
+      "Respect theme.textStyles maxFontSizeMultiplier docs"
+    ],
+    "outOfScope": [
+      "Changing Text components (E4)"
+    ],
+    "acceptance": [
+      "Mocked font scale 2 yields isLargeText true (test)",
+      "StackOnLargeText switches direction (test)",
+      "Updates when scale changes (test)",
+      "No new deps"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E2-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/useFontScale.ts",
+      "src/responsive/StackOnLargeText.tsx",
+      "tests/responsive/font-scale.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-13",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add PageContainer with centered max width and responsive gutters",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "layout",
+      "web"
+    ],
+    "problem": "On web and tablets content stretches edge to edge; no max-width container.",
+    "value": "Readable content width and breakpoint gutters with one wrapper.",
+    "scope": [
+      "<PageContainer maxWidth='sm|md|lg|xl|number' gutter responsive> centered, width 100% below max",
+      "Gutter from theme.space by breakpoint (16 base, 24 md, 32 lg)",
+      "Optional `measure` for reading width (editorial preset size.measure)"
+    ],
+    "outOfScope": [
+      "Full page shell (E6)"
+    ],
+    "acceptance": [
+      "Width 1400 content max 1024 centered with equal margins (test)",
+      "Width 400 uses full width minus gutters (test)",
+      "Gutters change at breakpoints (test)"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E2-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/PageContainer.tsx",
+      "tests/responsive/page-container.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E10-14",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Responsive docs, example, area barrel and public-API test",
+    "priority": "Medium",
+    "labels": [
+      "responsive",
+      "docs",
+      "exports"
+    ],
+    "problem": "New responsive module needs barrel, docs and example.",
+    "value": "Discoverable and documented responsive API.",
+    "scope": [
+      "src/responsive/index.ts barrel for all E10 exports",
+      "docs/responsive.md: breakpoints, size classes, Show/Hide, containers, safe-area adapter snippet, tablet SplitView, foldables, migration note for useBreakpoint",
+      "examples/responsive.tsx",
+      "Public-API test of exported names"
+    ],
+    "outOfScope": [
+      "Root src/index.ts and api snapshot (E14)"
+    ],
+    "acceptance": [
+      "Barrel exports every public symbol from E10-01..13 (test)",
+      "examples/responsive.tsx typechecks",
+      "docs/responsive.md includes Migration section for useBreakpoint behavior change",
+      "npm run docs:compat:check passes"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E10-02",
+      "E10-03",
+      "E10-04",
+      "E10-05",
+      "E10-06",
+      "E10-07",
+      "E10-08",
+      "E10-09",
+      "E10-10",
+      "E10-11",
+      "E10-12",
+      "E10-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run docs:compat:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/index.ts",
+      "docs/responsive.md",
+      "examples/responsive.tsx",
+      "tests/responsive/public-api.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  }
+]

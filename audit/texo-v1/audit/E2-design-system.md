@@ -137,7 +137,7 @@ One `resolveElevation(theme, level)` returns `ViewStyle` per platform: iOS `shad
 
 - `scripts/export-tokens.mjs`: emits W3C Design Tokens (DTCG) JSON plus a flat `tokens.manifest.json` per preset and mode (input for E13 AI manifests and Figma sync). Check-mode for CI.
 - `src/theme/contrast.ts` plus `scripts/validate-theme-contrast.mjs`: WCAG 2.x ratios (APCA optional later) for every `on*`/surface pair, text sizes, per preset x mode; fails CI under 4.5 (body) / 3.0 (large text, UI components).
-- Hardcoded-value guard `scripts/check-hardcoded-values.mjs` (turns `audit/theme/hardcoded-values-register.md` into a check; initial allowlist).
+- Hardcoded-value guard `scripts/check-hardcoded-values.mjs` (turns `audit/theme/hardcoded-values-register.md` into a check; initial allowlist). Not ticketed here (E2 is at its 20-ticket cap); recommended to E12 (testing) or E14 (CI).
 
 ## 4. Preset themes
 

@@ -1,0 +1,850 @@
+[
+  {
+    "id": "E3-01",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Define motion tokens (duration, easing, spring, stagger, distance)",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "tokens"
+    ],
+    "problem": "No motion tokens exist; Modal/BottomSheet rely on RN animationType strings only.",
+    "value": "One vocabulary for all animated components and for presets' motion personality.",
+    "scope": [
+      "Fill src/tokens/motion.base.ts: duration {instant 0, fast 120, base 200, slow 320, slower 480}, easing as cubic-bezier tuples {standard, decelerate, accelerate, emphasized} with RN Easing factory helper, spring {gentle, snappy, bouncy} with stiffness/damping/mass, stagger {fast 30, base 50}, distance {sm 8, md 16, lg 32}, scale {press .97}",
+      "Expose via theme.motion; type MotionTokens exported",
+      "Helper toEasing(token) returning RN Easing function"
+    ],
+    "outOfScope": [
+      "Hooks that consume tokens (E3-04)"
+    ],
+    "acceptance": [
+      "Every duration is a number >= 0 and monotonic non-decreasing (test)",
+      "toEasing returns a function giving 0 at 0 and 1 at 1 for every easing (test)",
+      "theme.motion defined for light and dark",
+      "No import of react-native-reanimated (grep)"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/motion.base.ts",
+      "tests/theme/motion-tokens.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-02",
+    "epic": "E3",
+    "type": "Task",
+    "title": "ADR: motion engine, Reanimated and gesture-handler peer policy",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "adr",
+      "dependencies"
+    ],
+    "problem": "Peer policy forbids silent native deps (audit/dependencies/native-dependency-gate.md); no decision exists for Animated vs Reanimated, gesture-handler or haptics.",
+    "value": "Locks the architecture so motion tickets can proceed without rework and keeps Expo Go compatibility.",
+    "scope": [
+      "Write ADR 0009 deciding: core = RN Animated (useNativeDriver where supported), LayoutAnimation, PanResponder; zero new dependencies",
+      "Decide Reanimated/gesture-handler: not core peers; allowed only via MotionEngine adapter in a separate entrypoint/package after future ADR; cite package.json exports root-only",
+      "Haptics: adapter, consumer-owned like clipboard (clipboard-dependency-strategy.md)",
+      "Expo Go matrix: which features work in Expo Go, bare, web",
+      "Create audit/dependencies/motion-dependency-strategy.md with the register rows required by native-dependency-gate.md"
+    ],
+    "outOfScope": [
+      "Implementing adapters"
+    ],
+    "acceptance": [
+      "ADR file exists with Status, Context, Decision, Consequences, Alternatives (Animated-only, Reanimated optional peer, Reanimated required)",
+      "motion-dependency-strategy.md has Expo Go / managed / prebuild / bare impact for each candidate package",
+      "Decision is consistent with peer-dependency-policy.md (no peerDependencies change)",
+      "Owner sign-off recorded (name and date) before dependents start"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "grep -n \"Decision\" audit/adr/0009-motion-engine-and-optional-peers.md"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Requires owner decision: blocks E3-04.. and E3-14"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency",
+      "ADR linked from audit/adr/README.md by E16"
+    ],
+    "filesTouched": [
+      "audit/adr/0009-motion-engine-and-optional-peers.md",
+      "audit/dependencies/motion-dependency-strategy.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E3-03",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add useReducedMotion and MotionProvider",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "a11y",
+      "hooks"
+    ],
+    "problem": "No reduced-motion handling anywhere in src; WCAG 2.3.3 and platform setting ignored.",
+    "value": "All animation honors OS reduce-motion and can be forced by the app.",
+    "scope": [
+      "useReducedMotion(): boolean via AccessibilityInfo.isReduceMotionEnabled and 'reduceMotionChanged' listener; web via matchMedia('(prefers-reduced-motion: reduce)') guarded",
+      "MotionProvider {reduceMotion?: 'system'|'always'|'never'} and useMotionPreference()",
+      "Cleans up listeners on unmount; SSR/test safe",
+      "tests/helpers/motion.ts mock for AccessibilityInfo"
+    ],
+    "outOfScope": [
+      "Animated helpers (E3-04)"
+    ],
+    "acceptance": [
+      "Hook returns true when mocked AccessibilityInfo reports true and updates on event (test)",
+      "'always' overrides system false; 'never' overrides system true (test)",
+      "Listener removed on unmount (test)",
+      "No crash when AccessibilityInfo or matchMedia is missing (test)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "tests/shims/react-native.tsx may lack AccessibilityInfo: patch via helper at runtime, do not edit shim (owned by E12)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/useReducedMotion.ts",
+      "src/motion/MotionProvider.tsx",
+      "tests/helpers/motion.ts",
+      "tests/motion/reduced-motion.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-04",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add animation primitives: useAnimatedValue and animate() honoring tokens",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "animated"
+    ],
+    "problem": "Components that animate would each re-implement timing/spring setup and ignore reduced motion.",
+    "value": "Tiny engine layer: token-driven, reduced-motion aware, replaceable by adapter.",
+    "scope": [
+      "MotionEngine interface (timing, spring, loop, stop) in src/motion/engine.ts with default RN Animated implementation",
+      "animate(value, to, {duration|spring: token, easing: token, useNativeDriver}) returns controllable handle",
+      "useAnimatedValue(initial) stable ref",
+      "When reduced motion: jump to final value with duration 0 (opacity fades allowed at 'instant' only)",
+      "useNativeDriver auto false for unsupported props and on web (no warning)"
+    ],
+    "outOfScope": [
+      "Reanimated implementation (E3-14)"
+    ],
+    "acceptance": [
+      "animate resolves duration from theme.motion tokens (test with fake timers)",
+      "Reduced-motion forces final value synchronously (test)",
+      "Web platform mock does not emit native-driver warning (test)",
+      "Engine is swappable: test injects fake engine via MotionProvider prop"
+    ],
+    "dependencies": [
+      "E3-01",
+      "E3-02",
+      "E3-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/engine.ts",
+      "src/motion/animate.ts",
+      "src/motion/useAnimatedValue.ts",
+      "tests/motion/animate.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-05",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add Presence and enter/exit transition presets",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "transitions"
+    ],
+    "problem": "Modal/BottomSheet/Alert/Popover mount and unmount abruptly or via RN strings; no reusable enter/exit.",
+    "value": "Declarative enter/exit for any child with fade, slide, scale, collapse presets.",
+    "scope": [
+      "<Presence visible>{children}</Presence> delaying unmount until exit animation ends; props: preset ('fade'|'slide-up'|'slide-down'|'scale'|'collapse'), duration/spring token override, onExited",
+      "Presets map to token distance/duration",
+      "Reduced motion: fade 0ms only, no translate",
+      "Accessible: hidden content gets accessibilityElementsHidden during exit"
+    ],
+    "outOfScope": [
+      "Adopting Presence in Modal/Toast (E6)"
+    ],
+    "acceptance": [
+      "Child unmounts only after exit completes (test with fake timers)",
+      "Re-showing during exit reverses without remount (test)",
+      "Reduced motion unmounts immediately (test)",
+      "Works without MotionProvider using defaults"
+    ],
+    "dependencies": [
+      "E3-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Layout during collapse needs measured height: use onLayout, document limits"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/Presence.tsx",
+      "src/motion/presets.ts",
+      "tests/motion/presence.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-06",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add pressable feedback (usePressFeedback, PressableScale)",
+    "priority": "High",
+    "labels": [
+      "motion",
+      "interaction"
+    ],
+    "problem": "Button swaps background to colors.surface on press and keeps opacity 1 (Button.tsx); no scale/ripple/state-layer feedback pattern.",
+    "value": "Consistent touch feedback usable by any pressable component.",
+    "scope": [
+      "usePressFeedback({scale, opacity, stateLayer}) returning animated style and handlers",
+      "<PressableScale> wrapper around Pressable with token defaults (scale .97, spring snappy)",
+      "Android ripple option via android_ripple using semantic stateLayer color",
+      "Reduced motion: opacity change only"
+    ],
+    "outOfScope": [
+      "Wiring into Button (E1)"
+    ],
+    "acceptance": [
+      "Pressing in animates scale to token value, release returns to 1 (test with injected engine)",
+      "Disabled disables feedback (test)",
+      "Passes accessibilityRole/State through (a11y test helper)",
+      "Hit area unchanged (>= 44pt) when hitSlop prop passed"
+    ],
+    "dependencies": [
+      "E3-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/usePressFeedback.ts",
+      "src/motion/PressableScale.tsx",
+      "tests/motion/press-feedback.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-07",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add Skeleton component with shimmer",
+    "priority": "Medium",
+    "labels": [
+      "motion",
+      "skeleton",
+      "loading"
+    ],
+    "problem": "No loading placeholder; only Spinner and ProgressBar exist.",
+    "value": "Standard perceived-performance primitive for lists/cards/text.",
+    "scope": [
+      "useShimmer() looping opacity/gradient-free translate animation (JS-only, no expo-linear-gradient)",
+      "<Skeleton variant='text|rect|circle' width height lines> using semantic surface tiers",
+      "Static (no animation) under reduced motion",
+      "accessibilityLabel 'Loading' and busy state on container",
+      "Registered in src/components/Skeleton/index.ts"
+    ],
+    "outOfScope": [
+      "Gradient shimmer needing native modules",
+      "Catalog entry (E11)"
+    ],
+    "acceptance": [
+      "Renders text/rect/circle with token radius (test)",
+      "Reduced motion renders no running animation (test checks engine not invoked)",
+      "Light and dark colors distinct from background (test)",
+      "Component has typed props exported from its index"
+    ],
+    "dependencies": [
+      "E3-04",
+      "E2-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/components/Skeleton/Skeleton.tsx",
+      "src/components/Skeleton/index.ts",
+      "src/motion/useShimmer.ts",
+      "tests/components/skeleton.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-08",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add layout transition helper over LayoutAnimation",
+    "priority": "Medium",
+    "labels": [
+      "motion",
+      "layout"
+    ],
+    "problem": "List insert/remove, accordion and filter changes snap with no transition.",
+    "value": "One-line layout animation that works cross-platform and respects reduced motion.",
+    "scope": [
+      "animateNextLayout(preset: 'ease'|'spring'|'fade') wrapping LayoutAnimation.configureNext with token durations",
+      "Guard Android UIManager.setLayoutAnimationEnabledExperimental (no-op under New Architecture; verify behavior on RN 0.86)",
+      "No-op under reduced motion and on web",
+      "useLayoutTransition() hook that triggers before state update callback"
+    ],
+    "outOfScope": [
+      "Shared-element transitions",
+      "Reanimated layout animations"
+    ],
+    "acceptance": [
+      "configureNext called with token duration (test with mocked LayoutAnimation)",
+      "Not called under reduced motion (test)",
+      "Missing UIManager/LayoutAnimation does not throw (test)",
+      "Document verified behavior per platform in file header"
+    ],
+    "dependencies": [
+      "E3-01",
+      "E3-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "LayoutAnimation behavior differs between iOS/Android/Fabric: document, verify on device in E12"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/layoutTransition.ts",
+      "tests/motion/layout-transition.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-09",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add useStagger for list/entrance sequencing",
+    "priority": "Low",
+    "labels": [
+      "motion",
+      "lists"
+    ],
+    "problem": "No way to sequence entrance of siblings.",
+    "value": "Presets like premium/consumer define stagger; need a primitive.",
+    "scope": [
+      "useStagger(count, {delay: token, max}) returning per-index delay values",
+      "<Stagger> wrapper applying delays to Presence children",
+      "Cap total delay (default 400ms) so long lists are not slow; none under reduced motion"
+    ],
+    "outOfScope": [
+      "Virtualized list integration"
+    ],
+    "acceptance": [
+      "Delays are index*stagger capped (test)",
+      "Reduced motion returns all zeros (test)",
+      "Stable output for same inputs (memo test)"
+    ],
+    "dependencies": [
+      "E3-05"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/useStagger.ts",
+      "src/motion/Stagger.tsx",
+      "tests/motion/stagger.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-10",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add useSwipe gesture primitive on PanResponder",
+    "priority": "Medium",
+    "labels": [
+      "gestures",
+      "interaction"
+    ],
+    "problem": "No gesture primitives; swipe-to-dismiss/actions would otherwise force react-native-gesture-handler.",
+    "value": "JS-only swipe detection usable in Expo Go.",
+    "scope": [
+      "useSwipe({onSwipeLeft/Right/Up/Down, threshold, velocity, direction lock}) returning panHandlers",
+      "Does not steal vertical scroll when horizontal-only (direction lock)",
+      "Thresholds from theme.size or props",
+      "Web: works with pointer events via PanResponder"
+    ],
+    "outOfScope": [
+      "Native-driven gestures",
+      "Swipeable list row component (E7)"
+    ],
+    "acceptance": [
+      "Simulated pan events beyond threshold fire the right callback once (test)",
+      "Below threshold fires none (test)",
+      "Horizontal-only mode does not claim responder for vertical move (test)",
+      "No import outside react-native"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/gestures/useSwipe.ts",
+      "tests/gestures/swipe.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-11",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add useDrag and Draggable primitive",
+    "priority": "Medium",
+    "labels": [
+      "gestures",
+      "drag"
+    ],
+    "problem": "No drag primitive for reorder, sheets or sliders.",
+    "value": "Reusable drag with bounds and spring-back for BottomSheet/Slider work in other epics.",
+    "scope": [
+      "useDrag({axis, bounds, snapPoints, onEnd}) returning Animated.ValueXY and panHandlers",
+      "<Draggable> view wrapper",
+      "Release spring to nearest snap point using spring token; reduced motion snaps instantly",
+      "Clamp to bounds"
+    ],
+    "outOfScope": [
+      "Sortable list",
+      "BottomSheet rewrite (E6)"
+    ],
+    "acceptance": [
+      "Drag clamps to bounds (test)",
+      "Release picks nearest snapPoint (test)",
+      "axis='x' ignores dy (test)",
+      "Reduced motion snaps without animation (test)"
+    ],
+    "dependencies": [
+      "E3-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/gestures/useDrag.ts",
+      "src/gestures/Draggable.tsx",
+      "tests/gestures/drag.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-12",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add themed PullToRefresh wrapper",
+    "priority": "Medium",
+    "labels": [
+      "gestures",
+      "lists",
+      "refresh"
+    ],
+    "problem": "No refresh pattern; RefreshControl is unthemed and absent on web.",
+    "value": "Drop-in themed pull-to-refresh for ScrollView/FlatList across platforms.",
+    "scope": [
+      "<PullToRefresh refreshing onRefresh> returning themed RefreshControl props (tintColor, colors, progressBackgroundColor from semantic roles) via usePullToRefreshProps()",
+      "Web fallback: visible refresh button / no-op with documented behavior",
+      "Optional haptic callback through useHaptics when provider present (soft dependency by context only)"
+    ],
+    "outOfScope": [
+      "Custom animated pull indicator (needs native driver decision)"
+    ],
+    "acceptance": [
+      "Props use theme colors in light and dark (test)",
+      "onRefresh called once per trigger (test)",
+      "Web path renders without RefreshControl (test)",
+      "Documented in file header"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/gestures/PullToRefresh.tsx",
+      "src/gestures/usePullToRefreshProps.ts",
+      "tests/gestures/pull-to-refresh.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-13",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Add haptics adapter contract: HapticsProvider and useHaptics",
+    "priority": "Medium",
+    "labels": [
+      "haptics",
+      "adapter",
+      "dependencies"
+    ],
+    "problem": "No haptics support; expo-haptics must not become a core dependency (peer policy, clipboard precedent).",
+    "value": "Components can trigger feedback when the consumer supplies an adapter; zero cost otherwise.",
+    "scope": [
+      "HapticsAdapter {impact(style), notification(type), selection()} types",
+      "HapticsProvider adapter?, enabled?; useHaptics() returns no-op functions when missing",
+      "Honors reduced-motion? No: separate setting; respects enabled flag",
+      "Docs snippet for expo-haptics adapter placed in docs (E3-15), not imported in src"
+    ],
+    "outOfScope": [
+      "Importing expo-haptics",
+      "Official adapter package"
+    ],
+    "acceptance": [
+      "grep -r expo-haptics src returns nothing",
+      "No-op without provider (test)",
+      "Adapter calls forwarded with correct args (test)",
+      "enabled=false suppresses calls (test)"
+    ],
+    "dependencies": [
+      "E3-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/haptics/types.ts",
+      "src/haptics/HapticsProvider.tsx",
+      "src/haptics/useHaptics.ts",
+      "tests/haptics/haptics.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E3-14",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Spike: Reanimated MotionEngine adapter feasibility (Expo Go, entrypoint)",
+    "priority": "Low",
+    "labels": [
+      "motion",
+      "spike",
+      "reanimated"
+    ],
+    "problem": "Teams may want worklet-driven animation; ADR 0009 defers it.",
+    "value": "Evidence-based go/no-go for an optional adapter entrypoint without touching core.",
+    "scope": [
+      "Prototype adapter implementing MotionEngine with react-native-reanimated in scratch (not shipped)",
+      "Measure Expo Go compatibility, bundle impact, babel plugin requirement, web behavior",
+      "Write findings and proposed entrypoint shape (`/reanimated` subpath or separate package) with required package.json exports change"
+    ],
+    "outOfScope": [
+      "Shipping the adapter",
+      "Changing package.json"
+    ],
+    "acceptance": [
+      "Report lists tested Expo SDK, RN, platforms and results",
+      "Report states babel plugin and config requirements",
+      "Recommendation: go/no-go with conditions",
+      "No file under src changed (git diff --stat)"
+    ],
+    "dependencies": [
+      "E3-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "git diff --stat -- src"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "audit/dependencies/reanimated-adapter-spike.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E3-15",
+    "epic": "E3",
+    "type": "Task",
+    "title": "Motion docs, example screen, area barrels and public-API test",
+    "priority": "Medium",
+    "labels": [
+      "motion",
+      "docs",
+      "exports"
+    ],
+    "problem": "New motion/gestures/haptics modules need exports, docs and usage example.",
+    "value": "Discoverable, documented API.",
+    "scope": [
+      "src/motion/index.ts, src/gestures/index.ts, src/haptics/index.ts barrels",
+      "docs/motion.md: tokens, reduced motion, engine decision, haptics adapter snippet for expo-haptics, Expo Go matrix",
+      "examples/motion.tsx covering Presence, PressableScale, Skeleton, useSwipe, PullToRefresh",
+      "Public-API test listing exported names"
+    ],
+    "outOfScope": [
+      "Root src/index.ts and api snapshot (E14)"
+    ],
+    "acceptance": [
+      "Barrels export every public symbol from E3 tickets (test)",
+      "examples/motion.tsx typechecks",
+      "docs/motion.md contains sections Tokens, Reduced motion, Engine, Haptics, Expo Go",
+      "npm run docs:compat:check passes"
+    ],
+    "dependencies": [
+      "E3-04",
+      "E3-05",
+      "E3-06",
+      "E3-07",
+      "E3-08",
+      "E3-09",
+      "E3-10",
+      "E3-11",
+      "E3-12",
+      "E3-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run docs:compat:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/motion/index.ts",
+      "src/gestures/index.ts",
+      "src/haptics/index.ts",
+      "docs/motion.md",
+      "examples/motion.tsx",
+      "tests/motion/public-api.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor"
+  }
+]
