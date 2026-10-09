@@ -1,9 +1,25 @@
 site_name: Personal Library React Native Components
 site_description: React Native components for Personal Library applications
-repo_url: https://github.com/niccolo/personal-library-react-native-components
+repo_url: https://github.com/pianic2/personal-library-react-native-components
 
 docs_dir: docs
 site_dir: site
+
+# Pages that cannot be built yet: they link to files outside docs/ (CONTRIBUTING.md, audit/, skills/), which
+# `mkdocs build --strict` rejects. Rewrite those links as repository URLs, then remove the page from this
+# list and add it to the nav (follow-up of the policy tickets that own the pages).
+exclude_docs: |
+  policies/execution-runbook.md
+  policies/stability.md
+  policies/versioning.md
+
+# Internal process documents that are intentionally not part of the site navigation.
+not_in_nav: |
+  policies/branching.md
+  policies/checkpoint.md
+  policies/evidence-template.md
+  policies/jql.md
+  policies/token-economy.md
 
 theme:
   name: mkdocs
@@ -12,6 +28,8 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - Platform Support: platform-support.md
+  - Compatibility: compatibility.md
+  - Accessibility Testing: accessibility-testing.md
   - Preview Runtime Limits: preview-runtime-limits.md
   - Expo/RN/Metro Troubleshooting: expo-rn-metro-troubleshooting.md
   - Migration Notes: migration.md
@@ -91,3 +109,6 @@ nav:
       - cn: utils/cn.md
       - mergeStyles: utils/merge-styles.md
       - platform: utils/platform.md
+  - Policies:
+      - Deprecation: policies/deprecation.md
+      - Licensing: policies/licensing.md
