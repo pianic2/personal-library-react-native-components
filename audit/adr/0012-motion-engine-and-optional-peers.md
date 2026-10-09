@@ -2,9 +2,7 @@
 
 ## Status
 
-Accepted, pending owner sign-off. Decision D11 (`audit/texo-v1/DECISIONS.md`, adopted by the orchestrator 2026-10-09, based on `audit/texo-v1/reviews/R1-architecture-review.md` ADR-R11).
-
-Owner sign-off (name and date): **pending**. The product owner records it here before any dependent ticket of PLRNUI-127 starts:
+**Proposed.** Decision D11 (`audit/texo-v1/DECISIONS.md`, adopted by the orchestrator 2026-10-09, based on `audit/texo-v1/reviews/R1-architecture-review.md` ADR-R11) is recorded here. This ADR becomes **Accepted** only when the product owner records the sign-off below. Dependent tickets (the E3 motion tickets) must not start before that.
 
 - Signed off by: _(name)_
 - Date: _(YYYY-MM-DD)_
