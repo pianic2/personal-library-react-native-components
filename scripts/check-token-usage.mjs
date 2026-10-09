@@ -49,7 +49,9 @@ class UsageError extends Error {}
  * ${...} expressions lexed as code) and regex literals. Returns the literal segments plus the source with
  * comments and literal bodies blanked out (used for the numeric count).
  * Heuristics for JSX text: "//" right after ":" is a URL, not a comment; a "'" right after a word character is an
- * apostrophe; a quote with no closing quote on the same line is plain text.
+ * apostrophe; a quote with no closing quote on the same line is plain text; "/" never starts a regex before ">"
+ * (JSX "/>") and does after operators, opening punctuation and keywords such as return.
+ * An unterminated template literal or block comment is an error (exit 2), not a silent skip.
  */
 function lex(src) {
   const n = src.length;
@@ -60,9 +62,15 @@ function lex(src) {
   const blank = (from, to) => {
     for (let k = from; k < to && k < n; k += 1) if (src[k] !== "\n") code[k] = " ";
   };
-  const prevSignificant = (index) => {
-    for (let k = index - 1; k >= 0; k -= 1) if (!/\s/.test(src[k])) return src[k];
-    return "";
+  // A "/" starts a regex literal after an operator or opening punctuation, or after a keyword such as return.
+  // "/>" (JSX self-closing tag) never starts one: that case is excluded at the call site.
+  const regexAllowedAfter = (index) => {
+    let k = index - 1;
+    while (k >= 0 && /\s/.test(src[k])) k -= 1;
+    if (k < 0) return true;
+    if (/[(,=:[!&|?{};]/.test(src[k])) return true;
+    const word = /[A-Za-z]+$/.exec(src.slice(Math.max(0, k - 10), k + 1));
+    return word !== null && ["return", "typeof", "case", "void", "delete", "in", "of", "else", "do"].includes(word[0]);
   };
 
   function scanCode(untilBrace) {
@@ -79,7 +87,8 @@ function lex(src) {
       }
       if (c === "/" && next === "*") {
         const end = src.indexOf("*/", i + 2);
-        const stop = end === -1 ? n : end + 2;
+        if (end === -1) throw new UsageError("unterminated block comment");
+        const stop = end + 2;
         blank(i, stop);
         i = stop;
         continue;
@@ -98,6 +107,7 @@ function lex(src) {
         const open = i;
         i += 1;
         let textStart = i;
+        let closed = false;
         const pushChunk = (to) => {
           segments.push({ text: src.slice(textStart, to), start: textStart, open });
           blank(textStart, to);
@@ -112,12 +122,14 @@ function lex(src) {
           } else if (src[i] === "`") {
             pushChunk(i);
             i += 1;
+            closed = true;
             break;
           } else i += 1;
         }
+        if (!closed) throw new UsageError("unterminated template literal");
         continue;
       }
-      if (c === "/" && next !== "/" && next !== "*" && /^[(,=:[!&|?{};]?$/.test(prevSignificant(i))) {
+      if (c === "/" && next !== "/" && next !== "*" && next !== ">" && regexAllowedAfter(i)) {
         let j = i + 1;
         let inClass = false;
         while (j < n && src[j] !== "\n") {
@@ -248,7 +260,12 @@ function run(root, allowlistPath) {
   let numeric = 0;
   for (const file of files) {
     const rel = relative(root, file).split(sep).join("/");
-    const result = findViolations(readFileSync(file, "utf8"));
+    let result;
+    try {
+      result = findViolations(readFileSync(file, "utf8"));
+    } catch (error) {
+      throw new UsageError(`${rel}: ${error.message}`);
+    }
     numeric += result.numericStyleCount;
     for (const violation of result.violations) {
       const index = entries.findIndex((entry) => entry.file === rel && entry.match === violation.match);

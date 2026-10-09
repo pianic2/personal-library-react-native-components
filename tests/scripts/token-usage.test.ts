@@ -216,4 +216,37 @@ describe("PLRNUI-179 token usage lint", () => {
     assert.deepEqual(violations, ["hardcoded color: src/components/Modal/Modal.tsx:40: rgba(0,0,0,0.5)"]);
     assert.doesNotMatch(result.stderr, /stale allowlist entry \(matches/);
   });
+
+  it("a self-closing JSX tag after an expression does not hide later colors on the line", () => {
+    const source = [
+      'const a = c ? <A a={1} /> : <B c="#ff0000" />;',
+      '{loading ? <Spinner size={s} /> : <Text style={{ color: "#00ff00" }}>x</Text>}',
+      '<A {...p} /><B style={{color:"#0000ff"}} />',
+    ].join("\n");
+    const { root, allowPath } = makeRoot({ "S/S.tsx": source });
+    const r = run(root, allowPath);
+    assert.equal(r.code, 1);
+    for (const [line, token] of [[1, "#ff0000"], [2, "#00ff00"], [3, "#0000ff"]]) assert.match(r.err, new RegExp(`S\\.tsx:${line}: ${token}`));
+  });
+
+  it("recognises a regex after the return keyword and handles escaped quotes and nested templates", () => {
+    const source = [
+      'function f(x) { return /"/.test(x) && "#ff0000"; }',
+      'const a = "say \\"hi\\""; const b = "#00ff00";',
+      "const c = `${`${\"#0000ff\"}`}`;",
+    ].join("\n");
+    const { root, allowPath } = makeRoot({ "U/U.tsx": source });
+    const r = run(root, allowPath);
+    assert.equal(r.code, 1);
+    for (const [line, token] of [[1, "#ff0000"], [2, "#00ff00"], [3, "#0000ff"]]) assert.match(r.err, new RegExp(`U\\.tsx:${line}: ${token}`));
+  });
+
+  it("fails closed (exit 2) on an unterminated template literal or block comment", () => {
+    for (const source of ["const a = `#ff0000", "/* never closed\nconst a = 1;"]) {
+      const { root, allowPath } = makeRoot({ "V/V.tsx": source });
+      const r = run(root, allowPath);
+      assert.equal(r.code, 2, source);
+      assert.match(r.err, /V\/V\.tsx: unterminated/);
+    }
+  });
 });
