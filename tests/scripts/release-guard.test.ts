@@ -133,6 +133,7 @@ describe("PLRNUI-124 release guard: shim channel", () => {
     assert.match(guard(shimFixture(shimPkg({ dependencies: { other: "^1.0.0" } })), "shim").stderr, /exactly one dependency/);
     assert.match(guard(shimFixture(shimPkg({ peerDependencies: { react: "*" } })), "shim").stderr, /must not declare peerDependencies/);
     assert.match(guard(shimFixture(shimPkg({ name: "@legacy/other" })), "shim").stderr, /legacy name/);
+    assert.match(guard(shimFixture(shimPkg({ bundledDependencies: true })), "shim").stderr, /must not declare bundledDependencies/);
   });
 
   it("fails when the identity config does not enable a shim", () => {

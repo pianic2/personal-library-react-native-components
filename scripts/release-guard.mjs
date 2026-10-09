@@ -22,7 +22,6 @@ const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CANONICAL_REPOSITORY = "git+https://github.com/pianic2/personal-library-react-native-components.git";
 const CHANNELS = ["rc", "latest", "shim"];
 const EVIDENCE_FILES = ["consumer-smoke.json", "expo-consumer-smoke.json"];
-const SHIM_EVIDENCE_FILE = "shim-consumer-smoke.json";
 const STABLE = /^\d+\.\d+\.\d+$/;
 const RC = /^\d+\.\d+\.\d+-rc\.\d+$/;
 
@@ -104,7 +103,7 @@ function checkShim(pkg, errors, check, identity) {
   if (names.length === 1) check(dependencies[names[0]] === `^${major}.0.0`, `shim dependency range must be ^${major}.0.0 (caret of the major, D10), found ${dependencies[names[0]]}`);
   check(!pkg.scripts || Object.keys(pkg.scripts).length === 0, "shim must have no scripts (no postinstall or any other)");
   for (const field of ["peerDependencies", "optionalDependencies", "bundledDependencies", "bundleDependencies"]) {
-    check(!pkg[field] || Object.keys(pkg[field]).length === 0, `shim must not declare ${field}`);
+    check(!(field in pkg) || pkg[field] === null || (typeof pkg[field] === "object" && Object.keys(pkg[field]).length === 0), `shim must not declare ${field}`);
   }
 }
 
