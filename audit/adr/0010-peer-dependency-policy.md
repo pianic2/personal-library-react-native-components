@@ -21,7 +21,7 @@ Proposed - pending H2: the allowance for `peerDependenciesMeta` optional peers f
 | Package type | Where declared | Example | Rule |
 | --- | --- | --- | --- |
 | Required runtime platform | `peerDependencies` | `react`, `react-native` | Version ranges follow the compatibility baseline (docs/compatibility.md). |
-| Expo module | none (injected) | `expo-haptics`, `expo-clipboard`, `expo-secure-store` | Never a dependency or a peer; the consumer installs it and passes it to the factory. |
+| Expo module | none (injected; ADR 0009 lists `expo` as a placeholder optional peer of `./native/expo`, which this ADR supersedes: no Expo module is a peer) | `expo-haptics`, `expo-clipboard`, `expo-secure-store` | Never a dependency or a peer; the consumer installs it and passes it to the factory. |
 | Non-Expo native library with an adapter | `peerDependencies` plus `peerDependenciesMeta` `optional: true` (Proposed - pending H2) | `react-native-svg`, `@shopify/flash-list`, `react-native-safe-area-context`, `@react-native-community/datetimepicker` | Imported only from `./adapters/<lib>`; absent libraries never break the root import. |
 | Pure JS helper | `devDependencies` only, never shipped | `typescript`, test tools | The package keeps no runtime `dependencies`. |
 | Test tooling for consumers | optional peer of `./testing` only (Proposed - pending H2) | `react-test-renderer` | Never reachable from the root entry. |
