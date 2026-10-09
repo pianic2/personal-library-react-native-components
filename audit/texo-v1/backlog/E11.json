@@ -1,0 +1,1107 @@
+[
+  {
+    "id": "E11-02",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Scaffold Expo catalog app workspace in repo",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No Expo app exists in repo; examples/*.tsx are loose files. PLRNUI-77 requires Expo previews embedded in GitHub Pages.",
+    "value": "Runnable app consuming the library from source on iOS/Android/Web.",
+    "scope": [
+      "apps/catalog (Expo, expo-router) with metro alias to ../../src",
+      "react-native-web enabled",
+      "Scripts: catalog:start, catalog:web"
+    ],
+    "outOfScope": [
+      "Screens content",
+      "Pages deploy (PLRNUI-77)"
+    ],
+    "acceptance": [
+      "npm run catalog:web -- --smoke exports web without error",
+      "Root package.json files/exports unchanged (package:dry-run diff empty)",
+      "Catalog excluded from npm pack"
+    ],
+    "dependencies": [
+      "PLRNUI-77"
+    ],
+    "validation": [
+      "npm run package:dry-run",
+      "cd apps/catalog && npx expo export --platform web"
+    ],
+    "evidence": [
+      "Export log"
+    ],
+    "risks": [
+      "Workspace install affects root lockfile; use isolated package.json under apps/catalog"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/package.json",
+      "apps/catalog/app.json",
+      "apps/catalog/metro.config.js",
+      "apps/catalog/app/_layout.tsx",
+      "apps/catalog/tsconfig.json"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-04",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Add catalog theme switcher (light/dark/system and presets)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "theming",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Theme provider supports overrides and storage adapter (tests/theme) but no UI to switch.",
+    "value": "Preview every component across themes; consumes E2 presets.",
+    "scope": [
+      "Global header control: light/dark/system plus preset list from createTheme exports",
+      "Persist via existing storage adapter"
+    ],
+    "outOfScope": [
+      "Authoring new presets (E2)"
+    ],
+    "acceptance": [
+      "Switching theme re-renders a sample without remount error (test)",
+      "Preset list auto-includes E2 presets via registry"
+    ],
+    "dependencies": [
+      "E11-02"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Screenshots light/dark"
+    ],
+    "risks": [
+      "Depends on E2 preset API shape"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/src/ThemeSwitcher.tsx",
+      "apps/catalog/src/theme-state.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-03",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Build catalog navigation, component list, and search",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "search",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No browsable index.",
+    "value": "Find any component by name/category/maturity.",
+    "scope": [
+      "Index screen from registry grouped by category",
+      "Fuzzy search by name/tag",
+      "Maturity badge per entry",
+      "Route per component /c/[name]"
+    ],
+    "outOfScope": [
+      "Playground controls"
+    ],
+    "acceptance": [
+      "Search for 'btn' returns Button (unit test)",
+      "Every registry entry reachable by route (test enumerates)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E11-02"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Screenshot web"
+    ],
+    "risks": [
+      "None"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/app/index.tsx",
+      "apps/catalog/app/c/[name].tsx",
+      "apps/catalog/src/search.ts",
+      "tests/catalog/search.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-09",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Define template system and generator CLI contract for app starters",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "cli",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No starters exist. Brief wants tabs, auth, dashboard, settings, onboarding, e-commerce, social feed.",
+    "value": "Agree layout so each template ticket is disjoint; aligns with E13/E14 CLI.",
+    "scope": [
+      "templates/<name>/ folder contract (package.json, app/, README, template.json)",
+      "scripts/check-templates.mjs validates structure",
+      "Templates consume package only via public imports"
+    ],
+    "outOfScope": [
+      "Template content"
+    ],
+    "acceptance": [
+      "check-templates passes on an empty fixture and fails on a missing README (tests)",
+      "Contract doc written"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs"
+    ],
+    "evidence": [
+      "Contract doc"
+    ],
+    "risks": [
+      "CLI ownership with E14"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/README.md",
+      "templates/_contract/**",
+      "scripts/check-templates.mjs",
+      "tests/templates/contract.test.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-05",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Add playground controls panel generated from props schema",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "playground",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Props schema absent; no interactive prop editing.",
+    "value": "Live editing of boolean/enum/string props with copyable code.",
+    "scope": [
+      "Controls renderer for boolean, enum, string, number",
+      "Code snippet generator from current props",
+      "Reset button"
+    ],
+    "outOfScope": [
+      "Auto-extraction of schema from TS (E13)"
+    ],
+    "acceptance": [
+      "Toggling 'disabled' updates rendered component (test)",
+      "Snippet output matches props (snapshot test)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E11-03"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Gif or screenshots"
+    ],
+    "risks": [
+      "Hand-written schemas can drift; E13 may generate"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/src/Playground.tsx",
+      "apps/catalog/src/controls/*.tsx",
+      "apps/catalog/src/snippet.ts",
+      "tests/catalog/snippet.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-06",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Add variants and states matrix view per component",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "states",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No grid showing all variants x states (default, disabled, error, loading, focused).",
+    "value": "Visual review and screenshot target for regression tests.",
+    "scope": [
+      "Matrix component rendering registry variants x states",
+      "Stable testIDs per cell: matrix-<component>-<variant>-<state>"
+    ],
+    "outOfScope": [
+      "Visual regression tooling (E12-06)"
+    ],
+    "acceptance": [
+      "Every registry component renders matrix without throwing (test)",
+      "testID format asserted"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E11-03"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Screenshot"
+    ],
+    "risks": [
+      "Large matrices slow on device"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/src/Matrix.tsx",
+      "tests/catalog/matrix.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-08",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Embed Expo web preview export into Pages build (builds on PLRNUI-77)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "pages",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "PLRNUI-77 is approved and covers the GitHub Pages showcase with auto-embedded previews; catalog app must plug into it, not duplicate it.",
+    "value": "Single deployment path; catalog is the content PLRNUI-77 embeds.",
+    "scope": [
+      "Document and wire output contract: expo export web to the directory PLRNUI-77 workflow expects",
+      "Deep-link param ?component=Button&theme=dark"
+    ],
+    "outOfScope": [
+      "Creating the Pages workflow itself (PLRNUI-77)"
+    ],
+    "acceptance": [
+      "Deep link opens given component/theme (e2e or unit router test)",
+      "No second Pages workflow added"
+    ],
+    "dependencies": [
+      "E11-03",
+      "E11-04",
+      "PLRNUI-77"
+    ],
+    "validation": [
+      "npx expo export --platform web in apps/catalog"
+    ],
+    "evidence": [
+      "Link to PLRNUI-77 PR"
+    ],
+    "risks": [
+      "Coordination with owner of PLRNUI-77"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/app/+html.tsx",
+      "apps/catalog/src/deeplink.ts",
+      "docs/showcase.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-10",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create tabs app starter template",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No tabs starter.",
+    "value": "Most common Expo shell.",
+    "scope": [
+      "templates/tabs: Home/Explore/Profile with NavBar+BottomBar, ThemeProvider, dark mode"
+    ],
+    "outOfScope": [
+      "Auth"
+    ],
+    "acceptance": [
+      "expo export web succeeds in CI template job",
+      "Only imports from package public API (lint script)"
+    ],
+    "dependencies": [
+      "E11-09"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build tabs"
+    ],
+    "evidence": [
+      "Export log"
+    ],
+    "risks": [
+      "Router versions"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/tabs/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-12",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create dashboard starter template",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No such starters.",
+    "value": "Cover the remaining core shells.",
+    "scope": [
+      "templates/dashboard (cards, stats, list) using existing components only"
+    ],
+    "outOfScope": [
+      "Charts (E7)"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build dashboard exits 0"
+    ],
+    "dependencies": [
+      "E11-09"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build dashboard settings onboarding"
+    ],
+    "evidence": [
+      "Export logs"
+    ],
+    "risks": [
+      "Reuse of missing components (pager) via placeholders is forbidden; use only existing"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/dashboard/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [
+      "E11-17",
+      "E11-18"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E11-17",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create settings starter template",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No settings starter.",
+    "value": "Covers the settings shell.",
+    "scope": [
+      "templates/settings (switch rows, theme toggle)"
+    ],
+    "outOfScope": [
+      "Charts (E7)"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build settings exits 0",
+      "The theme toggle switches ThemeProvider preference between light and dark (test in templates/settings)"
+    ],
+    "dependencies": [
+      "E11-12"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build dashboard settings onboarding"
+    ],
+    "evidence": [
+      "Export logs"
+    ],
+    "risks": [
+      "Reuse of missing components (pager) via placeholders is forbidden; use only existing"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/settings/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E11-12",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E11-18",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create onboarding starter template",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No onboarding starter.",
+    "value": "Covers the onboarding shell.",
+    "scope": [
+      "templates/onboarding (pager, skip, progress) using E7-15 Pager"
+    ],
+    "outOfScope": [
+      "Charts (E7)"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build onboarding exits 0",
+      "Skip navigates to the final step (test in templates/onboarding)"
+    ],
+    "dependencies": [
+      "E7-15",
+      "E11-12"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build dashboard settings onboarding"
+    ],
+    "evidence": [
+      "Export logs"
+    ],
+    "risks": [
+      "Reuse of missing components (pager) via placeholders is forbidden; use only existing"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/onboarding/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E11-12",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E11-14",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create page recipes: login, signup, profile, settings, empty and error states",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "recipes",
+      "patterns",
+      "ai-native",
+      "templates",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No reusable page-level compositions.",
+    "value": "Copy-paste (and registry-indexed) feature screens; reduces tokens for agents.",
+    "scope": [
+      "recipes/<name>.tsx as copyable source, not package exports",
+      "Registry type 'recipe' with dependencies list",
+      "Catalog route /recipes",
+      "(from E13-15) Page recipes for auth, settings, profile and onboarding list components used and states covered (loading/empty/error) in their README (from ai/templates plan)"
+    ],
+    "outOfScope": [
+      "Package-exported recipe components (decide in E14)"
+    ],
+    "acceptance": [
+      "Each recipe typechecks against public API (tsc project)",
+      "Each recipe has a render smoke test and a11y label test",
+      "(from E13-15) Each page recipe README lists components used and states covered: loading, empty, error (grep)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E13-14"
+    ],
+    "validation": [
+      "npm run typecheck:recipes",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Recipes might later become export entries; keep headless"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "recipes/**",
+      "tsconfig.recipes.json",
+      "tests/recipes/recipes.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E13-15"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-11",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create auth flow starter template (login, signup, forgot)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "auth",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No auth starter.",
+    "value": "Boilerplate cut for the most common flow.",
+    "scope": [
+      "templates/auth with route guard stub, form validation, error states, uses recipes from E11-14"
+    ],
+    "outOfScope": [
+      "Real backend"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build auth exits 0 (web export)",
+      "Screens use FormField/PasswordInput with a11y labels (test)"
+    ],
+    "dependencies": [
+      "E11-09",
+      "E11-14"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build auth"
+    ],
+    "evidence": [
+      "Export log"
+    ],
+    "risks": [
+      "Do not store credentials; mock service"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/auth/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-15",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create feature recipes: list-detail, checkout, search and filters",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "recipes",
+      "patterns",
+      "ai-native",
+      "templates",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No multi-screen feature recipes.",
+    "value": "Cover common flows beyond single pages.",
+    "scope": [
+      "recipes/features/{list-detail,checkout,search-filter}.tsx with mock data",
+      "(from E13-15) Feature recipe feature-form-flow: multi-step form with validation (from ai/templates plan)"
+    ],
+    "outOfScope": [
+      "Payments integration"
+    ],
+    "acceptance": [
+      "Typecheck + render smoke tests pass",
+      "Checkout exposes error and empty states",
+      "(from E13-15) recipes/features/form-flow compiles under tsconfig.recipes.json and re-implements no library component (grep shows imports from the package only)"
+    ],
+    "dependencies": [
+      "E11-14",
+      "E13-14"
+    ],
+    "validation": [
+      "npm run typecheck:recipes",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Needs E7 list components for best fidelity"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "recipes/features/**",
+      "tests/recipes/features.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E13-15"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-13",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create e-commerce starter template",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No such starters.",
+    "value": "Showcase list-detail and media-heavy layouts; waits on E7 list/media components.",
+    "scope": [
+      "templates/ecommerce (catalog, product detail, cart), 3 screens max, using the E7 List component"
+    ],
+    "outOfScope": [
+      "Payments, backend"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build ecommerce exits 0",
+      "Catalog screen renders the library List component (grep import)"
+    ],
+    "dependencies": [
+      "E7-02",
+      "E11-09"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build ecommerce social-feed"
+    ],
+    "evidence": [
+      "Export logs"
+    ],
+    "risks": [
+      "Scope creep; keep to 3 screens each"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/ecommerce/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 10,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [
+      "E11-19"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E11-19",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Create social feed starter template",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No social feed starter.",
+    "value": "Showcases media-heavy list layouts.",
+    "scope": [
+      "templates/social-feed (feed, post, composer), 3 screens max"
+    ],
+    "outOfScope": [
+      "Payments, backend"
+    ],
+    "acceptance": [
+      "node scripts/check-templates.mjs --build social-feed exits 0",
+      "Feed screen renders the library List component (grep import)"
+    ],
+    "dependencies": [
+      "E7-02",
+      "E11-13"
+    ],
+    "validation": [
+      "node scripts/check-templates.mjs --build ecommerce social-feed"
+    ],
+    "evidence": [
+      "Export logs"
+    ],
+    "risks": [
+      "Scope creep; keep to 3 screens each"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "templates/social-feed/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 11,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E11-13",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E11-07",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Populate catalog stories: layout, typography, surfaces, feedback",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Registry examples missing; examples/ has 6 loose files.",
+    "value": "demo-level catalog presence.",
+    "scope": [
+      "Stories with variants/states for Box, Row, Column, Divider, Text family, Card, Badge, Alert, ProgressBar, Spinner",
+      "Convert examples/layout-primitives.tsx and feedback.tsx"
+    ],
+    "outOfScope": [
+      "Other categories"
+    ],
+    "acceptance": [
+      "Registry validation passes for these components",
+      "Converted examples removed or re-exported"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-19",
+      "E1-20",
+      "E1-21",
+      "E1-27",
+      "E1-34",
+      "E11-02"
+    ],
+    "validation": [
+      "npm test",
+      "npm run typecheck"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "None"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/stories/foundation/**",
+      "apps/catalog/stories/feedback/**",
+      "examples/layout-primitives.tsx",
+      "examples/feedback.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 12,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E11-16",
+    "epic": "E11",
+    "type": "Task",
+    "title": "Populate catalog stories: forms, navigation, overlays, buttons",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Same gap for remaining components.",
+    "value": "demo-level catalog presence.",
+    "scope": [
+      "Stories for Button, Input family, Checkbox, Switch, RadioGroup, Select, FormField, NavBar family, Link, Modal, BottomSheet, Popover, Tooltip",
+      "Convert remaining examples/*.tsx"
+    ],
+    "outOfScope": [
+      "Other categories"
+    ],
+    "acceptance": [
+      "Registry validation passes for all 36 components combined with E11-07",
+      "examples/ directory emptied or re-exported"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-24",
+      "E1-31",
+      "E1-34",
+      "E11-02",
+      "E11-07"
+    ],
+    "validation": [
+      "npm test",
+      "npm run typecheck"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "None"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "apps/catalog/stories/forms/**",
+      "apps/catalog/stories/navigation/**",
+      "apps/catalog/stories/overlays/**",
+      "examples/basic-usage.tsx",
+      "examples/form-controls.tsx",
+      "examples/navigation.tsx",
+      "examples/overlays.experimental.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

@@ -1,0 +1,3480 @@
+[
+  {
+    "id": "E1-25",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Alert to demo: alert role, contrast, dismiss",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "a11y",
+      "alert",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Alert lacks accessibilityRole='alert'/liveRegion and contrast not validated for warning/info; no dismiss.",
+    "value": "Accessible, announced feedback.",
+    "scope": [
+      "accessibilityRole alert + liveRegion polite",
+      "Contrast-safe text per variant via token",
+      "onDismiss prop with close button",
+      "Tests and docs",
+      "(from E9-04) Alert: role alert + accessibilityLiveRegion by severity"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: role alert present",
+      "Test: onDismiss fires",
+      "Contrast helper test for 5 variants light/dark",
+      "alert.md ## Usage",
+      "(from E9-04) Alert exposes accessibilityRole alert and accessibilityLiveRegion assertive for danger, polite otherwise (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Alert"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Alert/Alert.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Alert/**",
+      "tests/components/alert.test.tsx",
+      "docs/components/feedback/alert.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-04"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-26",
+    "epic": "E6",
+    "type": "Task",
+    "title": "ProgressBar and Spinner to demo: semantics and honest indeterminate",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "a11y",
+      "progress",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "ProgressBar renders 30% when progress undefined, has no progressbar role/value, hardcoded height; Spinner has no label and unused theme var; numeric ActivityIndicator size not valid on iOS.",
+    "value": "Correct semantics and sizes.",
+    "scope": [
+      "ProgressBar: accessibilityRole progressbar + accessibilityValue, indeterminate prop (animated), height token, rename color->variant (keep color deprecated alias)",
+      "Spinner: accessibilityLabel/busy, size map to 'small'|'large' on iOS",
+      "Tests and docs usage",
+      "(from E9-04) Spinner: role progressbar/busy + label; ProgressBar: accessibilityValue min/max/now"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: progress=40 sets accessibilityValue now=40",
+      "Test: undefined progress with indeterminate false renders 0% not 30%",
+      "Spinner has accessibilityLabel default",
+      "docs progress-bar.md spinner.md ## Usage",
+      "(from E9-04) Spinner exposes role progressbar, busy state and a label; ProgressBar exposes accessibilityValue {min,max,now} (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ProgressBar, Spinner"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Default progress change 30->0 is behavioral"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/ProgressBar/ProgressBar.meta.ts, src/components/Spinner/Spinner.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ProgressBar/**",
+      "src/components/Spinner/**",
+      "tests/components/progress-spinner.test.tsx",
+      "docs/components/feedback/progress-bar.md",
+      "docs/components/feedback/spinner.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-04"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-28",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Link to demo: link role, disabled, tokenised styling",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "a11y",
+      "link",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Link has no accessibilityRole link, no disabled state, hardcoded opacity/heights/fontWeight.",
+    "value": "Semantic, themable link.",
+    "scope": [
+      "accessibilityRole link, accessibilityLabel passthrough, disabled prop",
+      "Move opacity/height maps to theme.components.link tokens or typed consts",
+      "Tests and docs",
+      "(from E9-05) Link role link with href"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: role link present",
+      "Test: disabled blocks onPress/navigate",
+      "No numeric literals for opacity in Link.tsx",
+      "link.md ## Usage",
+      "(from E9-05) Link has accessibilityRole link and renders href on web (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Link"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Link/Link.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Link/**",
+      "tests/components/link.test.tsx",
+      "docs/components/navigation/link.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-30",
+    "epic": "E6",
+    "type": "Task",
+    "title": "NavContext and NavBar to demo: hook tests and docs",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "tests",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "useNavItems/useNavLogo/useNavPathname/useOptionalNav have no tests and are undocumented; NavBar auto layout rule undocumented.",
+    "value": "Navigation context fully verified.",
+    "scope": [
+      "Tests for all hooks incl. error outside provider",
+      "Document auto layout rule and hooks in nav-context.md/nav-bar.md",
+      "(from E9-05) accessibilityState selected on the current NavItem"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: useNav throws outside NavProvider",
+      "Test: useOptionalNav returns null outside",
+      "nav-bar.md documents layout auto",
+      "(from E9-05) Current NavBar item exposes accessibilityState.selected=true (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists NavContext, NavBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/NavContext/NavContext.meta.ts, src/components/NavBar/NavBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/NavContext/**",
+      "src/components/NavBar/**",
+      "tests/components/nav-context.test.tsx",
+      "docs/components/navigation/nav-context.md",
+      "docs/components/navigation/nav-bar.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-01",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Portal, nested OverlayHost and overlay stack (ADR 0015)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "portal",
+      "foundation",
+      "primitive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Overlays use RN Modal directly (Modal, BottomSheet, Select); no shared stack, z-order, back-handler or scrim coordination, and Toast/Popover cannot render above a Modal.",
+    "value": "One zero-dep overlay root that Toast, Dialog, Drawer, Menu, Popover, Tooltip and ActionSheet build on; consistent back-button/Escape dismissal order.",
+    "scope": [
+      "OverlayHost provider (View-based layer, no native lib) with Portal component",
+      "Stack manager: push/pop/id, z-order, topmost-only back handling (BackHandler on Android, Escape on web)",
+      "useOverlay() imperative open/close API",
+      "useOverlayAnchor(ref) measure helper for anchored overlays",
+      "Write audit/adr/0015-overlay-architecture.md (ADR-R3/D4): single owner, nearest-host Portal, native-window surfaces render their own OverlayHost, one stack owns z-order, focus return, Back/Escape and scroll lock",
+      "Portal mounts into the nearest OverlayHost via context lookup (not the root); the root host is rendered by TexoProvider inside all providers; ThemeScope is forwarded explicitly",
+      "RN Modal only for true modal surfaces needing native focus trapping",
+      "Owns the BackHandler/Escape subscription for the stack; E8-18 useBackHandler is a public hook over it",
+      "(from E4-11) Create src/components/Portal/{Portal.tsx,index.ts,Portal.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-11) States/variants: multiple portals stack in mount order; unmount cleans up; host missing => __DEV__ error and inline fallback.",
+      "(from E4-11) Accessibility: Optional accessibilityViewIsModal prop on portal layer (iOS); onBackdropPress/back-handler delegated to consumers; focus not moved by Portal itself.",
+      "(from E4-11) Theme tokens used (read-only, no new token keys): theme.zIndex",
+      "(from E4-11) Tests: tests/components/Portal.test.tsx covering mount/unmount/update ordering; context (theme) available inside portal; missing host fallback warning",
+      "(from E4-11) Catalog: src/components/Portal/Portal.meta.ts exporting {name, category:'overlay', status:'demo', summary, props, example}; docs/components/overlay/Portal.md with usage example"
+    ],
+    "outOfScope": [
+      "Gesture handling",
+      "Router integration",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "tests/components/Portal.test.tsx: Portal children render under the OverlayHost node; unmounting the host removes them with console.error called 0 times (spy)",
+      "Back/Escape closes only the topmost dismissable overlay (test)",
+      "Works without OverlayHost via documented RN Modal fallback and dev warning",
+      "Exported from its component index.ts (root export wired by the E14 wave-wiring ticket); git diff package.json shows no dependency change",
+      "Native-renderer test: a Select rendered inside a Modal renders above the Modal content (mounted in the Modal's nested host)",
+      "Native-renderer test: a toast shown while a Modal is open is visible (rendered in the nested host)",
+      "Test: a Portal inside ThemeScope receives the scoped theme",
+      "audit/adr/0015-overlay-architecture.md exists with Status Accepted (grep)",
+      "(from E4-11) npm run typecheck passes and src/components/Portal/index.ts exports Portal and PortalProps",
+      "(from E4-11) npm test passes including tests/components/Portal.test.tsx",
+      "(from E4-11) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Portal returns no hardcoded colors",
+      "(from E4-11) Portal renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Portal"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Layer inside a RN Modal does not stack above it; document and use per-modal host",
+      "(from E4-11) Context re-provisioning design must not leak stale values; document that Modal remains for full-screen blocking"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Portal/Portal.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Portal/**",
+      "audit/adr/0015-overlay-architecture.md",
+      "tests/components/Portal.test.tsx",
+      "docs/components/overlay/Portal.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-11"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-04",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Banner (persistent page/section announcement)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "banner",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No persistent, full-width, dismissible announcement; Alert is inline-card styled.",
+    "value": "App-level notices (offline, update available, trial ending) without custom code.",
+    "scope": [
+      "Banner with variant, title, message, icon, actions, dismissible, sticky position prop",
+      "Uses safe-area top inset when provided by SafeArea (E6-23)",
+      "Optional persistence key callback (onDismiss only; no storage dependency)"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Renders all variants and dismiss path in tests",
+      "role=alert/status chosen by variant",
+      "No import of AsyncStorage or other native modules (grep check)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Banner"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Banner/Banner.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Banner/**",
+      "tests/components/Banner.test.tsx",
+      "docs/components/feedback/Banner.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-15",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Tabs (scrollable, controlled, a11y)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "tabs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No tab primitive; BottomBar is nav-bound only.",
+    "value": "In-page sectioning with a11y tablist semantics.",
+    "scope": [
+      "Tabs, TabList, Tab, TabPanel compound API; controlled/uncontrolled",
+      "Lazy panel mounting, keepMounted option",
+      "Arrow-key switching on web, role=tab/tabpanel states",
+      "Variants: underline, pill (segmented look is E5-13 SegmentedControl)"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Selected state in accessibilityState (test)",
+      "Lazy panel not rendered until visited (test)",
+      "Works in RTL (flip test)",
+      "TabsProps variant type excludes 'segmented' (type test with @ts-expect-error)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Tabs"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Tabs/Tabs.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Tabs/**",
+      "tests/components/Tabs.test.tsx",
+      "docs/components/navigation/Tabs.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-17",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Stepper and Wizard (progress + step state machine)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "stepper",
+      "wizard",
+      "e7",
+      "progress",
+      "steps",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No multi-step flow primitive.",
+    "value": "Onboarding/checkout flows with validation gating.",
+    "scope": [
+      "Stepper (horizontal/vertical, states: complete/current/error/disabled)",
+      "useWizard hook: next/back/goTo, per-step validate (sync/async), linear lock",
+      "Wizard container rendering current step with transition slot",
+      "(from E7-28) steps with label/status (complete, current, upcoming, error)",
+      "(from E7-28) orientation, compact mode on small breakpoints",
+      "(from E7-28) press to navigate completed steps optional"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Wizard navigation logic"
+    ],
+    "acceptance": [
+      "next() blocked when validate returns false (test)",
+      "Async validate shows pending state (test)",
+      "Step statuses exposed to a11y (progress text)",
+      "(from E7-28) Current step has accessibilityState selected and 'step X of Y' label",
+      "(from E7-28) Compact mode switches via useBreakpoint (test)",
+      "(from E7-28) Error state uses icon/text, not color alone",
+      "(from E7-28) Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "(from E7-28) Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "(from E7-28) Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Stepper"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E7-28) Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Stepper/Stepper.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Stepper/**",
+      "tests/components/Stepper.test.tsx",
+      "docs/components/navigation/Stepper.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E7-28"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-19",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Pagination (numbered and simple prev/next)",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "pagination",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No pagination control for tables/lists.",
+    "value": "Server and client paging UI.",
+    "scope": [
+      "Pagination with page, pageCount, siblingCount, boundary and ellipses",
+      "Simple variant (prev/next + 'Page x of y')",
+      "Pure usePagination range function exported"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Range function table-tested (incl. edge pages)",
+      "On page 1 Prev has accessibilityState.disabled=true and on the last page Next has accessibilityState.disabled=true (tests/components/Pagination.test.tsx)",
+      "a11y labels on buttons",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Pagination"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Pagination/Pagination.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Pagination/**",
+      "tests/components/Pagination.test.tsx",
+      "docs/components/navigation/Pagination.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-20",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add EmptyState, ErrorState, LoadingState and Result",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "states",
+      "e7",
+      "state",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Every screen re-implements empty/error/loading blocks.",
+    "value": "Consistent async-view states, big cut in boilerplate.",
+    "scope": [
+      "EmptyState (icon/illustration slot, title, description, actions)",
+      "ErrorState with retry and error-detail collapse",
+      "LoadingState (spinner/label/inline/full)",
+      "Result (success/info/warning/error/403/404 presets)",
+      "AsyncBoundary helper choosing state from {status,data,error}",
+      "(from E7-06) title, description, icon/illustration slot, primary/secondary action",
+      "(from E7-06) variants: empty, no-results, offline",
+      "(from E7-06) compact vs full size",
+      "(from E7-07) title, message, retry action, optional collapsible technical detail",
+      "(from E7-07) variants: inline, fullscreen",
+      "(from E7-07) loading state on retry button"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Illustrations assets",
+      "Error reporting integration"
+    ],
+    "acceptance": [
+      "AsyncBoundary renders correct state for each status (test)",
+      "Retry callback fired (test)",
+      "All parts themed, no hardcoded colors (grep check)",
+      "(from E7-06) EmptyState action renders the library Button component (test locates Button by element type)",
+      "(from E7-06) Title uses Heading, centered in container with flex 1",
+      "(from E7-06) accessibilityRole summary-compatible text order (title then description then action) verified by inspection test",
+      "(from E7-06) Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "(from E7-06) Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "(from E7-06) Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "(from E7-07) onRetry fired once per press and button disabled while retrying (test)",
+      "(from E7-07) ErrorState detail text is absent from the rendered tree until the 'Show details' toggle is pressed (test)",
+      "(from E7-07) Message announced via accessibilityLiveRegion polite on Android / role alert",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists StateView"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E7-06) Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/StateView/StateView.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/StateView/**",
+      "tests/components/StateView.test.tsx",
+      "docs/components/feedback/StateView.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E7-06",
+      "E7-07"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-24",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add KeyboardToolbar (accessory bar with prev/next/done)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "keyboard",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No input accessory bar; form navigation between fields is manual.",
+    "value": "Faster form entry on mobile.",
+    "scope": [
+      "KeyboardToolbar rendered above keyboard using useKeyboard offset (no native InputAccessoryView requirement)",
+      "Field registry hook: register inputs, next/prev focus, done dismiss",
+      "Slots for custom actions"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Prev/next focus order follows registration (test)",
+      "KeyboardToolbar renders null after a keyboardDidHide event and renders after keyboardDidShow (Keyboard mock test)",
+      "Done calls Keyboard.dismiss",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists KeyboardToolbar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E8-10",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/KeyboardToolbar/KeyboardToolbar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/KeyboardToolbar/**",
+      "tests/components/KeyboardToolbar.test.tsx",
+      "docs/components/patterns/KeyboardToolbar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-31",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add PullToRefresh wrapper with web fallback",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "refresh",
+      "gestures",
+      "lists",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Apps use RefreshControl directly; no web support or consistent control.",
+    "value": "Uniform refresh behaviour.",
+    "scope": [
+      "PullToRefresh wrapping ScrollView/FlatList via RefreshControl on native",
+      "Web: Animated pull indicator via touch events, threshold prop",
+      "Controlled refreshing, onRefresh promise-aware",
+      "(from E3-12) <PullToRefresh refreshing onRefresh> returning themed RefreshControl props (tintColor, colors, progressBackgroundColor from semantic roles) via usePullToRefreshProps()",
+      "(from E3-12) Web fallback: visible refresh button / no-op with documented behavior",
+      "(from E3-12) Optional haptic callback through useHaptics when provider present (soft dependency by context only)"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Custom animated pull indicator (needs native driver decision)"
+    ],
+    "acceptance": [
+      "onRefresh promise resolution clears refreshing (test)",
+      "Web threshold trigger tested with simulated events",
+      "RefreshControl receives tintColor and colors[0] equal to theme.colors.primary in light and in dark (test)",
+      "(from E3-12) Props use theme colors in light and dark (test)",
+      "(from E3-12) onRefresh called once per trigger (test)",
+      "(from E3-12) Web path renders without RefreshControl (test)",
+      "(from E3-12) Documented in file header",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists PullToRefresh"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E3-12) Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/PullToRefresh/PullToRefresh.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/PullToRefresh/**",
+      "tests/components/PullToRefresh.test.tsx",
+      "docs/components/patterns/PullToRefresh.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E3-12"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-32",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add SwipeActions row on useSwipe with left/right actions",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "swipe",
+      "list",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No swipe-to-reveal/delete row.",
+    "value": "Common list-row action pattern with zero native deps.",
+    "scope": [
+      "SwipeableRow with left/right action slots, full-swipe commit, spring back, built on useSwipe (E3-10)",
+      "SwipeGroup closes other open rows",
+      "gestureDriver interface for an optional gesture-handler adapter"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Full swipe fires the action once (test)",
+      "Opening one row closes other rows via SwipeGroup (test)",
+      "grep -c 'PanResponder.create' -r src/components/SwipeActions prints 0 (gesture via useSwipe)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SwipeActions"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E3-10",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Gesture conflict with vertical scroll; thresholds must be documented"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/SwipeActions/SwipeActions.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SwipeActions/**",
+      "tests/components/SwipeActions.test.tsx",
+      "docs/components/patterns/SwipeActions.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [
+      "E6-38"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E1-29",
+    "epic": "E6",
+    "type": "Task",
+    "title": "TopBar and BottomBar to demo: tokens, safe area, semantics",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "a11y",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "TopBar/BottomBar use absolute positioning with hardcoded heights (40, 60, width 90), no safe-area, no nav landmark or selected state, BottomBar lacks example.",
+    "value": "Bars usable without overlapping content.",
+    "scope": [
+      "Height/width values from tokens; positioning prop (absolute|static)",
+      "Safe-area padding via optional insets prop (no new dependency)",
+      "accessibilityRole tablist/tab or navigation; selected state on active item",
+      "Tests and docs",
+      "(from E9-05) Role header on TopBar title; tablist/tab + selected on BottomBar items"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: active item has accessibilityState selected",
+      "position prop 'static' renders without position absolute",
+      "No literals 40/60/90 in files (grep)",
+      "top-bar.md, bottom-bar.md ## Usage",
+      "(from E9-05) TopBar title has accessibilityRole header and BottomBar items expose role tab with selected state (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists TopBar, BottomBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-28",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/TopBar/TopBar.meta.ts, src/components/BottomBar/BottomBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/TopBar/**",
+      "src/components/BottomBar/**",
+      "tests/components/bars.test.tsx",
+      "docs/components/navigation/top-bar.md",
+      "docs/components/navigation/bottom-bar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-02",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade Modal: focus, a11y, Escape, keyboard avoidance, animations",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "modal",
+      "a11y",
+      "upgrade",
+      "motion",
+      "overlays",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Modal has no focus management, role/label, Escape handling, keyboard avoidance or transition options (overlay-platform-contract-plrnui-23.md Modal section).",
+    "value": "Gets Modal from experimental to demo/stable candidate and gives Dialog/Drawer a solid base.",
+    "scope": [
+      "accessibilityViewIsModal, role=dialog, label/described-by props",
+      "Escape and hardware back dismissal; initialFocus/restoreFocus props where RN allows (AccessibilityInfo.setAccessibilityFocus)",
+      "animationType presets (fade/slide/none) via Animated, reduce-motion aware",
+      "avoidKeyboard prop",
+      "Safe-area-aware padding via Safe-area context (E6-23) if present, otherwise zero",
+      "(from E9-09) Modal swaps animation for an instant transition under reduced motion",
+      "(from E9-03) accessibilityViewIsModal on Modal content, labelled dialog, accessible dismiss action, announce on open",
+      "(from E1-32) Export ModalProps",
+      "(from E1-32) Remove hardcoded rgba; use colors.backdrop",
+      "(from E1-32) accessibilityViewIsModal, optional title, accessibilityLabel",
+      "(from E1-32) Escape key dismiss on web",
+      "(from E1-32) Tests and docs"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Tests: backdrop press, Escape, onRequestClose each call onClose once",
+      "Rendered tree exposes accessibilityViewIsModal and a label prop",
+      "Existing props remain backward compatible (type test)",
+      "Platform matrix in the contract doc updated by evidence attachment",
+      "(from E9-09) With useReducedMotion mocked true, Modal open/close calls Animated.timing 0 times (spy)",
+      "(from E9-03) Modal content has accessibilityViewIsModal true (test)",
+      "(from E9-03) Backdrop dismiss exposes accessibilityRole button and an accessibilityLabel (test)",
+      "(from E1-32) token lint script reports no hit for Modal.tsx",
+      "(from E1-32) ModalProps exported (types contract)",
+      "(from E1-32) Test: dismissOnBackdrop=false ignores backdrop press",
+      "(from E1-32) modal.md ## Usage",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Modal"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E6-01",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E1-32) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Modal/Modal.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Modal/**",
+      "tests/components/modal.test.tsx",
+      "docs/components/overlay/modal.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-32",
+      "E9-03",
+      "E9-09"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-03",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade Alert: dismiss, icon slot, live-region, density and actions",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "alert",
+      "a11y",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Alert (src/components/Alert/Alert.tsx) is a single-action coloured box: no dismiss, icon, role=alert, inverted/soft/outline appearances, or multi-action slot; text colour is hard inverted on warning.",
+    "value": "Reliable inline feedback with correct contrast and accessibility announcements.",
+    "scope": [
+      "appearance: solid|soft|outline; contrast-safe text per variant",
+      "onDismiss with close button (accessible label)",
+      "icon slot and actions slot (keeps actionLabel/onAction)",
+      "accessibilityRole=alert and liveRegion polite/assertive by variant"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Existing props unchanged (type-level test)",
+      "Contrast of text on each variant background >= 4.5:1 for default theme (test computes ratio)",
+      "Dismiss button has accessibilityLabel and triggers onDismiss",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Alert"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-25",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Alert/Alert.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Alert/**",
+      "tests/components/alert.test.tsx",
+      "docs/components/feedback/alert.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-05",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add toast store, queue and imperative toast() API",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "toast",
+      "imperative-api",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No transient feedback system; apps hand-roll toasts. Needs provider + imperative API usable outside React.",
+    "value": "Single call: toast.success('Saved') from components or non-React code; replaces large boilerplate.",
+    "scope": [
+      "Toast store with queue, max visible, position config and FIFO ordering",
+      "Imperative API usable outside React: toast(), toast.success/error/info/warning/loading, toast.promise, dismiss(id), update(id)",
+      "Duration, persistent and action-button data model",
+      "Module-level singleton safe across multiple providers"
+    ],
+    "outOfScope": [
+      "Haptics (E8)",
+      "Persisted notification history"
+    ],
+    "acceptance": [
+      "toast() before provider mount queues and flushes on mount (test)",
+      "Max N visible honoured; queue order FIFO (test)",
+      "toast.promise transitions loading->success/error (test)",
+      "dismiss(id) removes and update(id) mutates the store entry (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Toast"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Module-level singleton must be multi-provider safe"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Toast/Toast.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Toast/**",
+      "tests/components/Toast.store.test.tsx",
+      "docs/components/feedback/Toast.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [
+      "E6-35"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E6-07",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade BottomSheet: snap points, drag gesture and dismissal paths",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "bottom-sheet",
+      "gesture",
+      "upgrade",
+      "a11y",
+      "motion",
+      "overlays",
+      "bottomsheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "BottomSheet is Modal-backed with two fixed snaps (35%/70%), no drag, keyboard avoidance or safe-area handling (contract doc).",
+    "value": "Production-usable sheet without gesture-handler/reanimated.",
+    "scope": [
+      "Snap points array (numbers, %, 'content') and controlled snapIndex",
+      "Drag handle + PanResponder/Animated drag, velocity-based snap, drag-to-dismiss",
+      "open/defaultOpen/onOpenChange (ADR 0014); onClose kept as alias",
+      "Optional adapter hook `gestureDriver` for gesture-handler users (interface only)",
+      "(from E1-33) Export BottomSheetProps",
+      "(from E1-33) Typed DimensionValue heights, handle tokens",
+      "(from E1-33) accessibilityViewIsModal, close action label",
+      "(from E1-33) Tests and docs"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Existing snap='collapsed'|'expanded' still works (test)",
+      "Snap resolution function unit-tested incl. velocity cases",
+      "Each dismissal path (Android hardwareBackPress via BackHandler mock, Escape keydown on web, backdrop press, drag past threshold) calls onOpenChange(false) exactly once (4 cases in tests/components/bottom-sheet.test.tsx)",
+      "(from E1-33) No 'as any' in BottomSheet.tsx",
+      "(from E1-33) BottomSheetProps is exported from the component index.ts (type import compiles under npm run typecheck:contracts)",
+      "(from E1-33) Test: snap collapsed vs expanded heights",
+      "(from E1-33) bottom-sheet.md ## Usage",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists BottomSheet"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E6-01",
+      "E8-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "PanResponder vs ScrollView conflict; document limitation and gestureDriver escape hatch",
+      "(from E1-33) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/BottomSheet/BottomSheet.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/BottomSheet/**",
+      "tests/components/bottom-sheet.test.tsx",
+      "docs/components/overlay/bottom-sheet.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-33",
+      "E9-03",
+      "E9-09"
+    ],
+    "splitFrom": null,
+    "splitInto": [
+      "E6-36"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E6-09",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Drawer (edge-anchored overlay panel, left/right/top)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "drawer",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "SideBar is a static list; no overlay drawer for mobile navigation or filters (navigation contract: drawer excluded).",
+    "value": "Mobile nav drawer / filter panel with zero-dep implementation.",
+    "scope": [
+      "Drawer with side, size, modal vs persistent mode (persistent collapses into layout on wide screens via useBreakpoint)",
+      "Edge swipe-to-close with PanResponder; backdrop; focus and Escape",
+      "DrawerContent compatible with SideBar as child"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Open/close controlled and uncontrolled tested",
+      "Persistent mode renders inline at >= breakpoint (test with mocked dimensions)",
+      "RTL side flipping test",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Drawer"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Drawer/Drawer.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Drawer/**",
+      "tests/components/Drawer.test.tsx",
+      "docs/components/overlay/Drawer.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-10",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade Popover: native anchored rendering, placement, collision, a11y",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "popover",
+      "upgrade",
+      "a11y",
+      "overlays",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Popover renders nothing on native (trigger-only) and has no placement/flip logic, roles or focus handling.",
+    "value": "Popover works on iOS/Android/Web and unlocks Menu/Select.",
+    "scope": [
+      "Render through Portal on all platforms, anchored via measureInWindow",
+      "placement + auto flip/shift within window and safe area",
+      "Outside press / Escape dismissal; controlled open",
+      "accessibilityRole, expanded state on trigger, restore focus",
+      "(from E9-03) Popover content exposes an accessible dismiss action",
+      "(from E1-14) Outside press and Escape (web) dismiss",
+      "(from E1-14) Remove double Pressable; trigger receives toggle",
+      "(from E1-14) Export PopoverProps; add accessibilityRole/expanded state"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Content renders on native in test (previous trigger-only fallback removed)",
+      "Placement function unit-tested for flip at edges",
+      "Trigger exposes accessibilityState.expanded",
+      "(from E9-03) Popover content exposes an accessibilityActions dismiss entry (test)",
+      "(from E1-14) Test: toggle opens content on Platform.OS ios and web",
+      "(from E1-14) Test: backdrop press closes",
+      "(from E1-14) PopoverProps is exported from the component index.ts (type import compiles under npm run typecheck:contracts)",
+      "(from E1-14) No Pressable nested inside Pressable in rendered tree (test)",
+      "(from E1-14) docs updated with native behavior",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Popover"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E1-14) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Popover/Popover.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Popover/**",
+      "tests/components/popover.test.tsx",
+      "docs/components/overlay/popover.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-14",
+      "E9-03"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-25",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Screen page root: safe area, scroll, status bar, keyboard avoidance",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "app-shell",
+      "screen",
+      "layout",
+      "keyboard",
+      "primitive",
+      "safe-area",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "ThemeAppShell only gives background/scroll; no header/footer slots, safe areas or keyboard handling (src/theme/ThemeAppShell.tsx).",
+    "value": "One import to scaffold a screen: removes the repeated SafeArea+Scroll+KeyboardAvoiding stack.",
+    "scope": [
+      "Screen: header slot, scroll|static body, sticky footer, insets via useInsets (E8-11), keyboard avoidance via E8-10, refresh slot",
+      "Does not edit src/theme; supersedes ThemeAppShell safe-area handling by composition",
+      "(from E6-22) keyboardAvoiding: padding/translate strategy per platform, scroll-to-focused-input, tap-outside dismiss (was KeyboardAvoidingScreen)",
+      "(from E4-07) Create src/components/Screen/{Screen.tsx,index.ts,Screen.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-07) API: <Screen scroll? edges={['top','bottom','left','right']} padding={SpaceKey} bg={colorKey} keyboardAvoiding statusBar='auto'|'light'|'dark' refreshing onRefresh header?: ReactNode footer?: ReactNode (sticky) contentContainerStyle />; useScreenInsets(): {top,bottom,left,right}; safe-area source: useInsets() from the E8-11 capability (injected adapter; zero-inset fallback).",
+      "(from E4-07) States/variants: scroll vs static; sticky footer respects bottom inset and keyboard; pull-to-refresh; landscape insets.",
+      "(from E4-07) Accessibility: Does not trap focus; header/footer rendered in reading order; refresh control has accessibility label.",
+      "(from E4-07) Theme tokens used (read-only, no new token keys): colors.background, theme.space, theme.globalStyles.safeArea/content/scrollContent",
+      "(from E4-07) Tests: tests/components/Screen.test.tsx covering edges select applied insets (mocked adapter); scroll prop swaps container; footer rendered outside scroll content; falls back to zero insets without a safe-area adapter",
+      "(from E4-07) Catalog: src/components/Screen/Screen.meta.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Screen.md with usage example"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "Renders with and without a safe-area adapter (test with mock capability)",
+      "Footer stays above the keyboard (mocked keyboard event test)",
+      "git diff --exit-code src/theme/ThemeAppShell.tsx passes",
+      "(from E6-22) Screen with dismissKeyboardOnTapOutside=true calls Keyboard.dismiss on background press and with false does not (Keyboard mock test)",
+      "(from E4-07) npm run typecheck passes and src/components/Screen/index.ts exports Screen and ScreenProps",
+      "(from E4-07) npm test passes including tests/components/Screen.test.tsx",
+      "(from E4-07) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Screen returns no hardcoded colors",
+      "(from E4-07) Screen renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Screen"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E6-01",
+      "E8-10",
+      "E8-11",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E4-07) Adapter-absent and adapter-present branches both tested via a mock capability",
+      "(from E4-07) KeyboardAvoidingView behaviour differs iOS/Android; document values"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Screen/Screen.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Screen/**",
+      "tests/components/Screen.test.tsx",
+      "docs/components/layout/Screen.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-07",
+      "E6-22"
+    ],
+    "splitFrom": null,
+    "splitInto": [
+      "E6-37"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E6-26",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade NavContext: active state, nested routes, adapter interface",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "nav-context",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "NavContext only lists items and navigate; no current route, activeMatch, nested items, or typed adapter contract.",
+    "value": "Basis for router adapters and nav components.",
+    "scope": [
+      "NavAdapter interface: navigate, replace, back, currentPath, subscribe",
+      "NavProvider accepts adapter or legacy navigate (backward compatible)",
+      "useActiveItem/isActive matching with exact|prefix",
+      "NavItem gains badge, children, hidden, disabled"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Legacy NavProvider usage compiles and passes tests",
+      "isActive prefix matching unit-tested",
+      "No router import (grep)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists NavContext"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-30",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/NavContext/NavContext.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/NavContext/**",
+      "tests/components/nav-context.test.tsx",
+      "docs/components/navigation/nav-context.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-38",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add SwipeActions a11y custom actions, web fallback and tests",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "swipe",
+      "list",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Swipe-only actions are unreachable for screen-reader and pointer users.",
+    "value": "Row actions reachable without swiping on every platform.",
+    "scope": [
+      "accessibilityActions fallback so actions are reachable without swipe",
+      "Web pointer support",
+      "Reduced motion: instant reset instead of spring"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "accessibilityActions list matches the configured actions (test)",
+      "onAccessibilityAction with an action name invokes that action's handler (test)",
+      "Pointer drag on web reveals the actions (test with pointer events)",
+      "With reduced motion mocked, spring-back calls Animated.spring 0 times (spy)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SwipeActions"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-32",
+      "E8-05",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Gesture conflict with vertical scroll; thresholds must be documented"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/SwipeActions/SwipeActions.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SwipeActions/**",
+      "tests/components/SwipeActions.a11y.test.tsx",
+      "docs/components/patterns/SwipeActions.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E6-32",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E6-06",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Dialog, AlertDialog and ConfirmDialog",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "dialog",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Only raw Modal exists; no title/description/actions anatomy, no alert-dialog semantics (no backdrop dismissal), no promise confirm.",
+    "value": "Standard confirm/alert flows with consistent anatomy and a11y.",
+    "scope": [
+      "Dialog compound parts (Header, Title, Description, Body, Footer) over Modal",
+      "AlertDialog: role=alertdialog, no backdrop dismiss, initial focus on least destructive action",
+      "ConfirmDialog with destructive tone and loading state on confirm",
+      "Imperative confirm() returning Promise<boolean> via provider"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Backdrop press does not close AlertDialog (test)",
+      "confirm() resolves true/false per button and false on Escape (test)",
+      "Title/description wired to accessibility label/hint",
+      "Destructive button visually and semantically distinct",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Dialog"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Dialog/Dialog.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Dialog/**",
+      "tests/components/Dialog.test.tsx",
+      "docs/components/overlay/Dialog.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-11",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade Tooltip: native long-press, keyboard focus, accessible description",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "tooltip",
+      "a11y",
+      "upgrade",
+      "overlays",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Tooltip is web-only (children-only on native), no keyboard focus trigger or screen reader relationship.",
+    "value": "Tooltip semantics across platforms with explicit hint behaviour.",
+    "scope": [
+      "Native: long-press shows tooltip via Portal, auto-hide",
+      "Web: hover + focus triggers, aria-describedby equivalent",
+      "Always sets accessibilityHint from content when string",
+      "Delay props and placement shared with Popover util",
+      "(from E9-03) Tooltip content announced as the trigger's description",
+      "(from E1-13) useEffect cleanup clearing timer",
+      "(from E1-13) Native: long-press shows tooltip via accessibilityHint + visible bubble",
+      "(from E1-13) Remove magic positions; use tokens for padding/maxWidth",
+      "(from E1-13) Export TooltipProps interface; add accessibilityDescribedBy/role='tooltip' on web"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Native long-press shows content in test",
+      "Web focus shows and blur hides (test)",
+      "Child receives accessibilityHint",
+      "(from E9-03) Tooltip trigger exposes the tooltip text via accessibilityHint (native) / aria-describedby (web) (test)",
+      "(from E1-13) Test with fake timers: unmount before delay does not setState (no warning)",
+      "(from E1-13) Test: native long-press opens content",
+      "(from E1-13) TooltipProps exported from component index.ts",
+      "(from E1-13) docs/components/overlay/tooltip.md updated",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Tooltip"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E1-13) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Tooltip/Tooltip.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Tooltip/**",
+      "tests/components/tooltip.test.tsx",
+      "docs/components/overlay/tooltip.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-13",
+      "E9-03"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-14",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade Select: listbox semantics, keyboard, search, multi, sizing",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "inputs",
+      "select",
+      "a11y",
+      "upgrade",
+      "forms",
+      "bug",
+      "form",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Select is modal-only, no keyboard/typeahead, selected-state a11y, search or multi-select (contract doc).",
+    "value": "Meets form-grade select for demo+ maturity.",
+    "scope": [
+      "Popover presentation on web wide screens, sheet on native/compact (responsive)",
+      "listbox/option roles, selected + expanded states, typeahead, Arrow/Enter/Escape",
+      "Error/disabled/size props aligned with FormField",
+      "Optional searchable prop (multi-select is E5-20 MultiSelect)",
+      "(from E9-06) Select: role combobox/button, expanded state, selected value in label",
+      "(from E1-18) Export SelectProps/SelectOption",
+      "(from E1-18) accessibilityRole='combobox'/button, label, disabled, expanded",
+      "(from E1-18) FlatList options with selected check, onRequestClose",
+      "(from E1-18) Optional label/helperText/error text"
+    ],
+    "outOfScope": [
+      "Async option loading (E5/E7 data layer)"
+    ],
+    "acceptance": [
+      "Keyboard navigation test on web path",
+      "Selected option exposes accessibilityState.selected",
+      "SelectProps has no 'multiple' prop (type test with @ts-expect-error)",
+      "value/defaultValue/onValueChange supported and onChange kept as @deprecated alias (type test; ADR 0014)",
+      "(from E9-06) Select exposes combobox role, expanded state and the selected value in its label (test)",
+      "(from E1-18) Test: 100 options rendered via FlatList (virtualised)",
+      "(from E1-18) Test: onRequestClose closes",
+      "(from E1-18) Test: selected option has accessibilityState selected",
+      "(from E1-18) SelectProps and SelectOption exported from index.ts",
+      "(from E1-18) docs select.md updated",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Select"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Overlaps E5 Inputs stream: coordinate, E5 must not touch src/components/Select",
+      "(from E1-18) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Select/Select.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Select/**",
+      "tests/components/select.test.tsx",
+      "docs/components/form/select.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-18",
+      "E9-06"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-18",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Breadcrumb (web-first, native collapsed form)",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "breadcrumb",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No breadcrumb; Link exists.",
+    "value": "Hierarchical navigation on web/desktop layouts.",
+    "scope": [
+      "Breadcrumb with items, separator slot, maxItems collapse to ellipsis",
+      "Uses Link/NavProvider navigate; current item aria-current",
+      "Native renders compact back-chain"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Collapse renders ellipsis for N>maxItems (test)",
+      "Last item has accessibilityState selected / aria-current",
+      "No router dependency",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Breadcrumb"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-26",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Breadcrumb/Breadcrumb.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Breadcrumb/**",
+      "tests/components/Breadcrumb.test.tsx",
+      "docs/components/navigation/Breadcrumb.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-27",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add expo-router and react-navigation adapters (optional, no hard dep)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "adapter",
+      "expo-router",
+      "react-navigation",
+      "peer-dependency",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Apps wire routers manually to NavProvider and Link.",
+    "value": "Two-line integration for common routers without making them dependencies.",
+    "scope": [
+      "createExpoRouterAdapter(router, pathname) taking injected objects (no import of expo-router)",
+      "createReactNavigationAdapter(navigation, state) likewise",
+      "useExpoRouterNav hook file that lazy-requires expo-router only when called, documented as optional",
+      "Type-only structural interfaces for router shapes"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "grep finds no import of expo-router or @react-navigation/* in package entry graph",
+      "Adapters tested with fake router objects",
+      "Link navigates through adapter (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists RouterAdapters"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-26",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Lazy require breaks bundlers; prefer injection and document"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/RouterAdapters/RouterAdapters.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/RouterAdapters/**",
+      "tests/components/RouterAdapters.test.tsx",
+      "docs/components/navigation/RouterAdapters.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-28",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade TopBar: back action, large title, collapse, safe area",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "top-bar",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "TopBar has title/left/right only; no back affordance, large title, scroll collapse or inset handling.",
+    "value": "Native-feeling headers.",
+    "scope": [
+      "backButton auto from adapter.canGoBack, large-title variant, scrollY-driven collapse prop",
+      "Top inset via SafeArea, centered/left title alignment",
+      "a11y heading role"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Back renders only when adapter reports canGoBack (test)",
+      "Existing slots unchanged (test)",
+      "Title has header role",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists TopBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-29",
+      "E2-06",
+      "E6-26",
+      "E8-11",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/TopBar/TopBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/TopBar/**",
+      "tests/components/top-bar.test.tsx",
+      "docs/components/navigation/top-bar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-30",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade SideBar: rail/collapsed modes, groups, drawer integration",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "sidebar",
+      "upgrade",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Native SideBar is a minimal list; web variant collapsible but without groups, rail mode or active state.",
+    "value": "Desktop/tablet navigation shell.",
+    "scope": [
+      "Modes: expanded, rail (icons only), hidden; controlled collapsed",
+      "Groups/headings and nested items from NavItem.children",
+      "Active state; keyboard navigation on web",
+      "Render inside Drawer when compact (documented example)",
+      "(from E9-05) Current SideBar item exposes accessibilityState selected"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Rail mode hides labels but keeps accessibilityLabel (test)",
+      "Web and native files share one prop type",
+      "Nested items collapse/expand (test)",
+      "Collapse button has accessibilityLabel and accessibilityState.expanded (test; moved from E1-15)",
+      "Native and web paths share one default variant (test; moved from E1-15)",
+      "(from E9-05) Current SideBar item exposes accessibilityState.selected=true (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SideBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-15",
+      "E2-06",
+      "E6-09",
+      "E6-26",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/SideBar/SideBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SideBar/**",
+      "tests/components/side-bar.test.tsx",
+      "docs/components/navigation/side-bar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-36",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade BottomSheet: keyboard, safe area, reduced motion and a11y",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "bottom-sheet",
+      "gesture",
+      "upgrade",
+      "a11y",
+      "motion",
+      "overlays",
+      "bottomsheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "A dragging sheet still overlaps the keyboard and home indicator, animates under reduced motion and lacks modal a11y semantics.",
+    "value": "Production-usable sheet on every platform without native dependencies.",
+    "scope": [
+      "Keyboard-aware via useKeyboard (E8-10)",
+      "Safe-area bottom padding via useInsets (E8-11)",
+      "Scrollable content hand-off prop",
+      "Role/label and modal semantics",
+      "Reduced motion: instant snapping",
+      "(from E9-09) BottomSheet swaps animation for an instant transition under reduced motion",
+      "(from E9-03) accessibilityViewIsModal on BottomSheet content and labelled close action"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "With useReducedMotion mocked true, snapping calls Animated.spring 0 times (spy) and sets the target height immediately (test)",
+      "Bottom padding equals the safe-area bottom inset from a mock E8-11 adapter (test)",
+      "A keyboardDidShow event (E8-10 mock) raises the sheet by the keyboard height (test)",
+      "The scroll hand-off prop forwards scroll events to the child ScrollView (test)",
+      "(from E9-03) BottomSheet content has accessibilityViewIsModal true and the close action exposes accessibilityRole button with a label (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists BottomSheet"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-07",
+      "E8-05",
+      "E8-10",
+      "E8-11",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "PanResponder vs ScrollView conflict; document limitation and gestureDriver escape hatch",
+      "(from E1-33) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/BottomSheet/BottomSheet.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/BottomSheet/**",
+      "tests/components/bottom-sheet.a11y.test.tsx",
+      "docs/components/overlay/bottom-sheet.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E6-07",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E6-08",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add ActionSheet (iOS-style action list with cancel and destructive)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "action-sheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No action list sheet; common for share/delete flows.",
+    "value": "Consistent native-feeling choice sheet with imperative API.",
+    "scope": [
+      "ActionSheet built on BottomSheet; options with icon, destructive, disabled; cancel row",
+      "Imperative showActionSheet() returning chosen index/key",
+      "Web renders as centered menu panel"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Selection resolves promise with key, cancel resolves null (test)",
+      "Destructive option has distinct role label",
+      "Each option min touch target 44pt (style assertion)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ActionSheet"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-07",
+      "E6-36",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/ActionSheet/ActionSheet.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ActionSheet/**",
+      "tests/components/ActionSheet.test.tsx",
+      "docs/components/overlay/ActionSheet.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-21",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Skeleton primitive (text/rect/circle) and SkeletonScreen/list/card presets",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "skeleton",
+      "loading",
+      "motion",
+      "e7",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No loading placeholder; Spinner only.",
+    "value": "Perceived-performance loading screens.",
+    "scope": [
+      "Skeleton primitive (text/rect/circle) with shimmer via Animated, reduce-motion static",
+      "Presets: SkeletonList, SkeletonCard, SkeletonProfile",
+      "accessibilityState busy and hidden children from AT",
+      "Skeleton is the single owner (ADR-R4); shimmer comes from useShimmer (E3-07)",
+      "(from E4-12) Create src/components/Skeleton/{Skeleton.tsx,index.ts,Skeleton.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-12) API: <Skeleton width height radius shape='rect'|'circle'|'text' lines? animated={true} /> plus <SkeletonGroup loading>{content}</SkeletonGroup> showing placeholders when loading. Animated opacity pulse via Animated + useNativeDriver; respects reduced motion (AccessibilityInfo.isReduceMotionEnabled) => static.",
+      "(from E4-12) States/variants: animated/static, shape variants, text lines last line 60% width.",
+      "(from E4-12) Accessibility: Group exposes accessibilityState busy and a single label \"Loading\"; individual bars hidden from screen readers.",
+      "(from E4-12) Theme tokens used (read-only, no new token keys): colors.surface, colors.border, theme.radius",
+      "(from E4-12) Tests: tests/components/Skeleton.test.tsx covering reduced motion disables animation; busy state on group; lines count and last-line width",
+      "(from E4-12) Catalog: src/components/Skeleton/Skeleton.meta.ts exporting {name, category:'feedback', status:'demo', summary, props, example}; docs/components/feedback/Skeleton.md with usage example",
+      "(from E7-05) Skeleton shapes: rect, circle, text lines",
+      "(from E7-05) shimmer via Animated native driver, single shared animated value per group",
+      "(from E7-05) reduce-motion respected (static when enabled)",
+      "(from E7-05) SkeletonList presets: row, card, avatar+text",
+      "(from E7-05) accessibilityState busy, hidden from screen reader per item with one group label"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)",
+      "Lottie/gradient shimmer (needs deps)"
+    ],
+    "acceptance": [
+      "Static when reduce-motion on (test)",
+      "Preset line counts configurable",
+      "Container sets busy state",
+      "grep -rn 'Animated.loop' src/components/Skeleton prints nothing (animation via useShimmer)",
+      "(from E4-12) npm run typecheck passes and src/components/Skeleton/index.ts exports Skeleton and SkeletonProps",
+      "(from E4-12) npm test passes including tests/components/Skeleton.test.tsx",
+      "(from E4-12) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Skeleton returns no hardcoded colors",
+      "(from E4-12) Skeleton renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "(from E7-05) Shimmer uses useNativeDriver true (grep) and one Animated.Value per SkeletonGroup",
+      "(from E7-05) Renders static block when reduce motion enabled (test with mocked AccessibilityInfo)",
+      "(from E7-05) SkeletonList of 20 rows mounts without per-row timers (assert no more than 1 animation loop)",
+      "(from E7-05) Group exposes single accessibilityLabel 'Loading'",
+      "(from E7-05) Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "(from E7-05) Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "(from E7-05) Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Skeleton"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E3-07",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Overlap with E3 Motion/E7: E3 must supply shimmer util only, not a Skeleton component",
+      "(from E4-12) Overlaps with E3 motion helpers; consume useReducedMotion if it lands first",
+      "(from E7-05) Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Skeleton/Skeleton.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Skeleton/**",
+      "tests/components/Skeleton.test.tsx",
+      "docs/components/feedback/Skeleton.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-12",
+      "E7-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-34",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add confirm-destructive pattern (useConfirmDestructive, hold-to-confirm)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "patterns",
+      "destructive",
+      "confirm",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Destructive actions have no standard confirm flow.",
+    "value": "Safe, consistent destructive UX.",
+    "scope": [
+      "useConfirmDestructive(action,{title,type-to-confirm?}) built on ConfirmDialog",
+      "HoldToConfirmButton variant (press-and-hold progress)",
+      "Integrates with undo hook as alternative strategy"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Action not run until confirmed (test)",
+      "Type-to-confirm requires exact text (test)",
+      "Hold button cancels on early release (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ConfirmDestructive"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Patterns/ConfirmDestructive/ConfirmDestructive.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Patterns/ConfirmDestructive/**",
+      "tests/components/ConfirmDestructive.test.tsx",
+      "docs/components/patterns/ConfirmDestructive.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-35",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add ToastViewport rendering, swipe-dismiss and live-region a11y",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "toast",
+      "imperative-api",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "The toast store needs a rendering surface mounted once in the root overlay host with accessible announcements.",
+    "value": "Visible, accessible toasts with zero per-app wiring (mounted by TexoProvider).",
+    "scope": [
+      "ToastViewport renders into the root OverlayHost and is mounted by TexoProvider (ADR-R1)",
+      "Swipe-to-dismiss via Animated+PanResponder (no gesture-handler)",
+      "Announce via AccessibilityInfo.announceForAccessibility and web aria-live",
+      "Pause on hover/focus (web) and while keyboard open (E8-10); safe-area offset (E8-11)",
+      "Reduced motion: instant enter/exit"
+    ],
+    "outOfScope": [
+      "Haptics (E8)",
+      "Persisted notification history"
+    ],
+    "acceptance": [
+      "Announcement called once per toast (mock AccessibilityInfo)",
+      "With useReducedMotion mocked true, toast enter/exit calls Animated.timing/Animated.spring 0 times (spy) in tests/components/Toast.test.tsx",
+      "Swipe past threshold dismisses the toast (PanResponder mock test)",
+      "Viewport bottom offset equals the safe-area bottom inset from a mock capability (test)",
+      "TexoProvider renders exactly one ToastViewport (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Toast"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-05",
+      "E8-05",
+      "E8-10",
+      "E8-11",
+      "E14-12",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Module-level singleton must be multi-provider safe"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Toast/Toast.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Toast/**",
+      "tests/components/Toast.test.tsx",
+      "src/providers/TexoProvider.tsx",
+      "docs/components/feedback/Toast.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E6-05",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E6-37",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add AppShell layout slots and screen presets",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "app-shell",
+      "screen",
+      "layout",
+      "keyboard",
+      "primitive",
+      "safe-area",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Apps still compose Banner, NavBar region and a responsive sidebar by hand around Screen.",
+    "value": "One import scaffolds an app shell; removes repeated layout boilerplate.",
+    "scope": [
+      "AppShell composes Screen with Banner slot, NavBar region and responsive sidebar region (size class from E10-02)",
+      "No OverlayHost of its own: overlays mount into the TexoProvider root host (ADR-R1/0015)",
+      "Presets: centered form screen, list screen, detail screen"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "AppShell renders no OverlayHost of its own; the count of OverlayHost nodes under TexoProvider is 1 (test)",
+      "Sidebar region renders at width class expanded and is absent at compact (Dimensions mock test)",
+      "Each preset renders under light and dark ThemeProvider with console.error called 0 times (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists AppShell"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-04",
+      "E6-25",
+      "E10-02",
+      "E14-12",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E4-07) Adapter-absent and adapter-present branches both tested via a mock capability",
+      "(from E4-07) KeyboardAvoidingView behaviour differs iOS/Android; document values"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/AppShell/AppShell.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/AppShell/**",
+      "tests/components/AppShell.test.tsx",
+      "docs/components/layout/AppShell.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E6-25",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E6-12",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add Menu/DropdownMenu with keyboard navigation",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "menu",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No menu primitive; Select is the only option list.",
+    "value": "Action menus for toolbars, row actions and overflow.",
+    "scope": [
+      "Menu, MenuItem, MenuSeparator, MenuLabel, check/radio items, submenu-free v1",
+      "Anchored via Popover; arrow/Home/End/typeahead on web; roving focus",
+      "Native: opens as Popover or ActionSheet per `nativePresentation` prop",
+      "Closes on select unless closeOnSelect=false"
+    ],
+    "outOfScope": [
+      "Nested submenus"
+    ],
+    "acceptance": [
+      "Arrow-key navigation moves focus (web test)",
+      "Arrow-key navigation over items [a, b(disabled), c] moves focus a -> c (tests/components/Menu.test.tsx)",
+      "role=menu/menuitem(+checked state) exposed",
+      "Select closes menu and fires onSelect once",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Menu"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-08",
+      "E6-10",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Menu/Menu.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Menu/**",
+      "tests/components/Menu.test.tsx",
+      "docs/components/overlay/Menu.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-33",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add undo and optimistic-UI hooks (useUndoableAction, useOptimisticAction)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "patterns",
+      "undo",
+      "optimistic-ui",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No standard pattern for delayed-commit undo or optimistic updates; each screen hand-rolls it.",
+    "value": "Patterns agents can reuse with minimal tokens.",
+    "scope": [
+      "useUndoableAction: apply now, commit after timeout, undo via Toast action",
+      "useOptimisticAction: optimistic state, rollback on failure, error toast hook",
+      "Pure state-machine core, UI-agnostic"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "Timer-based commit/undo tested with fake timers",
+      "Rollback restores previous value on rejection (test)",
+      "No hard dependency on Toast (accepts notifier callback)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Undo, Optimistic"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-05",
+      "E6-35",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/Patterns/Undo/Undo.meta.ts, src/components/Patterns/Optimistic/Optimistic.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Patterns/Undo/**",
+      "src/components/Patterns/Optimistic/**",
+      "tests/components/Undo.test.tsx",
+      "tests/components/Optimistic.test.tsx",
+      "docs/components/patterns/Undo.md",
+      "docs/components/patterns/Optimistic.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-13",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Add ContextMenu (long-press/right-click) built on Menu",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "context-menu",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No long-press / right-click menu pattern.",
+    "value": "Row and card contextual actions.",
+    "scope": [
+      "Wrap child; open on long-press (native) and contextmenu event (web)",
+      "Positioned at touch point; reuses Menu items",
+      "onOpenChange and disabled props"
+    ],
+    "outOfScope": [
+      "Native iOS preview-peek (needs native module)"
+    ],
+    "acceptance": [
+      "Long-press opens menu in test",
+      "Web contextmenu preventDefault called",
+      "A menu opened at (windowWidth-10, windowHeight-10) renders with left+width <= windowWidth and top+height <= windowHeight (Dimensions mock test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ContextMenu"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-12",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/ContextMenu/ContextMenu.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ContextMenu/**",
+      "tests/components/ContextMenu.test.tsx",
+      "docs/components/overlay/ContextMenu.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E6-29",
+    "epic": "E6",
+    "type": "Task",
+    "title": "Upgrade BottomBar and NavBar: badges, More overflow, tablist a11y, adaptive layout",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "bottom-bar",
+      "nav-bar",
+      "upgrade",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "BottomBar drops items beyond maxItems with no overflow; no badges, active state or tab semantics.",
+    "value": "Complete bottom nav pattern; resolves contract's deferred overflow menu.",
+    "scope": [
+      "Active highlight from useActiveItem",
+      "Overflow 'More' using Menu/ActionSheet when items > maxItems (opt-in overflow='menu')",
+      "Badge and haptic-free press feedback; safe-area bottom padding",
+      "role=tablist/tab and selected states",
+      "NavBar layout='auto' chooses bottom bar (compact) or rail/sidebar (medium/expanded) by useWindowSizeClass (absorbs E10-11 AdaptiveNav)",
+      "(from E10-11) <AdaptiveNav items active onChange>{content}</AdaptiveNav> choosing BottomBar (compact) or SideBar (medium/expanded) by size class",
+      "(from E10-11) Preserves accessibility roles/labels from each",
+      "(from E10-11) Optional `forceVariant`"
+    ],
+    "outOfScope": [
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work",
+      "Router integration",
+      "Changing BottomBar/SideBar (E6)"
+    ],
+    "acceptance": [
+      "overflow='none' keeps legacy behaviour (test)",
+      "overflow='menu' lists remaining items (test)",
+      "Selected tab exposes accessibilityState.selected",
+      "(from E10-11) Compact renders BottomBar, expanded SideBar (test)",
+      "(from E10-11) Active item preserved across resize (test)",
+      "(from E10-11) a11y tests from tests/accessibility pass for both modes",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists BottomBar, NavBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-29",
+      "E1-30",
+      "E2-06",
+      "E6-12",
+      "E6-26",
+      "E6-30",
+      "E8-11",
+      "E10-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run build (if defined)"
+    ],
+    "evidence": [
+      "Passing test output",
+      "Example usage snippet added to the component folder",
+      "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+    ],
+    "risks": [
+      "Web vs native behavior divergence must be documented, not hidden",
+      "(from E10-11) BottomBar/SideBar prop shapes may change in E6: depend on their final API"
+    ],
+    "dod": [
+      "Typed public API exported from the component index.ts",
+      "Theme tokens used, no hardcoded colors",
+      "a11y roles/labels set",
+      "Maturity reached: demo (documented if higher)",
+      "No new runtime or native dependency (peer-dependency-policy.md)",
+      "Colocated <Name>.meta.ts (src/components/BottomBar/BottomBar.meta.ts, src/components/NavBar/NavBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/BottomBar/**",
+      "src/components/NavBar/**",
+      "tests/components/bottom-bar.test.tsx",
+      "tests/components/nav-bar.test.tsx",
+      "docs/components/navigation/bottom-bar.md",
+      "docs/components/navigation/nav-bar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E10-11"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

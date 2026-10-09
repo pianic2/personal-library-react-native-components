@@ -1,0 +1,1043 @@
+[
+  {
+    "id": "E12-04",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Expand type tests: props contracts, polymorphism and negative cases",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "tests/types has 2 tiny files (RadioGroup, 5 prop types) covering far fewer than 36 components; no expectType tooling.",
+    "value": "Prevent breaking public typings.",
+    "scope": [
+      "Add tsd-style or tsc assert helpers (Equal<>/Expect<>)",
+      "Per-component prop type test incl. @ts-expect-error cases",
+      "Theme token types"
+    ],
+    "outOfScope": [
+      "Runtime tests"
+    ],
+    "acceptance": [
+      "npm run typecheck:contracts fails when a prop is renamed (verified in PR)",
+      "Each root component type imported in contracts"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Command output"
+    ],
+    "risks": [
+      "Type tests slow"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/types/props-contracts.ts",
+      "tests/types/polymorphism.ts",
+      "tests/types/negative-cases.ts",
+      "tsconfig.type-tests.json"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-08",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Upgrade Expo consumer smoke to real runtime on iOS/Android/Web",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "consumer",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "scripts/expo-consumer-smoke.mjs installs the tarball and runs expo export --platform web only; platforms android/ios declared but never bundled.",
+    "value": "Prove Metro bundles for all three platforms.",
+    "scope": [
+      "Add expo export --platform ios and android (Hermes bundle) steps",
+      "Render assertion for web via headless fetch of exported HTML/JS",
+      "Move work dir from /tmp hardcode to os.tmpdir param"
+    ],
+    "outOfScope": [
+      "Running simulators"
+    ],
+    "acceptance": [
+      "Script exits 0 with 3 bundles produced and non-empty",
+      "Test in tests/scripts updated",
+      "node scripts/expo-consumer-smoke.mjs --platform web exits 0 locally; the CI job requirement is recorded in the E17-05 ticket evidence"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run consumer:expo"
+    ],
+    "evidence": [
+      "Log with bundle sizes"
+    ],
+    "risks": [
+      "Runtime >7min install timeout"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/expo-consumer-smoke.mjs",
+      "tests/scripts/expo-consumer-smoke-script.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-07",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native visual option via Maestro or Expo screenshots (evaluate, optional job)",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "visual-regression",
+      "native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Web screenshots do not cover native rendering.",
+    "value": "Decide a free native path (Maestro Cloud free tier avoided; local emulator on CI).",
+    "scope": [
+      "Spike: Maestro on Android emulator in GitHub Actions on catalog APK or Expo Go",
+      "Write findings + minimal flow"
+    ],
+    "outOfScope": [
+      "Mandatory gating"
+    ],
+    "acceptance": [
+      "Doc with cost, runtime and flakiness measurements",
+      "Sample flow file runs locally"
+    ],
+    "dependencies": [
+      "E11-02"
+    ],
+    "validation": [
+      "maestro test tests/native/smoke.yaml"
+    ],
+    "evidence": [
+      "Doc"
+    ],
+    "risks": [
+      "Emulator CI slow and flaky"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/native-visual/**",
+      "audit/adr/0019-native-visual-testing.md"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-11",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Harden npm tarball consumer smoke for strict TS and ESM/Metro resolution",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "consumer",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "scripts/consumer-smoke.mjs (395 lines) validates the pack; confirm it covers moduleResolution bundler/node16, skipLibCheck false, isolatedModules.",
+    "value": "Types work in strict consumer configs.",
+    "scope": [
+      "Matrix of tsconfig variants compiled against tarball",
+      "Fail on any error with skipLibCheck false"
+    ],
+    "outOfScope": [
+      "Expo (E12-08)"
+    ],
+    "acceptance": [
+      "Matrix of >=3 tsconfigs passes",
+      "Script test updated"
+    ],
+    "dependencies": [
+      "E12-08"
+    ],
+    "validation": [
+      "npm run consumer:smoke"
+    ],
+    "evidence": [
+      "Log"
+    ],
+    "risks": [
+      "Increased runtime"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/consumer-smoke.mjs",
+      "tests/scripts/consumer-smoke-script.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-14",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add test-coverage matrix report: component x test dimensions",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "reporting",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No view of which component has which kinds of tests.",
+    "value": "Drive V1 maturity gating (demo requires minimal verification).",
+    "scope": [
+      "Script produces docs/test-matrix.md columns: unit, a11y, theme, types, catalog, visual, perf",
+      "Check mode for CI"
+    ],
+    "outOfScope": [
+      "Raising coverage"
+    ],
+    "acceptance": [
+      "Script lists all 36 components",
+      "--check fails on stale file"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "node scripts/test-matrix.mjs --check"
+    ],
+    "evidence": [
+      "Generated doc"
+    ],
+    "risks": [
+      "Heuristic by filename; keep naming conventions"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/test-matrix.mjs",
+      "docs/test-matrix.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-01",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Fix test runner glob and add coverage reporting",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "package.json test script uses tests/**/*.test.tsx; tests/compatibility-docs.test.ts (.ts) may not run. No coverage output or thresholds.",
+    "value": "All tests run; coverage gate prevents erosion.",
+    "scope": [
+      "Use node --test with explicit dir or glob covering .ts and .tsx",
+      "Add c8 / node --experimental-test-coverage script test:coverage",
+      "Initial threshold set at current level"
+    ],
+    "outOfScope": [
+      "Raising coverage"
+    ],
+    "acceptance": [
+      "Counting tests before/after shows compatibility-docs test executes",
+      "npm run test:coverage prints per-file table",
+      "CI fails below threshold"
+    ],
+    "dependencies": [
+      "E14-02",
+      "E14-05"
+    ],
+    "validation": [
+      "npm test",
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Node 22 experimental coverage flags"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "package.json",
+      "tests/setup.ts",
+      ".c8rc.json"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-02",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: layout, typography, surfaces",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Coverage is one 474-line smoke file plus 5 a11y tests; most components only 'render without throwing' (tests/components/component-smoke.test.tsx).",
+    "value": "Props, variants, callbacks asserted.",
+    "scope": [
+      "One test file each for Box, Row, Column, Divider, Text, Heading, P, B, Small, CodeInline, Quote, TextGroup, Card, Badge: variants, style override, ref"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "ls tests/components/{layout,typography,surfaces}/*.test.tsx | wc -l prints 14",
+      "Each of those 14 files contains >= 4 it()/test() calls (grep -c, logged in CI)",
+      "Line coverage >=80% for those components"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Naming must match E12-14 matrix"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/layout/**",
+      "tests/components/typography/**",
+      "tests/components/surfaces/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-03",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Migrate render tests to @testing-library/react-native with shim parity",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "rntl",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Tests use react-test-renderer with a hand-written react-native shim (tests/shims/react-native.tsx) mapped by loader; real RN host behavior (Pressable events, TextInput) is not exercised, queries are findByType.",
+    "value": "User-centric queries (getByRole, getByLabelText) and fireEvent; closer to real RN.",
+    "scope": [
+      "Evaluate running with real react-native via jest-expo or RNTL on node:test with real RN preset; decide and document",
+      "Add helper renderWithTheme in tests/helpers/render.tsx",
+      "Port core-controls test as proof"
+    ],
+    "outOfScope": [
+      "Port all tests"
+    ],
+    "acceptance": [
+      "ADR in docs explaining choice and trade-offs",
+      "core-controls test passes using getByRole/getByLabelText",
+      "Tests still using tests/shims/react-native.tsx pass unchanged in the same npm test run and no file under tests/shims is modified (git diff --exit-code tests/shims)"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "ADR + test output"
+    ],
+    "risks": [
+      "RNTL requires jest or custom env; may add jest-expo dev dep"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/render.tsx",
+      "tests/accessibility/core-controls.test.tsx",
+      "audit/adr/0018-testing-renderer.md",
+      "package.json"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-06",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add free visual regression with Playwright screenshots of web catalog",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "visual-regression",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No visual testing.",
+    "value": "Free, CI-friendly: Playwright toHaveScreenshot on react-native-web export, committed baselines, Linux Docker-consistent.",
+    "scope": [
+      "Playwright test iterating matrix cells (testID matrix-*) in light and dark",
+      "Baselines in tests/visual/__screenshots__",
+      "Artifact upload on diff"
+    ],
+    "outOfScope": [
+      "Native device screenshots",
+      "Paid services (Chromatic)"
+    ],
+    "acceptance": [
+      "Seeded 1px change fails the test (verified)",
+      "Run time under 10 min in CI",
+      "playwright.visual.config.ts defines projects for preset in {minimal, saas, dashboard} x mode in {light, dark} (grep)"
+    ],
+    "dependencies": [
+      "E11-06"
+    ],
+    "validation": [
+      "npx playwright test tests/visual"
+    ],
+    "evidence": [
+      "Report artifact"
+    ],
+    "risks": [
+      "Font rendering drift: pin container image"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/visual/**",
+      "playwright.visual.config.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-10",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add render-count performance baseline tests",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No tests for unnecessary rerenders (theme context, lists).",
+    "value": "Catch regressions in memoization.",
+    "scope": [
+      "Profiler-based helper counting commits",
+      "Tests: Button rerender on parent update with same props, ThemeProvider toggle only rerenders consumers, Input typing"
+    ],
+    "outOfScope": [
+      "Benchmarking device FPS"
+    ],
+    "acceptance": [
+      "Baselines in tests/perf/baselines.json compared with tolerance",
+      "Helper unit-tested"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Baseline file"
+    ],
+    "risks": [
+      "Brittle numbers; use relative thresholds"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/perf/**",
+      "tests/helpers/render-count.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-16",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: form controls",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Form controls only have smoke render and 5 a11y checks.",
+    "value": "Interaction correctness.",
+    "scope": [
+      "Tests for Input, PasswordInput, Textarea, Checkbox, Switch, RadioGroup, Select, FormField, Button: events, controlled value, disabled, error"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "9 files, >=5 tests each",
+      "Line coverage >=80%"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Shim lacks real events; use E12-03 helper if landed"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/form/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-17",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: feedback, overlays, navigation",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Overlays and navigation only render smoke checks.",
+    "value": "Open/close, dismiss, selection behaviors verified.",
+    "scope": [
+      "Tests for Alert, ProgressBar, Spinner, Modal, BottomSheet, Popover, Tooltip, NavBar, TopBar, BottomBar, SideBar, Link, NavContext"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "13 files, >=4 tests each",
+      "Line coverage >=80%"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Overlay edits by E6 may conflict"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/feedback/**",
+      "tests/components/overlay/**",
+      "tests/components/navigation/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-15",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add theme-matrix test harness running component tests under all themes",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "theming",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Theme tests exist for Button, Card, Input only (tests/theme).",
+    "value": "Every component verified under light, dark, and presets.",
+    "scope": [
+      "Helper forEachTheme(name, fn)",
+      "Apply to smoke render for all components"
+    ],
+    "outOfScope": [
+      "Preset creation (E2)"
+    ],
+    "acceptance": [
+      "All components render under light and dark with no undefined style values (test)",
+      "Preset list auto-extends"
+    ],
+    "dependencies": [
+      "E12-03"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Overlaps E12-02 files; helper only here"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/theme-matrix.tsx",
+      "tests/theme/theme-matrix.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E12-13",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add job for catalog web export, a11y and visual checks in CI",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ci",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Catalog and Playwright jobs have no CI wiring.",
+    "value": "Gate PRs on catalog build, axe, screenshots.",
+    "scope": [
+      "New workflow quality-web.yml calling catalog export, a11y:web, visual tests; upload artifacts"
+    ],
+    "outOfScope": [
+      "Pages deploy"
+    ],
+    "acceptance": [
+      "Workflow passes on PR",
+      "Artifacts present on failure"
+    ],
+    "dependencies": [
+      "E9-12",
+      "E12-06",
+      "E17-05"
+    ],
+    "validation": [
+      "actionlint .github/workflows/quality-web.yml"
+    ],
+    "evidence": [
+      "CI run link"
+    ],
+    "risks": [
+      "Install time of Playwright browsers; cache them"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      ".github/workflows/quality-web.yml"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E8-27",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native smoke: clean Expo app and web export",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "native-dependency-gate.md requires PLRNUI-46 coverage per optional peer candidate; no scenarios exist for adapters.",
+    "value": "Evidence for Expo Go/managed/prebuild/web claims in the proposals.",
+    "scope": [
+      "Fixture app under tests/native-smoke/expo-app: root import with zero expo-* installed; ./native and ./native/expo with injected modules absent and present",
+      "Matrix doc: capability x (Expo Go, dev build, bare, web) x SDK 57/RN 0.86",
+      "Metro bundling check for missing optional modules",
+      "Findings feed the docs/native compatibility table"
+    ],
+    "outOfScope": [
+      "Release pipeline (E17)",
+      "Adding any native package to package.json (native-dependency-gate.md)"
+    ],
+    "acceptance": [
+      "tests/native-smoke/matrix.md lists every capability from CapabilityMap (script check)",
+      "Root import renders with none of expo-* installed (script exit 0)",
+      "npx expo export --platform web in the fixture exits 0",
+      "Result recorded as tests/native-smoke/results.md"
+    ],
+    "dependencies": [
+      "E8-26"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Needs a real Expo environment; may be split by platform when scheduled"
+    ],
+    "dod": [
+      "Typed API exported only from the ./native subpath (Expo factories via ./native/expo; D7), never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "tests/native-smoke/expo-app/**",
+      "tests/native-smoke/matrix.md",
+      "tests/native-smoke/results.md"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 12,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [
+      "E8-29",
+      "E8-30"
+    ],
+    "origin": "original"
+  },
+  {
+    "id": "E8-29",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native smoke: Expo Go compatibility run",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Expo Go support claims for each capability are unverified.",
+    "value": "Evidence-backed Expo Go column in the native compatibility table.",
+    "scope": [
+      "Run the expo-app fixture in Expo Go (SDK 57) on at least one platform",
+      "Record each capability as supported or unsupported with a limitation note"
+    ],
+    "outOfScope": [
+      "Release pipeline (E17)",
+      "Adding any native package to package.json (native-dependency-gate.md)"
+    ],
+    "acceptance": [
+      "tests/native-smoke/expo-go.md lists every CapabilityMap capability with status supported or unsupported (script check)",
+      "Every unsupported row links a limitation note (grep)",
+      "Screenshot of the fixture running in Expo Go attached"
+    ],
+    "dependencies": [
+      "E8-27"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Needs a real Expo environment; may be split by platform when scheduled"
+    ],
+    "dod": [
+      "Typed API exported only from the ./native subpath (Expo factories via ./native/expo; D7), never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "tests/native-smoke/expo-go/**",
+      "tests/native-smoke/expo-go.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E8-27",
+    "splitInto": [],
+    "origin": "split"
+  },
+  {
+    "id": "E8-30",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native smoke: bare React Native app",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Bare React Native (no Expo modules) support is unverified.",
+    "value": "Proves the root entry and ./native fallbacks work without Expo.",
+    "scope": [
+      "Bare RN 0.86 fixture under tests/native-smoke/bare-rn importing the root entry and ./native",
+      "Metro bundle for Android and iOS"
+    ],
+    "outOfScope": [
+      "Release pipeline (E17)",
+      "Adding any native package to package.json (native-dependency-gate.md)"
+    ],
+    "acceptance": [
+      "npx react-native bundle for android in tests/native-smoke/bare-rn exits 0",
+      "Root import renders with no expo-* module installed (script exit 0)",
+      "Results recorded in tests/native-smoke/bare-rn.md"
+    ],
+    "dependencies": [
+      "E8-27"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Needs a real Expo environment; may be split by platform when scheduled"
+    ],
+    "dod": [
+      "Typed API exported only from the ./native subpath (Expo factories via ./native/expo; D7), never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "tests/native-smoke/bare-rn/**",
+      "tests/native-smoke/bare-rn.md"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": "E8-27",
+    "splitInto": [],
+    "origin": "split"
+  }
+]

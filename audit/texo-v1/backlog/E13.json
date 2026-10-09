@@ -1,0 +1,2270 @@
+[
+  {
+    "id": "E13-02",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Build TS-compiler-API component props extractor",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "typescript",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "scripts/public-api-snapshot.mjs regex-parses src/index.ts and sees names only, not prop shapes, defaults or unions; docs/components/*.md duplicate types by hand and drift.",
+    "value": "Single source of truth for props derived from real types.",
+    "scope": [
+      "scripts/ai/lib/extract-props.mjs using a typescript Program over src/index.ts exports",
+      "Resolve props type per exported component (function params, React.FC, forwardRef), literal unions, optionality, JSDoc description/@default, destructuring defaults",
+      "Deterministic output (sorted keys)"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Extractor on Button returns variant enum primary|secondary|ghost|danger|info default primary and size xs|sm|md|lg default md",
+      "Every value export of a component in src/index.ts yields an entry or a documented skip (Modal, Select, BottomSheet, Popover, Tooltip export no Props type)",
+      "Running the extractor twice on the repo yields outputs with equal sha256 hashes (tests/scripts/extract-props.test.ts)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "node --import tsx --test tests/scripts/extract-props.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Components without exported Props types need export fixes owned by E1; extractor must degrade, not fail"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "scripts/ai/lib/extract-props.mjs",
+      "tests/scripts/extract-props.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-03",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate props manifest ai/manifests/props.json",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No machine-readable props contract exists.",
+    "value": "Agents get exact prop names/types without reading .tsx.",
+    "scope": [
+      "Emit ai/manifests/props.json {schemaVersion, package, version, components:{Name:{props:[{name,type,required,default,description}]}}}",
+      "Publish ai/schema/props.schema.json",
+      "npm script ai:build:props"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "props.json validates against ai/schema/props.schema.json (ajv in test)",
+      "Contains every component value export of src/index.ts",
+      "version field equals package.json version"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E13-02"
+    ],
+    "validation": [
+      "npm run ai:build:props && node --import tsx --test tests/scripts/props-manifest.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/manifests/props.json",
+      "ai/schema/props.schema.json",
+      "scripts/ai/build-props.mjs",
+      "tests/scripts/props-manifest.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-13",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Create minimal agent-friendly examples set",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "examples",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "examples/*.tsx are broad demos, not minimal copyable snippets, and are not compile-checked per component.",
+    "value": "One <=25 line compiling example per component, reused by cards, llms-full and evals.",
+    "scope": [
+      "ai/examples/<Name>.tsx per component using only root imports",
+      "ai/tsconfig.examples.json type-checks them",
+      "Marker comment // @ai-example for extraction"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "tsc -p ai/tsconfig.examples.json --noEmit passes",
+      "Every component export has an example (test)",
+      "Each example <=25 non-blank lines"
+    ],
+    "dependencies": [
+      "E13-03"
+    ],
+    "validation": [
+      "npx tsc -p ai/tsconfig.examples.json --noEmit"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/examples/*.tsx",
+      "ai/tsconfig.examples.json",
+      "tests/scripts/examples.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-10",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate per-component cards ai/cards/<Name>.md",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "token-budget",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents read full docs pages or .tsx (thousands of tokens) to use one component.",
+    "value": "300-700 token card per component: import, props table, when/not-when, one minimal example.",
+    "scope": [
+      "scripts/ai/build-cards.mjs merges props.json + meta + example",
+      "Budget <=700 tokens (chars/4) enforced; over-budget fails",
+      "English, stable section order"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "ai/cards/Button.md has import line, props table with variant union, whenNotToUse, example",
+      "Budget check fails on a fixture card over 700 tokens",
+      "npm run ai:build run twice, then git diff --exit-code ai/cards exits 0",
+      "Cards are generated from src/components/*/*.meta.ts via scripts/lib/meta.mjs for every component with status >= demo, including components added after 1.0 planning (test counts cards == meta files with status >= demo)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E13-03",
+      "E13-13"
+    ],
+    "validation": [
+      "npm run ai:build:cards && node --import tsx --test tests/scripts/cards.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/cards/*.md",
+      "scripts/ai/build-cards.mjs",
+      "tests/scripts/cards.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-14",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Author component recipes (composition patterns)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "recipes",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No documented compositions (labelled field with error, confirm dialog, empty state).",
+    "value": "Agents reuse tested compositions instead of inventing layout.",
+    "scope": [
+      "8-12 recipes in ai/recipes/*.md plus .tsx using existing components only: login form, settings row, confirm modal, search header, empty state, status banner, bottom-bar shell, sheet picker",
+      "Frontmatter: name, uses[], when, platforms"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Each recipe tsx compiles under ai tsconfig",
+      "uses[] entries resolve to exported components",
+      "Recipes listed in llms.txt"
+    ],
+    "dependencies": [
+      "E13-13"
+    ],
+    "validation": [
+      "npx tsc -p ai/tsconfig.examples.json --noEmit"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Recipes needing components from E4-E7 wait; record a gap list"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/recipes/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-30",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Build skill eval harness with fixtures and deterministic graders",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "evals",
+      "quality-gate",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No evidence skills improve output; risk of shipping token-expensive no-ops.",
+    "value": "Prove uplift: same tasks with and without skills/manifests, graded mechanically.",
+    "scope": [
+      "evals/ai/tasks/*.json schema: prompt, expected components, banned patterns, must-compile",
+      "Graders: tsc compile in a fixture project, component usage via AST, banned hex/raw Pressable, prop validity vs props.json, context tokens consumed",
+      "scripts/ai/eval.mjs with pluggable agent command (default claude -p); arms baseline, +index, +skills; JSON and markdown results"
+    ],
+    "outOfScope": [
+      "Running live agents in CI (cost, non-determinism)"
+    ],
+    "acceptance": [
+      "tests/scripts/eval-graders.test.ts: every grader scores fixtures in evals/ai/golden/pass as pass and fixtures in evals/ai/golden/fail as fail",
+      "eval.mjs --dry-run works offline using recorded transcripts",
+      "Result schema documented"
+    ],
+    "dependencies": [
+      "E13-03",
+      "E13-13"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/eval-graders.test.ts",
+      "node scripts/ai/eval.mjs --dry-run"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "LLM variance: N>=5 runs per arm, report pass rate not a single run"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "evals/ai/schema.json",
+      "evals/ai/graders/**",
+      "scripts/ai/eval.mjs",
+      "tests/scripts/eval-graders.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-01",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Define AI-layer architecture, directory layout and package files wiring",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "architecture",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No agreed place for agent metadata; package.json files[] ships only dist/README/LICENSE so agents in consumer apps cannot see docs or manifests.",
+    "value": "Single contract every other E13 ticket builds on; enables disjoint parallel work.",
+    "scope": [
+      "Write ai/README.md: layout (src/components/<Name>/<Name>.meta.ts as metadata source per D8, ai/manifests, ai/cards, skills/, scripts/ai), generated vs hand-written rules, token budget tiers",
+      "package.json files[] adds only dist/meta (./meta JSON manifests); skills/, AGENTS.md and llms*.txt stay in the repo and docs site and are NOT in files (D13)",
+      "Add npm script stubs ai:build, ai:check"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "npm pack --dry-run lists dist/meta/*.json and lists no skills/, AGENTS.md or llms*.txt entries",
+      "ai/README.md labels each file class GENERATED or HAND-WRITTEN (grep)",
+      "package.json has scripts ai:build and ai:check (node -e check)"
+    ],
+    "dependencies": [
+      "E12-03"
+    ],
+    "validation": [
+      "npm run package:dry-run"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "package.json edits collide with E14 owner; keep edit to files[] and ai:* keys"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/README.md",
+      "package.json"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-11",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate per-category tier-0 component index (ai/manifests/index)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "token-budget",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No cheap discovery layer; agent opens many files to pick a component.",
+    "value": "Whole catalog in about 1.5k tokens so it fits in AGENTS.md and llms.txt.",
+    "scope": [
+      "ai/manifests/index.json [{name,category,summary,status,card}] sorted",
+      "ai/manifests/index/<category>.txt (one line per component: name - summary [status]) and ai/manifests/index/categories.txt top-level list (R1 M10)",
+      "Hard gates: each category file <= 1.5k tokens (<= 6000 chars) and categories.txt <= 400 tokens (<= 1600 chars)"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "tests/scripts/index-manifest.test.ts asserts every ai/manifests/index/<category>.txt is <= 6000 chars and categories.txt is <= 1600 chars",
+      "Every entry links to an existing card (test)",
+      "Categories equal the ComponentMeta category enum (test)"
+    ],
+    "dependencies": [
+      "E13-10"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/index-manifest.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/manifests/index.json",
+      "ai/manifests/index/**",
+      "scripts/ai/build-index.mjs",
+      "tests/scripts/index-manifest.test.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-07",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Backfill <Name>.meta.ts AI fields: form and input components",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Meta sidecars missing for: Input, PasswordInput, Textarea, Checkbox, RadioGroup, Switch, Select, FormField.",
+    "value": "Accurate when-to-use and anti-pattern guidance for the component-selection skill.",
+    "scope": [
+      "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Input, PasswordInput, Textarea, Checkbox, RadioGroup, Switch, Select, FormField",
+      "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/lib/meta.mjs --lint passes for all listed files",
+      "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-16",
+      "E1-22",
+      "E1-23",
+      "E6-14"
+    ],
+    "validation": [
+      "node scripts/ai/node scripts/lib/meta.mjs --lint.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Prose guidance goes stale when E1 changes components; freshness gate covers props, not prose"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/components/Input/Input.meta.ts",
+      "src/components/PasswordInput/PasswordInput.meta.ts",
+      "src/components/Textarea/Textarea.meta.ts",
+      "src/components/Checkbox/Checkbox.meta.ts",
+      "src/components/RadioGroup/RadioGroup.meta.ts",
+      "src/components/Switch/Switch.meta.ts",
+      "src/components/Select/Select.meta.ts",
+      "src/components/FormField/FormField.meta.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-09",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Backfill <Name>.meta.ts AI fields: feedback, overlay and surface components",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Meta sidecars missing for: Alert, Badge, Card, Spinner, ProgressBar, Modal, BottomSheet, Popover, Tooltip.",
+    "value": "Accurate when-to-use and anti-pattern guidance for the component-selection skill.",
+    "scope": [
+      "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Alert, Badge, Card, Spinner, ProgressBar, Modal, BottomSheet, Popover, Tooltip",
+      "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/lib/meta.mjs --lint passes for all listed files",
+      "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-20",
+      "E1-26",
+      "E6-02",
+      "E6-03",
+      "E6-11",
+      "E6-36"
+    ],
+    "validation": [
+      "node scripts/ai/node scripts/lib/meta.mjs --lint.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Prose guidance goes stale when E1 changes components; freshness gate covers props, not prose"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/components/Alert/Alert.meta.ts",
+      "src/components/Badge/Badge.meta.ts",
+      "src/components/Card/Card.meta.ts",
+      "src/components/Spinner/Spinner.meta.ts",
+      "src/components/ProgressBar/ProgressBar.meta.ts",
+      "src/components/Modal/Modal.meta.ts",
+      "src/components/BottomSheet/BottomSheet.meta.ts",
+      "src/components/Popover/Popover.meta.ts",
+      "src/components/Tooltip/Tooltip.meta.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-17",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Write root AGENTS.md and consumer AGENTS snippet",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "agents-md",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No AGENTS.md or CLAUDE.md; coding agents re-discover commands and conventions each session.",
+    "value": "Cross-tool (Codex, Cursor, Copilot, Claude Code) instructions in <=150 lines.",
+    "scope": [
+      "AGENTS.md: commands (typecheck, test, ai:build, api:snapshot:check), repo map, rules (no rename, single codebase, generated files not hand-edited), pointer to tier-0 index",
+      "CLAUDE.md containing only the @AGENTS.md import",
+      "ai/AGENTS.consumer.md: snippet for apps using the library"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "AGENTS.md <=150 lines and <=32 KiB",
+      "Every npm command in AGENTS.md exists in package.json scripts (test)",
+      "CLAUDE.md imports AGENTS.md"
+    ],
+    "dependencies": [
+      "E13-01"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/agents-md.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      "ai/AGENTS.consumer.md",
+      "tests/scripts/agents-md.test.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-18",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate llms.txt and llms-full.txt",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "llms-txt",
+      "generator",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No llms.txt; docs are Italian MkDocs pages not optimised for LLMs.",
+    "value": "llms.txt (link index, ~2k tokens) and llms-full.txt (all cards plus token summary) per llmstxt.org, usable from the npm tarball and docs site.",
+    "scope": [
+      "llms.txt: H1, blockquote summary, H2 sections (Components, Tokens, Recipes, Skills, Optional) with relative links",
+      "llms-full.txt concatenates tier-1 cards and token summary",
+      "Docs site copy via mkdocs extra files"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "llms.txt starts with '# ' and a blockquote; all links resolve (test)",
+      "llms-full.txt fails build if >120k chars",
+      "Both listed in package.json files[]"
+    ],
+    "dependencies": [
+      "E13-10",
+      "E13-11"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/llms-txt.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "No major provider confirms llms.txt consumption; cheap to generate, not a primary channel"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "llms.txt",
+      "llms-full.txt",
+      "scripts/ai/build-llms.mjs",
+      "tests/scripts/llms-txt.test.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-21",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill pack scaffolding, validator and skills.sh installability",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "distribution",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No skills directory; npx skills add finds nothing in this repo.",
+    "value": "`npx skills add pianic2/personal-library-react-native-components` installs the validated skill set into Claude Code (.claude/skills), Codex and Cursor (.agents/skills).",
+    "scope": [
+      "skills/<name>/SKILL.md layout: name equals folder (lowercase-hyphen, <=64), description <=1024, license, metadata.version",
+      "scripts/ai/validate-skills.mjs: frontmatter rules, SKILL.md <=500 lines, references one level deep, no broken links",
+      "Build step copies tier-0 index/tokens summary into each skill references/ (no symlinks)",
+      "README section: npx skills add, -a/-s flags, --copy, npx skills update"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "npx skills add ./ --list in a temp checkout lists all E13 skills",
+      "validate-skills exits 0, and 1 on a fixture with a 70-char name",
+      "Smoke script installs into temp project .claude/skills and .agents/skills"
+    ],
+    "dependencies": [
+      "E13-01"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/validate-skills.test.ts",
+      "node scripts/ai/skills-install-smoke.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "skills CLI evolves; smoke pins CLI version",
+      "skills.sh listing appears only after real installs (no publish step)"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/README.md",
+      "scripts/ai/validate-skills.mjs",
+      "scripts/ai/skills-install-smoke.mjs",
+      "tests/scripts/validate-skills.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-06",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Backfill <Name>.meta.ts AI fields: typography and layout primitives",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Meta sidecars missing for: Box, Column/Stack, Row, Divider, Text, Heading, P, B, Small, Quote, CodeInline, TextGroup.",
+    "value": "Accurate when-to-use and anti-pattern guidance for the component-selection skill.",
+    "scope": [
+      "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Box, Column, Row, Divider, Text, Heading, P, B, Small, Quote, CodeInline, TextGroup, grounded in source and docs/components/*.md",
+      "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/lib/meta.mjs --lint passes for all listed files",
+      "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-21"
+    ],
+    "validation": [
+      "node scripts/ai/node scripts/lib/meta.mjs --lint.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Prose guidance goes stale when E1 changes components; freshness gate covers props, not prose"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/components/Box/Box.meta.ts",
+      "src/components/Column/Column.meta.ts",
+      "src/components/Row/Row.meta.ts",
+      "src/components/Divider/Divider.meta.ts",
+      "src/components/Text/Text.meta.ts",
+      "src/components/Heading/Heading.meta.ts",
+      "src/components/P/P.meta.ts",
+      "src/components/B/B.meta.ts",
+      "src/components/Small/Small.meta.ts",
+      "src/components/Quote/Quote.meta.ts",
+      "src/components/CodeInline/CodeInline.meta.ts",
+      "src/components/TextGroup/TextGroup.meta.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-12",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate shadcn-style registry JSON for templates and recipes",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "registry",
+      "generator",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Copyable recipes/templates have no distribution format; library is import-only.",
+    "value": "registry.json and item files compatible with the shadcn registry schema so shadcn-style tooling and its MCP can consume recipes.",
+    "scope": [
+      "ai/registry/registry.json ($schema, name, homepage, items) with registry:block/registry:example items for recipes and templates",
+      "Item files with files[{path,content,type}], dependencies on this package, description",
+      "Validate against a vendored, version-pinned schema"
+    ],
+    "outOfScope": [
+      "Shipping component source copies (single-codebase rule)"
+    ],
+    "acceptance": [
+      "registry.json validates against vendored schema (test)",
+      "Each item content compiles under the ai tsconfig",
+      "No item duplicates component implementations (imports package only)"
+    ],
+    "dependencies": [
+      "E11-09",
+      "E11-14",
+      "E11-15",
+      "E13-14"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/registry.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "shadcn schema fields vary by version; vendor and pin"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/registry/**",
+      "scripts/ai/build-registry.mjs",
+      "tests/scripts/registry.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-22",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-component-selection",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents pick wrong components (raw Pressable instead of Button, TextInput instead of Input).",
+    "value": "Decision procedure from UI intent to component using tier-0 index then cards.",
+    "scope": [
+      "skills/texo-component-selection/SKILL.md (<=200 lines): read index first, open only needed cards, decision table, anti-patterns",
+      "references/decision-table.md; index copied at build"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "SKILL.md explicitly orders tier 0 before tier 1",
+      "Selection tasks exist in eval fixtures (E13-31)"
+    ],
+    "dependencies": [
+      "E13-11",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-component-selection/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-23",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-screen-generation",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Generated screens omit shell setup, theming, responsive behaviour and state coverage.",
+    "value": "Repeatable workflow: pick template, adapt, check states, verify with typecheck.",
+    "scope": [
+      "SKILL.md workflow, links to templates and recipes, checklist (loading/empty/error, theme, a11y labels)",
+      "scripts/verify-screen.mjs: tsc plus banned-pattern grep (hardcoded hex, raw Pressable)"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "verify-screen --self-test flags a fixture screen with hex colors",
+      "Workflow references templates from E13-15"
+    ],
+    "dependencies": [
+      "E11-14",
+      "E11-15",
+      "E13-14",
+      "E13-21"
+    ],
+    "validation": [
+      "node skills/texo-screen-generation/scripts/verify-screen.mjs --self-test"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-screen-generation/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-25",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-forms",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Form generation misses labels, errors, keyboard flow, password handling.",
+    "value": "Correct FormField/Input/Select composition and validation UX.",
+    "scope": [
+      "SKILL.md: FormField wrapper, error/helper pattern, submit disabled/loading, keyboard types, PasswordInput",
+      "references/form-recipes.md linking recipes"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "Eval task 'login form' exists (E13-31)",
+      "Every referenced component exists in the index"
+    ],
+    "dependencies": [
+      "E13-14",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-forms/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-26",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-navigation",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents mix NavBar/TopBar/BottomBar/SideBar and misuse NavProvider and the Link router adapter.",
+    "value": "Shell selection by breakpoint and router integration.",
+    "scope": [
+      "SKILL.md: shell decision table (phone/tablet/web), NavProvider/useNav, LinkRouterAdapter wiring",
+      "references/expo-router.md"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "Referenced examples compile under ai tsconfig",
+      "Eval task 'app shell' exists (E13-31)"
+    ],
+    "dependencies": [
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-navigation/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-28",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-responsive",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents hardcode widths and ignore useBreakpoint and platform differences.",
+    "value": "Adaptive layout guidance.",
+    "scope": [
+      "SKILL.md: useBreakpoint, Row/Column wrap patterns, shell swap, web vs native notes (isWeb etc.)",
+      "references/breakpoints.md from hook source"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "Breakpoint names in doc equal the Breakpoint type (test)",
+      "Eval task 'two-pane tablet' exists (E13-31)"
+    ],
+    "dependencies": [
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-responsive/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-29",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-motion",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "motion",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Motion primitives arrive with E3; otherwise agents write ad-hoc Animated code.",
+    "value": "Reduced-motion-aware animation guidance using library primitives.",
+    "scope": [
+      "SKILL.md covering E3 primitives, duration/easing tokens, reduced motion",
+      "Lists only APIs present in props manifest"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "Backticked identifiers in the skill all exist in props.json or tokens.json (test)"
+    ],
+    "dependencies": [
+      "E13-03",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Blocked on E3 for substance; ship last"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-motion/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-37",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-overlays-feedback",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "overlays",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No skill covers overlays and feedback (R2 gap).",
+    "value": "Agents follow ADR 0015 (nested hosts, open/onOpenChange) and the toast API instead of hand-rolling modals.",
+    "scope": [
+      "skills/texo-overlays-feedback/SKILL.md (<=200 lines): Dialog vs BottomSheet vs Popover vs Toast decision table, nested-host rule, open/defaultOpen/onOpenChange, toast() API, EmptyState/ErrorState",
+      "references/overlay-architecture.md summarising ADR 0015"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/ai/validate-skills.mjs exits 0",
+      "SKILL.md is <= 200 lines (wc -l)",
+      "SKILL.md contains no `visible=` prop usage (grep; ADR 0014)"
+    ],
+    "dependencies": [
+      "E6-01",
+      "E6-05",
+      "E6-06",
+      "E6-20",
+      "E6-35",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Must track E6 API changes until 1.0"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "skills/texo-overlays-feedback/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E13-38",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-migration (shim, codemod, deprecated aliases)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "migration",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No skill covers the legacy-to-Texo migration (R2 gap).",
+    "value": "Agents migrate imports and deprecated props deterministically with the codemod.",
+    "scope": [
+      "skills/texo-migration/SKILL.md (<=200 lines): shim vs direct install, codemod usage with placeholder names, mixed-import rule (one provider), deprecated aliases (B/P/Small/TextGroup, onChange -> onValueChange, Button variant -> tone)",
+      "Uses placeholder tokens until H1/H8 are resolved"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/ai/validate-skills.mjs exits 0",
+      "SKILL.md is <= 200 lines (wc -l)",
+      "Every name placeholder in SKILL.md uses the token format checked by scripts/check-doc-tokens.mjs (exit 0)"
+    ],
+    "dependencies": [
+      "E1-21",
+      "E13-21",
+      "E15-09",
+      "E15-12"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Final names arrive late (H1/H8); keep placeholders"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "skills/texo-migration/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E13-04",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate token manifest ai/manifests/tokens.json",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents hallucinate token names; tokens are spread across src/tokens/*.base.ts and ThemeTokens, theme.components.* is separate.",
+    "value": "Agents use theme/token paths that exist; foundation for the design-system skill.",
+    "scope": [
+      "Consume the DTCG token manifest emitted by E2-10 (scripts/export-tokens.mjs / src/tokens/manifest.ts) and project it into ai/manifests/tokens.json; no second token walker (R1 §3)",
+      "Category index with counts",
+      "Include semantic color roles (primary, textPrimary, textInverted, error, surface ...)"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "tokens.json includes every leaf key of defaultThemeTokens (test enumerates)",
+      "Each color entry has light and dark value",
+      "Paths resolve on useTheme().theme (test)",
+      "scripts/ai/build-tokens.mjs reads the E2-10 output (grep shows import of src/tokens/manifest or the exported JSON) and contains no traversal of defaultThemeTokens"
+    ],
+    "dependencies": [
+      "E2-10"
+    ],
+    "validation": [
+      "npm run ai:build:tokens && node --import tsx --test tests/scripts/tokens-manifest.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Token source reshaped by E2; read via exported API, not file paths"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/manifests/tokens.json",
+      "ai/schema/tokens.schema.json",
+      "scripts/ai/build-tokens.mjs",
+      "tests/scripts/tokens-manifest.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-31",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Author eval tasks and run baseline vs skills uplift report",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "evals",
+      "blocked-decision",
+      "needs-h5"
+    ],
+    "problem": "Harness needs tasks covering selection, forms, nav, a11y, tokens, responsive.",
+    "value": "Documented evidence of uplift (pass rate, hallucinated props, context tokens).",
+    "scope": [
+      "20 tasks across skill areas",
+      "Run 3 arms x N=5 and commit evals/ai/results/<date>.md",
+      "Gate: skills arm pass rate >= baseline + agreed margin, else revise skills"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "20 task files validate against evals/ai/schema.json",
+      "Report has per-arm pass rate, invalid-prop count, mean context tokens",
+      "Report states agent/model and CLI version"
+    ],
+    "dependencies": [
+      "E13-22",
+      "E13-23",
+      "E13-25",
+      "E13-30"
+    ],
+    "validation": [
+      "node scripts/ai/eval.mjs --report"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Needs paid agent runs; time-box",
+      "BLOCKED on H5: Eval budget and reference agent/model for AI-uplift proof. Unblock condition: Human names budget owner, run count and reference model."
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "evals/ai/tasks/**",
+      "evals/ai/results/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 9,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H5"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-33",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Optional MCP server over manifests (read-only)",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "mcp",
+      "optional",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "MCP can answer search_components/get_component/get_tokens queries but adds a process and tool-definition tokens per session; marginal over skills plus files.",
+    "value": "Build only if audit decision D3 = yes: thin stdio server reading shipped manifests, no network.",
+    "scope": [
+      "stdio MCP server in src/mcp/server.ts, 4 read-only tools, responses capped at card budget",
+      "README config snippets for Claude Code, Cursor, Codex"
+    ],
+    "outOfScope": [
+      "Write tools, remote hosting"
+    ],
+    "acceptance": [
+      "MCP inspector lists 4 tools; get_component Button equals card",
+      "Server starts offline in <500 ms",
+      "Each response <=700 tokens (test)"
+    ],
+    "dependencies": [
+      "E13-10",
+      "E13-11",
+      "E13-12"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Measure tool-definition overhead against skills before shipping"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/mcp/**",
+      "tests/mcp/**"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-08",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Backfill <Name>.meta.ts AI fields: navigation and shell components",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Meta sidecars missing for: NavBar, TopBar, BottomBar, SideBar, NavContext (NavProvider/useNav/useNavigate), Link.",
+    "value": "Accurate when-to-use and anti-pattern guidance for the component-selection skill.",
+    "scope": [
+      "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for NavBar, TopBar, BottomBar, SideBar, NavContext, Link",
+      "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/lib/meta.mjs --lint passes for all listed files",
+      "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E6-28",
+      "E6-29"
+    ],
+    "validation": [
+      "node scripts/ai/node scripts/lib/meta.mjs --lint.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Prose guidance goes stale when E1 changes components; freshness gate covers props, not prose"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/components/NavBar/NavBar.meta.ts",
+      "src/components/TopBar/TopBar.meta.ts",
+      "src/components/BottomBar/BottomBar.meta.ts",
+      "src/components/SideBar/SideBar.meta.ts",
+      "src/components/NavContext/NavContext.meta.ts",
+      "src/components/Link/Link.meta.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-16",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Generate style-preset metadata manifest",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Theme presets (E2) will exist but agents cannot choose one from intent.",
+    "value": "Agents recommend a preset by mood, density, contrast, brand constraints.",
+    "scope": [
+      "ai/schema/presets.schema.json: id, name, mood tags (fixed enum), density, contrast, radius character, fonts, primary hue, darkModeSupported",
+      "Generator reads the E2 preset registry and emits presets.json; default-only fallback until E2 lands"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "presets.json validates and includes the default preset",
+      "Test fails if an E2 preset lacks metadata",
+      "ai/schema/presets.schema.json defines mood as an enum and every ai/manifests/presets.json entry validates against it (schema test)"
+    ],
+    "dependencies": [
+      "E13-04"
+    ],
+    "validation": [
+      "node scripts/ai/build-presets.mjs --check"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Blocked on E2 API shape; ship default-only first"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "ai/manifests/presets.json",
+      "ai/schema/presets.schema.json",
+      "scripts/ai/build-presets.mjs"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-19",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Add ai:build orchestrator and emit ./meta JSON manifests into dist/meta",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "build",
+      "packaging",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Generators run individually; nothing guarantees artifacts reach the tarball.",
+    "value": "One command builds all manifests; tarball contains ai/, skills/, llms*.txt.",
+    "scope": [
+      "scripts/ai/build-all.mjs sequencing generators",
+      "prepack runs ai:build",
+      "Extend scripts/release-guard.mjs with an ai-artifacts check"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "npm run ai:build is idempotent (git diff empty on second run)",
+      "release:guard fails if ai/manifests/index.json is missing",
+      "npm pack --dry-run lists dist/meta/*.json and lists no skills/ or llms*.txt (D13)"
+    ],
+    "dependencies": [
+      "E13-03",
+      "E13-04",
+      "E13-10",
+      "E13-11",
+      "E13-18",
+      "E17-03"
+    ],
+    "validation": [
+      "npm run ai:build && git diff --exit-code ai llms.txt llms-full.txt",
+      "npm run package:dry-run"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "release-guard.mjs is also touched by E17; limit edit to one function"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "scripts/ai/build-all.mjs",
+      "scripts/release-guard.mjs"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-20",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Add manifest freshness CI gate (ai:check)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "ci",
+      "quality-gate",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Generated metadata silently drifts from source types.",
+    "value": "CI fails when manifests, cards or llms files differ from regenerated output; mirrors api:snapshot:check.",
+    "scope": [
+      "scripts/ai/check.mjs regenerates to a temp dir and diffs; prints the fix command",
+      "Also checks every export has meta+example and skills frontmatter is valid",
+      "Add to release:check and a CI workflow"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "Mutating a prop type in a fixture makes ai:check exit 1 (test)",
+      "node scripts/ai/check.mjs exits 0 on a freshly regenerated tree and exits 1 after one generated file is edited (tests/scripts/ai-check.test.ts)",
+      "release:check includes ai:check"
+    ],
+    "dependencies": [
+      "E13-19"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/ai-check.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "scripts/ai/check.mjs",
+      "tests/scripts/ai-check.test.ts",
+      ".github/workflows/ai-check.yml"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-24",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-design-system (tokens and theming)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Agents hardcode colors/spacing or invent token names.",
+    "value": "Token-first styling guidance with exact paths.",
+    "scope": [
+      "SKILL.md: useTheme(), semantic color roles, spacing scale, dark mode, preset choice",
+      "references/tokens-summary.md (build-copied from tokens.json)",
+      "scripts/lint-tokens.mjs flags literals absent from the token manifest"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "lint-tokens --self-test flags #fff and padding: 13, passes a tokenised fixture",
+      "tokens-summary <=1500 tokens"
+    ],
+    "dependencies": [
+      "E13-04",
+      "E13-16",
+      "E13-21"
+    ],
+    "validation": [
+      "node skills/texo-design-system/scripts/lint-tokens.mjs --self-test"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-design-system/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-27",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-accessibility",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Generated UI lacks roles, labels, 44pt targets, contrast.",
+    "value": "A11y checklist tied to library guarantees and tests/accessibility.",
+    "scope": [
+      "SKILL.md: required props per component, touch target, screen reader, contrast via tokens",
+      "references/a11y-by-component.md derived from meta a11y[]"
+    ],
+    "outOfScope": [
+      "Renaming package/imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "validate-skills passes",
+      "a11y-by-component.md is generated, not hand-edited (ai:check)",
+      "Eval task 'icon-only button needs label' exists (E13-31)"
+    ],
+    "dependencies": [
+      "E13-06",
+      "E13-07",
+      "E13-08",
+      "E13-09",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "skills/texo-accessibility/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-32",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Optional CLI: info and doctor commands (no add)",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "cli",
+      "optional",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Unclear if a CLI is worth it; shipped manifests plus skills already give agents offline data.",
+    "value": "Build only if audit decision D2 = yes: `info <Component>` prints the card; `doctor` checks Expo/RN/React peers, ThemeProvider presence, ai artifacts.",
+    "scope": [
+      "bin entry -> dist/cli.js, zero runtime deps",
+      "info [name] [--json], doctor [--json]",
+      "No `add`: library is imported not copied; recipes go through E13-12"
+    ],
+    "outOfScope": [
+      "Scaffolding/init (E14)"
+    ],
+    "acceptance": [
+      "info Button output equals ai/cards/Button.md",
+      "doctor exits non-zero on a fixture with RN 0.70",
+      "CLI adds <50 KB to tarball"
+    ],
+    "dependencies": [
+      "E13-10",
+      "E13-19"
+    ],
+    "validation": [
+      "npm test",
+      "npm run package:dry-run"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "New bin surface; Texo shim must keep bin names stable"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "src/cli/**",
+      "tests/cli/**"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 11,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-36",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-data-display",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "data-display",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No skill covers lists, tables and data display (R2 gap).",
+    "value": "Agents pick List/ListItem/DataTable/Stat/Skeleton correctly with virtualization defaults.",
+    "scope": [
+      "skills/texo-data-display/SKILL.md (<=200 lines): decision table List vs SectionList vs DataTable vs DescriptionList, virtualization defaults, Skeleton loading states, FlashList adapter note (H2)",
+      "references/data-table.md"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/ai/validate-skills.mjs exits 0",
+      "SKILL.md is <= 200 lines (wc -l)",
+      "Every component named in SKILL.md has a meta file with status >= demo (validate-skills cross-check)"
+    ],
+    "dependencies": [
+      "E6-21",
+      "E7-02",
+      "E7-09",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Charts beyond chart core are post-1.0; skill must not reference them"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "skills/texo-data-display/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E13-34",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Add AI-layer docs page and consumer onboarding",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Consumers do not know about skills, llms.txt or the AGENTS snippet.",
+    "value": "One page with copy-paste setup.",
+    "scope": [
+      "docs/ai.md: install skills, AGENTS snippet, llms.txt, freshness policy, token tiers",
+      "Add to mkdocs.yml nav"
+    ],
+    "outOfScope": [
+      "Italian translation (E16)"
+    ],
+    "acceptance": [
+      "mkdocs.yml nav contains the AI page",
+      "Commands on the page exist in package.json scripts or skills list (test)"
+    ],
+    "dependencies": [
+      "E13-17",
+      "E13-21",
+      "E14-15",
+      "E14-18"
+    ],
+    "validation": [
+      "node --import tsx --test tests/scripts/agents-md.test.ts"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Generated output churn; mitigated by deterministic sorted output"
+    ],
+    "dod": [
+      "Acceptance verified by command",
+      "Docs/AGENTS references updated if paths change",
+      "No hand edits to generated files"
+    ],
+    "filesTouched": [
+      "docs/ai.md",
+      "mkdocs.yml"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 15,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E13-35",
+    "epic": "E13",
+    "type": "Task",
+    "title": "Skill: texo-native-capabilities",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No skill covers the native capability layer (R2 gap).",
+    "value": "Agents wire capabilities with injection instead of adding native dependencies.",
+    "scope": [
+      "skills/texo-native-capabilities/SKILL.md (<=200 lines): capability decision table (./native hooks vs ./native/expo factories), createExpoCapabilities({...}) injection pattern, Expo Go limitations from E8-29, no require() rule",
+      "references/capabilities.md listing CapabilityMap entries"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/ai/validate-skills.mjs exits 0",
+      "SKILL.md shows expo-* imports only inside createExpoCapabilities examples (grep)",
+      "SKILL.md is <= 200 lines (wc -l)"
+    ],
+    "dependencies": [
+      "E8-26",
+      "E8-28",
+      "E13-21"
+    ],
+    "validation": [
+      "node scripts/ai/validate-skills.mjs"
+    ],
+    "evidence": [
+      "Command output / generated artifact path attached to the Jira ticket"
+    ],
+    "risks": [
+      "Capability list drifts; reference file must be regenerated from CapabilityMap"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "skills/texo-native-capabilities/**"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 15,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  }
+]

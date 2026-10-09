@@ -1,0 +1,508 @@
+[
+  {
+    "id": "E9-01",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Extend a11y test helpers: focus, hidden, value, hint, targets",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "tests/helpers/accessibility.ts only checks role/label/state/value and a min-size on style; no hint, hidden, focus order, selected or live-region helpers; touch target helper cannot see hitSlop/padding.",
+    "value": "One shared vocabulary so every component test asserts a11y the same way.",
+    "scope": [
+      "Add assertAccessibilityHint, assertNotAccessible/hidden, assertLiveRegion, assertTouchTargetWithHitSlop (44 iOS / 48 Android via Platform), collectInteractiveNodes",
+      "Add negative tests per helper"
+    ],
+    "outOfScope": [
+      "Per-component tests",
+      "Runtime AT testing"
+    ],
+    "acceptance": [
+      "New helpers exported from tests/helpers/accessibility.ts",
+      "Each helper has a passing and a failing (assert.throws) test",
+      "assertMinimumTouchTarget accepts platform minimum 44/48"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Style-only target checks can false-pass; document limits"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/accessibility.ts",
+      "tests/accessibility/accessibility-harness.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-11",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add screen-reader order and focus traversal test helper",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No test asserts reading order or that decorative nodes are hidden.",
+    "value": "Detect reading-order regressions in recipes/templates.",
+    "scope": [
+      "Helper getAccessibleTree(renderer) returning ordered accessible nodes honouring accessible/importantForAccessibility/accessibilityElementsHidden",
+      "Tests for Card, FormField, Modal"
+    ],
+    "outOfScope": [
+      "Real device TalkBack/VoiceOver"
+    ],
+    "acceptance": [
+      "Helper returns nodes in tree order and omits hidden nodes (tests)",
+      "Used by at least 3 component tests"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Shim-based tree is an approximation; labelled as such"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/accessibility-tree.ts",
+      "tests/accessibility/reading-order.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-12",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add web a11y smoke with axe in Playwright on exported web catalog",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "web",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No automated check of rendered DOM a11y on react-native-web; expo-consumer-smoke only exports web.",
+    "value": "Free CI axe-core scan of every catalog screen on web.",
+    "scope": [
+      "Playwright + @axe-core/playwright script serving exported catalog",
+      "Fail on serious/critical violations, allowlist with reason"
+    ],
+    "outOfScope": [
+      "Native AT"
+    ],
+    "acceptance": [
+      "npm run a11y:web exits non-zero on a seeded violation fixture",
+      "scripts/a11y-web.mjs builds its route list from the meta loader (scripts/lib/meta.mjs) and the run log lists one route per component with status >= demo"
+    ],
+    "dependencies": [
+      "E11-03"
+    ],
+    "validation": [
+      "npm run a11y:web"
+    ],
+    "evidence": [
+      "axe JSON report artifact"
+    ],
+    "risks": [
+      "Catalog needed first; flaky timing"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/a11y-web.mjs",
+      "tests/e2e/a11y-web.spec.ts",
+      "playwright.config.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-02",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add table-driven a11y contract test for all interactive components",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Only Button, Input, Checkbox, Switch, RadioGroup have a11y tests (tests/accessibility/core-controls.test.tsx). Select, Link, PasswordInput, NavBar, BottomBar, SideBar, Alert, ProgressBar, Spinner, Modal, Tooltip, Popover, BottomSheet, TopBar, Badge have none; src grep shows 0 a11y props in Modal, Popover, Tooltip, BottomSheet, TopBar, Spinner, Textarea.",
+    "value": "Registry-driven coverage that fails when a new component ships without a11y expectations.",
+    "scope": [
+      "Create a contract table {component, props, expected role/label/state/hint}",
+      "Iterate with test() per row",
+      "Fail if a root-exported component is missing from table or has explicit waiver",
+      "(from E1-36) tests/accessibility/demo-components.test.tsx using assertAccessibilityContract"
+    ],
+    "outOfScope": [
+      "Fixing component source (see E9-03..E9-07)"
+    ],
+    "acceptance": [
+      "Every public interactive component has a row or a documented waiver",
+      "Test fails when a component export is added without a row (verified by negative test)",
+      "(from E1-36) Roles asserted: alert, link, header, progressbar, combobox/button, tab/selected",
+      "(from E1-36) Test file passes in npm test"
+    ],
+    "dependencies": [
+      "E1-21",
+      "E1-25",
+      "E1-26",
+      "E1-28",
+      "E1-29",
+      "E1-35",
+      "E6-02",
+      "E6-07",
+      "E6-14",
+      "E6-36",
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Table + test output"
+    ],
+    "risks": [
+      "Will initially red for components lacking props; land with waivers referencing E9-03..07",
+      "(from E1-36) Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/accessibility/contract-table.test.tsx",
+      "tests/accessibility/contract-table.ts",
+      "tests/accessibility/demo-components.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E1-36"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-07",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Enforce 44/48 minimum touch targets via hitSlop across pressables",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "touch-target",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No hitSlop usage in src (grep); assertMinimumTouchTarget only inspects style. Small Button size, Checkbox, Switch, Link, Badge-pressable can be below 44pt (iOS) / 48dp (Android).",
+    "value": "WCAG 2.5.8 / platform HIG compliance.",
+    "scope": [
+      "Add internal useTouchTarget(minimum) util returning minHeight/hitSlop",
+      "Apply to Button(sm), Checkbox, Switch, RadioGroup, Link, PasswordInput toggle",
+      "Test each at smallest size"
+    ],
+    "outOfScope": [
+      "Visual size changes of components"
+    ],
+    "acceptance": [
+      "Smallest variant of each pressable passes assertMinimumTouchTarget(44) or has hitSlop closing gap",
+      "Platform.select 48 on Android in test"
+    ],
+    "dependencies": [
+      "E1-09",
+      "E1-22",
+      "E1-42",
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output with sizes table"
+    ],
+    "risks": [
+      "Internal util must not leak to public API (api:snapshot:check)"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/utils/touch-target.ts",
+      "src/components/Button/Button.tsx",
+      "src/components/Checkbox/Checkbox.tsx",
+      "src/components/Switch/Switch.tsx",
+      "src/components/RadioGroup/RadioGroup.tsx",
+      "tests/accessibility/touch-targets.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-13",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Write accessibility contract docs and per-component a11y table",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "docs/accessibility-testing.md is 17 lines; no consumer-facing a11y guarantees per component.",
+    "value": "Consumers and agents know what is guaranteed and what is not.",
+    "scope": [
+      "Rewrite doc with evidence levels (static, web axe, device manual)",
+      "Generated table of role/label/state per component from contract table",
+      "Manual device checklist VoiceOver/TalkBack"
+    ],
+    "outOfScope": [
+      "Per-component page edits (E16)"
+    ],
+    "acceptance": [
+      "Doc links to checklist and table",
+      "mkdocs build --strict passes"
+    ],
+    "dependencies": [
+      "E9-02"
+    ],
+    "validation": [
+      "mkdocs build --strict"
+    ],
+    "evidence": [
+      "Built page"
+    ],
+    "risks": [
+      "Table generation drift; add check script"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "docs/accessibility-testing.md",
+      "docs/accessibility-checklist.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-08",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add dynamic type and font scaling support and tests",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "dynamic-type",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No allowFontScaling/maxFontSizeMultiplier/fontScale references in src; fixed-height controls will clip at 200% text.",
+    "value": "Text scaling up to 200% without clipping (WCAG 1.4.4).",
+    "scope": [
+      "Text base honours allowFontScaling default true and optional maxFontSizeMultiplier prop/theme token",
+      "Controls use minHeight not height",
+      "Test via PixelRatio.getFontScale mock with 2.0"
+    ],
+    "outOfScope": [
+      "Responsive layout (E10)"
+    ],
+    "acceptance": [
+      "No fixed height on Button/Input/Select style (assert minHeight)",
+      "Test sets fontScale 2 and asserts rendered text style does not disable scaling"
+    ],
+    "dependencies": [
+      "E1-09",
+      "E1-12",
+      "E1-17",
+      "E1-42",
+      "E2-03",
+      "E8-05",
+      "E9-01",
+      "E9-07"
+    ],
+    "validation": [
+      "npm test",
+      "npm run typecheck"
+    ],
+    "evidence": [
+      "Test output",
+      "Screenshot at 200% from catalog"
+    ],
+    "risks": [
+      "Touches Text which E4 also edits; keep to props only"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/Text/Text.tsx",
+      "src/components/Button/Button.tsx",
+      "src/components/Input/Input.tsx",
+      "tests/accessibility/dynamic-type.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E9-14",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add manual device a11y verification protocol and evidence template",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "process",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Docs disclaim device behavior but no process exists to produce evidence.",
+    "value": "Repeatable VoiceOver/TalkBack signoff for production-ready maturity.",
+    "scope": [
+      "Template with per-component steps, device/OS matrix, pass/fail, screenshots",
+      "Link from maturity ladder"
+    ],
+    "outOfScope": [
+      "Executing the protocol"
+    ],
+    "acceptance": [
+      "Template file exists with all 36 components listed (script check)",
+      "Referenced from docs"
+    ],
+    "dependencies": [
+      "E9-13"
+    ],
+    "validation": [
+      "node scripts/check-a11y-protocol.mjs"
+    ],
+    "evidence": [
+      "Template"
+    ],
+    "risks": [
+      "Manual effort"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "docs/a11y-device-protocol.md",
+      "scripts/check-a11y-protocol.mjs"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

@@ -1,0 +1,1068 @@
+[
+  {
+    "id": "E15-01",
+    "epic": "E15",
+    "type": "Task",
+    "title": "DECISION: final Texo package name, scope, repo name and npm availability",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "decision",
+      "human-only",
+      "migration",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "problem": "Final naming is unresolved (ADR 0001 status 'Proposto'; npm name 'da definire'). Every cutover step depends on it.",
+    "value": "Unblocks E15-10,13,14,16 and E17 first publish.",
+    "scope": [
+      "Choose package name/scope (unscoped 'texo' vs scoped), verify npm availability and trademark",
+      "Choose GitHub repo name and redirect plan",
+      "Record decision as audit/adr/0017-texo-final-identity.md",
+      "Decide whether Texo 1.0.0 is a rename of the existing line or a new package line"
+    ],
+    "outOfScope": [
+      "Executing the rename"
+    ],
+    "acceptance": [
+      "ADR 0017 status Accepted with names, owner and date",
+      "npm view <name> returns 404 or ownership proven",
+      "Name written into config/package-identity.json 'target' field by E15-03/14 follow-up"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm view <name> version"
+    ],
+    "evidence": [
+      "ADR 0017"
+    ],
+    "risks": [
+      "Name squatting between decision and first publish - reserve with a 0.0.1 placeholder only if human approves",
+      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/adr/0017-texo-final-identity.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H1"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-02",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Record shim policy ADR 0013 (D10) with sunset window pending H4",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "decision",
+      "migration",
+      "blocked-decision",
+      "needs-h4"
+    ],
+    "problem": "Shim policy is mostly deducible (D10/ADR-R9); only the sunset/deprecation window is a human decision (H4).",
+    "value": "Shim build (E15-03) and parity work can proceed on a written policy.",
+    "scope": [
+      "Record adopted D10 policy in audit/adr/0013-legacy-shim-policy.md: generated dist-shim/, dependency on Texo with caret range of its major (^1.0.0, not exact), lockstep versions, no postinstall and no runtime warning, global singleton contexts with __DEV__ duplicate warning, PACKAGE_NAME deprecated",
+      "Sunset window and deprecation timeline left as an explicit 'Pending H4' section"
+    ],
+    "outOfScope": [
+      "Implementation"
+    ],
+    "acceptance": [
+      "audit/adr/0013-legacy-shim-policy.md exists with Status Accepted for the D10 items and a 'Pending H4' section for the sunset window (grep)",
+      "ADR 0013 states dependency range '^<major>.0.0' (grep)",
+      "ADR 0013 has a 'PACKAGE_NAME' section stating the export is @deprecated and naming its runtime value (grep -A3 PACKAGE_NAME shows '@deprecated')"
+    ],
+    "dependencies": [],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "ADR 0013"
+    ],
+    "risks": [
+      "Pinning exact forces shim republish on every Texo patch - automation in E17-02 must handle",
+      "BLOCKED on H4: Support matrix for 1.0 (Expo 57 only vs 56-57) and deprecation/sunset windows. Unblock condition: Human records support matrix in config/compatibility.json and sunset months in ADR 0011/0013."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/adr/0013-legacy-shim-policy.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H4"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-09",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Codemod engine: rewrite legacy imports to a configurable target specifier",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Consumers need an automated way to move from the legacy specifier to Texo; hand edits across apps are error-prone.",
+    "value": "Reduces migration cost and agent tokens; engine is name-agnostic so it ships before naming.",
+    "scope": [
+      "tools/codemod/ using the TypeScript API (already a devDependency): rewrite import/export/require/dynamic import/jest.mock specifiers, preserve type-only imports, handle subpaths 1:1",
+      "Mapping read from tools/codemod/mapping.json (placeholder target)",
+      "Fixture tests (before/after) with dry-run and --write",
+      "Zero runtime deps beyond typescript"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Fixture suite of >= 12 cases passes (named, namespace, default-less, type-only, require, dynamic import, jest.mock, re-export, comments preserved)",
+      "Running the codemod twice on tools/codemod fixtures: the second run reports 0 files changed and git diff is empty afterwards (test)",
+      "Does not touch unrelated '@personal-library/other' specifiers"
+    ],
+    "dependencies": [],
+    "validation": [
+      "node --test tools/codemod/**/*.test.mjs"
+    ],
+    "evidence": [
+      "fixture results"
+    ],
+    "risks": [
+      "Quote/format preservation - use text edits not reprint"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tools/codemod/**"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-03",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Build generated shim package (re-export only), parametrized by identity config",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "migration-prep",
+      "single-codebase",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No mechanism exists to publish the legacy name as a thin wrapper; hand-written copy would create two codebases.",
+    "value": "Proves the shim approach now using a placeholder target, with zero rename.",
+    "scope": [
+      "scripts/build-shim.mjs generates dist-shim/ (gitignored): package.json (name=legacy, version, dependencies:{<target>: ^<major>.0.0} (caret, D10)), index.js 'export * from <target>', index.d.ts same, and one file per subpath from config/exports.json",
+      "Target/legacy names read from config/package-identity.json; for the preparatory run use a local tarball of the current package aliased as target (npm alias 'npm:' or file: dependency)",
+      "README.md for shim generated from template stating deprecation",
+      "No postinstall scripts, no code beyond export statements (script asserts via parse)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/build-shim.mjs --target-tarball <tgz> produces dist-shim with package.json exports mirroring config/exports.json",
+      "Generated JS contains only export-from statements (checked by script)",
+      "npm pack --dry-run in dist-shim lists <= 2*N+3 files and no src",
+      "Running scripts/build-shim.mjs twice yields identical sha256 for every file under dist-shim/ (test)",
+      "Generated dist-shim/package.json depends on the target with range ^<major>.0.0 (test; D10)",
+      "npm pack --dry-run in dist-shim lists no skills/, ai/ or llms*.txt; only ./meta is re-exported (R2 gap: shim coverage of AI files)"
+    ],
+    "dependencies": [
+      "E14-01",
+      "E14-07"
+    ],
+    "validation": [
+      "node scripts/build-shim.mjs --check",
+      "npm pack --dry-run --prefix dist-shim"
+    ],
+    "evidence": [
+      "generated tree listing"
+    ],
+    "risks": [
+      "export * does not re-export default or CJS interop - Texo has no default exports, assert it"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/build-shim.mjs",
+      "scripts/lib/shim-template.mjs",
+      ".gitignore"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-11",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Evaluate 'texo migrate' CLI subcommand vs standalone codemod",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "spike",
+      "cli",
+      "e13-link",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "E13 plans a Texo CLI; unclear whether migration belongs there (discoverable, versioned with Texo) or standalone (usable before installing Texo).",
+    "value": "Avoids building two migration tools.",
+    "scope": [
+      "Compare: standalone npx package, 'texo migrate' subcommand, bin shipped in the shim, bin in Texo",
+      "Criteria: bootstrap problem (needs Texo installed), versioning, offline, agent usability, size of Texo install",
+      "Recommend one and define command surface (migrate imports, --check, --dry-run, config migration)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Document with comparison table and single recommendation",
+      "Command surface (flags, exit codes, JSON output) specified",
+      "Coordination note with E13 owner referenced"
+    ],
+    "dependencies": [
+      "E15-09"
+    ],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "audit/texo-v1/spikes/E15-texo-migrate-eval.md"
+    ],
+    "risks": [
+      "Bin inside shim conflicts with 'no code in shim' rule - evaluate"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/spikes/E15-texo-migrate-eval.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-12",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Draft migration guide to Texo with placeholder tokens",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "docs",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "docs/migration.md only covers stability labels; no guide moves a consumer from the legacy package to Texo.",
+    "value": "Guide is reviewed early and finalized by replacing tokens at cutover.",
+    "scope": [
+      "Create docs/migration-to-texo.md with tokens <TEXO_PACKAGE> <LEGACY_PACKAGE>",
+      "Sections: why, 3-step path (install shim as-is -> run codemod -> remove shim), subpath table, FAQ (peer deps, duplicate React, Metro cache clear, rollback), timeline from ADR 0013",
+      "Add token check script scripts/check-doc-tokens.mjs failing release when tokens remain"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Guide has all sections above",
+      "scripts/check-doc-tokens.mjs lists remaining tokens and exits 1 when any exist (used as release gate at cutover)",
+      "scripts/check-doc-tokens.mjs extracts every tsx block of docs/migration-to-texo.md, substitutes placeholders with @personal-library/react-native-components and tsc --noEmit on the fixture exits 0"
+    ],
+    "dependencies": [
+      "E15-09"
+    ],
+    "validation": [
+      "node scripts/check-doc-tokens.mjs"
+    ],
+    "evidence": [
+      "guide + script output"
+    ],
+    "risks": [
+      "Placeholders leaking into published docs - gate exists"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "docs/migration-to-texo.md",
+      "scripts/check-doc-tokens.mjs"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-15",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Runbook: shim publish and npm deprecate sequence",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "runbook",
+      "release",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Order of publishing/deprecating two packages is easy to get wrong (deprecating before the shim exists breaks installers).",
+    "value": "Single reviewed procedure with rollback.",
+    "scope": [
+      "Document sequence: 1 publish Texo rc (tag rc) 2 publish shim rc depending on exact Texo rc 3 shim-mode consumer regression 4 promote Texo to latest 5 publish shim 1.0.0 latest 6 npm deprecate '<pkg>@<1.0.0' with message pointing at migration guide 7 announce 8 after sunset deprecate shim latest",
+      "Exact npm commands incl. npm dist-tag add, npm deprecate, 2FA/OIDC notes",
+      "Rollback: dist-tag revert, never unpublish, deprecate message reset",
+      "Verification commands per step (npm view)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Runbook contains each step with command, expected output, owner",
+      "Rollback section covers every step",
+      "Rehearsed in Verdaccio via E17-12 (link)"
+    ],
+    "dependencies": [
+      "E15-02"
+    ],
+    "validation": [
+      "inspection"
+    ],
+    "evidence": [
+      "audit/texo-v1/runbooks/E15-cutover-and-deprecation.md"
+    ],
+    "risks": [
+      "Placeholders for names until E15-01"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/runbooks/E15-cutover-and-deprecation.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 1,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-07",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Compat test suite: run component and theme tests through the shim",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "compat-suite",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Existing tests import from src; nothing exercises rendered components via the legacy specifier.",
+    "value": "Behavioral proof that shim consumers get identical rendering.",
+    "scope": [
+      "tests/compat/ re-runs a curated subset (component-smoke, theme-overrides, accessibility core) with a loader aliasing the legacy specifier to the shim over the built target",
+      "Loader tests/compat-loader.mjs mapping specifiers",
+      "Runs as separate npm script invoked in CI by E17-05 (script name documented, package.json edit deferred to E17-01)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node test command in README of tests/compat passes",
+      "Same tests also pass with alias pointing straight to target (control)",
+      "Failing intentionally (remove an export) fails the suite"
+    ],
+    "dependencies": [
+      "E15-03"
+    ],
+    "validation": [
+      "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/compat-loader.mjs --test tests/compat/*.test.tsx"
+    ],
+    "evidence": [
+      "test log"
+    ],
+    "risks": [
+      "Duplicated test code - import shared cases, do not copy"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tests/compat/**",
+      "tests/compat-loader.mjs"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-10",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Wire codemod mapping and packaging to final Texo names",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h8"
+    ],
+    "problem": "Engine needs final specifiers and a distribution channel (npx package, bin of Texo, or part of texo CLI).",
+    "value": "Ships the usable migration tool.",
+    "scope": [
+      "Fill tools/codemod/mapping.json with final names from ADR 0017",
+      "Publish as npx-able entry per E15-11 evaluation",
+      "Run against two real open-source RN apps and attach diffs"
+    ],
+    "outOfScope": [
+      "Rename in this repo"
+    ],
+    "acceptance": [
+      "npx <tool> --dry-run on sample app prints expected diff",
+      "tsc passes in sample apps after --write",
+      "Docs reference exact command"
+    ],
+    "dependencies": [
+      "E15-01",
+      "E15-09",
+      "E15-11"
+    ],
+    "validation": [
+      "run on sample apps"
+    ],
+    "evidence": [
+      "PR diffs of sample apps"
+    ],
+    "risks": [
+      "Public sample apps may not exist; use examples/ + internal apps",
+      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
+      "BLOCKED on H8: Codemod channel naming (npx <name>-codemod vs texo migrate). Unblock condition: Human picks the channel after H1."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tools/codemod/mapping.json",
+      "tools/codemod/README.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 2,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H1",
+      "H8"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-13",
+    "epic": "E15",
+    "type": "Task",
+    "title": "README: Texo introduction and legacy-package notice",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "docs",
+      "readme",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "problem": "README still presents 0.1.0-rc.2 under the legacy name; after cutover the legacy package page on npm shows this README.",
+    "value": "Consumers landing on either npm page see the correct package and migration path.",
+    "scope": [
+      "New README for Texo (install, 60-second example, status, links)",
+      "Generated shim README (via E15-03 template) with deprecation banner and migration link",
+      "Remove rc.2-specific status prose"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "README names the final package consistently (grep against identity config)",
+      "Shim README contains banner + link to migration guide",
+      "scripts/check-doc-tokens.mjs exits 0"
+    ],
+    "dependencies": [
+      "E15-01",
+      "E15-12"
+    ],
+    "validation": [
+      "node scripts/check-doc-tokens.mjs"
+    ],
+    "evidence": [
+      "rendered README"
+    ],
+    "risks": [
+      "Badge URLs depend on final repo",
+      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "README.md",
+      "scripts/lib/shim-readme.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 2,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H1"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-06",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Subpath compat suite: shim subpaths resolve under all resolvers",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "exports",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Shim must expose every subpath of Texo; a missed entry breaks deep consumer imports.",
+    "value": "Subpath parity proven in Node, TS and Metro.",
+    "scope": [
+      "Reuse scripts/subpath-resolution-smoke.mjs --package <shim> over dist-shim tarball",
+      "Assert shim exports keys set equals target exports keys set",
+      "Assert legacy-only subpaths (if human adds './legacy') are listed in config"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Matrix 100% pass for shim",
+      "Exports key set equality asserted in tests/scripts/shim-subpaths.test.ts",
+      "Test fails if config/exports.json adds a subpath not generated in shim"
+    ],
+    "dependencies": [
+      "E14-10",
+      "E15-03"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "matrix output"
+    ],
+    "risks": [
+      "Metro resolution needs expo install - slow"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tests/scripts/shim-subpaths.test.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-04",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Export-parity test: shim exports equal Texo exports (values and types)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "parity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Without a gate, shim could silently miss or add exports relative to the target.",
+    "value": "Guarantees no consumer sees a missing named export after switching to the shim.",
+    "scope": [
+      "scripts/check-shim-parity.mjs: import shim and target in Node with react-native stubbed, compare Object.keys of namespace per subpath; compare exported type names via TS API",
+      "Fails on any difference both directions",
+      "Run in preparatory mode against tarball alias"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test passes for root and each subpath",
+      "Deleting one re-export in the generated shim makes the test fail (mutation check in test)",
+      "Report prints counts matching audit/api snapshot"
+    ],
+    "dependencies": [
+      "E14-11",
+      "E15-03"
+    ],
+    "validation": [
+      "node scripts/check-shim-parity.mjs",
+      "npm test"
+    ],
+    "evidence": [
+      "output + mutation proof"
+    ],
+    "risks": [
+      "Stubbing react-native may hide import-time errors - use tests/shims/react-native.tsx"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/check-shim-parity.mjs",
+      "tests/scripts/shim-export-parity.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-05",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Type-parity test: identical public types through shim",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Runtime parity does not prove type identity (props types, generics, declaration merging).",
+    "value": "Ensures TS consumers compile unchanged after swapping the import specifier.",
+    "scope": [
+      "tests/types/shim-parity.ts using Expect<Equal<>> on typeof every exported value and every Props type from shim vs target (generated list from snapshot)",
+      "tsconfig.shim-types.json with paths mapping both specifiers",
+      "Include a negative fixture that must fail to compile"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "tsc -p tsconfig.shim-types.json --noEmit passes",
+      "negative fixture fails as expected",
+      "Test list regenerates from API snapshot, no manual maintenance"
+    ],
+    "dependencies": [
+      "E12-04",
+      "E14-11",
+      "E15-03"
+    ],
+    "validation": [
+      "npx tsc -p tsconfig.shim-types.json --noEmit"
+    ],
+    "evidence": [
+      "tsc output"
+    ],
+    "risks": [
+      "Equal<> on complex generics may be flaky; fall back to assignability both ways"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "tests/types/shim-parity.ts",
+      "tsconfig.shim-types.json"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-08",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Consumer smoke in shim mode (Node/TS consumer and Expo SDK 57 consumer)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "shim",
+      "consumer-validation",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "scripts/consumer-smoke.mjs and expo-consumer-smoke.mjs validate only the current package, installing a single tarball.",
+    "value": "Real-app regression: legacy import specifier works end to end through the shim and Texo tarballs.",
+    "scope": [
+      "Add --via-shim flag: pack target tarball + shim tarball, install both, import from legacy name, run tsc, expo export web (and android bundle if available)",
+      "Read names from scripts/lib/identity.mjs instead of hardcoded constants",
+      "Assert only ONE copy of react, react-native and target in npm ls --all",
+      "Update tests/scripts/*-smoke-script.test.tsx",
+      "Mixed-imports fixture: ThemeProvider imported from the Texo name and Button from the legacy name (R1 M4)"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm run consumer:smoke -- --via-shim exits 0",
+      "npm run consumer:expo -- --via-shim exits 0 on Expo 57.0.21 / RN 0.86.3 / React 19.2.3",
+      "npm ls shows single resolved target version",
+      "npm run consumer:smoke without --via-shim exits 0 and the default-mode cases in tests/scripts/consumer-smoke-script.test.tsx pass unchanged",
+      "Mixed-imports test: Button imported via the legacy name renders with the theme of a ThemeProvider imported via the Texo name, and npm ls shows one target copy",
+      "A __DEV__ warning is emitted when a second context instance registers (test)"
+    ],
+    "dependencies": [
+      "E12-08",
+      "E12-11",
+      "E14-07",
+      "E14-12",
+      "E15-03"
+    ],
+    "validation": [
+      "npm run consumer:smoke -- --via-shim",
+      "npm run consumer:expo -- --via-shim",
+      "npm test"
+    ],
+    "evidence": [
+      "logs, npm ls output"
+    ],
+    "risks": [
+      "Shared owner with E12 consumer epic - coordinate"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "scripts/consumer-smoke.mjs",
+      "scripts/expo-consumer-smoke.mjs",
+      "tests/scripts/consumer-smoke-script.test.tsx",
+      "tests/scripts/expo-consumer-smoke-script.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-14",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Cutover: apply final identity to package.json, scripts, repo URLs and docs",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "cutover",
+      "semver-sensitive",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h6"
+    ],
+    "problem": "Hardcoded names remain after E14-07/E15-08 (package.json name/repository, release-guard, src/index.ts PACKAGE_NAME, mkdocs, docs).",
+    "value": "The actual rename done mechanically from config, in one reviewable PR.",
+    "scope": [
+      "Set identity config target=final, legacy=old name, shim.enabled=true",
+      "Update package.json name, repository, homepage; src/index.ts PACKAGE_NAME per ADR 0013",
+      "Update docs imports via codemod run on docs/ and examples/",
+      "Run full release:check + consumer smokes incl. --via-shim"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "grep -R '@personal-library/react-native-components' outside audit/, shim templates and migration docs returns 0",
+      "npm run release:check green",
+      "npm run consumer:expo -- --via-shim green"
+    ],
+    "dependencies": [
+      "E1-37",
+      "E2-20",
+      "E3-15",
+      "E10-14",
+      "E11-07",
+      "E11-16",
+      "E13-19",
+      "E14-02",
+      "E14-14",
+      "E14-15",
+      "E14-18",
+      "E15-01",
+      "E15-02",
+      "E15-04",
+      "E15-05",
+      "E15-06",
+      "E15-08",
+      "E15-10",
+      "E17-01",
+      "E17-05"
+    ],
+    "validation": [
+      "npm run release:check"
+    ],
+    "evidence": [
+      "PR + grep output"
+    ],
+    "risks": [
+      "Shared files with many tickets: land last, rebase others first",
+      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
+      "BLOCKED on H6: Version line: Texo starts at 1.0.0-rc.0; legacy name jumps to shim 1.0.0. Unblock condition: Human confirms version line in E17-08 release train plan."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "package.json",
+      "src/index.ts",
+      "examples/**"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 15,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H1",
+      "H6"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E15-16",
+    "epic": "E15",
+    "type": "Task",
+    "title": "Execute cutover publish: shim release and npm deprecate of legacy versions",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "release",
+      "human-only",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h6"
+    ],
+    "problem": "Final publication and deprecation are irreversible-ish public actions requiring human authorization.",
+    "value": "Completes the migration for consumers.",
+    "scope": [
+      "Follow E15-15 runbook with human operator",
+      "Publish shim, verify npm view, deprecate legacy <1.0.0",
+      "Post-publish smoke from clean machine"
+    ],
+    "outOfScope": [
+      "Renaming the package, repo or imports",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm view <legacy> dist-tags shows latest=shim 1.x",
+      "npm view <legacy>@0.1.0-rc.2 deprecated shows migration message",
+      "In an empty directory, npm install <legacy-name>@<version> then node -e \"import('<legacy-name>')\" exits 0 and npm ls shows exactly one Texo copy (log attached)"
+    ],
+    "dependencies": [
+      "E15-14",
+      "E15-15",
+      "E17-02",
+      "E17-04"
+    ],
+    "validation": [
+      "npm view commands in runbook"
+    ],
+    "evidence": [
+      "terminal transcript"
+    ],
+    "risks": [
+      "Wrong dist-tag impacts all current users",
+      "BLOCKED on H1: Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles. Unblock condition: Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json.",
+      "BLOCKED on H6: Version line: Texo starts at 1.0.0-rc.0; legacy name jumps to shim 1.0.0. Unblock condition: Human confirms version line in E17-08 release train plan."
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run release:check green (or the script's own check where no source changes)",
+      "Evidence attached to the Jira issue",
+      "No package/import rename performed"
+    ],
+    "filesTouched": [
+      "audit/texo-v1/runbooks/E15-execution-log.md"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 16,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H1",
+      "H6"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

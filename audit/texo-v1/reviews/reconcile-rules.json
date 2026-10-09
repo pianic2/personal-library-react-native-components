@@ -1,0 +1,4740 @@
+{
+  "meta": {
+    "title": "Texo V1 backlog reconciliation rules",
+    "author": "backlog reconciler",
+    "date": "2026-10-09",
+    "precedence": "DECISIONS.md > R1 architectural ownership (ADR-R4) > R2 mechanics",
+    "inputs": [
+      "tickets/*.json",
+      "DECISIONS.md",
+      "reviews/R1-architecture-review.md",
+      "reviews/R2-backlog-review.md",
+      "reviews/R2-dedup-map.json"
+    ],
+    "note": "Consumed by audit/texo-v1/scripts/reconcile.py. Every list here is applied deterministically in file order."
+  },
+  "expectedInputCount": 363,
+  "existingComponents": [
+    "Alert",
+    "B",
+    "Badge",
+    "BottomBar",
+    "BottomSheet",
+    "Box",
+    "Button",
+    "Card",
+    "Checkbox",
+    "CodeInline",
+    "Column",
+    "Divider",
+    "FormField",
+    "Heading",
+    "Input",
+    "Link",
+    "Modal",
+    "NavBar",
+    "NavContext",
+    "P",
+    "PasswordInput",
+    "Popover",
+    "ProgressBar",
+    "Quote",
+    "RadioGroup",
+    "Row",
+    "Select",
+    "SideBar",
+    "Small",
+    "Spinner",
+    "Switch",
+    "Text",
+    "TextGroup",
+    "Textarea",
+    "Tooltip",
+    "TopBar"
+  ],
+  "acRewrites": {
+    "E1-05": {
+      "CI workflow step runs maturity:check (actionlint-clean)": "actionlint .github/workflows/ci.yml exits 0 and the workflow contains a step running `npm run maturity:check` (grep)"
+    },
+    "E1-06": {
+      "B, P, Small, Quote, TextGroup, FormField are covered": "tests/components/render-matrix.test.tsx contains a render case for each of B, P, Small, Quote, TextGroup and FormField (grep -c per name >= 1) and npm test passes"
+    },
+    "E1-15": {
+      "Types declared once": "grep -rcE '(interface|type) SideBarItem\\b' src/components/SideBar sums to exactly 1"
+    },
+    "E2-02": {
+      "themeTokens.ts compiles and createThemeTokens output keys unchanged": "npm run typecheck exits 0 and tests/theme/semantic-colors.test.tsx asserts Object.keys(createThemeTokens()) deep-equals the pre-change key-list snapshot"
+    },
+    "E2-06": {
+      "Override via theme.recipes changes output and is typed": "tests/theme/variants.test.tsx: a theme.variants.button override changes the computed slot style; tests/types/variants.types.ts: an override naming an unknown slot fails via @ts-expect-error"
+    },
+    "E2-08": {
+      "Legacy stored value 'dark' restores correctly (test)": "tests/theme/theme-storage-adapter.test.tsx: storage holding legacy value 'dark' yields ThemePreference 'dark' and resolved ThemeMode 'dark' after mount"
+    },
+    "E2-09": {
+      "Works without DensityProvider (falls back to theme)": "tests/theme/density.test.tsx: useDensity() rendered without DensityProvider returns theme.density's default value (equality assertion)"
+    },
+    "E3-05": {
+      "Works without MotionProvider using defaults": "tests/motion/presence.test.tsx: Presence rendered without MotionProvider uses default motion tokens and renders its children without throwing"
+    },
+    "E3-14": {
+      "Recommendation: go/no-go with conditions": "audit/dependencies/reanimated-adapter-spike.md contains a 'Recommendation' heading with exactly one of GO / NO-GO and a bulleted 'Conditions' list (grep)"
+    },
+    "E6-01": {
+      "Portal renders children at OverlayHost, unmounts cleanly on host unmount": "tests/components/Portal.test.tsx: Portal children render under the OverlayHost node; unmounting the host removes them with console.error called 0 times (spy)"
+    },
+    "E6-05": {
+      "Respects reduce-motion": "With useReducedMotion mocked true, toast enter/exit calls Animated.timing/Animated.spring 0 times (spy) in tests/components/Toast.test.tsx"
+    },
+    "E6-07": {
+      "Closes via back/Escape/backdrop/drag": "Each dismissal path (Android hardwareBackPress via BackHandler mock, Escape keydown on web, backdrop press, drag past threshold) calls onOpenChange(false) exactly once (4 cases in tests/components/bottom-sheet.test.tsx)",
+      "Reduce-motion disables spring animation": "With useReducedMotion mocked true, snapping calls Animated.spring 0 times (spy) and sets the target height immediately (test)"
+    },
+    "E6-12": {
+      "Disabled items skipped": "Arrow-key navigation over items [a, b(disabled), c] moves focus a -> c (tests/components/Menu.test.tsx)"
+    },
+    "E6-13": {
+      "Positions clamp within window": "A menu opened at (windowWidth-10, windowHeight-10) renders with left+width <= windowWidth and top+height <= windowHeight (Dimensions mock test)"
+    },
+    "E6-19": {
+      "Disabled prev on first and next on last": "On page 1 Prev has accessibilityState.disabled=true and on the last page Next has accessibilityState.disabled=true (tests/components/Pagination.test.tsx)"
+    },
+    "E6-22": {
+      "Dismiss-on-tap-outside configurable": "Screen with dismissKeyboardOnTapOutside=true calls Keyboard.dismiss on background press and with false does not (Keyboard mock test)",
+      "Cleans up listeners on unmount": "useKeyboard removes every Keyboard listener on unmount (subscription.remove mock called once per subscription)"
+    },
+    "E6-24": {
+      "Hidden when keyboard hidden": "KeyboardToolbar renders null after a keyboardDidHide event and renders after keyboardDidShow (Keyboard mock test)"
+    },
+    "E6-31": {
+      "Theme tint colors used": "RefreshControl receives tintColor and colors[0] equal to theme.colors.primary in light and in dark (test)"
+    },
+    "E7-06": {
+      "Action buttons use existing Button": "EmptyState action renders the library Button component (test locates Button by element type)"
+    },
+    "E7-07": {
+      "Technical detail hidden by default": "ErrorState detail text is absent from the rendered tree until the 'Show details' toggle is pressed (test)"
+    },
+    "E7-10": {
+      "Card mode retains sort via a sort control and selection": "In card mode, changing the sort control reorders cards and selected row ids persist across the table/card switch (tests/components/DataTable.responsive.test.tsx)"
+    },
+    "E7-16": {
+      "Fade animation uses native driver": "Image fade-in calls Animated.timing with useNativeDriver: true (spy assertion)"
+    },
+    "E7-17": {
+      "Colors drawn from theme tokens": "grep -rEn '#[0-9a-fA-F]{3,8}|rgba?\\(' src/components/Avatar src/components/AvatarGroup returns nothing and the initials background equals a theme.colors value (test)"
+    },
+    "E7-21": {
+      "Adapters type-check against MediaEngine": "tests/types/media-engine.ts assigns each adapter to MediaEngine and npm run typecheck:contracts exits 0"
+    },
+    "E7-27": {
+      "Animation native driver": "CircularProgress indeterminate animation calls Animated.timing/Animated.loop with useNativeDriver: true (spy assertion)"
+    },
+    "E7-30": {
+      "Event rows use ListItem": "Agenda event rows render the ListItem component (test locates ListItem by element type)"
+    },
+    "E8-16": {
+      "useShare exposes pending state": "useShare().pending is true while the mocked share promise is unresolved and false after it resolves (test)"
+    },
+    "E8-18": {
+      "Works without provider using module-level fallback stack": "With no OverlayHost mounted, a handler registered via useBackHandler is called on a simulated hardwareBackPress (module-level fallback stack test)"
+    },
+    "E8-25": {
+      "Without adapter gate still works (noop splash)": "AppReadyGate without a splash adapter renders its children once ready resolves and calls no splash API (test)"
+    },
+    "E9-12": {
+      "Runs on catalog routes list generated from registry": "scripts/a11y-web.mjs builds its route list from the meta loader (scripts/lib/meta.mjs) and the run log lists one route per component with status >= demo"
+    },
+    "E10-01": {
+      "Boundary widths 479/480/767/768 resolve correctly (test)": "tests/responsive/breakpoint.test.tsx table test: 479 and 480 resolve to different breakpoint names, 767 and 768 resolve to different names, each equal to the value defined in src/tokens/breakpoints.base.ts"
+    },
+    "E10-05": {
+      "Works without provider (defaults)": "tests/responsive/provider.test.tsx: hooks rendered without ResponsiveProvider return the default thresholds from src/tokens/breakpoints.base.ts"
+    },
+    "E10-10": {
+      "Divider color from theme in light and dark": "SplitView divider backgroundColor equals theme.colors.border in light and in dark (test)"
+    },
+    "E10-12": {
+      "No new deps": "git diff --exit-code package.json passes for the dependencies and peerDependencies keys (CI check)"
+    },
+    "E11-11": {
+      "Builds on web": "node scripts/check-templates.mjs --build auth exits 0 (web export)"
+    },
+    "E12-02": {
+      "14 files exist": "ls tests/components/{layout,typography,surfaces}/*.test.tsx | wc -l prints 14",
+      "Each >=4 tests": "Each of those 14 files contains >= 4 it()/test() calls (grep -c, logged in CI)"
+    },
+    "E12-03": {
+      "Old shim path still works until migration done": "Tests still using tests/shims/react-native.tsx pass unchanged in the same npm test run and no file under tests/shims is modified (git diff --exit-code tests/shims)"
+    },
+    "E12-08": {
+      "CI runs it": "node scripts/expo-consumer-smoke.mjs --platform web exits 0 locally; the CI job requirement is recorded in the E17-05 ticket evidence"
+    },
+    "E13-02": {
+      "Output byte-identical across two runs": "Running the extractor twice on the repo yields outputs with equal sha256 hashes (tests/scripts/extract-props.test.ts)"
+    },
+    "E13-10": {
+      "Cards regenerate byte-identical": "npm run ai:build run twice, then git diff --exit-code ai/cards exits 0"
+    },
+    "E13-16": {
+      "Mood tags drawn from fixed enum": "ai/schema/presets.schema.json defines mood as an enum and every ai/manifests/presets.json entry validates against it (schema test)"
+    },
+    "E13-20": {
+      "Clean tree exits 0": "node scripts/ai/check.mjs exits 0 on a freshly regenerated tree and exits 1 after one generated file is edited (tests/scripts/ai-check.test.ts)"
+    },
+    "E13-30": {
+      "Grader unit tests pass on golden good/bad outputs": "tests/scripts/eval-graders.test.ts: every grader scores fixtures in evals/ai/golden/pass as pass and fixtures in evals/ai/golden/fail as fail"
+    },
+    "E14-09": {
+      "Policy states shim declares exactly one dependency: the target package": "ADR 0010 section 'Shim dependencies' states the shim package.json has exactly one dependency, the target package, with range ^<major>.0.0 (grep '\\^<major>' in that section)"
+    },
+    "E14-11": {
+      "Output is deterministic across two runs": "Running scripts/public-api-snapshot.mjs twice, then git diff --exit-code audit/api/snapshots exits 0"
+    },
+    "E15-02": {
+      "PACKAGE_NAME behavior stated": "ADR 0013 has a 'PACKAGE_NAME' section stating the export is @deprecated and naming its runtime value (grep -A3 PACKAGE_NAME shows '@deprecated')"
+    },
+    "E15-03": {
+      "Re-running yields byte-identical output": "Running scripts/build-shim.mjs twice yields identical sha256 for every file under dist-shim/ (test)"
+    },
+    "E15-08": {
+      "Default (non-shim) mode unchanged": "npm run consumer:smoke without --via-shim exits 0 and the default-mode cases in tests/scripts/consumer-smoke-script.test.tsx pass unchanged"
+    },
+    "E15-09": {
+      "Idempotent: second run changes nothing": "Running the codemod twice on tools/codemod fixtures: the second run reports 0 files changed and git diff is empty afterwards (test)"
+    },
+    "E15-12": {
+      "Code samples compile in a fixture with placeholders substituted by the existing name": "scripts/check-doc-tokens.mjs extracts every tsx block of docs/migration-to-texo.md, substitutes placeholders with @personal-library/react-native-components and tsc --noEmit on the fixture exits 0"
+    },
+    "E15-16": {
+      "Clean-room install of legacy name works via shim and imports resolve": "In an empty directory, npm install <legacy-name>@<version> then node -e \"import('<legacy-name>')\" exits 0 and npm ls shows exactly one Texo copy (log attached)"
+    },
+    "E16-03": {
+      "Contact address placeholder explicitly marked for human": "SECURITY.md contains the literal token 'TODO(H1): security contact' (grep) until H1 is resolved"
+    },
+    "E16-10": {
+      "secretlint (or gitleaks) run attached and clean": "npx secretlint 'audit/**/*' (or gitleaks detect --source audit) exits 0; log attached"
+    },
+    "E17-01": {
+      "npx changeset status runs clean": "npx changeset status exits 0",
+      "sync-shim-version writes the same version into shim generation input": "After node scripts/sync-shim-version.mjs, the shim generation input version equals package.json version (test compares both values)"
+    },
+    "E17-02": {
+      "Dry run in a fork/branch with --dry-run completes both packages": "A workflow run with input dry-run=true logs `npm publish --dry-run` for both packages and ends with exit 0 (run URL attached)"
+    },
+    "E17-05": {
+      "Duplicate runs eliminated on PR push": "ci.yml defines concurrency.group keyed on github.ref with cancel-in-progress: true (grep)"
+    },
+    "E17-13": {
+      "Reviewed by a maintainer (human)": "The PR adding audit/texo-v1/runbooks/E17-rollback.md carries an approving review from a CODEOWNERS maintainer (link attached)"
+    }
+  },
+  "textReplace": [
+    {
+      "all": true,
+      "find": ".catalog.ts",
+      "replace": ".meta.ts"
+    },
+    {
+      "all": true,
+      "find": "wiring is done by the E4 wiring ticket",
+      "replace": "wiring is done by the E14 wave-wiring ticket"
+    },
+    {
+      "all": true,
+      "find": "wiring is done by the E5 wiring ticket",
+      "replace": "wiring is done by the E14 wave-wiring ticket"
+    },
+    {
+      "all": true,
+      "find": "Exported from src/index.ts; no new deps in package.json",
+      "replace": "Exported from its component index.ts (root export wired by the E14 wave-wiring ticket); git diff package.json shows no dependency change"
+    },
+    {
+      "all": true,
+      "find": "its /native/* subpath",
+      "replace": "the ./native subpath (Expo factories via ./native/expo; D7)"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "defineRecipe",
+      "replace": "defineVariants"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "useRecipe",
+      "replace": "useVariants"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "RecipeProps",
+      "replace": "VariantProps"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "buttonRecipe",
+      "replace": "buttonVariants"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "src/theme/recipes/button.recipe.ts",
+      "replace": "src/theme/variants/button.variants.ts"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "src/theme/recipe.ts",
+      "replace": "src/theme/variants.ts"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "tests/theme/recipe.test.tsx",
+      "replace": "tests/theme/variants.test.tsx"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "tests/types/recipe.types.ts",
+      "replace": "tests/types/variants.types.ts"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "theme.recipes",
+      "replace": "theme.variants"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "recipe/variant API",
+      "replace": "variant API (defineVariants/useVariants)"
+    },
+    {
+      "ids": [
+        "E2-06",
+        "E2-20"
+      ],
+      "find": "\\b[Rr]ecipes?\\b",
+      "replace": "variants",
+      "regex": true
+    },
+    {
+      "epics": [
+        "E3"
+      ],
+      "find": "ADR 0009",
+      "replace": "ADR 0012"
+    },
+    {
+      "epics": [
+        "E3"
+      ],
+      "find": "0009-motion-engine",
+      "replace": "0012-motion-engine"
+    },
+    {
+      "ids": [
+        "E15-01",
+        "E15-10",
+        "E15-13",
+        "E15-14"
+      ],
+      "find": "ADR 0012",
+      "replace": "ADR 0017"
+    },
+    {
+      "ids": [
+        "E15-01"
+      ],
+      "find": "0012-texo-final-identity",
+      "replace": "0017-texo-final-identity"
+    },
+    {
+      "ids": [
+        "E12-03"
+      ],
+      "find": "docs/adr/testing-renderer.md",
+      "replace": "audit/adr/0018-testing-renderer.md"
+    },
+    {
+      "ids": [
+        "E12-07"
+      ],
+      "find": "docs/adr/native-visual-testing.md",
+      "replace": "audit/adr/0019-native-visual-testing.md"
+    },
+    {
+      "ids": [
+        "E12-07"
+      ],
+      "find": "tests/native/**",
+      "replace": "tests/native-visual/**"
+    },
+    {
+      "ids": [
+        "E16-10"
+      ],
+      "find": "under docs/adr",
+      "replace": "under audit/adr (D1)"
+    },
+    {
+      "ids": [
+        "E15-03"
+      ],
+      "find": "dependencies:{<target>: exact}",
+      "replace": "dependencies:{<target>: ^<major>.0.0} (caret, D10)"
+    },
+    {
+      "ids": [
+        "E7-21"
+      ],
+      "find": "expo-av",
+      "replace": "expo-audio"
+    },
+    {
+      "ids": [
+        "E1-02",
+        "E1-05",
+        "E1-06",
+        "E1-07",
+        "E1-08"
+      ],
+      "find": "src/meta/components.manifest.ts",
+      "replace": "src/components/<Name>/<Name>.meta.ts files (scripts/lib/meta.mjs)"
+    },
+    {
+      "ids": [
+        "E1-02",
+        "E1-05",
+        "E1-06",
+        "E1-07",
+        "E1-08"
+      ],
+      "find": "\\bmaturity manifest\\b",
+      "replace": "component meta",
+      "regex": true
+    },
+    {
+      "ids": [
+        "E1-02",
+        "E1-05",
+        "E1-06",
+        "E1-07",
+        "E1-08"
+      ],
+      "find": "\\bmanifest\\b",
+      "replace": "component meta",
+      "regex": true
+    },
+    {
+      "epics": [
+        "E9",
+        "E11",
+        "E12"
+      ],
+      "find": "catalog/registry.ts",
+      "replace": "scripts/lib/meta.mjs (meta loader)"
+    },
+    {
+      "epics": [
+        "E13"
+      ],
+      "find": "lint-meta --strict",
+      "replace": "node scripts/lib/meta.mjs --lint --strict"
+    },
+    {
+      "epics": [
+        "E13"
+      ],
+      "find": "lint-meta",
+      "replace": "node scripts/lib/meta.mjs --lint"
+    },
+    {
+      "ids": [
+        "E13-05"
+      ],
+      "find": "ai/schema/meta.schema.json",
+      "replace": "src/meta/types.ts (ComponentMeta)"
+    },
+    {
+      "ids": [
+        "E13-05"
+      ],
+      "find": "ai/meta/Button.meta.json",
+      "replace": "src/components/Button/Button.meta.ts"
+    },
+    {
+      "ids": [
+        "E13-05"
+      ],
+      "find": "Button.meta.json",
+      "replace": "Button.meta.ts"
+    },
+    {
+      "ids": [
+        "E4-07"
+      ],
+      "find": "safe-area source via adapter: uses react-native-safe-area-context if resolvable else RN SafeAreaView / zeros.",
+      "replace": "safe-area source: useInsets() from the E8-11 capability (injected adapter; zero-inset fallback)."
+    },
+    {
+      "ids": [
+        "E4-07"
+      ],
+      "find": "falls back without safe-area-context",
+      "replace": "falls back to zero insets without a safe-area adapter"
+    },
+    {
+      "ids": [
+        "E4-07"
+      ],
+      "find": "Optional peer resolution under Metro; use guarded require and test both branches",
+      "replace": "Adapter-absent and adapter-present branches both tested via a mock capability"
+    },
+    {
+      "ids": [
+        "E4-04"
+      ],
+      "find": "createSvgIconSet(paths: Record<string,string>) (lazy-requires react-native-svg, optional peer)",
+      "replace": "createSvgIconSet(Svg, paths: Record<string,string>) taking the injected react-native-svg module (no import or require in src; static-import convenience adapter is E4-24, blocked on H2)"
+    },
+    {
+      "ids": [
+        "E4-04"
+      ],
+      "find": "createSvgIconSet throws helpful error without react-native-svg",
+      "replace": "createSvgIconSet throws a descriptive error when called without the Svg module"
+    },
+    {
+      "ids": [
+        "E4-04"
+      ],
+      "find": "react-native-svg must stay an optional peer; Metro resolves lazily via try/require guarded",
+      "replace": "react-native-svg is injected by the consumer (D6); no require() in src"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "src/components/List/",
+      "replace": "src/components/BulletList/"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "{List.tsx,index.ts,List.meta.ts}",
+      "replace": "{BulletList.tsx,index.ts,BulletList.meta.ts}"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "List.meta.ts",
+      "replace": "BulletList.meta.ts"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "<List.Item>text</List.Item></List>",
+      "replace": "<BulletList.Item>text</BulletList.Item></BulletList>"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "<List type=",
+      "replace": "<BulletList type="
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "tests/components/List.test.tsx",
+      "replace": "tests/components/BulletList.test.tsx"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "docs/components/typography/List.md",
+      "replace": "docs/components/typography/BulletList.md"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "exports List and ListProps",
+      "replace": "exports BulletList and BulletListProps"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "List renders under",
+      "replace": "BulletList renders under"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "src/components/List returns",
+      "replace": "src/components/BulletList returns"
+    },
+    {
+      "ids": [
+        "E4-16"
+      ],
+      "find": "{name, category:'typography'",
+      "replace": "{name:'BulletList', category:'typography'"
+    },
+    {
+      "all": true,
+      "regex": true,
+      "find": "^No (new |runtime )?dependenc(y|ies) added$",
+      "replace": "git diff package.json shows no change to dependencies or peerDependencies"
+    },
+    {
+      "all": true,
+      "regex": true,
+      "find": "^No (new )?dependency; imports only react-native$",
+      "replace": "git diff package.json shows no dependency change and grep of the ticket's src files shows imports only from react and react-native"
+    },
+    {
+      "all": true,
+      "regex": true,
+      "find": "^docs pages (have|contain) ## Usage( tsx fences)?$",
+      "replace": "grep -l '^## Usage' succeeds for every docs page listed in filesTouched"
+    },
+    {
+      "all": true,
+      "regex": true,
+      "find": "^Both documented with ## Usage$",
+      "replace": "grep -l '^## Usage' succeeds for every docs page listed in filesTouched"
+    },
+    {
+      "all": true,
+      "regex": true,
+      "find": "^(\\w+)Props exported$",
+      "replace": "\\1Props is exported from the component index.ts (type import compiles under npm run typecheck:contracts)"
+    }
+  ],
+  "rescope": {
+    "E1-01": {
+      "title": "Define ComponentMeta, colocated <Name>.meta.ts loader and ADR 0016 (single metadata source)",
+      "problem": "Five overlapping metadata registries were planned (maturity manifest, *.catalog.ts, catalog/registry.ts, ai/meta/*.json, token manifests); R1 M7 / D8 require one colocated, typed source read by the maturity gate, catalog, docs lint and AI manifests.",
+      "value": "One file per component feeds every consumer; new components carry their own metadata so the strict gate, catalog and AI cards never drift.",
+      "scope": [
+        "Add ComponentMeta type in src/meta/types.ts (JSON-serialisable: name, category, status on the maturity ladder incl. deprecated, summary <=140ch, whenToUse[], whenNotToUse[{reason,instead}], composition{parents,children,pairsWith}, a11y[], variants, states, platformNotes, examples)",
+        "Loader + lint in scripts/lib/meta.mjs (modes --lint, --strict, --json) used by E1-02 maturity gate, E1-07 docs lint, E11 catalog and E13 AI manifests",
+        "Seed a minimal src/components/<Name>/<Name>.meta.ts for each of the 36 existing components with status from audit/texo-v1/audit/E1-component-maturity.md (18 demo / 18 prototype); Button gets the full reference meta",
+        "tsconfig.build.json excludes **/*.meta.ts; component code never imports meta",
+        "Write audit/adr/0016-metadata-single-source.md; ai/meta/*.json, <Name>.catalog.ts and catalog/registry.ts are not created (D8)"
+      ],
+      "acceptance": [
+        "ls src/components/*/*.meta.ts | wc -l equals ls -d src/components/*/ | wc -l (36 at merge time)",
+        "node scripts/lib/meta.mjs --lint exits 0 on the repo and exits 1 on a fixture whose whenNotToUse.instead names a non-existent component (tests/meta/meta-lint.test.ts)",
+        "After npm run build, find dist -name '*.meta.*' prints nothing",
+        "grep -rn \"\\.meta'\" src --include=*.tsx prints nothing (component code never imports meta)",
+        "audit/adr/0016-metadata-single-source.md exists with Status Accepted (grep)",
+        "src/meta is not re-exported from src/index.ts (npm run api:snapshot:check passes)"
+      ],
+      "filesTouched": [
+        "src/meta/types.ts",
+        "scripts/lib/meta.mjs",
+        "tests/meta/**",
+        "audit/adr/0016-metadata-single-source.md",
+        "tsconfig.build.json"
+      ],
+      "filesFromComponents": {
+        "names": "existing",
+        "template": "src/components/{N}/{N}.meta.ts"
+      },
+      "labelsAdd": [
+        "adr",
+        "metadata"
+      ]
+    },
+    "E1-02": {
+      "acceptanceAdd": [
+        "maturity-check exits 1 when a directory under src/components has no <Name>.meta.ts (fixture in tests/scripts/maturity-check.test.ts)",
+        "maturity-check reads component status only through scripts/lib/meta.mjs (grep shows no other meta parser in scripts/maturity-check.mjs)"
+      ]
+    },
+    "E1-15": {
+      "title": "Unify SideBar into one Platform.OS file and remove SideBar.web.tsx",
+      "problem": "SideBar is the only platform-extension file in src (src/components/SideBar/SideBar.web.tsx); explicit .js ESM specifiers (D9) defeat platform-extension resolution, so E14-03 cannot land until it is gone.",
+      "value": "Unblocks valid ESM emit (E14-03) and removes duplicated SideBar types; the demo lift itself is done by E6-30.",
+      "scope": [
+        "Merge SideBar.web.tsx into SideBar.tsx using Platform.OS branches (D9 platform-file ban)",
+        "Extract shared SideBarItem/types once",
+        "Typed fixed-positioning helper without any",
+        "Default variant, collapse-button a11y and docs are moved to E6-30 (R1 B3)"
+      ],
+      "acceptance": [
+        "test -e src/components/SideBar/SideBar.web.tsx exits 1",
+        "grep -rn 'as any' src/components/SideBar prints nothing",
+        "Web and native render paths are covered with Platform.OS mocked in tests/components/sidebar.test.tsx",
+        "grep -rcE '(interface|type) SideBarItem\\b' src/components/SideBar sums to exactly 1"
+      ],
+      "size": "S"
+    },
+    "E1-21": {
+      "title": "Typography: Heading/Quote to demo; deprecate B, P, Small, TextGroup as aliases",
+      "problem": "B, P, Small are Text presets and TextGroup duplicates Column; promoting them adds permanent semver surface (R1 M8, D14).",
+      "value": "Smaller stable surface; existing imports keep working through 1.x via @deprecated aliases.",
+      "scope": [
+        "Heading: accessibilityRole='header', children ReactNode, aria-level on web",
+        "Quote: token border width, accessibilityLabel passthrough",
+        "B, P, Small, TextGroup become @deprecated aliases: B = <Text weight='bold'>, P = <Text variant='body'>, Small = <Text variant='caption'>, TextGroup = <Column>; meta status 'deprecated'",
+        "examples/typography.tsx uses Text, Heading, Quote, CodeInline; deprecated aliases appear only in a 'Migration' section",
+        "Breaking-change register entry: aliases kept through 1.x (D3/D14)"
+      ],
+      "acceptance": [
+        "grep -l '@deprecated' src/components/B/*.tsx src/components/P/*.tsx src/components/Small/*.tsx src/components/TextGroup/*.tsx lists one file per component",
+        "tests/components/typography.test.tsx: B renders Text with fontWeight bold, P renders the body variant, Small renders the caption variant, TextGroup renders Column",
+        "tests/components/typography.test.tsx: Heading has accessibilityRole header",
+        "examples/typography.tsx typechecks (npm run typecheck exits 0)",
+        "Docs pages for B, P, Small and TextGroup contain a 'Deprecated' admonition naming the replacement (grep)"
+      ],
+      "filesAdd": [
+        "audit/migration/breaking-change-register.md"
+      ]
+    },
+    "E1-35": {
+      "acceptanceAdd": [
+        "PACKAGE_NAME export carries an @deprecated JSDoc tag (grep in its source file; R1 m10)"
+      ],
+      "scopeAdd": [
+        "Prop types of Tooltip, Popover, Select, Modal and BottomSheet are exported by their E6 upgrades and wired by E14-16 (deps removed to keep E1-35 early in the barrel chain)"
+      ]
+    },
+    "E1-37": {
+      "title": "Flip existing components' meta status to demo and enable the strict gate",
+      "scope": [
+        "Set status 'demo' in each existing component's <Name>.meta.ts (B, P, Small, TextGroup stay 'deprecated'), run maturity:check in strict mode, set CI to fail on prototype"
+      ],
+      "acceptance": [
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "grep -l \"status: 'prototype'\" src/components/*/*.meta.ts prints nothing",
+        "npm run maturity:check regenerates docs/maturity.md with git diff --exit-code docs/maturity.md passing",
+        "npm run release:check exits 0"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": "existing",
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    "E2-01": {
+      "acceptanceAdd": [
+        "TokenPair in src/tokens/types.ts carries an @deprecated JSDoc tag (grep; R1 m4)"
+      ]
+    },
+    "E2-20": {
+      "scope": [
+        "src/theme/presets/index.ts exporting the 1.0 presets (minimal, saas, dashboard) and a `presets` map plus getPreset(id); post-1.0 presets register themselves when their tickets land",
+        "Update src/theme/index.ts and src/tokens/index.ts barrels with E2 outputs (defineVariants, defineTheme, ThemeScope, DensityProvider, contrast, elevation, presets, tokens)",
+        "Rewrite docs/theme.md; add docs/theme/presets.md with the preset table from audit/texo-v1/audit/E2-design-system.md section 4; add examples/theme-presets.tsx",
+        "Amend ADR 0004: layers, contract v2, variant API, open decisions",
+        "Deprecate TokenPair in docs"
+      ],
+      "acceptance": [
+        "tests/theme/preset-registry.test.tsx: `presets` has exactly the keys minimal, saas, dashboard plus default",
+        "A test importing the barrels runs without circular-import warnings (console.warn spy called 0 times)",
+        "examples/theme-presets.tsx passes npm run typecheck",
+        "ADR 0004 contains sections Layers, Contract v2, Variants, Decisions (grep)"
+      ]
+    },
+    "E3-02": {
+      "acceptanceAdd": [
+        "File is named audit/adr/0012-motion-engine-and-optional-peers.md (D1 numbering; ls)"
+      ]
+    },
+    "E3-03": {
+      "title": "Add MotionProvider and useMotionPreference consuming useReducedMotion",
+      "problem": "Motion needs an app-level override for reduced motion; the system preference hook itself is owned by E8-05 (ADR-R4), so E3 must not ship a second implementation.",
+      "value": "One reduced-motion source; every animation reads useMotionPreference().",
+      "scope": [
+        "MotionProvider {reduceMotion?: 'system'|'always'|'never'} and useMotionPreference(); 'system' reads useReducedMotion from E8-05 (no second implementation)",
+        "SSR/test safe defaults when no provider is mounted",
+        "tests/helpers/motion.ts mock for the accessibility capability"
+      ],
+      "acceptance": [
+        "useMotionPreference() returns true when the mocked accessibility capability reports reduce motion (tests/motion/reduced-motion.test.tsx)",
+        "'always' overrides system false; 'never' overrides system true (test)",
+        "No crash when AccessibilityInfo or matchMedia is missing (test)",
+        "grep -rn 'export function useReducedMotion' src/motion prints nothing"
+      ],
+      "filesTouched": [
+        "src/motion/MotionProvider.tsx",
+        "src/motion/useMotionPreference.ts",
+        "tests/helpers/motion.ts",
+        "tests/motion/reduced-motion.test.tsx"
+      ],
+      "depsAdd": [
+        "E8-05"
+      ]
+    },
+    "E3-06": {
+      "title": "Add usePressFeedback hook (consumed by Touchable)",
+      "scope": [
+        "usePressFeedback({scale, opacity, stateLayer}) returning animated style and press handlers",
+        "Android ripple option via android_ripple using semantic stateLayer color",
+        "Reduced motion: opacity change only",
+        "No PressableScale component: Touchable (E4-03) is the only press primitive (ADR-R4, R1 M12)"
+      ],
+      "acceptance": [
+        "Pressing in animates scale to the token value and release returns to 1 (test with injected engine)",
+        "Disabled disables feedback (test)",
+        "With reduced motion mocked, the returned style changes opacity only (test)",
+        "test -e src/motion/PressableScale.tsx exits 1"
+      ],
+      "filesTouched": [
+        "src/motion/usePressFeedback.ts",
+        "tests/motion/press-feedback.test.tsx"
+      ]
+    },
+    "E3-07": {
+      "title": "Add useShimmer animation hook for Skeleton",
+      "problem": "Skeleton has a single owner (E6-21, ADR-R4); E3 supplies only the shimmer animation.",
+      "value": "Shared, reduced-motion-aware shimmer without a second Skeleton component.",
+      "scope": [
+        "useShimmer() looping opacity/translate animation (JS-only, no expo-linear-gradient), consumed by Skeleton (E6-21)",
+        "Static value (no animation) under reduced motion"
+      ],
+      "acceptance": [
+        "useShimmer returns an Animated value looping between token bounds (tests/motion/use-shimmer.test.tsx with injected engine)",
+        "With reduced motion mocked, the engine is not invoked and a static value is returned (test)",
+        "git diff --stat for this ticket lists no path under src/components"
+      ],
+      "filesTouched": [
+        "src/motion/useShimmer.ts",
+        "tests/motion/use-shimmer.test.tsx"
+      ]
+    },
+    "E3-15": {
+      "scope": [
+        "src/motion/index.ts and src/gestures/index.ts barrels (no src/haptics: haptics is the E8-13 capability)",
+        "docs/motion.md: tokens, reduced motion, engine decision (ADR 0012), Expo Go matrix",
+        "examples/motion.tsx covering Presence, usePressFeedback via Touchable, useShimmer, useSwipe",
+        "Public-API test listing exported names"
+      ],
+      "acceptance": [
+        "tests/motion/public-api.test.tsx: barrels export every public symbol from E3 tickets",
+        "examples/motion.tsx typechecks",
+        "docs/motion.md contains sections Tokens, Reduced motion, Engine, Expo Go (grep)",
+        "npm run docs:compat:check passes"
+      ],
+      "filesRemove": [
+        "src/haptics/index.ts"
+      ]
+    },
+    "E4-03": {
+      "acceptanceAdd": [
+        "haptic prop triggers useCapability('haptics') exactly once per press on the configured phase and never when disabled or loading (test with mock haptics adapter; absorbs E8-14)",
+        "Touchable consumes usePressFeedback from src/motion (grep) and no other press component exists in src (grep -rl 'PressableScale\\|HapticPressable' src prints nothing)"
+      ],
+      "depsAdd": [
+        "E3-06",
+        "E8-13"
+      ]
+    },
+    "E4-06": {
+      "depsAdd": [
+        "E2-05"
+      ]
+    },
+    "E4-09": {
+      "depsAdd": [
+        "E10-01",
+        "E10-03"
+      ]
+    },
+    "E5-02": {
+      "acceptanceAdd": [
+        "Built-in rule messages are read from the LocaleProvider catalog via useMessages()/messages keys (grep shows no hardcoded English message strings in src/forms/validation)"
+      ],
+      "depsAdd": [
+        "E4-23"
+      ]
+    },
+    "E5-05": {
+      "depsAdd": [
+        "E1-12"
+      ]
+    },
+    "E1-23": {
+      "acceptanceAdd": [
+        "PasswordInput Show/Hide labels come from useMessages() (grep -n \"'Show'\\|'Hide'\" src/components/PasswordInput prints nothing)"
+      ],
+      "depsAdd": [
+        "E4-23"
+      ]
+    },
+    "E5-18": {
+      "scope": [
+        "API: createNativeDatePickerAdapter() / createNativeTimePickerAdapter() in ./adapters/datetimepicker with a static import of @react-native-community/datetimepicker declared in peerDependenciesMeta optional (D6; requires H2)",
+        "Android uses DateTimePickerAndroid.open, iOS inline/compact presentation; web returns null (falls back to JS)",
+        "Accessibility/platform notes: delegates to OS dialogs",
+        "Tests: adapter shape; mock native module opens and resolves a date"
+      ],
+      "acceptanceAdd": [
+        "grep -rn 'require(' src/adapters/datetimepicker prints nothing",
+        "node scripts/check-native-boundaries.mjs exits 0 (adapter not reachable from the root entry)"
+      ]
+    },
+    "E6-01": {
+      "title": "Add Portal, nested OverlayHost and overlay stack (ADR 0015)",
+      "scopeRemove": [
+        "modal=true mode may delegate to RN Modal"
+      ],
+      "scopeAdd": [
+        "Write audit/adr/0015-overlay-architecture.md (ADR-R3/D4): single owner, nearest-host Portal, native-window surfaces render their own OverlayHost, one stack owns z-order, focus return, Back/Escape and scroll lock",
+        "Portal mounts into the nearest OverlayHost via context lookup (not the root); the root host is rendered by TexoProvider inside all providers; ThemeScope is forwarded explicitly",
+        "RN Modal only for true modal surfaces needing native focus trapping",
+        "Owns the BackHandler/Escape subscription for the stack; E8-18 useBackHandler is a public hook over it"
+      ],
+      "acceptanceAdd": [
+        "Native-renderer test: a Select rendered inside a Modal renders above the Modal content (mounted in the Modal's nested host)",
+        "Native-renderer test: a toast shown while a Modal is open is visible (rendered in the nested host)",
+        "Test: a Portal inside ThemeScope receives the scoped theme",
+        "audit/adr/0015-overlay-architecture.md exists with Status Accepted (grep)"
+      ],
+      "filesAdd": [
+        "audit/adr/0015-overlay-architecture.md"
+      ]
+    },
+    "E6-14": {
+      "scopeRemove": [
+        "Optional searchable and multiple props"
+      ],
+      "scopeAdd": [
+        "Optional searchable prop (multi-select is E5-20 MultiSelect)"
+      ],
+      "acceptanceRemove": [
+        "Multiple returns array",
+        "Existing value/onChange API unchanged"
+      ],
+      "acceptanceAdd": [
+        "SelectProps has no 'multiple' prop (type test with @ts-expect-error)",
+        "value/defaultValue/onValueChange supported and onChange kept as @deprecated alias (type test; ADR 0014)"
+      ]
+    },
+    "E6-15": {
+      "title": "Add Tabs (scrollable, controlled, a11y)",
+      "scopeRemove": [
+        "Variants: underline, pill, segmented"
+      ],
+      "scopeAdd": [
+        "Variants: underline, pill (segmented look is E5-13 SegmentedControl)"
+      ],
+      "acceptanceRemove": [
+        "Segmented variant has equal width mode"
+      ],
+      "acceptanceAdd": [
+        "TabsProps variant type excludes 'segmented' (type test with @ts-expect-error)"
+      ]
+    },
+    "E6-21": {
+      "title": "Add Skeleton primitive (text/rect/circle) and SkeletonScreen/list/card presets",
+      "scopeAdd": [
+        "Skeleton is the single owner (ADR-R4); shimmer comes from useShimmer (E3-07)"
+      ],
+      "acceptanceAdd": [
+        "grep -rn 'Animated.loop' src/components/Skeleton prints nothing (animation via useShimmer)"
+      ],
+      "depsAdd": [
+        "E3-07"
+      ]
+    },
+    "E6-29": {
+      "title": "Upgrade BottomBar and NavBar: badges, More overflow, tablist a11y, adaptive layout",
+      "scopeAdd": [
+        "NavBar layout='auto' chooses bottom bar (compact) or rail/sidebar (medium/expanded) by useWindowSizeClass (absorbs E10-11 AdaptiveNav)"
+      ],
+      "depsAdd": [
+        "E10-02"
+      ]
+    },
+    "E6-30": {
+      "acceptanceAdd": [
+        "Collapse button has accessibilityLabel and accessibilityState.expanded (test; moved from E1-15)",
+        "Native and web paths share one default variant (test; moved from E1-15)"
+      ]
+    },
+    "E7-04": {
+      "scope": [
+        "Adapter implementing ListRenderer using @shopify/flash-list in src/adapters/flash-list",
+        "Exposed via the './adapters/*' wildcard as ./adapters/flash-list (no new subpath key; D7)",
+        "@shopify/flash-list is declared in peerDependenciesMeta optional by the E14 package.json chain once H2 is approved",
+        "Doc: install and Expo compatibility notes"
+      ],
+      "filesTouched": [
+        "src/adapters/flash-list/**",
+        "tests/adapters/flash-list.test.tsx",
+        "docs/adapters/flash-list.md"
+      ]
+    },
+    "E8-01": {
+      "scope": [
+        "CapabilityMap interface keyed by capability id, closed in 1.0 (not module-augmentable; R1 m6)",
+        "CapabilityAdapter<T> {id, status:'available'|'unavailable'|'noop', api:T}",
+        "createCapabilityRegistry(), CapabilityProvider, useCapability(id), useCapabilityStatus(id)",
+        "Resolution order: provider adapter > registry default > RN-core fallback > noop (never throws)",
+        "defineExpoAdapter helper: structural module types (no expo type imports); modules are passed in by the caller (injection, D6), no require() in src",
+        "createNoopAdapters()",
+        "Contract doc in JSDoc + src/native/core/README.md"
+      ],
+      "acceptance": [
+        "useCapability returns a noop api with status 'noop' when no provider is mounted (test)",
+        "An adapter factory called without its injected module yields status 'unavailable' and never throws (test)",
+        "Provider nesting: inner overrides outer per id (test)",
+        "tests/native/core/contract.types.ts asserts an unknown capability id is a type error (@ts-expect-error)",
+        "src/native/core imports only react and react-native (grep check)",
+        "grep -rnE '\\brequire\\(' src prints nothing"
+      ]
+    },
+    "E8-02": {
+      "title": "Add ./native boundary check and native build emission (no package.json edits)",
+      "scope": [
+        "tsconfig.build.json emits src/native/**",
+        "scripts/check-native-boundaries.mjs: fails if the src/index.ts transitive graph reaches src/native/**/expo*, src/adapters/** or imports expo-*, react-native-safe-area-context, async-storage, netinfo, react-native-svg or @shopify/flash-list",
+        "./native and ./native/expo come from config/exports.json (E14-01) via E14-02; this ticket edits neither package.json nor config/exports.json",
+        "ADR content moved to audit/adr/0010-peer-dependency-policy.md (E14-09); docs/adr is not used (D1)",
+        "Update audit/migration/breaking-change-register.md entry as 'additive, no break'"
+      ],
+      "acceptance": [
+        "npm pack --dry-run lists dist/native/** files",
+        "Node resolution test: import('@personal-library/react-native-components/native') resolves types and js from the packed tarball",
+        "Boundary script exits 1 on a fixture importing expo-haptics from src/index.ts and exits 0 on the repo (tests/scripts/check-native-boundaries.test.ts)",
+        "node -e check: package.json peerDependencies keys are exactly react and react-native"
+      ],
+      "filesTouched": [
+        "tsconfig.build.json",
+        "scripts/check-native-boundaries.mjs",
+        "tests/scripts/check-native-boundaries.test.ts",
+        "audit/migration/breaking-change-register.md"
+      ],
+      "depsAdd": [
+        "E14-09",
+        "E14-02"
+      ]
+    },
+    "E8-05": {
+      "scopeAdd": [
+        "useReducedMotion here is the single implementation (ADR-R4); E3-03 MotionProvider consumes it; absorbs E9-09 hook",
+        "useFontScale here is the single implementation; E10-12 consumes it"
+      ],
+      "acceptanceAdd": [
+        "grep -rn 'export function useReducedMotion' src prints exactly one match, under src/native/accessibility"
+      ]
+    },
+    "E8-11": {
+      "scope": [
+        "SafeAreaAdapter {useInsets(), Provider?, Consumer view}; the ./native/expo factory accepts the injected react-native-safe-area-context module (no import, no require in src); the static-import convenience adapter is E8-31 (./adapters/safe-area-context, blocked on H2)",
+        "Fallback: insets from StatusBar.currentHeight (Android) + iOS conservative zero, status 'noop'; web uses env(safe-area-inset-*) via style helper",
+        "SafeAreaView-like primitive SafeAreaBox applying edges prop with adapter insets",
+        "Explicit statement of non-goal: no change to ThemeProvider (PLRNUI-28 contract)"
+      ],
+      "acceptanceRemove": [
+        "grep shows no import of react-native-safe-area-context outside"
+      ],
+      "acceptanceAdd": [
+        "grep -rnE \"(from|require\\().*react-native-safe-area-context\" src prints nothing"
+      ]
+    },
+    "E8-18": {
+      "title": "Add useBackHandler public hook over the overlay back stack",
+      "scope": [
+        "useBackHandler(handler, {enabled, priority}) registering into the E6-01 overlay/back stack (single stack, ADR 0015)",
+        "iOS/web: noop (web optional popstate off by default)",
+        "No separate BackLayerProvider: the stack lives in E6-01; module-level fallback when no host is mounted"
+      ],
+      "acceptanceAdd": [
+        "grep -rn 'BackHandler.addEventListener' src prints matches only under src/components/Portal (single stack owner E6-01)"
+      ],
+      "depsAdd": [
+        "E6-01"
+      ]
+    },
+    "E8-26": {
+      "scope": [
+        "createExpoCapabilities({haptics: Haptics, clipboard: Clipboard, ...}) builds the registry from modules passed as arguments (injection, D6); no lazyRequire or try-require",
+        "Returns {adapters, report} where report lists available/unavailable per capability",
+        "<ExpoCapabilityProvider> convenience"
+      ]
+    },
+    "E10-01": {
+      "acceptanceAdd": [
+        "audit/migration/breaking-change-register.md has a useBreakpoint native-behaviour entry (grep; D12)"
+      ],
+      "filesAdd": [
+        "audit/migration/breaking-change-register.md"
+      ]
+    },
+    "E10-02": {
+      "title": "Add useWindowSizeClass (orientation from E8-08)",
+      "scopeRemove": [
+        "useOrientation\\(\\): 'portrait'"
+      ],
+      "scopeAdd": [
+        "Re-export useOrientation from E8-08 (no second implementation)"
+      ],
+      "filesRemove": [
+        "src/responsive/useOrientation.ts"
+      ]
+    },
+    "E10-06": {
+      "title": "Add Container: max-width centered layout, responsive gutters and container-size context",
+      "problem": "Three container components were planned (E4-10 Container, E10-13 PageContainer, E10-06 measured Container); ADR-R4 assigns one owner.",
+      "value": "One Container covering max-width centring, breakpoint gutters and container-size queries.",
+      "scopeAdd": [
+        "Single Container owner (ADR-R4): centred max-width + breakpoint gutters (from E4-10/E10-13) + onLayout container-size context in src/components/Container"
+      ],
+      "filesTouched": [
+        "src/components/Container/**",
+        "src/responsive/useContainerSize.ts",
+        "tests/responsive/container.test.tsx"
+      ]
+    },
+    "E10-12": {
+      "title": "Add large-text layout switching (useIsLargeText, StackOnLargeText)",
+      "scopeRemove": [
+        "useFontScale\\(\\) from PixelRatio"
+      ],
+      "scopeAdd": [
+        "useIsLargeText is built on useFontScale from E8-05 (no second implementation)"
+      ],
+      "filesRemove": [
+        "src/responsive/useFontScale.ts"
+      ],
+      "filesAdd": [
+        "src/responsive/useIsLargeText.ts"
+      ]
+    },
+    "E10-14": {
+      "depsRemove": [
+        "E10-07",
+        "E10-09",
+        "E10-13",
+        "E10-11"
+      ]
+    },
+    "E12-04": {
+      "filesTouched": [
+        "tests/types/props-contracts.ts",
+        "tests/types/polymorphism.ts",
+        "tests/types/negative-cases.ts",
+        "tsconfig.type-tests.json"
+      ]
+    },
+    "E12-06": {
+      "acceptanceAdd": [
+        "playwright.visual.config.ts defines projects for preset in {minimal, saas, dashboard} x mode in {light, dark} (grep)"
+      ]
+    },
+    "E13-01": {
+      "scope": [
+        "Write ai/README.md: layout (src/components/<Name>/<Name>.meta.ts as metadata source per D8, ai/manifests, ai/cards, skills/, scripts/ai), generated vs hand-written rules, token budget tiers",
+        "package.json files[] adds only dist/meta (./meta JSON manifests); skills/, AGENTS.md and llms*.txt stay in the repo and docs site and are NOT in files (D13)",
+        "Add npm script stubs ai:build, ai:check"
+      ],
+      "acceptance": [
+        "npm pack --dry-run lists dist/meta/*.json and lists no skills/, AGENTS.md or llms*.txt entries",
+        "ai/README.md labels each file class GENERATED or HAND-WRITTEN (grep)",
+        "package.json has scripts ai:build and ai:check (node -e check)"
+      ],
+      "filesTouched": [
+        "ai/README.md",
+        "package.json"
+      ]
+    },
+    "E13-04": {
+      "scope": [
+        "Consume the DTCG token manifest emitted by E2-10 (scripts/export-tokens.mjs / src/tokens/manifest.ts) and project it into ai/manifests/tokens.json; no second token walker (R1 §3)",
+        "Category index with counts",
+        "Include semantic color roles (primary, textPrimary, textInverted, error, surface ...)"
+      ],
+      "acceptanceAdd": [
+        "scripts/ai/build-tokens.mjs reads the E2-10 output (grep shows import of src/tokens/manifest or the exported JSON) and contains no traversal of defaultThemeTokens"
+      ],
+      "depsAdd": [
+        "E2-10"
+      ]
+    },
+    "E13-05": {
+      "note": "absorbed into E1-01"
+    },
+    "E13-06": {
+      "title": "Backfill <Name>.meta.ts AI fields: typography and layout primitives",
+      "scope": [
+        "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Box, Column, Row, Divider, Text, Heading, P, B, Small, Quote, CodeInline, TextGroup, grounded in source and docs/components/*.md",
+        "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Box",
+          "Column",
+          "Row",
+          "Divider",
+          "Text",
+          "Heading",
+          "P",
+          "B",
+          "Small",
+          "Quote",
+          "CodeInline",
+          "TextGroup"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    "E13-07": {
+      "title": "Backfill <Name>.meta.ts AI fields: form and input components",
+      "scope": [
+        "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Input, PasswordInput, Textarea, Checkbox, RadioGroup, Switch, Select, FormField",
+        "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Input",
+          "PasswordInput",
+          "Textarea",
+          "Checkbox",
+          "RadioGroup",
+          "Switch",
+          "Select",
+          "FormField"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    "E13-08": {
+      "title": "Backfill <Name>.meta.ts AI fields: navigation and shell components",
+      "scope": [
+        "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for NavBar, TopBar, BottomBar, SideBar, NavContext, Link",
+        "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "NavBar",
+          "TopBar",
+          "BottomBar",
+          "SideBar",
+          "NavContext",
+          "Link"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    "E13-09": {
+      "title": "Backfill <Name>.meta.ts AI fields: feedback, overlay and surface components",
+      "scope": [
+        "Fill whenToUse/whenNotToUse/composition/a11y fields in colocated src/components/<Name>/<Name>.meta.ts (D8) for Alert, Badge, Card, Spinner, ProgressBar, Modal, BottomSheet, Popover, Tooltip",
+        "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Alert",
+          "Badge",
+          "Card",
+          "Spinner",
+          "ProgressBar",
+          "Modal",
+          "BottomSheet",
+          "Popover",
+          "Tooltip"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    "E13-10": {
+      "acceptanceAdd": [
+        "Cards are generated from src/components/*/*.meta.ts via scripts/lib/meta.mjs for every component with status >= demo, including components added after 1.0 planning (test counts cards == meta files with status >= demo)"
+      ]
+    },
+    "E13-11": {
+      "title": "Generate per-category tier-0 component index (ai/manifests/index)",
+      "scope": [
+        "ai/manifests/index.json [{name,category,summary,status,card}] sorted",
+        "ai/manifests/index/<category>.txt (one line per component: name - summary [status]) and ai/manifests/index/categories.txt top-level list (R1 M10)",
+        "Hard gates: each category file <= 1.5k tokens (<= 6000 chars) and categories.txt <= 400 tokens (<= 1600 chars)"
+      ],
+      "acceptance": [
+        "tests/scripts/index-manifest.test.ts asserts every ai/manifests/index/<category>.txt is <= 6000 chars and categories.txt is <= 1600 chars",
+        "Every entry links to an existing card (test)",
+        "Categories equal the ComponentMeta category enum (test)"
+      ],
+      "filesTouched": [
+        "ai/manifests/index.json",
+        "ai/manifests/index/**",
+        "scripts/ai/build-index.mjs",
+        "tests/scripts/index-manifest.test.ts"
+      ]
+    },
+    "E13-19": {
+      "title": "Add ai:build orchestrator and emit ./meta JSON manifests into dist/meta",
+      "acceptanceRemove": [
+        "npm pack --dry-run lists ai/manifests"
+      ],
+      "acceptanceAdd": [
+        "npm pack --dry-run lists dist/meta/*.json and lists no skills/ or llms*.txt (D13)"
+      ]
+    },
+    "E14-01": {
+      "title": "Define subpath export contract (D7 set) and ADR 0009",
+      "scope": [
+        "Create config/exports.json with exactly the 1.0 subpaths: '.', './theme', './tokens', './native', './native/expo', './adapters/*', './testing', './meta', './package.json' (D7/ADR-R6)",
+        "Conditions per subpath: types, react-native, import, default, all resolving to the same ESM file",
+        "Per subpath: stability (metadata, not path), owning symbols, allowed peers, sideEffects flag",
+        "ADR rejects './experimental', './navigation', './components/*', './utils', './hooks' (stability = metadata; hooks live in root; M3)",
+        "Write audit/adr/0009-subpath-exports.md superseding audit/api/subpath-exports.md; explicitly forbid src/*, dist/*, internal",
+        "config/exports.json is the only source of package.json exports; no other ticket edits package.json exports (generated by E14-02)"
+      ],
+      "acceptance": [
+        "node scripts/lib/validate-exports-config.mjs exits 0 and config/exports.json has exactly the 9 keys '.', './theme', './tokens', './native', './native/expo', './adapters/*', './testing', './meta', './package.json'",
+        "grep -E '\"\\./(experimental|navigation|utils|hooks|components)' config/exports.json prints nothing",
+        "ADR 0009 lists every subpath with stability rationale and states the legacy-shim parity rule (every subpath exists identically in the shim)",
+        "Validator check: each symbol of audit/api/public-root-api.snapshot is assigned to exactly one primary subpath or marked root-only",
+        "Validator check: every subpath declares types, react-native, import and default conditions pointing at the same dist file"
+      ]
+    },
+    "E14-03": {
+      "title": "Emit valid ESM: explicit .js specifiers, platform-file ban, extensionless-import check",
+      "problem": "src uses extensionless and directory specifiers that Node ESM and webpack-5 fullySpecified reject; rewriteRelativeImportExtensions does not rewrite them (R1 B6).",
+      "value": "Package resolves under Node, TS node16/bundler, Metro and webpack 5 without per-subpath bundling.",
+      "scope": [
+        "Codemod every relative specifier in src/** to explicit './X.js' or './dir/index.js' (scripts/codemods/add-js-extensions.mjs)",
+        "Build with module NodeNext (or keep bundler plus the check); rewriteRelativeImportExtensions rejected because it ignores extensionless/directory specifiers",
+        "scripts/check-esm-specifiers.mjs rejects extensionless relative imports and any src file named *.web.*, *.native.*, *.ios.*, *.android.* (D9)",
+        "No per-subpath bundling (would duplicate React contexts)",
+        "tests/scripts/dist-esm-resolve.test.ts imports every dist entry via node using the RN stub from tests/shims/react-native.tsx (R1 m8)"
+      ],
+      "acceptance": [
+        "node scripts/check-esm-specifiers.mjs exits 0 on src and exits 1 on a fixture containing import './Button' (tests/scripts/check-esm-specifiers.test.ts)",
+        "find src -name '*.web.*' -o -name '*.native.*' -o -name '*.ios.*' -o -name '*.android.*' prints nothing",
+        "After npm run build, node --import ./tests/shims/register-rn-stub.mjs -e \"await import('./dist/index.js')\" exits 0",
+        "tests/scripts/dist-esm-resolve.test.ts passes",
+        "d.ts files resolve under moduleResolution bundler and node16 in a fixture (tsc --noEmit exits 0 for both)",
+        "npm run typecheck exits 0"
+      ],
+      "filesTouched": [
+        "tsconfig.build.json",
+        "src/**",
+        "scripts/codemods/add-js-extensions.mjs",
+        "scripts/check-esm-specifiers.mjs",
+        "tests/scripts/dist-esm-resolve.test.ts",
+        "tests/scripts/check-esm-specifiers.test.ts",
+        "tests/shims/register-rn-stub.mjs"
+      ],
+      "depsAdd": [
+        "E1-15"
+      ]
+    },
+    "E14-05": {
+      "acceptanceAdd": [
+        "Size budgets are read only from config/size-limits.json (test -e .size-limit.json exits 1)"
+      ]
+    },
+    "E14-09": {
+      "scopeAdd": [
+        "Absorbs the native adapter contract ADR from E8-02: subpath vs optional peer, Expo Go/managed/prebuild/bare impact, alternatives (docs/adr is not used, D1)",
+        "Injection is the only core mechanism; no require() in src; convenience adapters live in ./adapters/<lib> (D6/ADR-R5)",
+        "peerDependenciesMeta optional peers for react-native-svg, @shopify/flash-list, react-native-safe-area-context and @react-native-community/datetimepicker recorded as 'Proposed - pending H2' (amends PLRNUI-39)",
+        "Shim rule: shim depends on the target with a caret range of its major (D10), not an exact pin"
+      ],
+      "acceptanceAdd": [
+        "ADR 0010 has headings Decision, Expo Go, managed, prebuild, bare, Alternatives (grep)",
+        "ADR 0010 marks the peerDependenciesMeta allowance 'Proposed - pending H2' (grep)",
+        "tests/scripts/optional-peers.test.ts also blocks react-native-svg, @shopify/flash-list, react-native-safe-area-context and @react-native-community/datetimepicker and importing '.' still succeeds"
+      ]
+    },
+    "E14-10": {
+      "scopeAdd": [
+        "Add a webpack-5 resolve case with resolve.fullySpecified=true (package type: module) importing every subpath (R1 B6)"
+      ],
+      "acceptanceAdd": [
+        "The webpack-5 fullySpecified case resolves every subpath in config/exports.json and the script exits 0; removing a .js specifier in a fixture makes it exit non-zero"
+      ]
+    },
+    "E15-02": {
+      "title": "Record shim policy ADR 0013 (D10) with sunset window pending H4",
+      "problem": "Shim policy is mostly deducible (D10/ADR-R9); only the sunset/deprecation window is a human decision (H4).",
+      "value": "Shim build (E15-03) and parity work can proceed on a written policy.",
+      "scope": [
+        "Record adopted D10 policy in audit/adr/0013-legacy-shim-policy.md: generated dist-shim/, dependency on Texo with caret range of its major (^1.0.0, not exact), lockstep versions, no postinstall and no runtime warning, global singleton contexts with __DEV__ duplicate warning, PACKAGE_NAME deprecated",
+        "Sunset window and deprecation timeline left as an explicit 'Pending H4' section"
+      ],
+      "acceptance": [
+        "audit/adr/0013-legacy-shim-policy.md exists with Status Accepted for the D10 items and a 'Pending H4' section for the sunset window (grep)",
+        "ADR 0013 states dependency range '^<major>.0.0' (grep)",
+        "ADR 0013 has a 'PACKAGE_NAME' section stating the export is @deprecated and naming its runtime value (grep -A3 PACKAGE_NAME shows '@deprecated')"
+      ],
+      "labelsRemove": [
+        "human-only"
+      ]
+    },
+    "E15-03": {
+      "acceptanceAdd": [
+        "Generated dist-shim/package.json depends on the target with range ^<major>.0.0 (test; D10)",
+        "npm pack --dry-run in dist-shim lists no skills/, ai/ or llms*.txt; only ./meta is re-exported (R2 gap: shim coverage of AI files)"
+      ]
+    },
+    "E15-08": {
+      "scopeAdd": [
+        "Mixed-imports fixture: ThemeProvider imported from the Texo name and Button from the legacy name (R1 M4)"
+      ],
+      "acceptanceAdd": [
+        "Mixed-imports test: Button imported via the legacy name renders with the theme of a ThemeProvider imported via the Texo name, and npm ls shows one target copy",
+        "A __DEV__ warning is emitted when a second context instance registers (test)"
+      ],
+      "depsAdd": [
+        "E14-12"
+      ]
+    },
+    "E16-10": {
+      "labelsRemove": []
+    },
+    "E17-05": {
+      "acceptanceAdd": [
+        "Expo/RN matrix entries are read from config/compatibility.json, so H4 changes only data, not the workflow (script check)"
+      ]
+    }
+  },
+  "merges": [
+    {
+      "id": "E3-13",
+      "into": "E8-13",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate haptics adapter (ADR-R4: E8-13 owns)",
+      "files": "none",
+      "excludeRe": [
+        "HapticsProvider",
+        "docs \\(E3-15\\)"
+      ]
+    },
+    {
+      "id": "E5-07",
+      "into": "E8-10",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate useKeyboard (ADR-R4: E8-10 owns)",
+      "files": "none"
+    },
+    {
+      "id": "E6-22",
+      "into": [
+        "E8-10",
+        "E6-25"
+      ],
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate useKeyboard; KeyboardAvoidingScreen folds into Screen (E6-25)",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E8-10": {
+          "scope": [
+            "useKeyboard() returning height, visible, duration (Keyboard events, iOS will/Android did)"
+          ],
+          "acceptance": [
+            "Mocked Keyboard events update height (test)",
+            "useKeyboard removes every Keyboard listener on unmount (subscription.remove mock called once per subscription)"
+          ]
+        },
+        "E6-25": {
+          "scope": [
+            "keyboardAvoiding: padding/translate strategy per platform, scroll-to-focused-input, tap-outside dismiss (was KeyboardAvoidingScreen)"
+          ],
+          "acceptance": [
+            "Screen with dismissKeyboardOnTapOutside=true calls Keyboard.dismiss on background press and with false does not (Keyboard mock test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E6-23",
+      "into": "E8-11",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate safe-area adapter",
+      "files": "none",
+      "excludeRe": [
+        "require",
+        "optional peer",
+        "static import"
+      ]
+    },
+    {
+      "id": "E10-07",
+      "into": "E8-11",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate safe-area adapter; ThemeAppShell prop superseded by Screen (E6-25)",
+      "files": "none",
+      "excludeRe": [
+        "ThemeAppShell",
+        "safe-area-context"
+      ]
+    },
+    {
+      "id": "E7-06",
+      "into": "E6-20",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate EmptyState",
+      "files": "none"
+    },
+    {
+      "id": "E7-07",
+      "into": "E6-20",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate ErrorState",
+      "files": "none"
+    },
+    {
+      "id": "E10-13",
+      "into": "E10-06",
+      "kind": "drop",
+      "source": "R1 (R2 picked E4-10)",
+      "reason": "Duplicate max-width container; ADR-R4 owner is E10-06",
+      "files": "none"
+    },
+    {
+      "id": "E4-10",
+      "into": "E10-06",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-10 as owner)",
+      "reason": "ADR-R4: Container owner E10-06 absorbs E4-10",
+      "files": "union"
+    },
+    {
+      "id": "E10-09",
+      "into": "E4-09",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate responsive grid; minItemWidth auto-fit folded into Grid",
+      "files": "none"
+    },
+    {
+      "id": "E3-12",
+      "into": "E6-31",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate PullToRefresh",
+      "files": "none"
+    },
+    {
+      "id": "E5-24",
+      "into": [
+        "E8-21",
+        "E8-22"
+      ],
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate Expo picker adapters (E8-21/E8-22 provide injected Expo adapters)",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E8-21": {
+          "scope": [
+            "Expo image picker adapter maps picker assets to the FileField PickedFile shape; permission denial returns [] and calls onPermissionDenied (injected module, no require)"
+          ],
+          "acceptance": [
+            "Mocked expo-image-picker result maps to PickedFile[]; permission-denied path returns [] and calls onPermissionDenied (test)"
+          ]
+        },
+        "E8-22": {
+          "scope": [
+            "Expo document picker adapter maps {canceled, assets} to the FileField PickedFile shape (injected module, no require)"
+          ],
+          "acceptance": [
+            "Mocked expo-document-picker result maps to PickedFile[]; cancel returns [] (test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E6-16",
+      "into": "E4-20",
+      "kind": "drop",
+      "source": "R2 (R1 allowed either owner)",
+      "reason": "Duplicate Accordion/Collapsible; E4-19/E4-20 kept",
+      "files": "none"
+    },
+    {
+      "id": "E7-28",
+      "into": "E6-17",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate stepper (variant='progress')",
+      "files": "none"
+    },
+    {
+      "id": "E7-29",
+      "into": "E5-15",
+      "kind": "drop",
+      "source": "R1+R2",
+      "reason": "Duplicate Calendar; marked dates and today highlight folded into E5-15",
+      "files": "none"
+    },
+    {
+      "id": "E9-09",
+      "into": [
+        "E8-05",
+        "E6-02",
+        "E6-07"
+      ],
+      "kind": "drop",
+      "source": "R1 (R2 picked E3-03)",
+      "reason": "Duplicate useReducedMotion; ADR-R4 owner E8-05; gating moves into component tickets",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E8-05": {
+          "scope": [
+            "Test shim exposes AccessibilityInfo reduce-motion events (tests/shims)"
+          ],
+          "acceptance": [
+            "useReducedMotion returns true when the mocked reduce-motion setting is enabled (test)"
+          ]
+        },
+        "E6-02": {
+          "scope": [
+            "Modal swaps animation for an instant transition under reduced motion"
+          ],
+          "acceptance": [
+            "With useReducedMotion mocked true, Modal open/close calls Animated.timing 0 times (spy)"
+          ]
+        },
+        "E6-07": {
+          "scope": [
+            "BottomSheet swaps animation for an instant transition under reduced motion"
+          ],
+          "acceptance": []
+        }
+      }
+    },
+    {
+      "id": "E9-03",
+      "into": [
+        "E1-32",
+        "E1-33",
+        "E1-14",
+        "E1-13"
+      ],
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Overlay a11y semantics belong with the owner tickets of those files",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E1-32": {
+          "scope": [
+            "accessibilityViewIsModal on Modal content, labelled dialog, accessible dismiss action, announce on open"
+          ],
+          "acceptance": [
+            "Modal content has accessibilityViewIsModal true (test)",
+            "Backdrop dismiss exposes accessibilityRole button and an accessibilityLabel (test)"
+          ]
+        },
+        "E1-33": {
+          "scope": [
+            "accessibilityViewIsModal on BottomSheet content and labelled close action"
+          ],
+          "acceptance": [
+            "BottomSheet content has accessibilityViewIsModal true and the close action exposes accessibilityRole button with a label (test)"
+          ]
+        },
+        "E1-14": {
+          "scope": [
+            "Popover content exposes an accessible dismiss action"
+          ],
+          "acceptance": [
+            "Popover content exposes an accessibilityActions dismiss entry (test)"
+          ]
+        },
+        "E1-13": {
+          "scope": [
+            "Tooltip content announced as the trigger's description"
+          ],
+          "acceptance": [
+            "Tooltip trigger exposes the tooltip text via accessibilityHint (native) / aria-describedby (web) (test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E9-04",
+      "into": [
+        "E1-25",
+        "E1-26",
+        "E1-20"
+      ],
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Feedback a11y semantics belong with E1 owners",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E1-25": {
+          "scope": [
+            "Alert: role alert + accessibilityLiveRegion by severity"
+          ],
+          "acceptance": [
+            "Alert exposes accessibilityRole alert and accessibilityLiveRegion assertive for danger, polite otherwise (test)"
+          ]
+        },
+        "E1-26": {
+          "scope": [
+            "Spinner: role progressbar/busy + label; ProgressBar: accessibilityValue min/max/now"
+          ],
+          "acceptance": [
+            "Spinner exposes role progressbar, busy state and a label; ProgressBar exposes accessibilityValue {min,max,now} (test)"
+          ]
+        },
+        "E1-20": {
+          "scope": [
+            "Badge: label when count-only"
+          ],
+          "acceptance": [
+            "A count-only Badge has an accessibilityLabel and the default label is overridable via prop (test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E9-05",
+      "into": [
+        "E6-30",
+        "E1-28",
+        "E1-29",
+        "E1-30"
+      ],
+      "kind": "merge",
+      "source": "R2 (SideBar part routed to E6-30 because E1-15 is a pre-fix only)",
+      "reason": "Navigation a11y semantics belong with owner tickets",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E6-30": {
+          "scope": [
+            "Current SideBar item exposes accessibilityState selected"
+          ],
+          "acceptance": [
+            "Current SideBar item exposes accessibilityState.selected=true (test)"
+          ]
+        },
+        "E1-28": {
+          "scope": [
+            "Link role link with href"
+          ],
+          "acceptance": [
+            "Link has accessibilityRole link and renders href on web (test)"
+          ]
+        },
+        "E1-29": {
+          "scope": [
+            "Role header on TopBar title; tablist/tab + selected on BottomBar items"
+          ],
+          "acceptance": [
+            "TopBar title has accessibilityRole header and BottomBar items expose role tab with selected state (test)"
+          ]
+        },
+        "E1-30": {
+          "scope": [
+            "accessibilityState selected on the current NavItem"
+          ],
+          "acceptance": [
+            "Current NavBar item exposes accessibilityState.selected=true (test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E9-06",
+      "into": [
+        "E1-18",
+        "E1-23",
+        "E1-16"
+      ],
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Form a11y semantics belong with E1 owners",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E1-18": {
+          "scope": [
+            "Select: role combobox/button, expanded state, selected value in label"
+          ],
+          "acceptance": [
+            "Select exposes combobox role, expanded state and the selected value in its label (test)"
+          ]
+        },
+        "E1-23": {
+          "scope": [
+            "Textarea: label/hint parity with Input"
+          ],
+          "acceptance": [
+            "Textarea label and hint props mirror Input (type test plus render test)"
+          ]
+        },
+        "E1-16": {
+          "scope": [
+            "FormField: error exposed via accessibilityHint + liveRegion polite"
+          ],
+          "acceptance": [
+            "FormField error is exposed via accessibilityHint and accessibilityLiveRegion polite (test)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E1-36",
+      "into": "E9-02",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Same deliverable: a11y contract over all components",
+      "files": "union"
+    },
+    {
+      "id": "E9-10",
+      "into": "E2-11",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Same contrast util; E2-11 also validates presets",
+      "files": "none"
+    },
+    {
+      "id": "E12-05",
+      "into": "E14-05",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Tree-shaking check is part of the bundle harness",
+      "files": "union"
+    },
+    {
+      "id": "E12-09",
+      "into": "E14-05",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Size budget gate duplicates config/size-limits.json",
+      "files": "union",
+      "excludeFilesRe": [
+        "\\.size-limit\\.json"
+      ],
+      "excludeRe": [
+        "\\.size-limit"
+      ]
+    },
+    {
+      "id": "E12-12",
+      "into": "E17-05",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Same .github/workflows/ci.yml job split",
+      "files": "none"
+    },
+    {
+      "id": "E16-07",
+      "into": "E1-04",
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Examples compile config duplicates tsconfig.tests.json",
+      "files": "union",
+      "excludeFilesRe": [
+        "tsconfig\\.examples\\.json"
+      ]
+    },
+    {
+      "id": "E13-15",
+      "into": [
+        "E11-14",
+        "E11-15"
+      ],
+      "kind": "merge",
+      "source": "R2",
+      "reason": "Second templates tree (ai/templates) duplicates recipes/",
+      "files": "none",
+      "content": "route",
+      "route": {
+        "E11-14": {
+          "scope": [
+            "Page recipes for auth, settings, profile and onboarding list components used and states covered (loading/empty/error) in their README (from ai/templates plan)"
+          ],
+          "acceptance": [
+            "Each page recipe README lists components used and states covered: loading, empty, error (grep)"
+          ]
+        },
+        "E11-15": {
+          "scope": [
+            "Feature recipe feature-form-flow: multi-step form with validation (from ai/templates plan)"
+          ],
+          "acceptance": [
+            "recipes/features/form-flow compiles under tsconfig.recipes.json and re-implements no library component (grep shows imports from the package only)"
+          ]
+        }
+      }
+    },
+    {
+      "id": "E4-12",
+      "into": "E6-21",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-12 as owner)",
+      "reason": "ADR-R4: Skeleton owner E6-21",
+      "files": "union"
+    },
+    {
+      "id": "E7-05",
+      "into": "E6-21",
+      "kind": "merge",
+      "source": "R1 (R2 rescoped to presets)",
+      "reason": "ADR-R4: Skeleton owner E6-21 (presets included)",
+      "files": "union"
+    },
+    {
+      "id": "E4-11",
+      "into": "E6-01",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-11 as owner)",
+      "reason": "ADR-R3/R4: Portal single owner E6-01",
+      "files": "union",
+      "excludeRe": [
+        "re-wrapping context"
+      ]
+    },
+    {
+      "id": "E4-07",
+      "into": "E6-25",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-07 as owner)",
+      "reason": "ADR-R4: Screen/AppShell owner E6-25 absorbs E4-07",
+      "files": "union"
+    },
+    {
+      "id": "E8-14",
+      "into": "E4-03",
+      "kind": "drop",
+      "source": "R1 (R2 kept useHapticPress)",
+      "reason": "R1 M12: Touchable haptic prop replaces HapticPressable/useHapticPress",
+      "files": "none",
+      "content": "none"
+    },
+    {
+      "id": "E4-21",
+      "into": "E7-01",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-21 as owner)",
+      "reason": "ADR-R4: ListItem owner E7-01",
+      "files": "union"
+    },
+    {
+      "id": "E4-13",
+      "into": "E7-17",
+      "kind": "merge",
+      "source": "R1 (R2 picked E4-13 as owner)",
+      "reason": "ADR-R4: Avatar owner E7-17",
+      "files": "union"
+    },
+    {
+      "id": "E4-14",
+      "into": "E7-17",
+      "kind": "merge",
+      "source": "R1 (R2 kept E4-14)",
+      "reason": "ADR-R4: AvatarGroup folded into E7-17",
+      "files": "union"
+    },
+    {
+      "id": "E10-11",
+      "into": "E6-29",
+      "kind": "merge",
+      "source": "R1 (R2 kept E10-11 depending on E6-29/E6-30)",
+      "reason": "R1 §3: AdaptiveNav = NavBar layout=auto upgrade",
+      "files": "none",
+      "excludeRe": [
+        "no changes to those components' files",
+        "only via their public index files"
+      ]
+    },
+    {
+      "id": "E1-13",
+      "into": "E6-11",
+      "kind": "merge",
+      "source": "R1 B3 (R2 serialised instead)",
+      "reason": "E1/E6 rewrite the same Tooltip; demo lift is the E6 upgrade",
+      "files": "union"
+    },
+    {
+      "id": "E1-14",
+      "into": "E6-10",
+      "kind": "merge",
+      "source": "R1 B3 (R2 serialised instead)",
+      "reason": "E1-14 native Popover would be thrown away by E6-10",
+      "files": "union",
+      "excludeRe": [
+        "render content in RN Modal"
+      ]
+    },
+    {
+      "id": "E1-18",
+      "into": "E6-14",
+      "kind": "merge",
+      "source": "R1 B3 (R2 serialised instead)",
+      "reason": "E1/E6 rewrite the same Select",
+      "files": "union"
+    },
+    {
+      "id": "E1-32",
+      "into": "E6-02",
+      "kind": "merge",
+      "source": "R1 B3 (R2 serialised instead)",
+      "reason": "E1/E6 rewrite the same Modal",
+      "files": "union"
+    },
+    {
+      "id": "E1-33",
+      "into": "E6-07",
+      "kind": "merge",
+      "source": "R1 B3 (R2 serialised instead)",
+      "reason": "E1/E6 rewrite the same BottomSheet",
+      "files": "union"
+    },
+    {
+      "id": "E13-05",
+      "into": "E1-01",
+      "kind": "merge",
+      "source": "R1 ADR-R7 / D8 (R2 kept *.catalog.ts sidecars)",
+      "reason": "One meta schema ticket",
+      "files": "none",
+      "deps": "none",
+      "excludeRe": [
+        "ai/",
+        "lint-meta",
+        "meta\\.mjs --lint",
+        "Button\\.meta",
+        "Schema validates",
+        "--strict"
+      ]
+    },
+    {
+      "id": "E11-01",
+      "into": "E1-01",
+      "kind": "merge",
+      "source": "R1 ADR-R7 / D8 (R2 kept registry, generated)",
+      "reason": "Catalog reads meta; no registry file",
+      "files": "none",
+      "deps": "none",
+      "excludeRe": [
+        "registry",
+        "Seed all 36",
+        "Registry covers",
+        "Not exported from package root"
+      ]
+    },
+    {
+      "id": "E4-22",
+      "into": "E14-14",
+      "kind": "merge",
+      "source": "R1 M11 (R2 kept E4-22)",
+      "reason": "Wave wiring owned by E14 series",
+      "files": "none",
+      "deps": "none",
+      "content": "none"
+    },
+    {
+      "id": "E5-29",
+      "into": "E14-15",
+      "kind": "merge",
+      "source": "R1 M11 (R2 kept E5-29)",
+      "reason": "Wave wiring owned by E14 series",
+      "files": "none",
+      "deps": "none",
+      "content": "none"
+    }
+  ],
+  "splits": {
+    "E6-05": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E6-05",
+          "title": "Add toast store, queue and imperative toast() API",
+          "scope": [
+            "Toast store with queue, max visible, position config and FIFO ordering",
+            "Imperative API usable outside React: toast(), toast.success/error/info/warning/loading, toast.promise, dismiss(id), update(id)",
+            "Duration, persistent and action-button data model",
+            "Module-level singleton safe across multiple providers"
+          ],
+          "acceptance": [
+            "toast() before provider mount queues and flushes on mount (test)",
+            "Max N visible honoured; queue order FIFO (test)",
+            "toast.promise transitions loading->success/error (test)",
+            "dismiss(id) removes and update(id) mutates the store entry (test)"
+          ],
+          "filesTouched": [
+            "src/components/Toast/**",
+            "tests/components/Toast.store.test.tsx"
+          ],
+          "size": "M"
+        },
+        {
+          "id": "E6-35",
+          "title": "Add ToastViewport rendering, swipe-dismiss and live-region a11y",
+          "problem": "The toast store needs a rendering surface mounted once in the root overlay host with accessible announcements.",
+          "value": "Visible, accessible toasts with zero per-app wiring (mounted by TexoProvider).",
+          "scope": [
+            "ToastViewport renders into the root OverlayHost and is mounted by TexoProvider (ADR-R1)",
+            "Swipe-to-dismiss via Animated+PanResponder (no gesture-handler)",
+            "Announce via AccessibilityInfo.announceForAccessibility and web aria-live",
+            "Pause on hover/focus (web) and while keyboard open (E8-10); safe-area offset (E8-11)",
+            "Reduced motion: instant enter/exit"
+          ],
+          "acceptance": [
+            "Announcement called once per toast (mock AccessibilityInfo)",
+            "With useReducedMotion mocked true, toast enter/exit calls Animated.timing/Animated.spring 0 times (spy) in tests/components/Toast.test.tsx",
+            "Swipe past threshold dismisses the toast (PanResponder mock test)",
+            "Viewport bottom offset equals the safe-area bottom inset from a mock capability (test)",
+            "TexoProvider renders exactly one ToastViewport (test)"
+          ],
+          "filesTouched": [
+            "src/components/Toast/**",
+            "tests/components/Toast.test.tsx",
+            "src/providers/TexoProvider.tsx"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E14-12",
+            "E8-10",
+            "E8-11",
+            "E8-05"
+          ]
+        }
+      ]
+    },
+    "E6-07": {
+      "absorbedRoute": {
+        "E9-09": "E6-36",
+        "E9-03": "E6-36"
+      },
+      "children": [
+        {
+          "id": "E6-07",
+          "title": "Upgrade BottomSheet: snap points, drag gesture and dismissal paths",
+          "scope": [
+            "Snap points array (numbers, %, 'content') and controlled snapIndex",
+            "Drag handle + PanResponder/Animated drag, velocity-based snap, drag-to-dismiss",
+            "open/defaultOpen/onOpenChange (ADR 0014); onClose kept as alias",
+            "Optional adapter hook `gestureDriver` for gesture-handler users (interface only)"
+          ],
+          "acceptance": [
+            "Existing snap='collapsed'|'expanded' still works (test)",
+            "Snap resolution function unit-tested incl. velocity cases",
+            "Each dismissal path (Android hardwareBackPress via BackHandler mock, Escape keydown on web, backdrop press, drag past threshold) calls onOpenChange(false) exactly once (4 cases in tests/components/bottom-sheet.test.tsx)"
+          ],
+          "filesTouched": [
+            "src/components/BottomSheet/**"
+          ],
+          "inheritFiles": true,
+          "size": "M"
+        },
+        {
+          "id": "E6-36",
+          "title": "Upgrade BottomSheet: keyboard, safe area, reduced motion and a11y",
+          "problem": "A dragging sheet still overlaps the keyboard and home indicator, animates under reduced motion and lacks modal a11y semantics.",
+          "value": "Production-usable sheet on every platform without native dependencies.",
+          "scope": [
+            "Keyboard-aware via useKeyboard (E8-10)",
+            "Safe-area bottom padding via useInsets (E8-11)",
+            "Scrollable content hand-off prop",
+            "Role/label and modal semantics",
+            "Reduced motion: instant snapping"
+          ],
+          "acceptance": [
+            "With useReducedMotion mocked true, snapping calls Animated.spring 0 times (spy) and sets the target height immediately (test)",
+            "Bottom padding equals the safe-area bottom inset from a mock E8-11 adapter (test)",
+            "A keyboardDidShow event (E8-10 mock) raises the sheet by the keyboard height (test)",
+            "The scroll hand-off prop forwards scroll events to the child ScrollView (test)"
+          ],
+          "filesTouched": [
+            "src/components/BottomSheet/**",
+            "tests/components/bottom-sheet.a11y.test.tsx"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E8-10",
+            "E8-11",
+            "E8-05"
+          ]
+        }
+      ]
+    },
+    "E6-25": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E6-25",
+          "title": "Add Screen page root: safe area, scroll, status bar, keyboard avoidance",
+          "scope": [
+            "Screen: header slot, scroll|static body, sticky footer, insets via useInsets (E8-11), keyboard avoidance via E8-10, refresh slot",
+            "Does not edit src/theme; supersedes ThemeAppShell safe-area handling by composition"
+          ],
+          "acceptance": [
+            "Renders with and without a safe-area adapter (test with mock capability)",
+            "Footer stays above the keyboard (mocked keyboard event test)",
+            "git diff --exit-code src/theme/ThemeAppShell.tsx passes"
+          ],
+          "filesTouched": [
+            "src/components/Screen/**"
+          ],
+          "inheritFiles": true,
+          "size": "M",
+          "depsAdd": [
+            "E8-10",
+            "E8-11"
+          ]
+        },
+        {
+          "id": "E6-37",
+          "title": "Add AppShell layout slots and screen presets",
+          "problem": "Apps still compose Banner, NavBar region and a responsive sidebar by hand around Screen.",
+          "value": "One import scaffolds an app shell; removes repeated layout boilerplate.",
+          "scope": [
+            "AppShell composes Screen with Banner slot, NavBar region and responsive sidebar region (size class from E10-02)",
+            "No OverlayHost of its own: overlays mount into the TexoProvider root host (ADR-R1/0015)",
+            "Presets: centered form screen, list screen, detail screen"
+          ],
+          "acceptance": [
+            "AppShell renders no OverlayHost of its own; the count of OverlayHost nodes under TexoProvider is 1 (test)",
+            "Sidebar region renders at width class expanded and is absent at compact (Dimensions mock test)",
+            "Each preset renders under light and dark ThemeProvider with console.error called 0 times (test)"
+          ],
+          "filesTouched": [
+            "src/components/AppShell/**",
+            "tests/components/AppShell.test.tsx",
+            "docs/components/layout/AppShell.md"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E6-04",
+            "E10-02",
+            "E14-12"
+          ]
+        }
+      ]
+    },
+    "E6-32": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E6-32",
+          "title": "Add SwipeActions row on useSwipe with left/right actions",
+          "scope": [
+            "SwipeableRow with left/right action slots, full-swipe commit, spring back, built on useSwipe (E3-10)",
+            "SwipeGroup closes other open rows",
+            "gestureDriver interface for an optional gesture-handler adapter"
+          ],
+          "acceptance": [
+            "Full swipe fires the action once (test)",
+            "Opening one row closes other rows via SwipeGroup (test)",
+            "grep -c 'PanResponder.create' -r src/components/SwipeActions prints 0 (gesture via useSwipe)"
+          ],
+          "filesTouched": [
+            "src/components/SwipeActions/**",
+            "tests/components/SwipeActions.test.tsx"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E3-10"
+          ]
+        },
+        {
+          "id": "E6-38",
+          "title": "Add SwipeActions a11y custom actions, web fallback and tests",
+          "problem": "Swipe-only actions are unreachable for screen-reader and pointer users.",
+          "value": "Row actions reachable without swiping on every platform.",
+          "scope": [
+            "accessibilityActions fallback so actions are reachable without swipe",
+            "Web pointer support",
+            "Reduced motion: instant reset instead of spring"
+          ],
+          "acceptance": [
+            "accessibilityActions list matches the configured actions (test)",
+            "onAccessibilityAction with an action name invokes that action's handler (test)",
+            "Pointer drag on web reveals the actions (test with pointer events)",
+            "With reduced motion mocked, spring-back calls Animated.spring 0 times (spy)"
+          ],
+          "filesTouched": [
+            "src/components/SwipeActions/**",
+            "tests/components/SwipeActions.a11y.test.tsx"
+          ],
+          "size": "S",
+          "depsAdd": [
+            "E8-05"
+          ]
+        }
+      ]
+    },
+    "E8-27": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E8-27",
+          "title": "Add native smoke: clean Expo app and web export",
+          "scope": [
+            "Fixture app under tests/native-smoke/expo-app: root import with zero expo-* installed; ./native and ./native/expo with injected modules absent and present",
+            "Matrix doc: capability x (Expo Go, dev build, bare, web) x SDK 57/RN 0.86",
+            "Metro bundling check for missing optional modules",
+            "Findings feed the docs/native compatibility table"
+          ],
+          "acceptance": [
+            "tests/native-smoke/matrix.md lists every capability from CapabilityMap (script check)",
+            "Root import renders with none of expo-* installed (script exit 0)",
+            "npx expo export --platform web in the fixture exits 0",
+            "Result recorded as tests/native-smoke/results.md"
+          ],
+          "filesTouched": [
+            "tests/native-smoke/expo-app/**",
+            "tests/native-smoke/matrix.md",
+            "tests/native-smoke/results.md"
+          ],
+          "size": "M"
+        },
+        {
+          "id": "E8-29",
+          "title": "Add native smoke: Expo Go compatibility run",
+          "problem": "Expo Go support claims for each capability are unverified.",
+          "value": "Evidence-backed Expo Go column in the native compatibility table.",
+          "scope": [
+            "Run the expo-app fixture in Expo Go (SDK 57) on at least one platform",
+            "Record each capability as supported or unsupported with a limitation note"
+          ],
+          "acceptance": [
+            "tests/native-smoke/expo-go.md lists every CapabilityMap capability with status supported or unsupported (script check)",
+            "Every unsupported row links a limitation note (grep)",
+            "Screenshot of the fixture running in Expo Go attached"
+          ],
+          "filesTouched": [
+            "tests/native-smoke/expo-go/**",
+            "tests/native-smoke/expo-go.md"
+          ],
+          "size": "S"
+        },
+        {
+          "id": "E8-30",
+          "title": "Add native smoke: bare React Native app",
+          "problem": "Bare React Native (no Expo modules) support is unverified.",
+          "value": "Proves the root entry and ./native fallbacks work without Expo.",
+          "scope": [
+            "Bare RN 0.86 fixture under tests/native-smoke/bare-rn importing the root entry and ./native",
+            "Metro bundle for Android and iOS"
+          ],
+          "acceptance": [
+            "npx react-native bundle for android in tests/native-smoke/bare-rn exits 0",
+            "Root import renders with no expo-* module installed (script exit 0)",
+            "Results recorded in tests/native-smoke/bare-rn.md"
+          ],
+          "filesTouched": [
+            "tests/native-smoke/bare-rn/**",
+            "tests/native-smoke/bare-rn.md"
+          ],
+          "size": "M"
+        }
+      ]
+    },
+    "E11-12": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E11-12",
+          "title": "Create dashboard starter template",
+          "scope": [
+            "templates/dashboard (cards, stats, list) using existing components only"
+          ],
+          "acceptance": [
+            "node scripts/check-templates.mjs --build dashboard exits 0"
+          ],
+          "filesTouched": [
+            "templates/dashboard/**"
+          ],
+          "size": "M"
+        },
+        {
+          "id": "E11-17",
+          "title": "Create settings starter template",
+          "problem": "No settings starter.",
+          "value": "Covers the settings shell.",
+          "scope": [
+            "templates/settings (switch rows, theme toggle)"
+          ],
+          "acceptance": [
+            "node scripts/check-templates.mjs --build settings exits 0",
+            "The theme toggle switches ThemeProvider preference between light and dark (test in templates/settings)"
+          ],
+          "filesTouched": [
+            "templates/settings/**"
+          ],
+          "size": "S"
+        },
+        {
+          "id": "E11-18",
+          "title": "Create onboarding starter template",
+          "problem": "No onboarding starter.",
+          "value": "Covers the onboarding shell.",
+          "scope": [
+            "templates/onboarding (pager, skip, progress) using E7-15 Pager"
+          ],
+          "acceptance": [
+            "node scripts/check-templates.mjs --build onboarding exits 0",
+            "Skip navigates to the final step (test in templates/onboarding)"
+          ],
+          "filesTouched": [
+            "templates/onboarding/**"
+          ],
+          "size": "S",
+          "depsAdd": [
+            "E7-15"
+          ]
+        }
+      ]
+    },
+    "E11-13": {
+      "absorbedRoute": {},
+      "children": [
+        {
+          "id": "E11-13",
+          "title": "Create e-commerce starter template",
+          "scope": [
+            "templates/ecommerce (catalog, product detail, cart), 3 screens max, using the E7 List component"
+          ],
+          "acceptance": [
+            "node scripts/check-templates.mjs --build ecommerce exits 0",
+            "Catalog screen renders the library List component (grep import)"
+          ],
+          "filesTouched": [
+            "templates/ecommerce/**"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E7-02"
+          ]
+        },
+        {
+          "id": "E11-19",
+          "title": "Create social feed starter template",
+          "problem": "No social feed starter.",
+          "value": "Showcases media-heavy list layouts.",
+          "scope": [
+            "templates/social-feed (feed, post, composer), 3 screens max"
+          ],
+          "acceptance": [
+            "node scripts/check-templates.mjs --build social-feed exits 0",
+            "Feed screen renders the library List component (grep import)"
+          ],
+          "filesTouched": [
+            "templates/social-feed/**"
+          ],
+          "size": "M",
+          "depsAdd": [
+            "E7-02"
+          ]
+        }
+      ]
+    }
+  },
+  "newTicketDefaults": {
+    "type": "Task",
+    "priority": "High",
+    "semver": "none",
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ]
+  },
+  "newTickets": [
+    {
+      "id": "E14-12",
+      "epic": "E14",
+      "title": "Add TexoProvider composition root (ADR-R1)",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "provider",
+        "composition-root",
+        "dx"
+      ],
+      "problem": "About 12 providers (Theme, Density, Locale, Motion, Responsive, Capability, Icon, Nav, OverlayHost, Toast...) with no composition root guarantee ordering bugs and invert the boilerplate goal (R1 M5, D2).",
+      "value": "One import wires every provider in a fixed order; individual providers stay exported for advanced use.",
+      "scope": [
+        "src/providers/TexoProvider.tsx composing Theme(preset/preference/density) -> Locale -> Motion -> Responsive -> Capabilities (safe area, haptics, keyboard, back handler) -> Icons -> Nav -> OverlayHost(root); ToastViewport is mounted by E6-35",
+        "Typed props {theme, preset, preference, density, locale, motion, adapters, icons, nav}",
+        "src/providers/createSingletonContext.ts: contexts registered on globalThis[Symbol.for('texo.<name>')] with a __DEV__ warning when a second instance registers (D10); ThemeContext uses it",
+        "Docs page docs/texo-provider.md"
+      ],
+      "acceptance": [
+        "tests/providers/TexoProvider.test.tsx: a probe rendered inside the root OverlayHost reads theme, locale, motion preference, responsive, capabilities, icons and nav contexts",
+        "Exactly one root OverlayHost is rendered (test counts nodes)",
+        "Each composed provider remains importable on its own from its module (test imports them)",
+        "A second registration of the theme context logs one __DEV__ warning (test)",
+        "node scripts/check-api-conventions.mjs exits 0"
+      ],
+      "dependencies": [
+        "E2-08",
+        "E2-09",
+        "E4-23",
+        "E3-03",
+        "E10-05",
+        "E8-01",
+        "E4-04",
+        "E1-30",
+        "E6-01",
+        "E14-13"
+      ],
+      "risks": [
+        "Provider order is semver surface once 1.0 ships; freeze it in ADR 0014/0015 references"
+      ],
+      "filesTouched": [
+        "src/providers/TexoProvider.tsx",
+        "src/providers/createSingletonContext.ts",
+        "src/providers/index.ts",
+        "src/providers/TexoProvider.meta.ts",
+        "src/theme/ThemeProvider.tsx",
+        "tests/providers/TexoProvider.test.tsx",
+        "docs/texo-provider.md"
+      ]
+    },
+    {
+      "id": "E14-13",
+      "epic": "E14",
+      "title": "Write ADR 0014 API conventions and add the prop-convention conformance check",
+      "size": "M",
+      "labels": [
+        "api-conventions",
+        "adr",
+        "types"
+      ],
+      "problem": "Event and visual-axis names already diverge (onChange vs onValueChange, variant = colour vs structure, error boolean vs string) and no ADR fixes them before ~150 components land (R1 M6, D3).",
+      "value": "Every component ticket can be verified against one machine-checked convention set; old names survive as @deprecated aliases through 1.x.",
+      "scope": [
+        "audit/adr/0014-api-conventions.md: value/defaultValue/onValueChange; open/defaultOpen/onOpenChange; variant = structure, tone = semantic colour, size xs..lg; invalid + string error; ref/style/styles/testID/a11y passthrough; compound via Object.assign; a11y defaults (D3)",
+        "scripts/check-api-conventions.mjs (TypeScript compiler API) iterating every exported *Props of src/index.ts; auto-discovers components, no per-component edits",
+        "scripts/api-conventions.baseline.json lists pre-existing violations (Switch/Checkbox/RadioGroup onChange, Button variant colour, ProgressBar color, FormField colorScheme); new components may not add entries",
+        "tests/types/api-conventions.ts type helpers with @ts-expect-error negative cases"
+      ],
+      "acceptance": [
+        "audit/adr/0014-api-conventions.md exists with Status Accepted and sections Controlled values, Open state, Visual axes, Validation, Passthrough, Compound components, A11y defaults (grep)",
+        "node scripts/check-api-conventions.mjs exits 0 on the repo and exits 1 on tests/fixtures/api-conventions/bad-props.ts exporting a prop `visible` without `open` (tests/scripts/check-api-conventions.test.ts)",
+        "tests/types/api-conventions.ts compiles under npm run typecheck:contracts with @ts-expect-error cases for error: boolean and size: 'xl' on a non-display component",
+        "Adding a fixture component export requires no edit to the check script (test)"
+      ],
+      "dependencies": [],
+      "risks": [
+        "Baseline must shrink, never grow; reviewers reject tickets that add baseline entries"
+      ],
+      "filesTouched": [
+        "audit/adr/0014-api-conventions.md",
+        "scripts/check-api-conventions.mjs",
+        "scripts/api-conventions.baseline.json",
+        "tests/scripts/check-api-conventions.test.ts",
+        "tests/fixtures/api-conventions/**",
+        "tests/types/api-conventions.ts"
+      ]
+    },
+    {
+      "id": "E4-23",
+      "epic": "E4",
+      "title": "Add LocaleProvider, typed messages catalog, direction and Intl formatters",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "i18n",
+        "rtl",
+        "foundation"
+      ],
+      "problem": "Built-in strings and a11y labels are hardcoded English (PasswordInput 'Show'/'Hide', validation messages, announcements) and RTL is handled ad hoc (R1 M9).",
+      "value": "One place to translate every built-in string and read direction; part of TexoProvider.",
+      "scope": [
+        "src/i18n/LocaleProvider.tsx with locale and direction (from I18nManager) and partial message overrides",
+        "src/i18n/messages.ts typed default English catalog (validation, password visibility, OTP, combobox empty, toast undo, pagination, loading)",
+        "useMessages(), useLocale(), useDirection()",
+        "src/i18n/format.ts Intl number/date formatters with fallback when Intl is missing",
+        "docs/i18n.md"
+      ],
+      "acceptance": [
+        "tests/i18n/locale.test.tsx: useMessages() returns the typed English default without a provider",
+        "A partial override merges over defaults and leaves other keys unchanged (test)",
+        "useDirection() returns 'rtl' when I18nManager.isRTL is mocked true (test)",
+        "formatNumber/formatDate return a string when global Intl is undefined (test)",
+        "grep -rn 'react-intl\\|i18next' package.json prints nothing (no new dependency)"
+      ],
+      "dependencies": [],
+      "risks": [
+        "Catalog keys become semver surface; keep keys namespaced by component"
+      ],
+      "filesTouched": [
+        "src/i18n/**",
+        "tests/i18n/locale.test.tsx",
+        "docs/i18n.md"
+      ]
+    },
+    {
+      "id": "E4-24",
+      "epic": "E4",
+      "title": "Add ./adapters/react-native-svg icon-set convenience adapter",
+      "semver": "minor",
+      "size": "S",
+      "priority": "Medium",
+      "labels": [
+        "icon",
+        "adapter",
+        "optional-peer"
+      ],
+      "problem": "Injection (createSvgIconSet(Svg, paths)) works everywhere, but consumers want a zero-wiring adapter that statically imports react-native-svg (D6).",
+      "value": "One-line SVG icons for apps that already depend on react-native-svg.",
+      "scope": [
+        "src/adapters/react-native-svg/index.ts statically importing react-native-svg and exporting createSvgIconSet(paths) bound to it",
+        "react-native-svg declared in peerDependenciesMeta optional by the E14 package.json chain once H2 is approved"
+      ],
+      "acceptance": [
+        "node scripts/check-native-boundaries.mjs exits 0 (adapter unreachable from the root entry)",
+        "tests/adapters/react-native-svg.test.tsx renders an icon from a mocked react-native-svg module",
+        "grep -rn 'react-native-svg' src --include=*.ts --include=*.tsx lists only src/adapters/react-native-svg"
+      ],
+      "dependencies": [
+        "E4-04",
+        "E14-09",
+        "E8-02"
+      ],
+      "risks": [
+        "react-native-svg version alignment with Expo SDK 57"
+      ],
+      "filesTouched": [
+        "src/adapters/react-native-svg/**",
+        "tests/adapters/react-native-svg.test.tsx",
+        "docs/adapters/react-native-svg.md"
+      ]
+    },
+    {
+      "id": "E8-31",
+      "epic": "E8",
+      "title": "Add ./adapters/safe-area-context convenience adapter",
+      "semver": "minor",
+      "size": "S",
+      "priority": "Medium",
+      "labels": [
+        "native",
+        "safe-area",
+        "adapter",
+        "optional-peer"
+      ],
+      "problem": "E8-11 accepts an injected react-native-safe-area-context module; apps that already use it want a static-import adapter (D6).",
+      "value": "Zero-wiring accurate insets for the most common Expo setup.",
+      "scope": [
+        "src/adapters/safe-area-context/index.ts statically importing react-native-safe-area-context and returning a SafeAreaAdapter for E8-11",
+        "react-native-safe-area-context declared in peerDependenciesMeta optional by the E14 package.json chain once H2 is approved"
+      ],
+      "acceptance": [
+        "node scripts/check-native-boundaries.mjs exits 0",
+        "tests/adapters/safe-area-context.test.tsx: insets from a mocked module reach SafeAreaBox padding",
+        "grep -rn 'react-native-safe-area-context' src --include=*.ts --include=*.tsx lists only src/adapters/safe-area-context"
+      ],
+      "dependencies": [
+        "E8-11",
+        "E14-09",
+        "E8-02"
+      ],
+      "risks": [
+        "Provider must wrap the app; document in docs/adapters/safe-area-context.md"
+      ],
+      "filesTouched": [
+        "src/adapters/safe-area-context/**",
+        "tests/adapters/safe-area-context.test.tsx",
+        "docs/adapters/safe-area-context.md"
+      ]
+    },
+    {
+      "id": "E1-42",
+      "epic": "E1",
+      "title": "Migrate Button to Touchable and buttonVariants (variant/tone per ADR 0014)",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "button",
+        "variants",
+        "api-conventions"
+      ],
+      "problem": "Button hand-rolls Pressable styling and uses variant for colour; E9-07/E9-08 must wait for its migration (R1 m7) and Button is in the proposed stable set.",
+      "value": "Button becomes a thin Touchable + useVariants composition; tone/variant split with deprecated aliases.",
+      "scope": [
+        "Button renders Touchable (E4-03) and styles via useVariants(buttonVariants) (E2-06)",
+        "variant = solid|soft|outline|ghost|link; tone = primary|neutral|success|warning|danger|info; legacy variant='danger|info|primary|secondary' mapped to tone via @deprecated alias",
+        "style/testID/ref passthrough"
+      ],
+      "acceptance": [
+        "tests/components/button.test.tsx: legacy variant='danger' renders the same style as tone='danger' and emits a __DEV__ deprecation warning once",
+        "grep -n 'Pressable' src/components/Button/Button.tsx prints nothing (renders Touchable)",
+        "node scripts/check-api-conventions.mjs exits 0 and scripts/api-conventions.baseline.json has no Button entry left (grep)"
+      ],
+      "dependencies": [
+        "E1-09",
+        "E4-03",
+        "E2-06",
+        "E14-13"
+      ],
+      "risks": [
+        "Visual regressions in pressed state; compare light/dark snapshots before and after"
+      ],
+      "filesTouched": [
+        "src/components/Button/**",
+        "tests/components/button.test.tsx",
+        "docs/components/buttons/button.md",
+        "scripts/api-conventions.baseline.json"
+      ]
+    },
+    {
+      "id": "E17-14",
+      "epic": "E17",
+      "title": "Define the 1.0 stable bar checklist and stable set",
+      "size": "M",
+      "labels": [
+        "release",
+        "stability",
+        "stable-bar"
+      ],
+      "problem": "The plan's own 1.0 gate requires a non-empty stable set but no ticket defines the stable bar or promotes anything (R1 B1).",
+      "value": "An operational, script-checked definition of 'stable' and the list of components that must meet it for 1.0.",
+      "scope": [
+        "docs/policies/stable-bar.md checklist: ADR 0014 check clean with no baseline entry, a11y contract row green (E9-02), device protocol run (E9-14), docs Usage/Stability present (E1-07), per-subpath snapshot frozen (E14-11), no `as any`",
+        "config/stable-set.json with the ADR-R10 proposal (Text, Heading, Box, Row, Column, Divider, Touchable, Button, Icon, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field/Label, Card/Surface, Badge, Spinner, ProgressBar, Alert, Screen, ThemeProvider/TexoProvider, useTheme, tokens)",
+        "scripts/check-stable-bar.mjs verifying each listed item"
+      ],
+      "acceptance": [
+        "node scripts/check-stable-bar.mjs --validate exits 0 and config/stable-set.json lists exactly the H3-confirmed set",
+        "node scripts/check-stable-bar.mjs exits 1 for a fixture component containing `as any` (tests/scripts/check-stable-bar.test.ts)",
+        "docs/policies/stable-bar.md lists the 6 checklist items (grep -c '^- ' >= 6)"
+      ],
+      "dependencies": [
+        "E17-07",
+        "E9-02",
+        "E9-14",
+        "E14-11",
+        "E14-13",
+        "E1-07"
+      ],
+      "risks": [
+        "Scope creep in the stable set delays 1.0; anything not listed ships @experimental"
+      ],
+      "filesTouched": [
+        "docs/policies/stable-bar.md",
+        "config/stable-set.json",
+        "scripts/check-stable-bar.mjs",
+        "tests/scripts/check-stable-bar.test.ts"
+      ]
+    },
+    {
+      "id": "E1-38",
+      "epic": "E1",
+      "title": "Promote layout and typography stable set to stable",
+      "size": "S",
+      "labels": [
+        "maturity",
+        "stable",
+        "promotion"
+      ],
+      "problem": "Text, Heading, Box, Row, Column, Divider and Icon are proposed stable for 1.0 (ADR-R10) but remain demo.",
+      "value": "Non-empty stable set for the 1.0 gate.",
+      "scope": [
+        "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+        "Set status 'stable' in each <Name>.meta.ts"
+      ],
+      "acceptance": [
+        "node scripts/check-stable-bar.mjs --only Text,Heading,Box,Row,Column,Divider,Icon exits 0",
+        "Each listed <Name>.meta.ts has status 'stable' (grep)"
+      ],
+      "dependencies": [
+        "E17-14",
+        "E1-37",
+        "E1-19",
+        "E1-11",
+        "E1-17",
+        "E1-21",
+        "E4-04"
+      ],
+      "risks": [
+        "Promotion freezes API; any later break needs a major"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Text",
+          "Heading",
+          "Box",
+          "Row",
+          "Column",
+          "Divider",
+          "Icon"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    {
+      "id": "E1-39",
+      "epic": "E1",
+      "title": "Promote controls stable set to stable",
+      "size": "S",
+      "labels": [
+        "maturity",
+        "stable",
+        "promotion"
+      ],
+      "problem": "Touchable, Button, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field and Label are proposed stable (ADR-R10) but remain demo.",
+      "value": "Stable form and control surface for 1.0.",
+      "scope": [
+        "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+        "Set status 'stable' in each <Name>.meta.ts"
+      ],
+      "acceptance": [
+        "node scripts/check-stable-bar.mjs --only Touchable,Button,Link,Input,Textarea,Checkbox,Switch,RadioGroup,Field,Label exits 0",
+        "Each listed <Name>.meta.ts has status 'stable' (grep)"
+      ],
+      "dependencies": [
+        "E17-14",
+        "E1-37",
+        "E1-42",
+        "E4-03",
+        "E1-28",
+        "E1-12",
+        "E1-23",
+        "E1-22",
+        "E5-05",
+        "E5-04"
+      ],
+      "risks": [
+        "onChange -> onValueChange aliases must be in place before freezing"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Touchable",
+          "Button",
+          "Link",
+          "Input",
+          "Textarea",
+          "Checkbox",
+          "Switch",
+          "RadioGroup",
+          "Field",
+          "Label"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    {
+      "id": "E1-40",
+      "epic": "E1",
+      "title": "Promote feedback stable set to stable",
+      "size": "S",
+      "labels": [
+        "maturity",
+        "stable",
+        "promotion"
+      ],
+      "problem": "Badge, Spinner, ProgressBar and Alert are proposed stable (ADR-R10) but remain demo.",
+      "value": "Stable feedback primitives for 1.0.",
+      "scope": [
+        "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+        "Set status 'stable' in each <Name>.meta.ts"
+      ],
+      "acceptance": [
+        "node scripts/check-stable-bar.mjs --only Badge,Spinner,ProgressBar,Alert exits 0",
+        "Each listed <Name>.meta.ts has status 'stable' (grep)"
+      ],
+      "dependencies": [
+        "E17-14",
+        "E1-37",
+        "E1-20",
+        "E1-26",
+        "E6-03"
+      ],
+      "risks": [
+        "ProgressBar color -> tone alias must exist before freezing"
+      ],
+      "filesTouched": [],
+      "filesFromComponents": {
+        "names": [
+          "Badge",
+          "Spinner",
+          "ProgressBar",
+          "Alert"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    {
+      "id": "E1-41",
+      "epic": "E1",
+      "title": "Promote surfaces, Screen and providers to stable",
+      "size": "S",
+      "labels": [
+        "maturity",
+        "stable",
+        "promotion"
+      ],
+      "problem": "Card, Surface, Screen, ThemeProvider/TexoProvider, useTheme and tokens are proposed stable (ADR-R10) but remain demo.",
+      "value": "Stable app roots and surfaces for 1.0.",
+      "scope": [
+        "Run node scripts/check-stable-bar.mjs for these items and fix gaps",
+        "Set status 'stable' in Card, Surface, Screen meta and in src/providers/TexoProvider.meta.ts"
+      ],
+      "acceptance": [
+        "node scripts/check-stable-bar.mjs --only Card,Surface,Screen,TexoProvider,ThemeProvider,useTheme,tokens exits 0",
+        "Each listed meta file has status 'stable' (grep)"
+      ],
+      "dependencies": [
+        "E17-14",
+        "E1-37",
+        "E1-20",
+        "E4-06",
+        "E6-25",
+        "E14-12",
+        "E2-08"
+      ],
+      "risks": [
+        "TexoProvider order becomes frozen"
+      ],
+      "filesTouched": [
+        "src/providers/TexoProvider.meta.ts"
+      ],
+      "filesFromComponents": {
+        "names": [
+          "Card",
+          "Surface",
+          "Screen"
+        ],
+        "template": "src/components/{N}/{N}.meta.ts"
+      }
+    },
+    {
+      "id": "E14-14",
+      "epic": "E14",
+      "title": "Wave wiring A: root exports, API snapshot and docs nav for foundations and E4",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring"
+      ],
+      "problem": "Component tickets may not edit src/index.ts, snapshots or mkdocs.yml (single owner per wave, R1 M11); foundations (theme, tokens, motion, responsive, i18n, TexoProvider) and E4 primitives need wiring. Absorbs E4-22.",
+      "value": "Serialised, conflict-free root barrel and API snapshot updates; the strict maturity gate sees every new component.",
+      "scope": [
+        "Add root named exports for E2 (presets, defineVariants/useVariants, ThemeScope, DensityProvider), E3 motion barrel, E10 responsive barrel, E4-23 i18n, E14-12 TexoProvider and every V1 E4 component index",
+        "Regenerate audit/api/public-root-api.snapshot and per-subpath snapshots (E14-11)",
+        "Add mkdocs.yml nav entries and regenerate docs/components.md from meta (E1-08 generator)",
+        "Run node scripts/maturity-check.mjs --strict over every component with meta status >= demo"
+      ],
+      "outOfScope": [
+        "Editing component implementation files",
+        "package.json edits (exports come from config/exports.json via E14-02)"
+      ],
+      "acceptance": [
+        "npm run api:snapshot:check exits 0 after regeneration and the snapshot diff contains no removed lines",
+        "For each wired component, `import { <Name> } from '../src/index.js'` is defined (tests/exports/wave-a.test.ts)",
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "mkdocs build --strict exits 0",
+        "node scripts/check-esm-specifiers.mjs exits 0"
+      ],
+      "dependencies": [
+        "E1-35",
+        "E2-20",
+        "E3-15",
+        "E10-14",
+        "E14-12",
+        "E4-23",
+        "E14-11",
+        "E1-05",
+        "E1-08"
+      ],
+      "risks": [
+        "Late component tickets miss the wave; they roll into the next wiring ticket"
+      ],
+      "filesTouched": [
+        "src/index.ts",
+        "audit/api/public-root-api.snapshot",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "docs/components.md",
+        "tests/exports/wave-a.test.ts"
+      ]
+    },
+    {
+      "id": "E14-15",
+      "epic": "E14",
+      "title": "Wave wiring B: root exports, API snapshot and docs nav for E5 forms",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring"
+      ],
+      "problem": "E5 form components and hooks need root exports, snapshot and nav entries (absorbs E5-29).",
+      "value": "Forms reachable from the root entry with a reviewed API diff.",
+      "scope": [
+        "Add root exports for every V1 E5 component and form hook",
+        "Regenerate snapshots, mkdocs nav and docs/components.md",
+        "Strict maturity gate run"
+      ],
+      "outOfScope": [
+        "Editing component implementation files",
+        "package.json edits (exports come from config/exports.json via E14-02)"
+      ],
+      "acceptance": [
+        "npm run api:snapshot:check exits 0 after regeneration and the snapshot diff contains no removed lines",
+        "For each wired component, `import { <Name> } from '../src/index.js'` is defined (tests/exports/wave-b.test.ts)",
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "mkdocs build --strict exits 0"
+      ],
+      "dependencies": [
+        "E14-14"
+      ],
+      "risks": [
+        "Adapters (./adapters/*) are not root exports; keep them out of the barrel"
+      ],
+      "filesTouched": [
+        "src/index.ts",
+        "audit/api/public-root-api.snapshot",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "docs/components.md",
+        "tests/exports/wave-b.test.ts"
+      ]
+    },
+    {
+      "id": "E14-16",
+      "epic": "E14",
+      "title": "Wave wiring C: root exports, API snapshot and docs nav for E6 overlays and navigation",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring"
+      ],
+      "problem": "E6 had no wiring ticket (R2 gap); 30+ overlay, feedback and navigation components need root exports, snapshot and nav.",
+      "value": "Overlays and navigation reachable from the root entry with a reviewed API diff.",
+      "scope": [
+        "Add root exports for every V1 E6 component and hook",
+        "Regenerate snapshots, mkdocs nav and docs/components.md",
+        "Strict maturity gate run"
+      ],
+      "outOfScope": [
+        "Editing component implementation files",
+        "package.json edits (exports come from config/exports.json via E14-02)"
+      ],
+      "acceptance": [
+        "npm run api:snapshot:check exits 0 after regeneration and the snapshot diff contains no removed lines",
+        "For each wired component, `import { <Name> } from '../src/index.js'` is defined (tests/exports/wave-c.test.ts)",
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "mkdocs build --strict exits 0"
+      ],
+      "dependencies": [
+        "E14-15"
+      ],
+      "risks": [
+        "Existing root exports (Modal, Popover...) must keep their names (no removal lines in snapshot diff)"
+      ],
+      "filesTouched": [
+        "src/index.ts",
+        "audit/api/public-root-api.snapshot",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "docs/components.md",
+        "tests/exports/wave-c.test.ts"
+      ]
+    },
+    {
+      "id": "E14-17",
+      "epic": "E14",
+      "title": "Wave wiring D: root exports, API snapshot and docs nav for E7 data display",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring"
+      ],
+      "problem": "E7 had no wiring ticket (R2 gap); list, table, avatar, stat and chart-core components need root exports, snapshot and nav.",
+      "value": "Data display reachable from the root entry with a reviewed API diff.",
+      "scope": [
+        "Add root exports for every V1 E7 component",
+        "Regenerate snapshots, mkdocs nav and docs/components.md",
+        "Strict maturity gate run"
+      ],
+      "outOfScope": [
+        "Editing component implementation files",
+        "package.json edits (exports come from config/exports.json via E14-02)"
+      ],
+      "acceptance": [
+        "npm run api:snapshot:check exits 0 after regeneration and the snapshot diff contains no removed lines",
+        "For each wired component, `import { <Name> } from '../src/index.js'` is defined (tests/exports/wave-d.test.ts)",
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "mkdocs build --strict exits 0"
+      ],
+      "dependencies": [
+        "E14-16"
+      ],
+      "risks": [
+        "Post-1.0 E7 components stay unwired until E14-19"
+      ],
+      "filesTouched": [
+        "src/index.ts",
+        "audit/api/public-root-api.snapshot",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "docs/components.md",
+        "tests/exports/wave-d.test.ts"
+      ]
+    },
+    {
+      "id": "E14-18",
+      "epic": "E14",
+      "title": "Wave wiring E: ./native, ./native/expo and ./testing barrels, snapshots and docs nav",
+      "semver": "minor",
+      "size": "M",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring",
+        "native"
+      ],
+      "problem": "E8 capabilities live under src/native/<capability>/** with no subpath barrels; ./native, ./native/expo and ./testing (D7) need entry files, snapshots and nav.",
+      "value": "Native capabilities shipped through the D7 subpaths without ever touching the root entry.",
+      "scope": [
+        "src/native/index.ts (contracts, hooks, RN-core/web fallbacks), src/native/expo/index.ts (injectable Expo factories), src/testing/index.ts (mock adapters, renderWithCapabilities)",
+        "Regenerate per-subpath snapshots and docs nav for docs/native",
+        "Boundary check run"
+      ],
+      "outOfScope": [
+        "Root barrel (src/index.ts) edits: native is never root-exported",
+        "package.json edits"
+      ],
+      "acceptance": [
+        "node scripts/check-native-boundaries.mjs exits 0",
+        "audit/api/snapshots contains snapshots for ./native, ./native/expo and ./testing and npm run api:snapshot:check exits 0",
+        "Node resolution from the packed tarball: import('<pkg>/native'), import('<pkg>/native/expo') and import('<pkg>/testing') resolve (test)",
+        "mkdocs build --strict exits 0"
+      ],
+      "dependencies": [
+        "E14-17",
+        "E8-02",
+        "E8-03",
+        "E8-26"
+      ],
+      "risks": [
+        "Expo factories must stay injection-only (D6)"
+      ],
+      "filesTouched": [
+        "src/native/index.ts",
+        "src/native/expo/index.ts",
+        "src/testing/index.ts",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "tests/exports/wave-e.test.ts"
+      ]
+    },
+    {
+      "id": "E14-19",
+      "epic": "E14",
+      "title": "Wave wiring post-1.0: exports, snapshot and nav for deferred components",
+      "semver": "minor",
+      "size": "M",
+      "priority": "Low",
+      "labels": [
+        "integration",
+        "exports",
+        "wave-wiring"
+      ],
+      "problem": "Components deferred to post-1.0 (D14) still need a single serialised wiring step when they land.",
+      "value": "Keeps the one-owner barrel rule after 1.0.",
+      "scope": [
+        "Add root exports, snapshots, mkdocs nav and docs/components.md entries for every post-1.0 component ticket that has landed"
+      ],
+      "outOfScope": [
+        "Editing component implementation files",
+        "package.json edits"
+      ],
+      "acceptance": [
+        "npm run api:snapshot:check exits 0 after regeneration and the snapshot diff contains no removed lines",
+        "node scripts/maturity-check.mjs --strict exits 0",
+        "mkdocs build --strict exits 0"
+      ],
+      "dependencies": [
+        "E14-18"
+      ],
+      "risks": [
+        "Must not run before 1.0 GA"
+      ],
+      "filesTouched": [
+        "src/index.ts",
+        "audit/api/public-root-api.snapshot",
+        "audit/api/snapshots/**",
+        "mkdocs.yml",
+        "docs/components.md"
+      ]
+    },
+    {
+      "id": "E13-35",
+      "epic": "E13",
+      "title": "Skill: texo-native-capabilities",
+      "size": "S",
+      "labels": [
+        "ai-native",
+        "skills",
+        "native"
+      ],
+      "problem": "No skill covers the native capability layer (R2 gap).",
+      "value": "Agents wire capabilities with injection instead of adding native dependencies.",
+      "scope": [
+        "skills/texo-native-capabilities/SKILL.md (<=200 lines): capability decision table (./native hooks vs ./native/expo factories), createExpoCapabilities({...}) injection pattern, Expo Go limitations from E8-29, no require() rule",
+        "references/capabilities.md listing CapabilityMap entries"
+      ],
+      "acceptance": [
+        "node scripts/ai/validate-skills.mjs exits 0",
+        "SKILL.md shows expo-* imports only inside createExpoCapabilities examples (grep)",
+        "SKILL.md is <= 200 lines (wc -l)"
+      ],
+      "dependencies": [
+        "E13-21",
+        "E8-26",
+        "E8-28"
+      ],
+      "validation": [
+        "node scripts/ai/validate-skills.mjs"
+      ],
+      "evidence": [
+        "Command output / generated artifact path attached to the Jira ticket"
+      ],
+      "risks": [
+        "Capability list drifts; reference file must be regenerated from CapabilityMap"
+      ],
+      "filesTouched": [
+        "skills/texo-native-capabilities/**"
+      ]
+    },
+    {
+      "id": "E13-36",
+      "epic": "E13",
+      "title": "Skill: texo-data-display",
+      "size": "S",
+      "labels": [
+        "ai-native",
+        "skills",
+        "data-display"
+      ],
+      "problem": "No skill covers lists, tables and data display (R2 gap).",
+      "value": "Agents pick List/ListItem/DataTable/Stat/Skeleton correctly with virtualization defaults.",
+      "scope": [
+        "skills/texo-data-display/SKILL.md (<=200 lines): decision table List vs SectionList vs DataTable vs DescriptionList, virtualization defaults, Skeleton loading states, FlashList adapter note (H2)",
+        "references/data-table.md"
+      ],
+      "acceptance": [
+        "node scripts/ai/validate-skills.mjs exits 0",
+        "SKILL.md is <= 200 lines (wc -l)",
+        "Every component named in SKILL.md has a meta file with status >= demo (validate-skills cross-check)"
+      ],
+      "dependencies": [
+        "E13-21",
+        "E7-09",
+        "E7-02",
+        "E6-21"
+      ],
+      "validation": [
+        "node scripts/ai/validate-skills.mjs"
+      ],
+      "evidence": [
+        "Command output / generated artifact path attached to the Jira ticket"
+      ],
+      "risks": [
+        "Charts beyond chart core are post-1.0; skill must not reference them"
+      ],
+      "filesTouched": [
+        "skills/texo-data-display/**"
+      ]
+    },
+    {
+      "id": "E13-37",
+      "epic": "E13",
+      "title": "Skill: texo-overlays-feedback",
+      "size": "S",
+      "labels": [
+        "ai-native",
+        "skills",
+        "overlays"
+      ],
+      "problem": "No skill covers overlays and feedback (R2 gap).",
+      "value": "Agents follow ADR 0015 (nested hosts, open/onOpenChange) and the toast API instead of hand-rolling modals.",
+      "scope": [
+        "skills/texo-overlays-feedback/SKILL.md (<=200 lines): Dialog vs BottomSheet vs Popover vs Toast decision table, nested-host rule, open/defaultOpen/onOpenChange, toast() API, EmptyState/ErrorState",
+        "references/overlay-architecture.md summarising ADR 0015"
+      ],
+      "acceptance": [
+        "node scripts/ai/validate-skills.mjs exits 0",
+        "SKILL.md is <= 200 lines (wc -l)",
+        "SKILL.md contains no `visible=` prop usage (grep; ADR 0014)"
+      ],
+      "dependencies": [
+        "E13-21",
+        "E6-01",
+        "E6-05",
+        "E6-06",
+        "E6-20"
+      ],
+      "validation": [
+        "node scripts/ai/validate-skills.mjs"
+      ],
+      "evidence": [
+        "Command output / generated artifact path attached to the Jira ticket"
+      ],
+      "risks": [
+        "Must track E6 API changes until 1.0"
+      ],
+      "filesTouched": [
+        "skills/texo-overlays-feedback/**"
+      ]
+    },
+    {
+      "id": "E13-38",
+      "epic": "E13",
+      "title": "Skill: texo-migration (shim, codemod, deprecated aliases)",
+      "size": "S",
+      "labels": [
+        "ai-native",
+        "skills",
+        "migration"
+      ],
+      "problem": "No skill covers the legacy-to-Texo migration (R2 gap).",
+      "value": "Agents migrate imports and deprecated props deterministically with the codemod.",
+      "scope": [
+        "skills/texo-migration/SKILL.md (<=200 lines): shim vs direct install, codemod usage with placeholder names, mixed-import rule (one provider), deprecated aliases (B/P/Small/TextGroup, onChange -> onValueChange, Button variant -> tone)",
+        "Uses placeholder tokens until H1/H8 are resolved"
+      ],
+      "acceptance": [
+        "node scripts/ai/validate-skills.mjs exits 0",
+        "SKILL.md is <= 200 lines (wc -l)",
+        "Every name placeholder in SKILL.md uses the token format checked by scripts/check-doc-tokens.mjs (exit 0)"
+      ],
+      "dependencies": [
+        "E13-21",
+        "E15-09",
+        "E15-12",
+        "E1-21"
+      ],
+      "validation": [
+        "node scripts/ai/validate-skills.mjs"
+      ],
+      "evidence": [
+        "Command output / generated artifact path attached to the Jira ticket"
+      ],
+      "risks": [
+        "Final names arrive late (H1/H8); keep placeholders"
+      ],
+      "filesTouched": [
+        "skills/texo-migration/**"
+      ]
+    }
+  ],
+  "postV1": [
+    "E7-14",
+    "E7-18",
+    "E7-19",
+    "E7-20",
+    "E7-21",
+    "E7-25",
+    "E7-26",
+    "E7-30",
+    "E7-31",
+    "E7-32",
+    "E7-33",
+    "E8-24",
+    "E8-25",
+    "E10-08",
+    "E10-10",
+    "E2-13",
+    "E2-15",
+    "E2-16",
+    "E2-17",
+    "E2-19",
+    "E4-08",
+    "E4-18",
+    "E5-22",
+    "E6-13",
+    "E6-18",
+    "E11-12",
+    "E11-13",
+    "E13-32",
+    "E13-33",
+    "E14-19"
+  ],
+  "skipR2AddDeps": [
+    [
+      "E6-01",
+      "E8-18",
+      "R1 ADR-R3: E6-01 owns the stack; E8-18 depends on E6-01 instead"
+    ],
+    [
+      "E8-05",
+      "E3-03",
+      "R1 ADR-R4: E8-05 owns useReducedMotion; E3-03 depends on E8-05 instead"
+    ],
+    [
+      "E3-06",
+      "E4-03",
+      "R1 M12: Touchable consumes usePressFeedback; E4-03 depends on E3-06 instead"
+    ],
+    [
+      "E8-14",
+      "E4-03",
+      "E8-14 merged into E4-03"
+    ],
+    [
+      "E3-15",
+      "E4-12",
+      "E3-15 no longer barrels Skeleton"
+    ],
+    [
+      "E3-15",
+      "E6-31",
+      "E3-15 no longer barrels PullToRefresh"
+    ],
+    [
+      "E3-15",
+      "E8-13",
+      "E3-15 no longer barrels haptics"
+    ],
+    [
+      "E6-14",
+      "E1-18",
+      "E1-18 merged into E6-14"
+    ],
+    [
+      "E6-02",
+      "E1-32",
+      "E1-32 merged into E6-02"
+    ],
+    [
+      "E6-07",
+      "E1-33",
+      "E1-33 merged into E6-07"
+    ],
+    [
+      "E6-10",
+      "E1-14",
+      "E1-14 merged into E6-10"
+    ],
+    [
+      "E6-11",
+      "E1-13",
+      "E1-13 merged into E6-11"
+    ],
+    [
+      "E6-25",
+      "E4-07",
+      "E4-07 merged into E6-25"
+    ],
+    [
+      "E11-01",
+      "E1-01",
+      "E11-01 merged into E1-01"
+    ],
+    [
+      "E11-01",
+      "E13-05",
+      "E11-01 and E13-05 merged into E1-01"
+    ]
+  ],
+  "r2AddDeps": [
+    {
+      "id": "E1-05",
+      "dependsOn": [
+        "E16-02",
+        "E13-01"
+      ]
+    },
+    {
+      "id": "E1-37",
+      "dependsOn": [
+        "E9-02"
+      ]
+    },
+    {
+      "id": "E2-05",
+      "dependsOn": [
+        "E1-19",
+        "E1-20"
+      ]
+    },
+    {
+      "id": "E3-06",
+      "dependsOn": [
+        "E4-03"
+      ]
+    },
+    {
+      "id": "E3-15",
+      "dependsOn": [
+        "E4-12",
+        "E6-31",
+        "E8-13"
+      ]
+    },
+    {
+      "id": "E4-07",
+      "dependsOn": [
+        "E8-11",
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E4-09",
+      "dependsOn": [
+        "E10-03"
+      ]
+    },
+    {
+      "id": "E4-10",
+      "dependsOn": [
+        "E10-01"
+      ]
+    },
+    {
+      "id": "E4-12",
+      "dependsOn": [
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E4-22",
+      "dependsOn": [
+        "E1-05",
+        "E1-08",
+        "E1-35"
+      ]
+    },
+    {
+      "id": "E5-05",
+      "dependsOn": [
+        "E1-16"
+      ]
+    },
+    {
+      "id": "E5-08",
+      "dependsOn": [
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E5-29",
+      "dependsOn": [
+        "E8-10",
+        "E8-21",
+        "E14-02",
+        "E8-02"
+      ]
+    },
+    {
+      "id": "E6-01",
+      "dependsOn": [
+        "E4-11",
+        "E8-18"
+      ]
+    },
+    {
+      "id": "E6-02",
+      "dependsOn": [
+        "E1-32",
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E6-03",
+      "dependsOn": [
+        "E1-25"
+      ]
+    },
+    {
+      "id": "E6-07",
+      "dependsOn": [
+        "E8-10",
+        "E1-33",
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E6-10",
+      "dependsOn": [
+        "E1-14"
+      ]
+    },
+    {
+      "id": "E6-11",
+      "dependsOn": [
+        "E1-13"
+      ]
+    },
+    {
+      "id": "E6-14",
+      "dependsOn": [
+        "E1-18"
+      ]
+    },
+    {
+      "id": "E6-24",
+      "dependsOn": [
+        "E8-10"
+      ]
+    },
+    {
+      "id": "E6-25",
+      "dependsOn": [
+        "E4-07",
+        "E8-10",
+        "E8-11"
+      ]
+    },
+    {
+      "id": "E6-26",
+      "dependsOn": [
+        "E1-30"
+      ]
+    },
+    {
+      "id": "E6-28",
+      "dependsOn": [
+        "E8-11",
+        "E1-29"
+      ]
+    },
+    {
+      "id": "E6-29",
+      "dependsOn": [
+        "E8-11",
+        "E1-29",
+        "E1-30"
+      ]
+    },
+    {
+      "id": "E6-30",
+      "dependsOn": [
+        "E1-15"
+      ]
+    },
+    {
+      "id": "E6-32",
+      "dependsOn": [
+        "E3-10"
+      ]
+    },
+    {
+      "id": "E7-02",
+      "dependsOn": [
+        "E4-21"
+      ]
+    },
+    {
+      "id": "E7-05",
+      "dependsOn": [
+        "E4-12"
+      ]
+    },
+    {
+      "id": "E7-14",
+      "dependsOn": [
+        "E4-21"
+      ]
+    },
+    {
+      "id": "E7-22",
+      "dependsOn": [
+        "E6-20"
+      ]
+    },
+    {
+      "id": "E7-30",
+      "dependsOn": [
+        "E4-21",
+        "E5-15"
+      ]
+    },
+    {
+      "id": "E7-33",
+      "dependsOn": [
+        "E4-21",
+        "E6-20"
+      ]
+    },
+    {
+      "id": "E8-02",
+      "dependsOn": [
+        "E14-02"
+      ]
+    },
+    {
+      "id": "E8-04",
+      "dependsOn": [
+        "E2-08"
+      ]
+    },
+    {
+      "id": "E8-05",
+      "dependsOn": [
+        "E3-03"
+      ]
+    },
+    {
+      "id": "E8-14",
+      "dependsOn": [
+        "E4-03"
+      ]
+    },
+    {
+      "id": "E8-17",
+      "dependsOn": [
+        "E6-26"
+      ]
+    },
+    {
+      "id": "E8-21",
+      "dependsOn": [
+        "E5-23"
+      ]
+    },
+    {
+      "id": "E8-22",
+      "dependsOn": [
+        "E5-23"
+      ]
+    },
+    {
+      "id": "E9-02",
+      "dependsOn": [
+        "E1-35"
+      ]
+    },
+    {
+      "id": "E9-07",
+      "dependsOn": [
+        "E1-09",
+        "E1-22"
+      ]
+    },
+    {
+      "id": "E9-08",
+      "dependsOn": [
+        "E8-05",
+        "E2-03",
+        "E1-09",
+        "E1-12",
+        "E1-17",
+        "E9-07"
+      ]
+    },
+    {
+      "id": "E10-02",
+      "dependsOn": [
+        "E8-08"
+      ]
+    },
+    {
+      "id": "E10-11",
+      "dependsOn": [
+        "E6-29",
+        "E6-30"
+      ]
+    },
+    {
+      "id": "E10-12",
+      "dependsOn": [
+        "E8-05"
+      ]
+    },
+    {
+      "id": "E10-14",
+      "dependsOn": [
+        "E8-11",
+        "E4-09",
+        "E4-10"
+      ]
+    },
+    {
+      "id": "E11-01",
+      "dependsOn": [
+        "E1-01",
+        "E13-05"
+      ]
+    },
+    {
+      "id": "E11-07",
+      "dependsOn": [
+        "E1-19",
+        "E1-20",
+        "E1-21",
+        "E1-27"
+      ]
+    },
+    {
+      "id": "E11-16",
+      "dependsOn": [
+        "E1-24",
+        "E1-31",
+        "E1-34"
+      ]
+    },
+    {
+      "id": "E12-01",
+      "dependsOn": [
+        "E14-02"
+      ]
+    },
+    {
+      "id": "E12-03",
+      "dependsOn": [
+        "E12-01"
+      ]
+    },
+    {
+      "id": "E12-13",
+      "dependsOn": [
+        "E17-05"
+      ]
+    },
+    {
+      "id": "E12-14",
+      "dependsOn": [
+        "E1-01"
+      ]
+    },
+    {
+      "id": "E13-01",
+      "dependsOn": [
+        "E12-03"
+      ]
+    },
+    {
+      "id": "E13-12",
+      "dependsOn": [
+        "E11-09",
+        "E11-14",
+        "E11-15"
+      ]
+    },
+    {
+      "id": "E13-19",
+      "dependsOn": [
+        "E17-03"
+      ]
+    },
+    {
+      "id": "E13-23",
+      "dependsOn": [
+        "E11-14",
+        "E11-15"
+      ]
+    },
+    {
+      "id": "E13-34",
+      "dependsOn": [
+        "E5-29"
+      ]
+    },
+    {
+      "id": "E14-11",
+      "dependsOn": [
+        "E13-02"
+      ]
+    },
+    {
+      "id": "E15-05",
+      "dependsOn": [
+        "E12-04"
+      ]
+    },
+    {
+      "id": "E15-08",
+      "dependsOn": [
+        "E12-08",
+        "E12-11"
+      ]
+    },
+    {
+      "id": "E15-14",
+      "dependsOn": [
+        "E1-37",
+        "E2-20",
+        "E3-15",
+        "E4-22",
+        "E5-29",
+        "E10-14",
+        "E11-07",
+        "E11-16",
+        "E13-19",
+        "E17-05"
+      ]
+    },
+    {
+      "id": "E16-08",
+      "dependsOn": [
+        "E13-02"
+      ]
+    },
+    {
+      "id": "E17-01",
+      "dependsOn": [
+        "E1-05"
+      ]
+    },
+    {
+      "id": "E17-05",
+      "dependsOn": [
+        "E1-05"
+      ]
+    }
+  ],
+  "addDeps": [
+    {
+      "id": "E9-07",
+      "dependsOn": [
+        "E1-42"
+      ],
+      "source": "R1 m7"
+    },
+    {
+      "id": "E9-08",
+      "dependsOn": [
+        "E1-42"
+      ],
+      "source": "R1 m7"
+    },
+    {
+      "id": "E10-01",
+      "dependsOn": [
+        "E2-01"
+      ],
+      "source": "R1 m2"
+    },
+    {
+      "id": "E13-10",
+      "dependsOn": [
+        "E1-01"
+      ],
+      "source": "ADR-R7: cards read meta"
+    },
+    {
+      "id": "E13-03",
+      "dependsOn": [
+        "E1-01"
+      ],
+      "source": "ADR-R7: props manifest joins meta"
+    },
+    {
+      "id": "E1-37",
+      "dependsOn": [
+        "E13-06",
+        "E13-07",
+        "E13-08",
+        "E13-09"
+      ],
+      "source": "meta backfill before status flip"
+    },
+    {
+      "id": "E11-03",
+      "dependsOn": [
+        "E1-01"
+      ],
+      "source": "catalog reads meta (ADR-R7)"
+    },
+    {
+      "id": "E15-14",
+      "dependsOn": [
+        "E14-18"
+      ],
+      "source": "wiring chain end"
+    },
+    {
+      "id": "E12-13",
+      "dependsOn": [
+        "E9-12"
+      ],
+      "source": "original"
+    }
+  ],
+  "removeDeps": [
+    {
+      "id": "E3-15",
+      "deps": [
+        "E3-12",
+        "E3-13"
+      ],
+      "reason": "dropped items no longer barrelled by E3"
+    },
+    {
+      "id": "E8-26",
+      "deps": [
+        "E8-24",
+        "E8-25"
+      ],
+      "reason": "post-1.0 adapters must not block V1"
+    },
+    {
+      "id": "E1-35",
+      "deps": [
+        "E1-13",
+        "E1-14",
+        "E1-18",
+        "E1-32",
+        "E1-33"
+      ],
+      "reason": "those prop types are now exported by the E6 upgrades and wired by E14-16; keeps E1-35 early in the barrel chain"
+    }
+  ],
+  "componentDeps": {
+    "targets": [
+      "E2-06",
+      "E14-13",
+      "E1-01"
+    ],
+    "exempt": [
+      "E1-15",
+      "E2-06",
+      "E14-13",
+      "E1-01"
+    ],
+    "exemptReason": {
+      "E1-15": "platform-file unification pre-fix required by E14-03 in Wave 0; no variant/API change"
+    },
+    "extra": [
+      "E10-04",
+      "E10-10",
+      "E10-12",
+      "E3-05",
+      "E3-09",
+      "E3-11"
+    ]
+  },
+  "depsAllOf": {
+    "E14-14": {
+      "epics": [
+        "E4"
+      ],
+      "requirePathPrefix": "src/"
+    },
+    "E14-15": {
+      "epics": [
+        "E5"
+      ],
+      "requirePathPrefix": "src/"
+    },
+    "E14-16": {
+      "epics": [
+        "E6"
+      ],
+      "requirePathPrefix": "src/"
+    },
+    "E14-17": {
+      "epics": [
+        "E7"
+      ],
+      "requirePathPrefix": "src/"
+    },
+    "E14-18": {
+      "epics": [
+        "E8"
+      ],
+      "requirePathPrefix": "src/native/"
+    }
+  },
+  "chains": [
+    {
+      "file": "package.json",
+      "order": [
+        "E14-02",
+        "E14-05",
+        "E12-01",
+        "E12-03",
+        "E13-01",
+        "E1-05",
+        "E17-01",
+        "E15-14"
+      ],
+      "source": "R2 serialiseFiles (E8-02/E5-29 removed: exports via config/exports.json; E14-05 added for absorbed E12-09 script)"
+    },
+    {
+      "file": "mkdocs.yml",
+      "order": [
+        "E16-02",
+        "E1-05",
+        "E14-14",
+        "E14-15",
+        "E14-16",
+        "E14-17",
+        "E14-18",
+        "E13-34"
+      ],
+      "source": "R2 (wiring tickets replace E4-22/E5-29)"
+    },
+    {
+      "file": "docs/components.md",
+      "order": [
+        "E1-08",
+        "E14-14",
+        "E14-15",
+        "E14-16",
+        "E14-17"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "src/index.ts + audit/api snapshots",
+      "order": [
+        "E1-35",
+        "E14-11",
+        "E14-14",
+        "E14-15",
+        "E14-16",
+        "E14-17",
+        "E14-18",
+        "E15-14"
+      ],
+      "source": "R2 + R1 M11"
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "order": [
+        "E1-05",
+        "E17-05",
+        "E12-13"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "examples/**",
+      "order": [
+        "E1-19",
+        "E1-20",
+        "E1-21",
+        "E1-24",
+        "E1-27",
+        "E1-31",
+        "E1-34",
+        "E11-07",
+        "E11-16",
+        "E15-14"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "src/components/Box|Card/**",
+      "order": [
+        "E1-19",
+        "E1-20",
+        "E2-05"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "scripts/*consumer-smoke.mjs",
+      "order": [
+        "E12-08",
+        "E12-11",
+        "E15-08"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "tests/types/**",
+      "order": [
+        "E12-04",
+        "E15-05"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "scripts/release-guard.mjs",
+      "order": [
+        "E17-03",
+        "E13-19"
+      ],
+      "source": "R2"
+    },
+    {
+      "file": "tsconfig.build.json",
+      "order": [
+        "E14-03",
+        "E1-01",
+        "E8-02"
+      ],
+      "source": "R2 + E1-01 meta exclude"
+    },
+    {
+      "file": "src/components/Button/**",
+      "order": [
+        "E1-09",
+        "E1-42",
+        "E9-07",
+        "E9-08"
+      ],
+      "source": "R1 m7 + R2"
+    }
+  ],
+  "priority": [
+    "E1-15",
+    "E14-03",
+    "E14-13",
+    "E1-04",
+    "E1-01",
+    "E2-01",
+    "E2-02",
+    "E2-04",
+    "E2-03",
+    "E2-05",
+    "E2-06",
+    "E3-01",
+    "E8-01",
+    "E8-05",
+    "E3-03",
+    "E3-04",
+    "E3-06",
+    "E4-02",
+    "E4-01",
+    "E8-13",
+    "E4-03",
+    "E4-04",
+    "E4-23",
+    "E6-01",
+    "E10-01",
+    "E14-01",
+    "E14-06",
+    "E14-02",
+    "E14-12"
+  ],
+  "decisions": {
+    "H1": {
+      "text": "Final Texo name / npm scope / org / repo owner; license holder; SECURITY contact; CODEOWNERS handles",
+      "unblock": "Human records H1 in audit/adr/0017-texo-final-identity.md (E15-01) and config/package-identity.json",
+      "ids": [
+        "E15-01",
+        "E15-10",
+        "E15-13",
+        "E15-14",
+        "E15-16",
+        "E16-01",
+        "E16-03",
+        "E16-09"
+      ]
+    },
+    "H2": {
+      "text": "Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker)",
+      "unblock": "Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)",
+      "ids": [
+        "E4-24",
+        "E5-18",
+        "E7-04",
+        "E8-31",
+        "E7-25",
+        "E7-26"
+      ]
+    },
+    "H3": {
+      "text": "Confirm 1.0 scope cut and stable set (ADR-R10)",
+      "unblock": "Human confirms config/stable-set.json contents and the post-1.0 list",
+      "ids": [
+        "E17-14",
+        "E1-38",
+        "E1-39",
+        "E1-40",
+        "E1-41"
+      ]
+    },
+    "H4": {
+      "text": "Support matrix for 1.0 (Expo 57 only vs 56-57) and deprecation/sunset windows",
+      "unblock": "Human records support matrix in config/compatibility.json and sunset months in ADR 0011/0013",
+      "ids": [
+        "E15-02",
+        "E17-07"
+      ]
+    },
+    "H5": {
+      "text": "Eval budget and reference agent/model for AI-uplift proof",
+      "unblock": "Human names budget owner, run count and reference model",
+      "ids": [
+        "E13-31"
+      ]
+    },
+    "H6": {
+      "text": "Version line: Texo starts at 1.0.0-rc.0; legacy name jumps to shim 1.0.0",
+      "unblock": "Human confirms version line in E17-08 release train plan",
+      "ids": [
+        "E15-14",
+        "E15-16"
+      ]
+    },
+    "H7": {
+      "text": "Public/private fate of audit/ and Jira-internal CONTRIBUTING",
+      "unblock": "Human decides publication of audit/ in E16-10 review",
+      "ids": [
+        "E16-10"
+      ]
+    },
+    "H8": {
+      "text": "Codemod channel naming (npx <name>-codemod vs texo migrate)",
+      "unblock": "Human picks the channel after H1",
+      "ids": [
+        "E15-10"
+      ]
+    }
+  },
+  "uiObligation": {
+    "dod": [
+      "Colocated <Name>.meta.ts ({metaPaths}) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "acceptance": [
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists {names}"
+    ]
+  },
+  "epics": {
+    "E1": {
+      "title": "Component maturity (existing components -> demo -> stable)",
+      "goal": "Every existing component reaches demo with meta, tests, docs and examples behind a strict gate; the ADR-R10 stable set is promoted.",
+      "successCriteria": [
+        "node scripts/maturity-check.mjs --strict exits 0 with no prototype entries",
+        "All 36 existing components have <Name>.meta.ts",
+        "B/P/Small/TextGroup are @deprecated aliases",
+        "Stable set (H3-confirmed) has status stable"
+      ],
+      "milestones": [
+        "Gate tooling: meta loader, checker, lints",
+        "Family demo lifts and fixes",
+        "Strict gate on and stable promotions"
+      ]
+    },
+    "E2": {
+      "title": "Design system & presets",
+      "goal": "Theme contract v2, semantic tokens, defineVariants/useVariants, density, system mode and the minimal/saas/dashboard presets behind a contrast gate.",
+      "successCriteria": [
+        "Theme contract v2 test green",
+        "defineVariants used by Button",
+        "3 V1 presets pass the contrast script in light and dark"
+      ],
+      "milestones": [
+        "Theme contract v2 and scales",
+        "Variant API, density, system mode",
+        "Presets, registry, contrast gate and token manifest"
+      ]
+    },
+    "E3": {
+      "title": "Motion & interaction",
+      "goal": "RN Animated-based motion tokens, MotionProvider, press feedback and gestures, all gated by reduced motion (D11).",
+      "successCriteria": [
+        "No Reanimated/gesture-handler peer",
+        "Every animation honours useMotionPreference",
+        "ADR 0012 accepted"
+      ],
+      "milestones": [
+        "Motion tokens, ADR 0012, MotionProvider",
+        "Animation primitives and gestures",
+        "Motion docs and barrels"
+      ]
+    },
+    "E4": {
+      "title": "Primitives, layout & typography",
+      "goal": "Composable primitives (Slot, Touchable, Icon, Surface, Grid, BulletList, Collapsible/Accordion) plus LocaleProvider.",
+      "successCriteria": [
+        "Touchable is the only press primitive",
+        "All built-in strings come from useMessages()",
+        "Every primitive has meta + docs + tests"
+      ],
+      "milestones": [
+        "Hooks, Slot, Touchable, Icon, LocaleProvider",
+        "Layout and content primitives",
+        "Disclosure and adapters"
+      ]
+    },
+    "E5": {
+      "title": "Inputs, forms & selection",
+      "goal": "Schema-agnostic forms, compound Field and selection/date controls following ADR 0014.",
+      "successCriteria": [
+        "useForm + Field + Form compose without a schema library",
+        "All controls expose value/defaultValue/onValueChange",
+        "datetimepicker adapter shipped once H2 approves"
+      ],
+      "milestones": [
+        "Validation, useForm, Label, Field",
+        "Controls and selection",
+        "Pickers, masks and adapters"
+      ]
+    },
+    "E6": {
+      "title": "Feedback, overlays & navigation/app shell",
+      "goal": "Single overlay architecture (ADR 0015) with toast, dialogs, sheets, menus, Screen/AppShell and navigation upgrades.",
+      "successCriteria": [
+        "Select-in-Modal and toast-over-Modal tests green",
+        "Exactly one OverlayHost owner",
+        "Screen/AppShell replace ThemeAppShell boilerplate"
+      ],
+      "milestones": [
+        "Portal/OverlayHost and existing overlay upgrades",
+        "Toast, dialogs, sheets, menus, states",
+        "Screen, AppShell and navigation"
+      ]
+    },
+    "E7": {
+      "title": "Data display, lists, tables, charts, media",
+      "goal": "List/ListItem/Avatar, DataTable, Stat, Timeline, Pager, Image and chart core; svg charts, media and chat are post-1.0.",
+      "successCriteria": [
+        "List virtualization defaults documented and tested",
+        "DataTable sort/selection/responsive tests green",
+        "No react-native-svg import outside ./adapters"
+      ],
+      "milestones": [
+        "ListItem, List, Avatar, Image",
+        "DataTable, Stat, Timeline, chart core",
+        "Post-1.0 media, charts and chat"
+      ]
+    },
+    "E8": {
+      "title": "Native capabilities & device APIs",
+      "goal": "Injection-only capability layer exposed via ./native and ./native/expo with RN-core/web fallbacks and a smoke matrix.",
+      "successCriteria": [
+        "No require() and no expo-* import reachable from the root entry",
+        "Every capability works with no optional module installed",
+        "Expo app, Expo Go and bare RN smoke results recorded"
+      ],
+      "milestones": [
+        "Capability contract and RN-core hooks",
+        "Adapters, permissions, pickers, storage",
+        "Expo preset, smoke matrix and docs"
+      ]
+    },
+    "E9": {
+      "title": "Accessibility",
+      "goal": "Table-driven a11y contract over every interactive component, touch targets, dynamic type and a device protocol.",
+      "successCriteria": [
+        "Contract table fails on any unlisted interactive export",
+        "44/48 targets enforced",
+        "Device protocol evidence for the stable set"
+      ],
+      "milestones": [
+        "Harness and contract table",
+        "Targets, dynamic type, reading order",
+        "Web axe smoke and device protocol"
+      ]
+    },
+    "E10": {
+      "title": "Responsive / adaptive",
+      "goal": "Width-based breakpoints on all platforms, size classes, responsive values, Container and large-text switching.",
+      "successCriteria": [
+        "useBreakpoint identical on native and web",
+        "One Container owner",
+        "Breaking-change register entry for useBreakpoint"
+      ],
+      "milestones": [
+        "Breakpoints and size classes",
+        "Resolvers, Show/Hide, Container",
+        "Responsive docs and barrel"
+      ]
+    },
+    "E11": {
+      "title": "Showcase, catalog & templates/recipes",
+      "goal": "Expo catalog app generated from meta with playground and matrix views, plus runnable templates and recipes.",
+      "successCriteria": [
+        "Catalog lists every component with status >= demo from meta",
+        "Web export embedded in Pages",
+        "Templates build via check-templates"
+      ],
+      "milestones": [
+        "Catalog scaffold, navigation, theming",
+        "Stories, playground, matrix",
+        "Templates and recipes"
+      ]
+    },
+    "E12": {
+      "title": "Testing & consumer validation",
+      "goal": "Coverage, RNTL, type tests, visual regression, perf baselines and hardened consumer smoke.",
+      "successCriteria": [
+        "Coverage reported in CI",
+        "Visual regression across presets x modes",
+        "Consumer smoke green on Node/TS, Metro and webpack"
+      ],
+      "milestones": [
+        "Runner, coverage, RNTL",
+        "Behavior, type and perf tests",
+        "Visual and consumer validation"
+      ]
+    },
+    "E13": {
+      "title": "AI-native layer (manifests, skills, evals)",
+      "goal": "Meta-driven manifests shipped as ./meta, cards, per-category T0 index, 12 skills and an eval harness; MCP/CLI post-1.0.",
+      "successCriteria": [
+        "Only ./meta JSON ships in npm",
+        "Each T0 category file <= 1.5k tokens",
+        "Skills validate and eval uplift measured (H5)"
+      ],
+      "milestones": [
+        "Architecture, extractor, manifests",
+        "Cards, index, llms, AGENTS, ai:build",
+        "Skills and evals"
+      ]
+    },
+    "E14": {
+      "title": "Package architecture & DX",
+      "goal": "D7 subpaths from config/exports.json, valid ESM, API-conventions ADR, TexoProvider, serialised wave wiring and per-subpath API snapshots.",
+      "successCriteria": [
+        "Subpath matrix green on Node, TS, Metro and webpack-5 fullySpecified",
+        "check-api-conventions clean",
+        "Only wave-wiring tickets edit src/index.ts"
+      ],
+      "milestones": [
+        "ESM emit, conventions ADR, exports contract",
+        "Generator, snapshots, TexoProvider",
+        "Wave wiring A-E"
+      ]
+    },
+    "E15": {
+      "title": "Texo migration (cutover)",
+      "goal": "Generated re-export shim with parity suites, codemod and migration docs; cutover after H1/H6.",
+      "successCriteria": [
+        "Shim parity (values, types, subpaths) green",
+        "Mixed legacy+Texo imports share one provider",
+        "Codemod idempotent"
+      ],
+      "milestones": [
+        "Policy and shim build",
+        "Parity, compat and smoke suites",
+        "Codemod, docs and cutover (blocked H1/H6/H8)"
+      ]
+    },
+    "E16": {
+      "title": "Docs & open-source readiness",
+      "goal": "English docs with strict mkdocs build, governance files, API reference and license audit.",
+      "successCriteria": [
+        "mkdocs build --strict green",
+        "SECURITY/CODE_OF_CONDUCT/SUPPORT present",
+        "API reference generated from TSDoc"
+      ],
+      "milestones": [
+        "Docs build and governance",
+        "Getting started and API reference",
+        "Publication review (H1/H7)"
+      ]
+    },
+    "E17": {
+      "title": "V1 release engineering",
+      "goal": "Changesets lockstep, trusted publishing, CI matrix, semver policy, stable bar and the release train to 1.0.",
+      "successCriteria": [
+        "Release dry run green for both packages",
+        "Stable bar check green for the confirmed set",
+        "Rollback runbook approved"
+      ],
+      "milestones": [
+        "Support matrix, policy, supply chain",
+        "Changesets, guard, CI, pack checks",
+        "Publishing, promotion, stable bar, rehearsal"
+      ]
+    }
+  },
+  "conflicts": [
+    {
+      "topic": "Skeleton owner",
+      "R1": "E6-21 owns; E4-12, E7-05 merged; E3 keeps useShimmer",
+      "R2": "E4-12 owns; drop E6-21, E3-07; E7-05 presets",
+      "resolution": "E6-21 canonical (absorbs E4-12, E7-05); E3-07 rescoped to useShimmer",
+      "basis": "D5 / ADR-R4"
+    },
+    {
+      "topic": "Portal owner",
+      "R1": "E6-01 owns; E4-11 merged",
+      "R2": "E4-11 owns; E6-01 rescoped to OverlayHost",
+      "resolution": "E6-01 canonical (absorbs E4-11), writes ADR 0015",
+      "basis": "D4 / ADR-R3"
+    },
+    {
+      "topic": "Back-handler stack",
+      "R1": "E6-01 owns; E8-18 thin hook over it",
+      "R2": "E6-01 depends on E8-18",
+      "resolution": "E8-18 depends on E6-01; R2 edge E6-01->E8-18 skipped",
+      "basis": "D4"
+    },
+    {
+      "topic": "Screen owner",
+      "R1": "E6-25 absorbs E4-07",
+      "R2": "E4-07 owns; E6-25 AppShell only",
+      "resolution": "E6-25 canonical (absorbs E4-07), split into Screen (E6-25) and AppShell (E6-37)",
+      "basis": "D5 / ADR-R4 + R2 split mechanics"
+    },
+    {
+      "topic": "Avatar owner",
+      "R1": "E7-17 absorbs E4-13, E4-14",
+      "R2": "E4-13/E4-14 own; drop E7-17",
+      "resolution": "E7-17 canonical",
+      "basis": "ADR-R4"
+    },
+    {
+      "topic": "ListItem owner",
+      "R1": "E7-01 absorbs E4-21",
+      "R2": "E4-21 owns; drop E7-01",
+      "resolution": "E7-01 canonical",
+      "basis": "ADR-R4"
+    },
+    {
+      "topic": "Container owner",
+      "R1": "E10-06 absorbs E4-10, E10-13",
+      "R2": "E4-10 owns; drop E10-13; rename E10-06",
+      "resolution": "E10-06 canonical, moved to src/components/Container",
+      "basis": "ADR-R4"
+    },
+    {
+      "topic": "Accordion owner",
+      "R1": "E6-16 <- E4-19/E4-20 (or reverse)",
+      "R2": "E4-19/E4-20 own; drop E6-16",
+      "resolution": "R2 applied (R1 explicitly allowed either owner)",
+      "basis": "R2 mechanics where R1 is indifferent"
+    },
+    {
+      "topic": "Reduced-motion owner",
+      "R1": "E8-05 exposes; E3-03 MotionProvider consumes; E9-09 -> E8-05",
+      "R2": "E3-03 owns; E8-05 re-exports; E9-09 -> E3-03",
+      "resolution": "E8-05 owns useReducedMotion; E3-03 depends on E8-05; E9-09 routed to E8-05/E6-02/E6-07",
+      "basis": "ADR-R4"
+    },
+    {
+      "topic": "Press primitive",
+      "R1": "Touchable only; E3-06 hook only; remove E8-14",
+      "R2": "PressableScale on Touchable; E8-14 keeps useHapticPress",
+      "resolution": "E3-06 hook only, E4-03 depends on E3-06 and E8-13; E8-14 merged into E4-03",
+      "basis": "R1 M12 / ADR-R4"
+    },
+    {
+      "topic": "E1 vs E6 overlay rewrites",
+      "R1": "merge E1-13/14/18/32/33/15 into E6 upgrades",
+      "R2": "serialise E1 before E6",
+      "resolution": "Merged E1-13/14/18/32/33; E1-15 kept as a platform-file pre-fix (needed by E14-03, R1 B6) with its remaining scope moved to E6-30",
+      "basis": "R1 B3 + B6"
+    },
+    {
+      "topic": "Metadata source",
+      "R1": "colocated <Name>.meta.ts; E1-01+E11-01+E13-05 merged",
+      "R2": "E1-01 manifest + <Name>.catalog.ts sidecars + generated registry",
+      "resolution": "<Name>.meta.ts everywhere (text replace of .catalog.ts); E1-01 absorbs E13-05/E11-01; E13-06..09 become meta backfill",
+      "basis": "D8 / ADR-R7"
+    },
+    {
+      "topic": "Wiring tickets",
+      "R1": "E14-14 recurring wave wiring replaces E4-22/E5-29",
+      "R2": "keep E4-22/E5-29, add E6/E7 wiring",
+      "resolution": "E14-14..E14-18 wave wiring (+E14-19 post-1.0) absorb E4-22/E5-29 and close the E6/E7 gap",
+      "basis": "R1 M11"
+    },
+    {
+      "topic": "package.json ownership",
+      "R1": "config/exports.json only source; E14-02 generates",
+      "R2": "serialise 9 tickets on package.json incl. E8-02, E5-29",
+      "resolution": "E8-02 and wiring edit neither package.json nor config/exports.json (D7 fixes all subpaths in E14-01); remaining script edits chained E14-02 -> E14-05 -> E12-01 -> E12-03 -> E13-01 -> E1-05 -> E17-01 -> E15-14",
+      "basis": "D7 + R1 M2 + R2 chain"
+    },
+    {
+      "topic": "AdaptiveNav",
+      "R1": "merge E10-11 into E6-29",
+      "R2": "keep E10-11 depending on E6-29/E6-30",
+      "resolution": "Merged into E6-29",
+      "basis": "R1 §3"
+    },
+    {
+      "topic": "ADR numbering",
+      "R1": "0009..0016 allocated",
+      "R2": "n/a",
+      "resolution": "E3-02 -> 0012, E15-01 0012 -> 0017 (collision), E12-03 -> 0018, E12-07 -> 0019 (docs/adr not used), E8-02 ADR folded into 0010",
+      "basis": "D1"
+    },
+    {
+      "topic": "Shim dependency range",
+      "R1": "caret ^major",
+      "R2": "n/a (E15-02 open decision)",
+      "resolution": "E15-02 rescoped to record D10; only sunset window pending H4",
+      "basis": "D10"
+    },
+    {
+      "topic": "Optional deps",
+      "R1": "injection only; ./adapters/* need H2",
+      "R2": "n/a",
+      "resolution": "Removed lazy/try-require from E4-04, E4-07, E5-18, E6-23, E8-01, E8-11, E8-26; static-import adapters E4-24, E5-18, E7-04, E8-31 blocked needs-H2",
+      "basis": "D6"
+    },
+    {
+      "topic": "E3-15 deps",
+      "R1": "n/a",
+      "R2": "E3-15 depends on E4-12, E6-31, E8-13",
+      "resolution": "Skipped: E3-15 no longer barrels Skeleton, PullToRefresh or haptics",
+      "basis": "rescope consistency"
+    },
+    {
+      "topic": "Presets in 1.0",
+      "R1": "minimal, saas, dashboard only",
+      "R2": "8 presets",
+      "resolution": "E2-13/15/16/17/19 post-1.0; E2-20 registry asserts 3 presets",
+      "basis": "D14"
+    }
+  ],
+  "componentNamespaces": [
+    "Patterns"
+  ]
+}

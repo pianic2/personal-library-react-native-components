@@ -1,0 +1,2371 @@
+[
+  {
+    "id": "E5-25",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add input mask engine (pattern, phone, card, date, currency)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "mask",
+      "util",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Formatted entry (phone, card, expiry, currency) is rewritten per app with caret bugs.",
+    "value": "Pure, heavily tested engine decoupled from UI; masks usable in any TextInput.",
+    "scope": [
+      "API: applyMask(text, pattern:string|MaskFn): {masked:string; raw:string; complete:boolean}; patterns 9=digit a=letter *=alnum, other chars literal; presets: masks.phone(region), masks.creditCard, masks.expiry, masks.date(format), masks.currency({locale,currency,precision}); getCaretAfterChange(prev,next,selection).",
+      "Behavior: insertion mid-string, deletion over literals, paste, overflow trimmed.",
+      "Accessibility/platform notes: n/a (raw value exposed for validation)",
+      "Tests: table-driven pattern cases; caret mapping; currency locales; card brand grouping 4-4-4-4 vs amex 4-6-5"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Caret handling on Android differs; limit to documented behaviour"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/forms/mask/**",
+      "tests/forms/mask.test.ts",
+      "docs/components/form/mask.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-28",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add inputPresets (email, password, phone, otp, url, name, search) prop bundles",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "dx",
+      "autofill",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Correct keyboardType/autoComplete/textContentType/autoCapitalize combos are forgotten, hurting autofill and a11y.",
+    "value": "Spread-in presets reduce boilerplate and agent tokens; correct by default.",
+    "scope": [
+      "API: inputPresets.email = {keyboardType:'email-address', autoCapitalize:'none', autoComplete:'email', textContentType:'emailAddress', autoCorrect:false}; likewise password, newPassword, phone, otp, url, givenName, familyName, postalCode, search; usage <Input {...inputPresets.email} />. Typed as satisfies Partial<TextInputProps>.",
+      "Behavior: n/a",
+      "Accessibility/platform notes: autofill hints improve assistive and password-manager use.",
+      "Tests: each preset has required keys; types satisfy TextInputProps"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/forms/inputPresets/**",
+      "tests/forms/inputPresets.test.ts",
+      "docs/components/form/inputPresets.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-02",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Resolver contract and built-in rules (required, length, pattern, email, match)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No shared validation contract; every consumer invents messages and error shapes.",
+    "value": "Schema-agnostic Resolver type and tiny rule combinators so simple forms need no library.",
+    "scope": [
+      "API: type Errors<T>=Partial<Record<Path<T>,string>>; type Resolver<T>=(values:T)=>Errors<T>|Promise<Errors<T>>; createResolver<T>({ [path]: Rule | Rule[] }): Resolver<T>; rules: required(msg?), minLength(n,msg?), maxLength, pattern(re,msg?), email(msg?), min/max(number), matches(otherPath,msg?), custom(fn). Messages overridable via setValidationMessages(partial) for i18n.",
+      "Behavior: first failing rule per field reported; async rules supported.",
+      "Accessibility/platform notes: Messages plain strings for live-region announce.",
+      "Tests: each rule pass/fail; first-error ordering; custom async rule; message override"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "Built-in rule messages are read from the LocaleProvider catalog via useMessages()/messages keys (grep shows no hardcoded English message strings in src/forms/validation)"
+    ],
+    "dependencies": [
+      "E4-23"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/forms/validation/**",
+      "tests/forms/validation.test.ts",
+      "docs/components/form/validation.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-12",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Fix Input label leak, root wrapper and optional label",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "form",
+      "input",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Input passes label to TextInput through ...rest, returns a fragment (no wrapper style/testID), and requires label even inside FormField (duplicate labels).",
+    "value": "Clean DOM/props and composability with FormField.",
+    "scope": [
+      "Destructure label; make it optional (when absent skip label text, require accessibilityLabel in dev warning)",
+      "Wrap in a View accepting containerStyle",
+      "Keep existing token usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "TextInput props contain no 'label' key (test)",
+      "Input renders without label and warns in __DEV__ if no accessibilityLabel (test)",
+      "containerStyle applied to wrapper (test)",
+      "tests/accessibility/core-controls.test.tsx still passes",
+      "tests/theme/input-component-tokens.test.tsx still passes",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Input"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Fragment->View root may alter layouts relying on sibling flow"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Input/Input.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Input/**",
+      "tests/components/input.test.tsx",
+      "docs/components/form/input.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-22",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Form toggles to demo: Checkbox, Switch, RadioGroup states and tokens",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "form",
+      "a11y",
+      "tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Checkbox/Switch/RadioGroup hardcode sizes and opacity, lack error/disabled states (RadioGroup has no disabled), Switch has no animation.",
+    "value": "Complete, token-driven state coverage.",
+    "scope": [
+      "Add theme.components.* tokens or local const tokens for size/opacity (no literals inline)",
+      "RadioGroup: disabled (group and option), group accessibilityLabel",
+      "Checkbox: indeterminate, error",
+      "Switch: animated thumb via Animated, respects reduced motion",
+      "Tests and docs usage"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Tests for disabled/indeterminate/error states",
+      "RadioGroup option disabled sets accessibilityState disabled",
+      "tests/accessibility/core-controls.test.tsx passes",
+      "grep -l '^## Usage' succeeds for every docs page listed in filesTouched",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Checkbox, Switch, RadioGroup"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Checkbox/Checkbox.meta.ts, src/components/Switch/Switch.meta.ts, src/components/RadioGroup/RadioGroup.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Checkbox/**",
+      "src/components/Switch/**",
+      "src/components/RadioGroup/**",
+      "tests/components/toggles.test.tsx",
+      "docs/components/form/checkbox.md",
+      "docs/components/form/switch.md",
+      "docs/components/form/radio-group.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-01",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add schema-agnostic useForm hook (values, errors, touched, dirty, submit)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "hook",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Consumers wire Input/Select/Checkbox state by hand (value+error+touched per field); no shared validation lifecycle.",
+    "value": "Removes the largest form boilerplate; works with any validator via a Resolver; typed field paths.",
+    "scope": [
+      "API: useForm<T extends Record<string,unknown>>({defaultValues: T, resolver?: Resolver<T>, validateOn?: 'change'|'blur'|'submit' (default 'blur'), revalidateOn?: 'change'|'blur', onSubmit?: (values:T)=>void|Promise<void>}): { values, errors: Partial<Record<Path<T>,string>>, touched, dirty, isValid, isSubmitting, submitCount, setValue(path,v), setError(path,msg), reset(values?), validate(path?), handleSubmit(): ()=>Promise<void>, getFieldProps(path): {value, onChangeText, onBlur, error?: boolean, helperText?: string}, getCheckboxProps(path), getSwitchProps(path), getSelectProps(path) }. type Resolver<T> = (values:T)=>Errors<T>|Promise<Errors<T>>. Dot paths for nesting up to 3 levels.",
+      "Behavior: idle, validating, submitting, submitted; async validators with stale-result cancellation; submit with errors focuses first invalid registered ref.",
+      "Accessibility/platform notes: Does not render; exposes error strings so Field announces them; handleSubmit moves focus to first error field when refs registered via getFieldProps().ref.",
+      "Tests: validateOn modes; touched/dirty tracking; async resolver race (latest wins); nested paths; reset restores defaults; handleSubmit blocks on errors"
+    ],
+    "outOfScope": [
+      "Field arrays (follow-up after v1)",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "Type tests in tests/types prove getFieldProps(\"a.b\") typed and invalid path is a compile error"
+    ],
+    "dependencies": [
+      "E4-02",
+      "E5-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Type-level Path<T> can slow tsc; cap depth and add typecheck:contracts type test"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/forms/useForm/**",
+      "tests/forms/useForm.test.tsx",
+      "docs/components/form/useForm.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-03",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add optional zod resolver adapter via structural typing",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "zod",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Teams standardise on zod; they should not hand-translate issues to Errors<T>.",
+    "value": "One-line schema validation without adding zod as a hard dependency.",
+    "scope": [
+      "API: zodResolver<T>(schema: { safeParseAsync(v:unknown): Promise<{success:true,data:T}|{success:false,error:{issues:{path:(string|number)[];message:string}[]}}> }): Resolver<T>; works with zod 3 and 4 structurally; exposed as subpath @personal-library/react-native-components/zod (package.json exports entry added by wiring ticket).",
+      "Behavior: joins nested path with dots; first issue per path wins; root-level issue keyed as \"_form\".",
+      "Accessibility/platform notes: n/a",
+      "Tests: maps issues to paths using a fake schema object (no zod import in tests); array indices in paths; async refinements"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "grep -rn \"from .zod.\" src/forms/zod returns nothing (no runtime import)"
+    ],
+    "dependencies": [
+      "E5-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Subpath export resolution under Metro needs package exports support; document fallback deep import"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/forms/zod/**",
+      "tests/forms/zod.test.ts",
+      "docs/components/form/zod.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-04",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Label with required marker, disabled state and press-to-focus",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "typography",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Input renders its own label via P; Checkbox/Switch rows and custom controls have no shared label.",
+    "value": "Consistent label semantics for Field and standalone controls.",
+    "scope": [
+      "Create src/components/Label/{Label.tsx,index.ts,Label.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Label required optional disabled size='sm'|'md' onPress? htmlFor?: RefObject<{focus():void}> nativeID>{text}</Label>; required shows * (colors.error) with accessibilityLabel suffix ', required'.",
+      "States/variants: default, required, optional (muted \"(optional)\"), disabled.",
+      "Accessibility: nativeID for accessibilityLabelledBy on controls; press forwards focus to referenced input.",
+      "Theme tokens used (read-only, no new token keys): colors.textPrimary, colors.textMuted, colors.error, theme.typography.fontSize, theme.space",
+      "Tests: tests/components/Label.test.tsx covering required suffix in accessibility label; press focuses ref; disabled color",
+      "Catalog: src/components/Label/Label.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Label.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Label/index.ts exports Label and LabelProps",
+      "npm test passes including tests/components/Label.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Label returns no hardcoded colors",
+      "Label renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Label"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Label/Label.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Label/**",
+      "tests/components/Label.test.tsx",
+      "docs/components/form/Label.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-09",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add OTPInput one-time code / PIN input with autofill and paste",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "otp",
+      "pin",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Verification codes require per-box refs, paste handling and SMS autofill; typically broken.",
+    "value": "Auth flows need it in nearly every app; single hidden TextInput design is robust.",
+    "scope": [
+      "Create src/components/OTPInput/{OTPInput.tsx,index.ts,OTPInput.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <OTPInput length={6} value defaultValue onChange onComplete(code) type='numeric'|'alphanumeric' secure autoFocus disabled error separatorAt?: number size='md'|'lg' label accessibilityLabel />; ref {focus, clear}. One invisible TextInput (textContentType oneTimeCode, autoComplete sms-otp/one-time-code, maxLength=length) renders N boxes from value.",
+      "States/variants: empty, partially filled with caret box, complete, error, disabled, secure (dots).",
+      "Accessibility: Announces as a single text field \"Verification code, N digits\" (not N fields); error announced via live region; boxes hidden from screen readers; large touch area focuses input.",
+      "Theme tokens used (read-only, no new token keys): colors.border, colors.primary (focus), colors.error, colors.surface, colors.disabledBg, theme.radius, theme.size",
+      "Tests: tests/components/OTPInput.test.tsx covering typing and backspace; paste truncates to length; onComplete fires once; filters non-numeric; secure masking; accessibility single-field semantics",
+      "Catalog: src/components/OTPInput/OTPInput.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/OTPInput.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/OTPInput/index.ts exports OTPInput and OTPInputProps",
+      "npm test passes including tests/components/OTPInput.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/OTPInput returns no hardcoded colors",
+      "OTPInput renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists OTPInput"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/OTPInput/OTPInput.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/OTPInput/**",
+      "tests/components/OTPInput.test.tsx",
+      "docs/components/form/OTPInput.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-10",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Slider (single value) with step, ticks and adjustable a11y",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "slider",
+      "gesture",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No native-free slider; community sliders need native modules or gesture-handler.",
+    "value": "Volume/price/settings; PanResponder implementation works in Expo Go and web.",
+    "scope": [
+      "Create src/components/Slider/{Slider.tsx,index.ts,Slider.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Slider value defaultValue onValueChange onSlidingStart onSlidingComplete min={0} max={100} step={1} disabled showValue marks?: {value,label?}[] accessibilityLabel formatValue?(v) size />; math exported: clampToStep(v,min,max,step).",
+      "States/variants: idle, dragging (thumb scale), disabled, with marks, RTL mirrored.",
+      "Accessibility: accessibilityRole adjustable, accessibilityValue {min,max,now,text}, onAccessibilityAction increment/decrement by step; keyboard arrows on web.",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.border, colors.disabled, colors.surface, theme.size, theme.radius",
+      "Tests: tests/components/Slider.test.tsx covering clampToStep math incl. float steps; value from touch position (mock layout width); increment/decrement actions; disabled ignores gestures",
+      "Catalog: src/components/Slider/Slider.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Slider.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Slider/index.ts exports Slider and SliderProps",
+      "npm test passes including tests/components/Slider.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Slider returns no hardcoded colors",
+      "Slider renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Slider"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "PanResponder inside ScrollView steals gestures; set onStartShouldSetPanResponderCapture and document"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Slider/Slider.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Slider/**",
+      "tests/components/Slider.test.tsx",
+      "docs/components/form/Slider.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-26",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add MaskedInput wrapping Input with mask engine and raw value",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "mask",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Applying masks to Input requires onChangeText + selection plumbing.",
+    "value": "Declarative masked field with raw/masked values and keyboard presets.",
+    "scope": [
+      "Create src/components/MaskedInput/{MaskedInput.tsx,index.ts,MaskedInput.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <MaskedInput mask value (raw) onChangeRaw(raw) onChangeText(masked) onComplete {...InputProps} />; derives keyboardType from mask.",
+      "States/variants: incomplete, complete, error.",
+      "Accessibility: Same as Input; announces nothing extra.",
+      "Theme tokens used (read-only, no new token keys): Input tokens",
+      "Tests: tests/components/MaskedInput.test.tsx covering masked display raw callback; keyboardType derivation; selection handling",
+      "Catalog: src/components/MaskedInput/MaskedInput.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/MaskedInput.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/MaskedInput/index.ts exports MaskedInput and MaskedInputProps",
+      "npm test passes including tests/components/MaskedInput.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/MaskedInput returns no hardcoded colors",
+      "MaskedInput renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists MaskedInput"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E5-25",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/MaskedInput/MaskedInput.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/MaskedInput/**",
+      "tests/components/MaskedInput.test.tsx",
+      "docs/components/form/MaskedInput.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-27",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add CheckboxGroup mirroring RadioGroup API",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "RadioGroup exists but multi-select option lists must be assembled manually from Checkbox.",
+    "value": "API parity and group label/error semantics for settings and filters.",
+    "scope": [
+      "Create src/components/CheckboxGroup/{CheckboxGroup.tsx,index.ts,CheckboxGroup.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <CheckboxGroup options:{value,label,description?,disabled?}[] value:string[] defaultValue onValueChange label orientation error helperText max />.",
+      "States/variants: none, some, all (optional select-all with indeterminate), disabled, error.",
+      "Accessibility: group with label (accessibilityLabelledBy), items role checkbox with checked state, indeterminate \"mixed\".",
+      "Theme tokens used (read-only, no new token keys): Checkbox tokens, colors.error, theme.space",
+      "Tests: tests/components/CheckboxGroup.test.tsx covering toggle semantic; max; select-all indeterminate",
+      "Catalog: src/components/CheckboxGroup/CheckboxGroup.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/CheckboxGroup.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/CheckboxGroup/index.ts exports CheckboxGroup and CheckboxGroupProps",
+      "npm test passes including tests/components/CheckboxGroup.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/CheckboxGroup returns no hardcoded colors",
+      "CheckboxGroup renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists CheckboxGroup"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/CheckboxGroup/CheckboxGroup.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/CheckboxGroup/**",
+      "tests/components/CheckboxGroup.test.tsx",
+      "docs/components/form/CheckboxGroup.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-16",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Harden FormField: tokenised spacing, color safe, typed props, tests",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "form",
+      "formfield",
+      "a11y",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "FormField concatenates textPrimary+'99', hardcodes margins 16/6/4, types variant/colorScheme as string, and has no test.",
+    "value": "Form composition safe with any theme and verified.",
+    "scope": [
+      "Replace color concat with colors.textMuted; spacing via theme.space",
+      "Type variant/colorScheme to Input-supported unions",
+      "Simplify child prop sniffing helper",
+      "Tests for error/helper/required/aria wiring",
+      "(from E9-06) FormField: error exposed via accessibilityHint + liveRegion polite"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "No '+ \"99\"' string concat in FormField.tsx",
+      "Test: errorText sets error on child Input and shows error text",
+      "Test: required renders asterisk",
+      "Test: helperText renders when no error",
+      "FormFieldProps variant/colorScheme not 'string'",
+      "(from E9-06) FormField error is exposed via accessibilityHint and accessibilityLiveRegion polite (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists FormField"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-12",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/FormField/FormField.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/FormField/**",
+      "tests/components/form-field.test.tsx",
+      "docs/components/form/form-field.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-06"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-23",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Text inputs to demo: PasswordInput and Textarea",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "form",
+      "input",
+      "i18n",
+      "a11y",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "PasswordInput toggle is unstyled RN Text with hardcoded 'Show'/'Hide'; Textarea has hardcoded minHeight 100; neither has an example.",
+    "value": "Both reach demo with example.",
+    "scope": [
+      "PasswordInput: toggle uses themed Text/Link style, texts from showPasswordLabel/hidePasswordLabel props",
+      "Textarea: minHeight via rows prop and token",
+      "Docs usage",
+      "(from E9-06) Textarea: label/hint parity with Input"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Toggle label comes from props (test)",
+      "Textarea rows prop sets minHeight (test)",
+      "grep -l '^## Usage' succeeds for every docs page listed in filesTouched",
+      "PasswordInput Show/Hide labels come from useMessages() (grep -n \"'Show'\\|'Hide'\" src/components/PasswordInput prints nothing)",
+      "(from E9-06) Textarea label and hint props mirror Input (type test plus render test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists PasswordInput, Textarea"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-12",
+      "E2-06",
+      "E4-23",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/PasswordInput/PasswordInput.meta.ts, src/components/Textarea/Textarea.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/PasswordInput/**",
+      "src/components/Textarea/**",
+      "tests/components/text-inputs.test.tsx",
+      "docs/components/form/password-input.md",
+      "docs/components/form/textarea.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-06"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-11",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add RangeSlider with two thumbs and minimum distance",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "slider",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Price/date ranges need two-thumb selection.",
+    "value": "Reuses Slider math; ranges are a frequent filter control.",
+    "scope": [
+      "Create src/components/RangeSlider/{RangeSlider.tsx,index.ts,RangeSlider.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <RangeSlider value:[number,number] defaultValue onValueChange minDistance={0} min max step disabled formatValue accessibilityLabel />.",
+      "States/variants: thumbs cannot cross; active thumb highlighted; overlapping thumbs resolved by direction.",
+      "Accessibility: Two adjustable elements labelled \"Minimum\"/\"Maximum\" with accessibilityValue.",
+      "Theme tokens used (read-only, no new token keys): same as Slider",
+      "Tests: tests/components/RangeSlider.test.tsx covering minDistance enforced; thumb crossing prevented; a11y actions per thumb",
+      "Catalog: src/components/RangeSlider/RangeSlider.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/RangeSlider.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/RangeSlider/index.ts exports RangeSlider and RangeSliderProps",
+      "npm test passes including tests/components/RangeSlider.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/RangeSlider returns no hardcoded colors",
+      "RangeSlider renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists RangeSlider"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E5-10",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/RangeSlider/RangeSlider.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/RangeSlider/**",
+      "tests/components/RangeSlider.test.tsx",
+      "docs/components/form/RangeSlider.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-05",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add compound Field (Label, Control, Hint, Error) with a11y wiring",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "compound",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "FormField clones child props heuristically (src/components/FormField/FormField.tsx) and Input embeds its own label/helper, so labels/hints cannot be composed or reused.",
+    "value": "Explicit composition: any control becomes a labelled, described, error-announcing field; replaces cloneElement guessing.",
+    "scope": [
+      "Create src/components/Field/{Field.tsx,index.ts,Field.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Field name? status='default'|'error'|'success'|'warning' required disabled><Field.Label>Email</Field.Label><Field.Control><Input bare/></Field.Control><Field.Hint>We never share it</Field.Hint><Field.Error>{message}</Field.Error></Field>; useField(): {nativeID, labelId, hintId, errorId, status, required, disabled}; controls consume via useFieldControlProps() => {nativeID, accessibilityLabelledBy, accessibilityDescribedBy, accessibilityState, aria-invalid}. Field.Error renders only when children truthy.",
+      "States/variants: default, error, success, warning, disabled; error replaces hint visually but both described.",
+      "Accessibility: Error uses accessibilityLiveRegion=\"polite\" and role alert on web; control gets aria-invalid/aria-describedby (web) and accessibilityHint fallback (native); label linked via nativeID.",
+      "Theme tokens used (read-only, no new token keys): colors.error, colors.success, colors.warning, colors.textMuted, theme.space, Label, Small",
+      "Tests: tests/components/Field.test.tsx covering context ids unique via useId; Error live region present only with message; status propagates to control props; works with RN TextInput and Input",
+      "Catalog: src/components/Field/Field.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Field.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Field/index.ts exports Field and FieldProps",
+      "npm test passes including tests/components/Field.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Field returns no hardcoded colors",
+      "Field renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Field"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-12",
+      "E1-16",
+      "E2-06",
+      "E5-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Input currently renders its own label; needs E1 follow-up (bare prop) — not part of this ticket"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Field/Field.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Field/**",
+      "tests/components/Field.test.tsx",
+      "docs/components/form/Field.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-22",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Rating (stars/custom icon) with half steps and read-only mode",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "rating",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Reviews need input and display of ratings.",
+    "value": "Reviews/feedback screens; built from Icon so shapes are swappable.",
+    "scope": [
+      "Create src/components/Rating/{Rating.tsx,index.ts,Rating.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Rating value defaultValue onValueChange max={5} precision={1|0.5} readOnly size icon?: IconName activeColor allowClear showValue count? />.",
+      "States/variants: empty, partial/half, hover/press preview, readOnly, disabled.",
+      "Accessibility: adjustable role with accessibilityValue \"3 of 5\"; increment/decrement actions; readOnly = image with label.",
+      "Theme tokens used (read-only, no new token keys): colors.warning (default star), colors.border, Icon, Touchable",
+      "Tests: tests/components/Rating.test.tsx covering half-step math; readOnly ignores press; adjustable actions; clear on same value",
+      "Catalog: src/components/Rating/Rating.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Rating.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Rating/index.ts exports Rating and RatingProps",
+      "npm test passes including tests/components/Rating.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Rating returns no hardcoded colors",
+      "Rating renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Rating"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-04",
+      "E4-05",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Rating/Rating.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Rating/**",
+      "tests/components/Rating.test.tsx",
+      "docs/components/form/Rating.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-06",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Form provider and bound fields connecting useForm to Field",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "context",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "useForm return value must be threaded to each control manually.",
+    "value": "<Form form={form}> + <Form.Field name> removes per-field plumbing and auto-focuses next/first-error.",
+    "scope": [
+      "Create src/components/Form/{Form.tsx,index.ts,Form.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Form form={useFormReturn} onSubmit?>{children}</Form>; <Form.Field name label hint required render={({field,fieldState})=>ReactNode}> or children as single control (auto-injects value/onChangeText/onBlur/error via cloneElement fallback only when render omitted); <Form.Submit label loading /> using Button with isSubmitting; useFormContext(); useWatch(name).",
+      "States/variants: submitting disables Form.Submit and shows loading; errors shown after touched/submit.",
+      "Accessibility: returnKeyType next/done chaining, first error focused and announced after failed submit (AccessibilityInfo.announceForAccessibility).",
+      "Theme tokens used (read-only, no new token keys): delegates to Field/Button tokens",
+      "Tests: tests/components/Form.test.tsx covering field binding updates values; submit disables button while pending; focus first invalid field; useWatch rerenders only watched field",
+      "Catalog: src/components/Form/Form.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Form.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Form/index.ts exports Form and FormProps",
+      "npm test passes including tests/components/Form.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Form returns no hardcoded colors",
+      "Form renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Form"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E5-01",
+      "E5-05",
+      "E5-28",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Form/Form.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Form/**",
+      "tests/components/Form.test.tsx",
+      "docs/components/form/Form.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-08",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add FormLayout: keyboard-avoiding scrolling form container with focus chain",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "layout",
+      "keyboard",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Forms are covered by the keyboard and need manual KeyboardAvoidingView/ScrollView/tap-to-dismiss and next-field focusing.",
+    "value": "One wrapper makes any form usable on small phones; cuts the most common RN forms bug.",
+    "scope": [
+      "Create src/components/FormLayout/{FormLayout.tsx,index.ts,FormLayout.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <FormLayout gap={SpaceKey} padding footer?: ReactNode stickyFooter keyboardShouldPersistTaps='handled' dismissOnTap scrollToFocused extraScrollHeight={24} />; useFocusChain(count): refs + onSubmitEditing handlers (returnKeyType next/done) exported from same dir.",
+      "States/variants: keyboard visible/hidden, sticky footer lifting above keyboard, tablet max width via Container optional.",
+      "Accessibility: Does not break screen reader order; dismiss on tap does not swallow presses (handled taps); focused field scrolled into view for switch-control users.",
+      "Theme tokens used (read-only, no new token keys): theme.space, colors.background",
+      "Tests: tests/components/FormLayout.test.tsx covering footer offset follows keyboard height (mock useKeyboard); focus chain order; dismiss on tap",
+      "Catalog: src/components/FormLayout/FormLayout.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/FormLayout.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/FormLayout/index.ts exports FormLayout and FormLayoutProps",
+      "npm test passes including tests/components/FormLayout.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/FormLayout returns no hardcoded colors",
+      "FormLayout renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists FormLayout"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-25",
+      "E6-37",
+      "E8-10",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "KeyboardAvoidingView behaviour: behavior ios padding, android height; test matrix in docs"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/FormLayout/FormLayout.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/FormLayout/**",
+      "tests/components/FormLayout.test.tsx",
+      "docs/components/form/FormLayout.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-12",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add ToggleGroup (single/multiple) with icon or text items",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "toggle",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Formatting toolbars and compact option sets need grouped toggle buttons; Chip/Radio do not fit.",
+    "value": "Shared selection state hook reused by SegmentedControl.",
+    "scope": [
+      "Create src/components/ToggleGroup/{ToggleGroup.tsx,index.ts,ToggleGroup.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <ToggleGroup type='single'|'multiple' value defaultValue onValueChange orientation size variant='outline'|'soft' disabled><ToggleGroup.Item value icon label/></ToggleGroup>; export useToggleGroupState({type,value,defaultValue,onValueChange}).",
+      "States/variants: selected, pressed, disabled item, single deselect allowed via allowEmpty.",
+      "Accessibility: single => radiogroup/radio roles; multiple => checkbox roles; icon-only items require label.",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.surface, colors.border, theme.radius, Touchable, Icon",
+      "Tests: tests/components/ToggleGroup.test.tsx covering single replaces selection; multiple toggles set; icon-only without label warns; state hook exported",
+      "Catalog: src/components/ToggleGroup/ToggleGroup.meta.ts exporting {name, category:'buttons', status:'demo', summary, props, example}; docs/components/buttons/ToggleGroup.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/ToggleGroup/index.ts exports ToggleGroup and ToggleGroupProps",
+      "npm test passes including tests/components/ToggleGroup.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/ToggleGroup returns no hardcoded colors",
+      "ToggleGroup renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ToggleGroup"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/ToggleGroup/ToggleGroup.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ToggleGroup/**",
+      "tests/components/ToggleGroup.test.tsx",
+      "docs/components/buttons/ToggleGroup.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-14",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add NumberInput with stepper buttons, min/max/step and locale parsing",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "numeric",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Quantity/amount entry via Input keyboardType is error-prone (parsing, clamping, decimals).",
+    "value": "Cart quantity, settings, amounts; supports hold-to-repeat.",
+    "scope": [
+      "Create src/components/NumberInput/{NumberInput.tsx,index.ts,NumberInput.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <NumberInput value defaultValue onChange(value:number|null) min max step={1} precision locale showSteppers allowEmpty label error helperText size disabled />; export parseNumber(text,locale), formatNumber(n,{precision,locale}).",
+      "States/variants: empty, valid, clamped on blur, at min/max (stepper disabled), disabled.",
+      "Accessibility: adjustable role with accessibilityValue; stepper buttons labelled Increase/Decrease; announces clamped value.",
+      "Theme tokens used (read-only, no new token keys): Input tokens (theme.components.input), colors.border, colors.primary, Touchable",
+      "Tests: tests/components/NumberInput.test.tsx covering parse/format with comma and dot locales; clamp on blur; stepper repeat via fake timers; allowEmpty",
+      "Catalog: src/components/NumberInput/NumberInput.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/NumberInput.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/NumberInput/index.ts exports NumberInput and NumberInputProps",
+      "npm test passes including tests/components/NumberInput.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/NumberInput returns no hardcoded colors",
+      "NumberInput renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists NumberInput"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-05",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/NumberInput/NumberInput.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/NumberInput/**",
+      "tests/components/NumberInput.test.tsx",
+      "docs/components/form/NumberInput.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-15",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add pure-JS Calendar month grid (single/range/multiple)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "date",
+      "calendar",
+      "e7",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Native date pickers differ per platform and need native modules; a JS grid gives consistent UI and testability.",
+    "value": "Foundation for DatePicker, date-range filters, booking UIs without a date library.",
+    "scope": [
+      "Create src/components/Calendar/{Calendar.tsx,index.ts,Calendar.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Calendar mode='single'|'range'|'multiple' value onValueChange month onMonthChange minDate maxDate disabledDates:(d)=>boolean firstDayOfWeek locale showOutsideDays />; dateMath helpers (addMonths, isSameDay, getMonthMatrix) on Date only; labels via Intl.DateTimeFormat.",
+      "States/variants: today, selected, in-range, disabled, outside month, focused day.",
+      "Accessibility: grid with gridcell semantics (web) / each day label \"Monday, 12 May 2026, selected\"; month nav buttons labelled; announces month change.",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.textInverted, colors.surface, colors.disabled, colors.border, theme.space, Touchable",
+      "Tests: tests/components/Calendar.test.tsx covering month matrix incl leap year & week start; range selection ordering; disabled/min/max; accessibility labels from Intl",
+      "Catalog: src/components/Calendar/Calendar.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Calendar.md with usage example",
+      "(from E7-29) pure date utils (no moment/date-fns), locale via Intl with fallback",
+      "(from E7-29) single/range selection, min/max, disabled dates, marked dots",
+      "(from E7-29) week start prop, today highlight",
+      "(from E7-29) month change callbacks"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)",
+      "Time picker (E5)",
+      "Recurring events"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Calendar/index.ts exports Calendar and CalendarProps",
+      "npm test passes including tests/components/Calendar.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Calendar returns no hardcoded colors",
+      "Calendar renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "(from E7-29) Date utils unit-tested across month/leap/DST boundaries and week start 0 and 1",
+      "(from E7-29) Grid 6x7 cells memoized; selecting a day re-renders only affected cells (render counter)",
+      "(from E7-29) Cells have accessibilityLabel full date and selected state",
+      "(from E7-29) Arrow keys/focus on web not required; touch target >= 44dp",
+      "(from E7-29) Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "(from E7-29) Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "(from E7-29) Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Calendar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Intl availability on Hermes (supported since RN 0.70); document minimum",
+      "(from E7-29) Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Calendar/Calendar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Calendar/**",
+      "tests/components/Calendar.test.tsx",
+      "docs/components/form/Calendar.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E7-29"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-21",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add SearchBar with clear, debounce, loading and cancel",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "search",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Search fields repeat icon + clear + debounce wiring (useDebounce exists but unused by Input).",
+    "value": "Common top-of-list control; consistent a11y role search.",
+    "scope": [
+      "Create src/components/SearchBar/{SearchBar.tsx,index.ts,SearchBar.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <SearchBar value defaultValue onChangeText onSearch(debouncedText) debounceMs={300} onSubmit loading onCancel showCancel placeholder size autoFocus />.",
+      "States/variants: empty, typing, with clear button, loading, focused with cancel (iOS style).",
+      "Accessibility: accessibilityRole search; clear button labelled \"Clear search\"; returnKeyType search.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.textMuted, colors.primary, Icon search/clear, Touchable, Spinner",
+      "Tests: tests/components/SearchBar.test.tsx covering debounced onSearch via fake timers; clear resets and focuses; cancel behaviour",
+      "Catalog: src/components/SearchBar/SearchBar.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/SearchBar.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/SearchBar/index.ts exports SearchBar and SearchBarProps",
+      "npm test passes including tests/components/SearchBar.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/SearchBar returns no hardcoded colors",
+      "SearchBar renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SearchBar"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/SearchBar/SearchBar.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SearchBar/**",
+      "tests/components/SearchBar.test.tsx",
+      "docs/components/form/SearchBar.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-13",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add SegmentedControl with animated indicator",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Switching 2-5 mutually exclusive views/options is a ubiquitous mobile pattern absent from the library.",
+    "value": "Native-feeling selection built on ToggleGroup state; replaces custom tab hacks.",
+    "scope": [
+      "Create src/components/SegmentedControl/{SegmentedControl.tsx,index.ts,SegmentedControl.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <SegmentedControl options:{value,label,icon?,disabled?}[] value defaultValue onValueChange size='sm'|'md' fullWidth disabled accessibilityLabel />; indicator animates translateX via Animated (instant under reduced motion).",
+      "States/variants: selected, pressed, disabled option, overflow => equal widths with truncation.",
+      "Accessibility: radiogroup with radio items (or tablist when role=\"tablist\" prop), selected state exposed.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.primary, colors.textInverted, colors.border, theme.radius, theme.space",
+      "Tests: tests/components/SegmentedControl.test.tsx covering selection change; disabled option skipped; indicator position math; a11y roles",
+      "Catalog: src/components/SegmentedControl/SegmentedControl.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/SegmentedControl.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/SegmentedControl/index.ts exports SegmentedControl and SegmentedControlProps",
+      "npm test passes including tests/components/SegmentedControl.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/SegmentedControl returns no hardcoded colors",
+      "SegmentedControl renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SegmentedControl"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E5-12",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/SegmentedControl/SegmentedControl.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SegmentedControl/**",
+      "tests/components/SegmentedControl.test.tsx",
+      "docs/components/form/SegmentedControl.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-16",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add DatePicker field opening Calendar in sheet/popover with native adapter hook",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "date",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Date entry needs a field that opens a picker; platform differences are painful.",
+    "value": "Standard form field for dates using the JS Calendar by default; optional native picker via adapter.",
+    "scope": [
+      "Create src/components/DatePicker/{DatePicker.tsx,index.ts,DatePicker.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <DatePicker value:Date|null onChange label placeholder mode='date'|'range' min max format?(d)=>string presentation='auto'|'sheet'|'popover' adapter?: DatePickerAdapter error helperText disabled clearable />; type DatePickerAdapter={ open(opts):Promise<Date|null> } (see E5-18).",
+      "States/variants: closed/open, empty, selected, error, disabled, clearable.",
+      "Accessibility: Field is a button announcing \"Date, <value or not set>, button\"; sheet traps focus (Portal accessibilityViewIsModal); Escape/back closes.",
+      "Theme tokens used (read-only, no new token keys): Input tokens, colors.border/primary, Surface, Icon calendar",
+      "Tests: tests/components/DatePicker.test.tsx covering open/select/close flow; min/max respected; adapter path used when provided; clear",
+      "Catalog: src/components/DatePicker/DatePicker.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/DatePicker.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/DatePicker/index.ts exports DatePicker and DatePickerProps",
+      "npm test passes including tests/components/DatePicker.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/DatePicker returns no hardcoded colors",
+      "DatePicker renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DatePicker"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-05",
+      "E4-06",
+      "E5-15",
+      "E6-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Presentation inside BottomSheet vs Popover depends on E6 overlays; use Portal + Surface only to avoid coupling"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/DatePicker/DatePicker.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DatePicker/**",
+      "tests/components/DatePicker.test.tsx",
+      "docs/components/form/DatePicker.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-17",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add TimePicker (12/24h, minute step) with JS columns",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "time",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No time entry control; native time pickers are inconsistent.",
+    "value": "Scheduling/alarm/booking forms; completes the date/time pair.",
+    "scope": [
+      "Create src/components/TimePicker/{TimePicker.tsx,index.ts,TimePicker.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <TimePicker value:{hours:number;minutes:number}|null onChange hour12 minuteStep={1} min max label error disabled presentation='sheet'|'inline' />; scroll-snap columns built with FlatList getItemLayout.",
+      "States/variants: 12h with AM/PM, 24h, disabled times via min/max, empty.",
+      "Accessibility: Each column adjustable with accessibilityValue; value announced \"9:30 PM\".",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.surface, colors.border, theme.space, Surface, Portal",
+      "Tests: tests/components/TimePicker.test.tsx covering 12h<->24h conversion; minuteStep rounding; min/max clamp; adjustable actions",
+      "Catalog: src/components/TimePicker/TimePicker.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/TimePicker.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/TimePicker/index.ts exports TimePicker and TimePickerProps",
+      "npm test passes including tests/components/TimePicker.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/TimePicker returns no hardcoded colors",
+      "TimePicker renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists TimePicker"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-05",
+      "E4-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/TimePicker/TimePicker.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/TimePicker/**",
+      "tests/components/TimePicker.test.tsx",
+      "docs/components/form/TimePicker.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-19",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add Combobox/Autocomplete with async options and creatable values",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "autocomplete",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Select has no search; long lists and server-side lookups need type-ahead.",
+    "value": "Country/user/tag pickers; MultiSelect builds on it.",
+    "scope": [
+      "Create src/components/Combobox/{Combobox.tsx,index.ts,Combobox.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Combobox options:{value,label,disabled?,group?}[] value onValueChange inputValue onInputChange filter?(option,query)=>boolean loading onEndReached creatable onCreate emptyMessage label placeholder error helperText clearable presentation='dropdown'|'sheet' /> ; headless useCombobox(opts) returning getInputProps/getListProps/getOptionProps/highlightedIndex.",
+      "States/variants: closed, open with results, loading, empty, selected, error, disabled; web keyboard arrows/enter/esc.",
+      "Accessibility: role combobox + listbox/option (web), accessibilityState expanded, results count announced (\"5 results\"), selected option state.",
+      "Theme tokens used (read-only, no new token keys): Input tokens, Surface level 2, colors.primary, ListItem, Portal, Icon chevron",
+      "Tests: tests/components/Combobox.test.tsx covering filtering default case/diacritic-insensitive; async loading and empty state; creatable flow; highlight navigation in useCombobox; results count announcement",
+      "Catalog: src/components/Combobox/Combobox.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/Combobox.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Combobox/index.ts exports Combobox and ComboboxProps",
+      "npm test passes including tests/components/Combobox.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Combobox returns no hardcoded colors",
+      "Combobox renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Combobox"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-05",
+      "E4-06",
+      "E6-01",
+      "E7-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Keyboard overlap for dropdown; sheet presentation fallback on small heights"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Combobox/Combobox.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Combobox/**",
+      "tests/components/Combobox.test.tsx",
+      "docs/components/form/Combobox.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-23",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add FileField (files/images) UI with injectable picker adapter",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "upload",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Upload fields need previews, progress, limits, errors; picking requires native modules.",
+    "value": "Native-free UI plus picker contract; adapters live separately so core stays dependency-free.",
+    "scope": [
+      "Create src/components/FileField/{FileField.tsx,index.ts,FileField.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <FileField value:PickedFile[] onChange kind='image'|'document'|'any' multiple max maxSizeBytes accept:string[] picker:FilePickerAdapter onReject(reasons) label error helperText progress?:Record<id,number> onRemove disabled />; type PickedFile={id,uri,name,size?,mimeType?,width?,height?}; type FilePickerAdapter={ pick(opts):Promise<PickedFile[]> }.",
+      "States/variants: empty dropzone, populated, uploading with ProgressBar, rejected file error, max reached, disabled.",
+      "Accessibility: Add button labelled with accept hint; each file row has Remove action; rejections announced.",
+      "Theme tokens used (read-only, no new token keys): colors.border, colors.surface, colors.error, ProgressBar, Chip/ListItem, Icon upload/trash/file, Avatar for thumbnails",
+      "Tests: tests/components/FileField.test.tsx covering validation of size/type/max with fake adapter; remove; progress display; rejection callbacks",
+      "Catalog: src/components/FileField/FileField.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/FileField.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/FileField/index.ts exports FileField and FileFieldProps",
+      "npm test passes including tests/components/FileField.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/FileField returns no hardcoded colors",
+      "FileField renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists FileField"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E7-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Thumbnail rendering uses RN Image; large images need downscale guidance in docs"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/FileField/FileField.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/FileField/**",
+      "tests/components/FileField.test.tsx",
+      "docs/components/form/FileField.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-18",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add optional @react-native-community/datetimepicker adapter for DatePicker/TimePicker",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "adapter",
+      "native-module",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "problem": "Some apps prefer OS-native date/time dialogs; native module must stay optional.",
+    "value": "Opt-in native UI without making it a dependency of the core package.",
+    "scope": [
+      "API: createNativeDatePickerAdapter() / createNativeTimePickerAdapter() in ./adapters/datetimepicker with a static import of @react-native-community/datetimepicker declared in peerDependenciesMeta optional (D6; requires H2)",
+      "Android uses DateTimePickerAndroid.open, iOS inline/compact presentation; web returns null (falls back to JS)",
+      "Accessibility/platform notes: delegates to OS dialogs",
+      "Tests: adapter shape; mock native module opens and resolves a date"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "grep -rn 'require(' src/adapters/datetimepicker prints nothing",
+      "node scripts/check-native-boundaries.mjs exits 0 (adapter not reachable from the root entry)"
+    ],
+    "dependencies": [
+      "E5-16",
+      "E5-17"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Expo Go version compatibility; list tested versions in docs/compatibility.md via E14",
+      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/adapters/datetimepicker/**",
+      "tests/adapters/datetimepicker.test.tsx",
+      "docs/components/form/datetimepicker-adapter.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H2"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E5-20",
+    "epic": "E5",
+    "type": "Task",
+    "title": "Add MultiSelect built from Combobox and Chip",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Selecting several values needs a token field with removal.",
+    "value": "Tags, assignees, filters.",
+    "scope": [
+      "Create src/components/MultiSelect/{MultiSelect.tsx,index.ts,MultiSelect.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <MultiSelect options value:string[] onValueChange max maxVisibleChips={3} showSelectAll clearable searchable label error helperText disabled placeholder />.",
+      "States/variants: none, some, max reached (options disabled), overflow +N chip.",
+      "Accessibility: Each chip removable with labelled action; selection count announced.",
+      "Theme tokens used (read-only, no new token keys): Chip tokens, Combobox, colors.border",
+      "Tests: tests/components/MultiSelect.test.tsx covering toggle options; max enforced; chip removal; overflow summary",
+      "Catalog: src/components/MultiSelect/MultiSelect.meta.ts exporting {name, category:'form', status:'demo', summary, props, example}; docs/components/form/MultiSelect.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/MultiSelect/index.ts exports MultiSelect and MultiSelectProps",
+      "npm test passes including tests/components/MultiSelect.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/MultiSelect returns no hardcoded colors",
+      "MultiSelect renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists MultiSelect"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-15",
+      "E5-19",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/MultiSelect/MultiSelect.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/MultiSelect/**",
+      "tests/components/MultiSelect.test.tsx",
+      "docs/components/form/MultiSelect.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

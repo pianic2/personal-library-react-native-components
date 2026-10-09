@@ -1,0 +1,2347 @@
+[
+  {
+    "id": "E7-08",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add useDataTable headless model: columns, sort, selection",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "headless",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Tables need sorting/selection logic separate from rendering for testability.",
+    "value": "Pure TS model reused by view, responsive layout and other UIs.",
+    "scope": [
+      "Column def type (key, header, accessor, sortable, comparator, width, align, priority)",
+      "Hook useDataTable: stable sorted row ids, sort state cycle asc/desc/none, selection (single/multi/all)",
+      "Optional controlled sort/selection",
+      "Pure functions exported for unit testing"
+    ],
+    "outOfScope": [
+      "Rendering",
+      "Server-side pagination UI"
+    ],
+    "acceptance": [
+      "Sorting 50,000 rows completes < 150ms in Node benchmark (attach result)",
+      "Sorted output memoized: same inputs return same array reference (test)",
+      "Stable sort verified (ties keep input order)",
+      "Sort/selection reducers have 100% branch coverage",
+      "No React Native imports in model files (grep) so it runs in plain Node",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DataTable"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/model/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/DataTable/model/model.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DataTable/model/**",
+      "tests/components/DataTable.model.test.tsx",
+      "docs/components/data-display/DataTable.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-13",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add DescriptionList for key-value pairs",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "description-list",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Label/value detail screens are hand-built.",
+    "value": "Composable details view reused by DataTable cards.",
+    "scope": [
+      "items [{label, value}] or compound DescriptionList.Item",
+      "layouts: stacked, inline, grid columns by breakpoint",
+      "copyable hook via consumer onCopy (no clipboard dependency per policy)"
+    ],
+    "outOfScope": [
+      "Clipboard implementation"
+    ],
+    "acceptance": [
+      "No import of expo-clipboard (grep)",
+      "Label/value pairs read together by screen reader (single accessible element per pair)",
+      "Inline layout wraps long values without overlap (render test with long string)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DescriptionList"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DescriptionList/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/DescriptionList/DescriptionList.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DescriptionList/**",
+      "tests/components/DescriptionList.test.tsx",
+      "docs/components/data-display/DescriptionList.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-15",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Pager and Carousel with page indicator",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "carousel",
+      "pager",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No paging primitive; carousels rely on third-party deps.",
+    "value": "Zero-dep paging for onboarding, galleries, banners.",
+    "scope": [
+      "Pager: horizontal paging via FlatList/ScrollView pagingEnabled, controlled index",
+      "Carousel: peek, loop-less snap, autoplay optional with pause on touch",
+      "PageIndicator dots",
+      "lazy mount adjacent pages only"
+    ],
+    "outOfScope": [
+      "Infinite loop mode",
+      "Vertical pager",
+      "Parallax"
+    ],
+    "acceptance": [
+      "Only current +/- 1 pages mounted for lazy mode (test with 100 pages)",
+      "Autoplay disabled when reduce motion enabled and on unmount timers cleared (test)",
+      "Indicator exposes 'page X of Y' label",
+      "onIndexChange fires once per settle (no duplicate on momentum events)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Pager"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Pager/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Pager/Pager.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Pager/**",
+      "tests/components/Pager.test.tsx",
+      "docs/components/data-display/Pager.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-19",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add VideoPlayer shell with controller UI and adapter contract",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "video",
+      "media",
+      "adapter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Video playback needs native libs; core must stay dep-free.",
+    "value": "UI shell (controls, poster, progress, error) over a MediaEngine interface.",
+    "scope": [
+      "MediaEngine interface (load, play, pause, seek, events)",
+      "VideoPlayer renders poster, play/pause, scrubber, time, fullscreen callback",
+      "state machine idle|loading|playing|paused|error",
+      "controls auto-hide"
+    ],
+    "outOfScope": [
+      "Any engine implementation",
+      "Streaming/DRM",
+      "Captions rendering"
+    ],
+    "acceptance": [
+      "Shell works with a mock MediaEngine in tests covering all states",
+      "No import of expo-av/expo-video in this dir (grep)",
+      "Scrubber has accessibilityRole adjustable with increment/decrement actions",
+      "Controls auto-hide timer cleared on unmount (test)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists VideoPlayer"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/VideoPlayer/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/VideoPlayer/VideoPlayer.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/VideoPlayer/**",
+      "tests/components/VideoPlayer.test.tsx",
+      "docs/components/data-display/VideoPlayer.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-27",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add CircularProgress with pure-View default",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "progress",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "ProgressBar is only linear.",
+    "value": "Ring progress for goals/loading, no dependency.",
+    "scope": [
+      "determinate ring using two clipped half-circle rotated Views, indeterminate rotation",
+      "size, thickness, center label, color variants matching ProgressBar",
+      "svg-based smooth variant only through E7-25 optional renderer"
+    ],
+    "outOfScope": [
+      "Gradient rings"
+    ],
+    "acceptance": [
+      "Value clamped to 0-100 like ProgressBar (test)",
+      "Role progressbar with accessibilityValue min/max/now",
+      "CircularProgress indeterminate animation calls Animated.timing/Animated.loop with useNativeDriver: true (spy assertion)",
+      "No svg import (grep)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists CircularProgress"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/CircularProgress/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/CircularProgress/CircularProgress.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/CircularProgress/**",
+      "tests/components/CircularProgress.test.tsx",
+      "docs/components/data-display/CircularProgress.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-31",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Markdown renderer for a safe subset without dependencies",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "markdown",
+      "richtext",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "AI and CMS content arrives as markdown; no renderer.",
+    "value": "Zero-dep renderer for headings, emphasis, lists, code, links, quotes.",
+    "scope": [
+      "tokenizer to AST (pure) and renderer using Text/Heading/CodeInline/Quote/Link",
+      "links via Link adapter, images via Image",
+      "no HTML, sanitized URLs (allow http, https, mailto)",
+      "custom component overrides map"
+    ],
+    "outOfScope": [
+      "Tables, footnotes, HTML, MDX",
+      "Streaming incremental parse (follow-up)"
+    ],
+    "acceptance": [
+      "javascript: and data: URLs rejected (test)",
+      "Parser handles 100KB document < 100ms Node (attach)",
+      "Unsupported syntax degrades to plain text, never throws (fuzz test over 1,000 random strings)",
+      "Headings expose header role; links expose link role",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Markdown"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Markdown/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Scope creep toward CommonMark compliance; define supported subset in docs"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Markdown/Markdown.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Markdown/**",
+      "tests/components/Markdown.test.tsx",
+      "docs/components/data-display/Markdown.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-20",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add AudioPlayer shell with compact and full variants",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "audio",
+      "media",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Same need as video for audio content.",
+    "value": "Reuses MediaEngine contract for podcasts/voice notes.",
+    "scope": [
+      "compact bar and full layout",
+      "play/pause, seek, speed, time",
+      "waveform bar placeholder using View bars (static data prop)"
+    ],
+    "outOfScope": [
+      "Recording",
+      "Background audio session"
+    ],
+    "acceptance": [
+      "Uses MediaEngine from E7-19 only",
+      "Seek adjustable role and speed button labelled",
+      "Waveform of 200 bars renders within one memoized component, no per-bar state",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists AudioPlayer"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-19",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/AudioPlayer/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/AudioPlayer/AudioPlayer.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/AudioPlayer/**",
+      "tests/components/AudioPlayer.test.tsx",
+      "docs/components/data-display/AudioPlayer.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-21",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add expo-video and expo-audio MediaEngine adapters on subpath",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "adapter",
+      "media",
+      "dependencies",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Shells need real engines but expo packages are optional.",
+    "value": "Official adapters keep core zero-native-dep.",
+    "scope": [
+      "Adapter modules createExpoVideoEngine and createExpoAvEngine",
+      "subpath entries; optional peers proposed to E14",
+      "docs for Expo Go support status"
+    ],
+    "outOfScope": [
+      "Editing package.json",
+      "Bundling engines"
+    ],
+    "acceptance": [
+      "Root entry and shell dirs contain no expo-audio/expo-video imports (grep)",
+      "tests/types/media-engine.ts assigns each adapter to MediaEngine and npm run typecheck:contracts exits 0",
+      "Missing package yields clear error message (mock test)",
+      "Native dependency gate checklist attached",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists MediaAdapters"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-19",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/MediaAdapters/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "expo-audio deprecation status vs SDK 56; verify before choosing which adapter to ship first"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/MediaAdapters/MediaAdapters.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/MediaAdapters/**",
+      "tests/components/MediaAdapters.test.tsx",
+      "docs/components/data-display/MediaAdapters.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-01",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add ListItem row primitive with slots, press and a11y",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "primitive",
+      "surface",
+      "row",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No standard row (leading/title/subtitle/trailing) exists; apps hand-roll rows with Box/Row/Text.",
+    "value": "Single memoized row used by List, SectionList, NotificationList, Settings screens.",
+    "scope": [
+      "leading/trailing/title/subtitle/meta slots",
+      "pressable with disabled/selected states",
+      "density sm|md|lg",
+      "accessibilityRole button when onPress, minHeight 44",
+      "React.memo with stable default styles",
+      "(from E4-21) Create src/components/ListItem/{ListItem.tsx,index.ts,ListItem.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-21) API: <ListItem title subtitle leading={ReactNode} trailing={ReactNode} chevron onPress selected disabled divider='inset'|'full'|'none' size='md'|'lg' />; leading/trailing may be Icon, Avatar, Switch.",
+      "(from E4-21) States/variants: default, pressed, selected, disabled, with/without press.",
+      "(from E4-21) Accessibility: Pressable row role button, label = title+subtitle; nested interactive trailing control keeps own role; min height 44.",
+      "(from E4-21) Theme tokens used (read-only, no new token keys): colors.surface, colors.border, colors.textPrimary/textSecondary, colors.primary, theme.space",
+      "(from E4-21) Tests: tests/components/ListItem.test.tsx covering press only when onPress given; label composition; selected state; divider variants",
+      "(from E4-21) Catalog: src/components/ListItem/ListItem.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/ListItem.md with usage example"
+    ],
+    "outOfScope": [
+      "Swipe actions",
+      "Selection state management",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "ListItem is wrapped in React.memo and does not re-render when parent re-renders with identical props (test with render counter)",
+      "Touch target >= 44dp when pressable",
+      "Supports accessibilityLabel derived from title+subtitle by default",
+      "Does not create new style objects per render for static variants (StyleSheet or memoized)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "(from E4-21) npm run typecheck passes and src/components/ListItem/index.ts exports ListItem and ListItemProps",
+      "(from E4-21) npm test passes including tests/components/ListItem.test.tsx",
+      "(from E4-21) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/ListItem returns no hardcoded colors",
+      "(from E4-21) ListItem renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ListItem"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListItem/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts",
+      "(from E4-21) API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/ListItem/ListItem.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ListItem/**",
+      "tests/components/ListItem.test.tsx",
+      "docs/components/surfaces/ListItem.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-21"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-11",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Stat KPI card with delta, trend and sparkline slot",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "stat",
+      "dashboard",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Dashboards need a KPI tile; Card+Text composition is repeated.",
+    "value": "Standard metric tile.",
+    "scope": [
+      "label, value, unit, delta with direction semantic color (up/down/neutral), helper text",
+      "loading skeleton state",
+      "trend slot accepting Sparkline",
+      "number formatting via Intl-safe util with fallback (Hermes Intl caveat)"
+    ],
+    "outOfScope": [
+      "Chart rendering"
+    ],
+    "acceptance": [
+      "Delta announced with textual direction ('up 4.2%'), not color alone (a11y test)",
+      "Large values truncated with ellipsis and accessibilityLabel holds full value",
+      "Loading state renders Skeleton without layout shift (same height asserted)",
+      "Built on Card; no new color literals",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Stat"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Stat/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Stat/Stat.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Stat/**",
+      "tests/components/Stat.test.tsx",
+      "docs/components/data-display/Stat.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-16",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Image with placeholder, fallback and optional blurhash adapter",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "image",
+      "media",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "RN Image lacks loading/error states and consistent sizing.",
+    "value": "Reliable image with progressive placeholder, error fallback, aspect ratio.",
+    "scope": [
+      "Wrapper over RN Image: aspectRatio, resizeMode/fit, loading placeholder (color or Skeleton), error fallback slot, fade-in",
+      "placeholder adapter interface (renderPlaceholder) so blurhash/thumbhash decoders plug in; no decoder bundled",
+      "optional expo-image adapter on subpath",
+      "alt text required prop or decorative flag"
+    ],
+    "outOfScope": [
+      "Bundling blurhash decoder",
+      "Caching layer"
+    ],
+    "acceptance": [
+      "Missing alt without decorative flag logs dev warning and test asserts",
+      "onError switches to fallback and onLoad removes placeholder (test)",
+      "Image fade-in calls Animated.timing with useNativeDriver: true (spy assertion)",
+      "Root and component dir import neither expo-image nor blurhash (grep); adapter lives in subfolder with gate checklist",
+      "Layout does not shift when image loads (aspectRatio reserved)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Image"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Image/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Image/Image.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Image/**",
+      "tests/components/Image.test.tsx",
+      "docs/components/data-display/Image.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-22",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add chart core: scales, ticks, palette and accessible data summary",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Each chart would duplicate scale math and a11y.",
+    "value": "Shared pure-TS foundation across chart components.",
+    "scope": [
+      "linear/band scales, nice ticks, formatters",
+      "categorical palette from tokens with contrast validation",
+      "ChartFrame: title, legend, axes slots, loading/empty/error states",
+      "accessibleSummary generator and optional data-table fallback",
+      "downsample (LTTB) util"
+    ],
+    "outOfScope": [
+      "Rendering of marks"
+    ],
+    "acceptance": [
+      "Scales and ticks have unit tests incl. empty, single-point, negative, equal values",
+      "LTTB reduces 100,000 points to 500 in < 50ms Node benchmark",
+      "Palette: adjacent series colors differ by test-defined contrast threshold in light and dark",
+      "ChartFrame exposes accessibilityLabel summary built from data",
+      "No react-native-svg import (grep) in core files",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Chart"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-20",
+      "E6-21",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Chart/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Chart/Chart.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Chart/**",
+      "tests/components/Chart.test.tsx",
+      "docs/components/data-display/Chart.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-02",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add List wrapper over FlatList with virtualization defaults",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Raw FlatList needs repeated config (keyExtractor, getItemLayout, windowSize, separators, empty/error/loading).",
+    "value": "Safe-by-default virtualized list that cuts boilerplate and agent tokens.",
+    "scope": [
+      "Props: data, renderItem, keyExtractor required or id/key inference with dev warning",
+      "Defaults: initialNumToRender, windowSize 7, maxToRenderPerBatch, removeClippedSubviews on Android",
+      "estimatedItemSize/getItemLayout passthrough",
+      "slots: ListEmpty, ListError, loading skeleton, header/footer",
+      "onEndReached pagination with loadingMore footer",
+      "pull-to-refresh prop",
+      "renderer prop typed ListRenderer for adapter injection (default FlatList)"
+    ],
+    "outOfScope": [
+      "FlashList import (see adapter ticket)",
+      "Sections (SectionList ticket)"
+    ],
+    "acceptance": [
+      "Default props documented in a table and asserted in a test",
+      "Test with 10,000 items: mounted item count never exceeds initialNumToRender + window budget (<= 60) after mount",
+      "renderItem and keyExtractor are not re-created by List internals per render (referential stability test)",
+      "Dev-only warning when keyExtractor missing and items lack id/key",
+      "No ScrollView-with-map fallback path exists (grep)",
+      "Perf budget recorded: 1,000-item list initial render < 100ms on mid-tier Android reference (measure per E12, attach numbers)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists List"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/List/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Defaults tuned for FlatList; may differ for FlashList (handled in adapter)"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/List/List.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/List/**",
+      "tests/components/List.test.tsx",
+      "docs/components/typography/List.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-17",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Avatar and AvatarGroup with overflow count",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "avatar",
+      "display",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No user identity glyph or stacked group.",
+    "value": "Common social/collab primitive.",
+    "scope": [
+      "Avatar: image via Image component, initials fallback, size scale, status dot",
+      "AvatarGroup: overlap, max with +N, size inherit, spacing",
+      "deterministic color from name via token palette",
+      "(from E4-13) Create src/components/Avatar/{Avatar.tsx,index.ts,Avatar.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-13) API: <Avatar source?: ImageSourcePropType name?: string size='xs'|'sm'|'md'|'lg'|'xl'|number shape='circle'|'rounded' status?: 'online'|'offline'|'busy'|'away' icon?: IconName onPress? />. Initials from name (max 2, locale-safe), deterministic bg color from name hash over theme palette tokens.",
+      "(from E4-13) States/variants: image loaded, loading (Skeleton circle), error => initials, no name => icon fallback.",
+      "(from E4-13) Accessibility: accessibilityRole image, label = name or alt; status announced in label (\"online\"); pressable variant uses Touchable.",
+      "(from E4-13) Theme tokens used (read-only, no new token keys): colors.primary/secondary/accent/info/success, colors.textInverted, theme.radius, theme.size",
+      "(from E4-13) Tests: tests/components/Avatar.test.tsx covering initials extraction (unicode, single word, empty); image error falls back; deterministic color; status in accessibility label",
+      "(from E4-13) Catalog: src/components/Avatar/Avatar.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Avatar.md with usage example",
+      "(from E4-14) Create src/components/AvatarGroup/{AvatarGroup.tsx,index.ts,AvatarGroup.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-14) API: <AvatarGroup max={3} size spacing={-8} total?: number>{<Avatar/>...}</AvatarGroup>; overflow chip '+N'.",
+      "(from E4-14) States/variants: fewer than max; exactly max; overflow.",
+      "(from E4-14) Accessibility: Group label \"N people\" via accessibilityLabel on container; children hidden individually when overflow.",
+      "(from E4-14) Theme tokens used (read-only, no new token keys): colors.surface, colors.border, theme.space",
+      "(from E4-14) Tests: tests/components/AvatarGroup.test.tsx covering overflow count math; respects total prop",
+      "(from E4-14) Catalog: src/components/AvatarGroup/AvatarGroup.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/AvatarGroup.md with usage example"
+    ],
+    "outOfScope": [
+      "Presence logic",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "Initials fallback when image fails (test)",
+      "AvatarGroup with 500 items renders at most max+1 children (assert)",
+      "+N chip has accessibilityLabel 'and N more'",
+      "grep -rEn '#[0-9a-fA-F]{3,8}|rgba?\\(' src/components/Avatar src/components/AvatarGroup returns nothing and the initials background equals a theme.colors value (test)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "(from E4-13) npm run typecheck passes and src/components/Avatar/index.ts exports Avatar and AvatarProps",
+      "(from E4-13) npm test passes including tests/components/Avatar.test.tsx",
+      "(from E4-13) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Avatar returns no hardcoded colors",
+      "(from E4-13) Avatar renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "(from E4-14) npm run typecheck passes and src/components/AvatarGroup/index.ts exports AvatarGroup and AvatarGroupProps",
+      "(from E4-14) npm test passes including tests/components/AvatarGroup.test.tsx",
+      "(from E4-14) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/AvatarGroup returns no hardcoded colors",
+      "(from E4-14) AvatarGroup renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Avatar, AvatarGroup"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E6-21",
+      "E7-16",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Avatar/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts",
+      "(from E4-13) API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Avatar/Avatar.meta.ts, src/components/AvatarGroup/AvatarGroup.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Avatar/**",
+      "tests/components/Avatar.test.tsx",
+      "docs/components/surfaces/Avatar.md",
+      "src/components/AvatarGroup/**",
+      "tests/components/AvatarGroup.test.tsx",
+      "docs/components/surfaces/AvatarGroup.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-13",
+      "E4-14"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-23",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add BarChart (pure View) vertical, horizontal and stacked",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Most dashboard charts are bars; no zero-dep option.",
+    "value": "Dependency-free bar charts with animated grow.",
+    "scope": [
+      "vertical/horizontal, grouped, stacked",
+      "value labels, axis, gridlines as Views",
+      "animation via transform scale with native driver",
+      "press handler per bar with tooltip hook"
+    ],
+    "outOfScope": [
+      "SVG rendering",
+      "Zoom/pan"
+    ],
+    "acceptance": [
+      "Renders 200 bars with no more than 3 Views per bar (assert)",
+      "Bars computed in one useMemo keyed by data/size; re-render on unrelated parent update does not recompute (test)",
+      "Animation uses native driver (grep)",
+      "No react-native-svg import (grep)",
+      "Perf budget: 100 bars initial render < 60ms reference device (attach)",
+      "Built on E7-22 scales and ChartFrame",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists BarChart"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/BarChart/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/BarChart/BarChart.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/BarChart/**",
+      "tests/components/BarChart.test.tsx",
+      "docs/components/data-display/BarChart.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-24",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Sparkline with View-bar default and line variant",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "stat",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Inline trend visuals needed in Stat and tables.",
+    "value": "Tiny chart usable in cells.",
+    "scope": [
+      "variants: bars, win-loss (pure View); line via SvgRenderer if provided",
+      "fixed height, no axes, min/max markers",
+      "memoized, cell-safe"
+    ],
+    "outOfScope": [
+      "Interactions"
+    ],
+    "acceptance": [
+      "Renders 50 points under 10ms Node render benchmark (react-test-renderer)",
+      "Default variant imports no svg module (grep)",
+      "accessibilityLabel summarises trend (min, max, last)",
+      "Safe to render 500 times in a DataTable column without layout cost: memoized with stable props test",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Sparkline"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Sparkline/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Sparkline/Sparkline.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Sparkline/**",
+      "tests/components/Sparkline.test.tsx",
+      "docs/components/data-display/Sparkline.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-25",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add LineChart and AreaChart via optional react-native-svg",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "adapter",
+      "dependencies",
+      "post-1.0",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "problem": "Lines/areas/curves cannot be drawn faithfully with Views.",
+    "value": "Production-grade line/area charts as opt-in subpath.",
+    "scope": [
+      "LineChart/AreaChart using react-native-svg Path",
+      "multi-series, curves (monotone), gradient fills, points, crosshair via PanResponder",
+      "LTTB downsample above threshold",
+      "subpath entry; react-native-svg optional peer proposed to E14"
+    ],
+    "outOfScope": [
+      "Core import of svg",
+      "Zoom/pan",
+      "Real-time streaming"
+    ],
+    "acceptance": [
+      "Root entry has no react-native-svg import (grep src/index.ts and E7 core dirs)",
+      "Missing peer yields named error, tested by mock",
+      "10,000-point series renders as <= 1,000 path points after downsampling (assert)",
+      "Single Path per series (no per-point elements) except optional point markers capped at 200",
+      "Crosshair handler throttled; no setState per move beyond rAF (test via spy)",
+      "Native dependency gate checklist attached",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists LineChart"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/LineChart/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "react-native-svg version alignment with Expo SDK 56",
+      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/LineChart/LineChart.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/LineChart/**",
+      "tests/components/LineChart.test.tsx",
+      "docs/components/data-display/LineChart.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": true,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H2"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-03",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add SectionList wrapper with sticky headers and A-Z index hook",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Grouped lists need separate wrapper config; sticky header theming repeated.",
+    "value": "Themed grouped list sharing List defaults.",
+    "scope": [
+      "Wrap RN SectionList with List defaults",
+      "themed SectionHeader, stickySectionHeadersEnabled default on iOS",
+      "empty/error/loading slots reused from List",
+      "scrollToSection imperative ref"
+    ],
+    "outOfScope": [
+      "Alphabetical side index UI",
+      "FlashList sections"
+    ],
+    "acceptance": [
+      "Test with 5 sections x 2,000 items: mounted rows bounded (<= 60)",
+      "Section header has accessibilityRole header",
+      "Shares default constants with List via exported const (no duplicated magic numbers)",
+      "scrollToSection(i) covered by a test",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SectionList"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/SectionList/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/SectionList/SectionList.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/SectionList/**",
+      "tests/components/SectionList.test.tsx",
+      "docs/components/data-display/SectionList.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-04",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add optional FlashList adapter for List via subpath",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "adapter",
+      "dependencies",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "problem": "FlashList gives large perf wins but must not become a core dependency.",
+    "value": "Opt-in high-perf list without touching core peers.",
+    "scope": [
+      "Adapter implementing ListRenderer using @shopify/flash-list in src/adapters/flash-list",
+      "Exposed via the './adapters/*' wildcard as ./adapters/flash-list (no new subpath key; D7)",
+      "@shopify/flash-list is declared in peerDependenciesMeta optional by the E14 package.json chain once H2 is approved",
+      "Doc: install and Expo compatibility notes"
+    ],
+    "outOfScope": [
+      "Editing package.json (E14 owns)",
+      "Making FlashList a default"
+    ],
+    "acceptance": [
+      "Root entry has zero import of @shopify/flash-list (grep src/index.ts and src/components/List)",
+      "Adapter type-checks against ListRenderer contract",
+      "Missing peer produces a clear error message naming the package, tested by mock",
+      "Native dependency gate checklist from peer-dependency-policy.md filled in the ticket evidence",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+    ],
+    "dependencies": [
+      "E7-02"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListFlashAdapter/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "FlashList v2 API differences; pin compatible range in E14",
+      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)"
+    ],
+    "filesTouched": [
+      "src/adapters/flash-list/**",
+      "tests/adapters/flash-list.test.tsx",
+      "docs/adapters/flash-list.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H2"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-09",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add DataTable view: virtualized rows, sticky header, horizontal scroll",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No table component for RN; ScrollView-based tables collapse at scale.",
+    "value": "Native-friendly table with sticky header on large data.",
+    "scope": [
+      "Render via List with row virtualization",
+      "sticky header (ListHeaderComponent sticky or fixed outside scroll synced to horizontal offset)",
+      "horizontal scroll when columns exceed width, pinned first column option",
+      "sortable header press with aria sort state",
+      "row press/selection, loading skeleton and empty/error slots",
+      "memoized Row and Cell"
+    ],
+    "outOfScope": [
+      "Cell editing",
+      "Column resize/drag reorder",
+      "Grouping"
+    ],
+    "acceptance": [
+      "Test 10,000 rows: mounted rows <= 60",
+      "Header stays visible while body scrolls vertically (render test asserts header outside scroll content or sticky indices)",
+      "Row/Cell are React.memo; sort change does not re-render unaffected rows with unchanged props (render counter test)",
+      "Header cells expose accessibilityRole header and sort state in accessibilityLabel",
+      "Perf budget: 1,000 rows x 8 columns initial render < 150ms reference device (attach numbers)",
+      "Built on useDataTable from E7-08 without duplicating sort logic",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DataTable"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E7-02",
+      "E7-08",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/DataTable.tsx returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Sticky + horizontal sync is platform-sensitive (web vs native); test on iOS and Android"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/DataTable/view/view.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DataTable/DataTable.tsx",
+      "src/components/DataTable/index.ts",
+      "src/components/DataTable/view/**",
+      "tests/components/DataTable.view.test.tsx",
+      "docs/components/data-display/DataTable.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-12",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Timeline component with status nodes and connectors",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "timeline",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No vertical event sequence component.",
+    "value": "Order tracking, activity history, changelogs.",
+    "scope": [
+      "items with title, time, description, icon/status",
+      "connector lines, alignment left/alternate",
+      "last/active/completed states",
+      "renders in List when long (virtualized prop)"
+    ],
+    "outOfScope": [
+      "Horizontal timeline",
+      "Gantt"
+    ],
+    "acceptance": [
+      "Items beyond 100 render via List virtualization when `virtualized` is set (mounted count test)",
+      "Each item exposes accessible label with status text",
+      "Connector line height adapts to content via onLayout-free flex layout (no measured state)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Timeline"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Timeline/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Timeline/Timeline.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Timeline/**",
+      "tests/components/Timeline.test.tsx",
+      "docs/components/data-display/Timeline.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-14",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Tree view with expand/collapse and keyboard/a11y",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "tree",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No hierarchical display component.",
+    "value": "File trees, categories, org charts as lists.",
+    "scope": [
+      "nodes with id/children, controlled or uncontrolled expanded set",
+      "flattened visible-node array fed to List for virtualization",
+      "indentation, chevron, selection (single/multi), lazy loadChildren",
+      "accessibilityState expanded"
+    ],
+    "outOfScope": [
+      "Drag and drop",
+      "Checkbox tri-state (E5)"
+    ],
+    "acceptance": [
+      "Flatten function pure, tested with 10,000 nodes in < 50ms",
+      "Collapsed subtrees not mounted (assert)",
+      "Toggling one node re-renders only its row and descendants appearing/disappearing (render counter)",
+      "Rows expose expanded/collapsed accessibilityState",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Tree"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-01",
+      "E7-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Tree/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Tree/Tree.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Tree/**",
+      "tests/components/Tree.test.tsx",
+      "docs/components/data-display/Tree.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-18",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Gallery grid and Lightbox viewer",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "gallery",
+      "media",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No photo grid or full-screen viewer.",
+    "value": "Browse media and view fullscreen.",
+    "scope": [
+      "Gallery: virtualized grid (List numColumns) with square tiles",
+      "Lightbox: Modal + Pager, close button, index counter, caption, swipe-down dismiss optional",
+      "zoom via pluggable renderItem (gesture lib optional, not bundled)"
+    ],
+    "outOfScope": [
+      "Pinch zoom implementation",
+      "Video items"
+    ],
+    "acceptance": [
+      "Grid of 2,000 images keeps mounted tiles <= 60",
+      "Lightbox opens at tapped index and Back/hardware close dismisses (test)",
+      "Focus/accessibility: close button labelled, modal announces",
+      "Images use E7-16 Image with placeholder",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Gallery"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E7-15",
+      "E7-16",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Gallery/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Gallery/Gallery.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Gallery/**",
+      "tests/components/Gallery.test.tsx",
+      "docs/components/data-display/Gallery.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-26",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add DonutChart and PieChart via optional react-native-svg",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "adapter",
+      "post-1.0",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "problem": "Proportions need arcs.",
+    "value": "Segmented donut with center label.",
+    "scope": [
+      "arc path generator (pure), segments, center slot, legend",
+      "selected-segment highlight",
+      "subpath shared with E7-25 optional peer"
+    ],
+    "outOfScope": [
+      "3D, exploded pies"
+    ],
+    "acceptance": [
+      "Arc generator unit-tested for 0, 100 and tiny slices (<1%) merge-into-other option",
+      "Segment angles sum to 360 within 1e-6",
+      "Legend text provides values (not color-only)",
+      "No core import of react-native-svg (grep)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DonutChart"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E7-25",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DonutChart/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts",
+      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/DonutChart/DonutChart.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DonutChart/**",
+      "tests/components/DonutChart.test.tsx",
+      "docs/components/data-display/DonutChart.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": true,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H2"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-32",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add ChatBubble and MessageList with inverted virtualization",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chat",
+      "list",
+      "performance",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Chat UIs are common (AI-native apps) and tricky to virtualize.",
+    "value": "Message bubble and list with grouping, timestamps, typing indicator.",
+    "scope": [
+      "ChatBubble: own/other, status (sending, sent, failed), slots for Markdown",
+      "MessageList on List with inverted, keep-scroll-position on prepend, scroll-to-bottom button",
+      "typing indicator, date separators",
+      "auto-scroll only when near bottom"
+    ],
+    "outOfScope": [
+      "Composer input (E5)",
+      "Attachments upload",
+      "Realtime transport"
+    ],
+    "acceptance": [
+      "10,000 messages keep mounted <= 60",
+      "Appending a message does not re-render existing bubbles (render counter)",
+      "Auto-scroll suppressed when user scrolled up >1 screen (test)",
+      "Failed bubble exposes retry action with label",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists MessageList"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E7-31",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/MessageList/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/MessageList/MessageList.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/MessageList/**",
+      "tests/components/MessageList.test.tsx",
+      "docs/components/data-display/MessageList.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 10,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-10",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add DataTable responsive mode: collapse columns to cards",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Wide tables are unusable on phones.",
+    "value": "Same data renders as table on wide screens and card list on narrow.",
+    "scope": [
+      "Use useBreakpoint to switch table | card layout",
+      "column priority hides low-priority columns progressively",
+      "card renderer uses DescriptionList pairs",
+      "mode override prop"
+    ],
+    "outOfScope": [
+      "Custom per-breakpoint column templates beyond priority"
+    ],
+    "acceptance": [
+      "Layout switches at breakpoint boundary in a test with mocked useBreakpoint",
+      "Columns with priority above cutoff not rendered (assert)",
+      "In card mode, changing the sort control reorders cards and selected row ids persist across the table/card switch (tests/components/DataTable.responsive.test.tsx)",
+      "Switching mode does not remount the list when data unchanged (key stability test)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists DataTable"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E7-09",
+      "E7-13",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/responsive/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/DataTable/responsive/responsive.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/DataTable/responsive/**",
+      "tests/components/DataTable.responsive.test.tsx",
+      "docs/components/data-display/DataTable.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-30",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add Agenda list grouped by day",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "calendar",
+      "list",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Event schedules need grouped day list.",
+    "value": "Agenda view over SectionList with day headers.",
+    "scope": [
+      "events grouped by date, all-day vs timed, empty day handling",
+      "scrollToDate",
+      "optional connection to Calendar marked dates via callback"
+    ],
+    "outOfScope": [
+      "Event creation/drag",
+      "Recurrence"
+    ],
+    "acceptance": [
+      "Built on SectionList wrapper (E7-03); 2,000 events mounted rows bounded",
+      "scrollToDate unit-tested",
+      "Agenda event rows render the ListItem component (test locates ListItem by element type)",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Agenda"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E5-15",
+      "E7-01",
+      "E7-03",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Agenda/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/Agenda/Agenda.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Agenda/**",
+      "tests/components/Agenda.test.tsx",
+      "docs/components/data-display/Agenda.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 11,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E7-33",
+    "epic": "E7",
+    "type": "Task",
+    "title": "Add NotificationList with grouping, read state and actions",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "e7",
+      "notifications",
+      "list",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Notification feeds recur in apps.",
+    "value": "Feed built on List/ListItem with unread semantics.",
+    "scope": [
+      "items with icon/avatar, title, body, time, unread dot",
+      "group by Today/Earlier via SectionList",
+      "mark read, dismiss callbacks",
+      "empty state"
+    ],
+    "outOfScope": [
+      "Push notifications (E8)",
+      "Swipe gestures"
+    ],
+    "acceptance": [
+      "Unread state announced in accessibilityLabel",
+      "Grouping util unit-tested with timezone-boundary cases",
+      "Built on E7-03 and E7-01; 5,000 items bounded mount",
+      "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+      "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+      "Ships an example and catalog entry data (props table source) at demo maturity per brief",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists NotificationList"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E6-20",
+      "E7-01",
+      "E7-03",
+      "E14-13"
+    ],
+    "validation": [
+      "npx tsc --noEmit",
+      "unit/render tests per E12 harness for new component",
+      "grep -R \"from 'react-native-svg'\\|expo-\" src/components/NotificationList/** returns no match unless ticket scope states an optional adapter"
+    ],
+    "evidence": [
+      "tsc output",
+      "test output",
+      "screenshot or render snapshot of main states, light and dark"
+    ],
+    "risks": [
+      "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+    ],
+    "dod": [
+      "Acceptance met",
+      "Example + catalog data present",
+      "No new runtime dependency in core (peer policy PLRNUI-44)",
+      "Colocated <Name>.meta.ts (src/components/NotificationList/NotificationList.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/NotificationList/**",
+      "tests/components/NotificationList.test.tsx",
+      "docs/components/data-display/NotificationList.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 11,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

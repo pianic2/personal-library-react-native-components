@@ -1,0 +1,1296 @@
+[
+  {
+    "key": "E1",
+    "title": "Component maturity (existing components -> demo -> stable)",
+    "goal": "Every existing component reaches demo with meta, tests, docs and examples behind a strict gate; the ADR-R10 stable set is promoted.",
+    "successCriteria": [
+      "node scripts/maturity-check.mjs --strict exits 0 with no prototype entries",
+      "All 36 existing components have <Name>.meta.ts",
+      "B/P/Small/TextGroup are @deprecated aliases",
+      "Stable set (H3-confirmed) has status stable"
+    ],
+    "ticketCount": 24,
+    "v1TicketCount": 24,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Gate tooling: meta loader, checker, lints",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          3
+        ],
+        "tickets": [
+          "E1-03",
+          "E1-04",
+          "E1-15",
+          "E1-01",
+          "E1-02",
+          "E1-06"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Family demo lifts and fixes",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          3,
+          6
+        ],
+        "tickets": [
+          "E1-07",
+          "E1-08",
+          "E1-09",
+          "E1-10",
+          "E1-11",
+          "E1-19",
+          "E1-20"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Strict gate on and stable promotions",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          7,
+          12
+        ],
+        "tickets": [
+          "E1-05",
+          "E1-24",
+          "E1-42",
+          "E1-27",
+          "E1-31",
+          "E1-34",
+          "E1-37"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H3"
+        ],
+        "tickets": [
+          "E1-38",
+          "E1-39",
+          "E1-40",
+          "E1-41"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E2",
+    "title": "Design system & presets",
+    "goal": "Theme contract v2, semantic tokens, defineVariants/useVariants, density, system mode and the minimal/saas/dashboard presets behind a contrast gate.",
+    "successCriteria": [
+      "Theme contract v2 test green",
+      "defineVariants used by Button",
+      "3 V1 presets pass the contrast script in light and dark"
+    ],
+    "ticketCount": 20,
+    "v1TicketCount": 15,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Theme contract v2 and scales",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          3
+        ],
+        "tickets": [
+          "E2-01",
+          "E2-02",
+          "E2-03",
+          "E2-04",
+          "E2-06"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Variant API, density, system mode",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          3,
+          7
+        ],
+        "tickets": [
+          "E2-07",
+          "E2-08",
+          "E2-09",
+          "E2-11",
+          "E2-05"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Presets, registry, contrast gate and token manifest",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          8,
+          9
+        ],
+        "tickets": [
+          "E2-10",
+          "E2-12",
+          "E2-14",
+          "E2-18",
+          "E2-20"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E2-13",
+          "E2-15",
+          "E2-16",
+          "E2-17",
+          "E2-19"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E3",
+    "title": "Motion & interaction",
+    "goal": "RN Animated-based motion tokens, MotionProvider, press feedback and gestures, all gated by reduced motion (D11).",
+    "successCriteria": [
+      "No Reanimated/gesture-handler peer",
+      "Every animation honours useMotionPreference",
+      "ADR 0012 accepted"
+    ],
+    "ticketCount": 13,
+    "v1TicketCount": 13,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Motion tokens, ADR 0012, MotionProvider",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          4
+        ],
+        "tickets": [
+          "E3-02",
+          "E3-10",
+          "E3-01",
+          "E3-03"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Animation primitives and gestures",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          5,
+          6
+        ],
+        "tickets": [
+          "E3-04",
+          "E3-08",
+          "E3-05",
+          "E3-06"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Motion docs and barrels",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          6,
+          8
+        ],
+        "tickets": [
+          "E3-07",
+          "E3-11",
+          "E3-14",
+          "E3-09",
+          "E3-15"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E4",
+    "title": "Primitives, layout & typography",
+    "goal": "Composable primitives (Slot, Touchable, Icon, Surface, Grid, BulletList, Collapsible/Accordion) plus LocaleProvider.",
+    "successCriteria": [
+      "Touchable is the only press primitive",
+      "All built-in strings come from useMessages()",
+      "Every primitive has meta + docs + tests"
+    ],
+    "ticketCount": 18,
+    "v1TicketCount": 16,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Hooks, Slot, Touchable, Icon, LocaleProvider",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          4
+        ],
+        "tickets": [
+          "E4-02",
+          "E4-23",
+          "E1-17",
+          "E4-01",
+          "E4-04"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Layout and content primitives",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          7
+        ],
+        "tickets": [
+          "E4-16",
+          "E4-05",
+          "E4-09",
+          "E4-19",
+          "E1-21"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Disclosure and adapters",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          7,
+          9
+        ],
+        "tickets": [
+          "E4-03",
+          "E4-06",
+          "E4-15",
+          "E4-17",
+          "E4-20"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H2"
+        ],
+        "tickets": [
+          "E4-24"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E4-08",
+          "E4-18"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E5",
+    "title": "Inputs, forms & selection",
+    "goal": "Schema-agnostic forms, compound Field and selection/date controls following ADR 0014.",
+    "successCriteria": [
+      "useForm + Field + Form compose without a schema library",
+      "All controls expose value/defaultValue/onValueChange",
+      "datetimepicker adapter shipped once H2 approves"
+    ],
+    "ticketCount": 30,
+    "v1TicketCount": 29,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Validation, useForm, Label, Field",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          4
+        ],
+        "tickets": [
+          "E5-25",
+          "E5-28",
+          "E5-02",
+          "E1-12",
+          "E1-22",
+          "E5-01",
+          "E5-03",
+          "E5-04",
+          "E5-09"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Controls and selection",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          8
+        ],
+        "tickets": [
+          "E5-10",
+          "E5-26",
+          "E5-27",
+          "E1-16",
+          "E1-23",
+          "E5-11",
+          "E5-05",
+          "E5-06",
+          "E5-08"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Pickers, masks and adapters",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          8,
+          10
+        ],
+        "tickets": [
+          "E5-12",
+          "E5-14",
+          "E5-15",
+          "E5-21",
+          "E5-13",
+          "E5-16",
+          "E5-17",
+          "E5-19",
+          "E5-23",
+          "E5-20"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H2"
+        ],
+        "tickets": [
+          "E5-18"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E5-22"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E6",
+    "title": "Feedback, overlays & navigation/app shell",
+    "goal": "Single overlay architecture (ADR 0015) with toast, dialogs, sheets, menus, Screen/AppShell and navigation upgrades.",
+    "successCriteria": [
+      "Select-in-Modal and toast-over-Modal tests green",
+      "Exactly one OverlayHost owner",
+      "Screen/AppShell replace ThemeAppShell boilerplate"
+    ],
+    "ticketCount": 40,
+    "v1TicketCount": 38,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Portal/OverlayHost and existing overlay upgrades",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          4
+        ],
+        "tickets": [
+          "E1-25",
+          "E1-26",
+          "E1-28",
+          "E1-30",
+          "E6-01",
+          "E6-04",
+          "E6-15",
+          "E6-17",
+          "E6-19",
+          "E6-20",
+          "E6-24",
+          "E6-31"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Toast, dialogs, sheets, menus, states",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          6
+        ],
+        "tickets": [
+          "E6-32",
+          "E1-29",
+          "E6-02",
+          "E6-03",
+          "E6-05",
+          "E6-07",
+          "E6-09",
+          "E6-10",
+          "E6-25",
+          "E6-26",
+          "E6-38",
+          "E6-06",
+          "E6-11"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Screen, AppShell and navigation",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          6,
+          9
+        ],
+        "tickets": [
+          "E6-14",
+          "E6-27",
+          "E6-28",
+          "E6-30",
+          "E6-36",
+          "E6-08",
+          "E6-21",
+          "E6-34",
+          "E6-35",
+          "E6-37",
+          "E6-12",
+          "E6-33",
+          "E6-29"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E6-18",
+          "E6-13"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E7",
+    "title": "Data display, lists, tables, charts, media",
+    "goal": "List/ListItem/Avatar, DataTable, Stat, Timeline, Pager, Image and chart core; svg charts, media and chat are post-1.0.",
+    "successCriteria": [
+      "List virtualization defaults documented and tested",
+      "DataTable sort/selection/responsive tests green",
+      "No react-native-svg import outside ./adapters"
+    ],
+    "ticketCount": 28,
+    "v1TicketCount": 17,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "ListItem, List, Avatar, Image",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          8
+        ],
+        "tickets": [
+          "E7-08",
+          "E7-13",
+          "E7-15",
+          "E7-27",
+          "E7-01"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "DataTable, Stat, Timeline, chart core",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          8,
+          9
+        ],
+        "tickets": [
+          "E7-11",
+          "E7-16",
+          "E7-22",
+          "E7-02",
+          "E7-17"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Post-1.0 media, charts and chat",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          9,
+          11
+        ],
+        "tickets": [
+          "E7-23",
+          "E7-24",
+          "E7-03",
+          "E7-09",
+          "E7-12",
+          "E7-10"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H2"
+        ],
+        "tickets": [
+          "E7-04"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E7-19",
+          "E7-31",
+          "E7-20",
+          "E7-21",
+          "E7-25",
+          "E7-14",
+          "E7-18",
+          "E7-26",
+          "E7-32",
+          "E7-30",
+          "E7-33"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E8",
+    "title": "Native capabilities & device APIs",
+    "goal": "Injection-only capability layer exposed via ./native and ./native/expo with RN-core/web fallbacks and a smoke matrix.",
+    "successCriteria": [
+      "No require() and no expo-* import reachable from the root entry",
+      "Every capability works with no optional module installed",
+      "Expo app, Expo Go and bare RN smoke results recorded"
+    ],
+    "ticketCount": 25,
+    "v1TicketCount": 23,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Capability contract and RN-core hooks",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          3
+        ],
+        "tickets": [
+          "E8-01",
+          "E8-03",
+          "E8-05",
+          "E8-06",
+          "E8-07",
+          "E8-08",
+          "E8-09"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Adapters, permissions, pickers, storage",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          3,
+          4
+        ],
+        "tickets": [
+          "E8-10",
+          "E8-11",
+          "E8-13",
+          "E8-15",
+          "E8-16",
+          "E8-23",
+          "E8-19"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Expo preset, smoke matrix and docs",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          5,
+          11
+        ],
+        "tickets": [
+          "E8-04",
+          "E8-18",
+          "E8-20",
+          "E8-12",
+          "E8-17",
+          "E8-21",
+          "E8-22",
+          "E8-26"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H2"
+        ],
+        "tickets": [
+          "E8-31"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E8-24",
+          "E8-25"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E9",
+    "title": "Accessibility",
+    "goal": "Table-driven a11y contract over every interactive component, touch targets, dynamic type and a device protocol.",
+    "successCriteria": [
+      "Contract table fails on any unlisted interactive export",
+      "44/48 targets enforced",
+      "Device protocol evidence for the stable set"
+    ],
+    "ticketCount": 8,
+    "v1TicketCount": 8,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Harness and contract table",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          1
+        ],
+        "tickets": [
+          "E9-01",
+          "E9-11"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Targets, dynamic type, reading order",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          9
+        ],
+        "tickets": [
+          "E9-12",
+          "E9-02",
+          "E9-07"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Web axe smoke and device protocol",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          9,
+          10
+        ],
+        "tickets": [
+          "E9-13",
+          "E9-08",
+          "E9-14"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E10",
+    "title": "Responsive / adaptive",
+    "goal": "Width-based breakpoints on all platforms, size classes, responsive values, Container and large-text switching.",
+    "successCriteria": [
+      "useBreakpoint identical on native and web",
+      "One Container owner",
+      "Breaking-change register entry for useBreakpoint"
+    ],
+    "ticketCount": 10,
+    "v1TicketCount": 8,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Breakpoints and size classes",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          3,
+          4
+        ],
+        "tickets": [
+          "E10-01",
+          "E10-02"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Resolvers, Show/Hide, Container",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          4
+        ],
+        "tickets": [
+          "E10-03",
+          "E10-06",
+          "E10-12"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Responsive docs and barrel",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          5,
+          6
+        ],
+        "tickets": [
+          "E10-04",
+          "E10-05",
+          "E10-14"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E10-08",
+          "E10-10"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E11",
+    "title": "Showcase, catalog & templates/recipes",
+    "goal": "Expo catalog app generated from meta with playground and matrix views, plus runnable templates and recipes.",
+    "successCriteria": [
+      "Catalog lists every component with status >= demo from meta",
+      "Web export embedded in Pages",
+      "Templates build via check-templates"
+    ],
+    "ticketCount": 18,
+    "v1TicketCount": 13,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Catalog scaffold, navigation, theming",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          3
+        ],
+        "tickets": [
+          "E11-02",
+          "E11-04",
+          "E11-03",
+          "E11-09"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Stories, playground, matrix",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          4
+        ],
+        "tickets": [
+          "E11-05",
+          "E11-06",
+          "E11-08",
+          "E11-10"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Templates and recipes",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          6,
+          13
+        ],
+        "tickets": [
+          "E11-14",
+          "E11-11",
+          "E11-15",
+          "E11-07",
+          "E11-16"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E11-12",
+          "E11-17",
+          "E11-18",
+          "E11-13",
+          "E11-19"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E12",
+    "title": "Testing & consumer validation",
+    "goal": "Coverage, RNTL, type tests, visual regression, perf baselines and hardened consumer smoke.",
+    "successCriteria": [
+      "Coverage reported in CI",
+      "Visual regression across presets x modes",
+      "Consumer smoke green on Node/TS, Metro and webpack"
+    ],
+    "ticketCount": 17,
+    "v1TicketCount": 17,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Runner, coverage, RNTL",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          3
+        ],
+        "tickets": [
+          "E12-04",
+          "E12-08",
+          "E12-07",
+          "E12-11",
+          "E12-14"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Behavior, type and perf tests",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          5
+        ],
+        "tickets": [
+          "E12-01",
+          "E12-02",
+          "E12-03",
+          "E12-06",
+          "E12-10",
+          "E12-16"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Visual and consumer validation",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          5,
+          13
+        ],
+        "tickets": [
+          "E12-17",
+          "E12-15",
+          "E12-13",
+          "E8-27",
+          "E8-29",
+          "E8-30"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E13",
+    "title": "AI-native layer (manifests, skills, evals)",
+    "goal": "Meta-driven manifests shipped as ./meta, cards, per-category T0 index, 12 skills and an eval harness; MCP/CLI post-1.0.",
+    "successCriteria": [
+      "Only ./meta JSON ships in npm",
+      "Each T0 category file <= 1.5k tokens",
+      "Skills validate and eval uplift measured (H5)"
+    ],
+    "ticketCount": 36,
+    "v1TicketCount": 34,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Architecture, extractor, manifests",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          7
+        ],
+        "tickets": [
+          "E13-02",
+          "E13-03",
+          "E13-13",
+          "E13-10",
+          "E13-14",
+          "E13-30",
+          "E13-01",
+          "E13-11",
+          "E13-07",
+          "E13-09",
+          "E13-17"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Cards, index, llms, AGENTS, ai:build",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          7,
+          8
+        ],
+        "tickets": [
+          "E13-18",
+          "E13-21",
+          "E13-06",
+          "E13-12",
+          "E13-22",
+          "E13-23",
+          "E13-25",
+          "E13-26",
+          "E13-28",
+          "E13-29",
+          "E13-37"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Skills and evals",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          8,
+          15
+        ],
+        "tickets": [
+          "E13-38",
+          "E13-04",
+          "E13-08",
+          "E13-16",
+          "E13-19",
+          "E13-20",
+          "E13-24",
+          "E13-27",
+          "E13-36",
+          "E13-34",
+          "E13-35"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H5"
+        ],
+        "tickets": [
+          "E13-31"
+        ]
+      },
+      {
+        "order": 5,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E13-33",
+          "E13-32"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E14",
+    "title": "Package architecture & DX",
+    "goal": "D7 subpaths from config/exports.json, valid ESM, API-conventions ADR, TexoProvider, serialised wave wiring and per-subpath API snapshots.",
+    "successCriteria": [
+      "Subpath matrix green on Node, TS, Metro and webpack-5 fullySpecified",
+      "check-api-conventions clean",
+      "Only wave-wiring tickets edit src/index.ts"
+    ],
+    "ticketCount": 21,
+    "v1TicketCount": 20,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "ESM emit, conventions ADR, exports contract",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          1
+        ],
+        "tickets": [
+          "E14-01",
+          "E14-06",
+          "E14-07",
+          "E14-13",
+          "E14-03",
+          "E14-09"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Generator, snapshots, TexoProvider",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          6
+        ],
+        "tickets": [
+          "E14-02",
+          "E14-04",
+          "E14-08",
+          "E14-05",
+          "E14-10",
+          "E1-35",
+          "E14-11"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Wave wiring A-E",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          6,
+          14
+        ],
+        "tickets": [
+          "E14-12",
+          "E8-02",
+          "E14-14",
+          "E14-15",
+          "E14-16",
+          "E14-17",
+          "E14-18"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Post-1.0 (deferred, D14)",
+        "tickets": [
+          "E14-19"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E15",
+    "title": "Texo migration (cutover)",
+    "goal": "Generated re-export shim with parity suites, codemod and migration docs; cutover after H1/H6.",
+    "successCriteria": [
+      "Shim parity (values, types, subpaths) green",
+      "Mixed legacy+Texo imports share one provider",
+      "Codemod idempotent"
+    ],
+    "ticketCount": 16,
+    "v1TicketCount": 16,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Policy and shim build",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          1
+        ],
+        "tickets": [
+          "E15-09",
+          "E15-03",
+          "E15-11"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Parity, compat and smoke suites",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          1,
+          2
+        ],
+        "tickets": [
+          "E15-12",
+          "E15-15",
+          "E15-07"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Codemod, docs and cutover (blocked H1/H6/H8)",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          4,
+          7
+        ],
+        "tickets": [
+          "E15-06",
+          "E15-04",
+          "E15-05",
+          "E15-08"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H1",
+          "H4",
+          "H6",
+          "H8"
+        ],
+        "tickets": [
+          "E15-01",
+          "E15-02",
+          "E15-10",
+          "E15-13",
+          "E15-14",
+          "E15-16"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E16",
+    "title": "Docs & open-source readiness",
+    "goal": "English docs with strict mkdocs build, governance files, API reference and license audit.",
+    "successCriteria": [
+      "mkdocs build --strict green",
+      "SECURITY/CODE_OF_CONDUCT/SUPPORT present",
+      "API reference generated from TSDoc"
+    ],
+    "ticketCount": 10,
+    "v1TicketCount": 10,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Docs build and governance",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          0
+        ],
+        "tickets": [
+          "E16-04",
+          "E16-05"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Getting started and API reference",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          1,
+          1
+        ],
+        "tickets": [
+          "E16-02",
+          "E16-06"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Publication review (H1/H7)",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          7,
+          14
+        ],
+        "tickets": [
+          "E16-08",
+          "E8-28"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H1",
+          "H7"
+        ],
+        "tickets": [
+          "E16-01",
+          "E16-03",
+          "E16-09",
+          "E16-10"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "E17",
+    "title": "V1 release engineering",
+    "goal": "Changesets lockstep, trusted publishing, CI matrix, semver policy, stable bar and the release train to 1.0.",
+    "successCriteria": [
+      "Release dry run green for both packages",
+      "Stable bar check green for the confirmed set",
+      "Rollback runbook approved"
+    ],
+    "ticketCount": 14,
+    "v1TicketCount": 14,
+    "milestones": [
+      {
+        "order": 1,
+        "title": "Support matrix, policy, supply chain",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          0,
+          1
+        ],
+        "tickets": [
+          "E17-06",
+          "E17-10",
+          "E17-03",
+          "E17-08"
+        ]
+      },
+      {
+        "order": 2,
+        "title": "Changesets, guard, CI, pack checks",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          2,
+          8
+        ],
+        "tickets": [
+          "E17-12",
+          "E17-13",
+          "E17-11",
+          "E17-01"
+        ]
+      },
+      {
+        "order": 3,
+        "title": "Publishing, promotion, stable bar, rehearsal",
+        "assignment": "contiguous slice of the epic's ready V1 tickets ordered by wave",
+        "waves": [
+          8,
+          10
+        ],
+        "tickets": [
+          "E17-05",
+          "E17-02",
+          "E17-09",
+          "E17-04"
+        ]
+      },
+      {
+        "order": 4,
+        "title": "Blocked on human decisions",
+        "decisions": [
+          "H3",
+          "H4"
+        ],
+        "tickets": [
+          "E17-07",
+          "E17-14"
+        ]
+      }
+    ]
+  }
+]

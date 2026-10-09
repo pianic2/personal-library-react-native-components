@@ -1,0 +1,755 @@
+[
+  {
+    "id": "E10-01",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Unify useBreakpoint: width-based on all platforms, breakpoint tokens, ResponsiveContext",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "breakpoints",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Public hooks/useBreakpoint returns 'base' for every native device (tablets get phone layout); a second diverging copy exists in src/utils/useBreakpoint.ts with different thresholds (480 vs 640).",
+    "value": "Correct, single breakpoint source; foundation for all responsive work.",
+    "scope": [
+      "Fill src/tokens/breakpoints.base.ts: xs 0, sm 480, md 768, lg 1024, xl 1280 (document change from 640)",
+      "hooks/useBreakpoint.ts resolves from useWindowDimensions width on every platform; return type keeps Breakpoint string for BC, add useBreakpointInfo() returning {bp, width, height, isAtLeast(bp), isBelow(bp)}",
+      "Delete duplicate utils/useBreakpoint.ts (not exported publicly)",
+      "src/responsive/context.ts ResponsiveContext {breakpoints, orientationLock?} with defaults",
+      "tests/helpers/dimensions.ts to mock window size",
+      "Breaking-change register entry text in PR description (behavioral change on native)"
+    ],
+    "outOfScope": [
+      "Provider component (E10-05)",
+      "Container queries"
+    ],
+    "acceptance": [
+      "Width 820 on ios mock returns 'md' (previously 'base') (test)",
+      "tests/responsive/breakpoint.test.tsx table test: 479 and 480 resolve to different breakpoint names, 767 and 768 resolve to different names, each equal to the value defined in src/tokens/breakpoints.base.ts",
+      "grep -rn utils/useBreakpoint src returns nothing",
+      "'base' kept as alias for below sm in the Breakpoint type or documented rename",
+      "audit/migration/breaking-change-register.md has a useBreakpoint native-behaviour entry (grep; D12)"
+    ],
+    "dependencies": [
+      "E2-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Behavior change on tablets/large phones: needs migration note and BC entry",
+      "Breakpoint type 'base' vs 'xs' naming mismatch must be settled (owner)"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/tokens/breakpoints.base.ts",
+      "src/hooks/useBreakpoint.ts",
+      "src/utils/useBreakpoint.ts",
+      "src/responsive/context.ts",
+      "tests/helpers/dimensions.ts",
+      "tests/responsive/breakpoint.test.tsx",
+      "audit/migration/breaking-change-register.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-02",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add useWindowSizeClass (orientation from E8-08)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "orientation",
+      "size-class",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No orientation or semantic size classes; apps branch on raw widths.",
+    "value": "Material-style window size classes drive adaptive layouts consistently.",
+    "scope": [
+      "useWindowSizeClass(): {width: 'compact'|'medium'|'expanded', height: same} using 600/840 (width) and 480/900 (height)",
+      "Thresholds overridable through ResponsiveContext",
+      "Re-export useOrientation from E8-08 (no second implementation)"
+    ],
+    "outOfScope": [
+      "Foldable posture (E10-08)"
+    ],
+    "acceptance": [
+      "599/600/839/840 width boundaries (test)",
+      "Rotation mock changes orientation (test)",
+      "Context override changes classes (test)",
+      "No new dependencies (no expo-screen-orientation)"
+    ],
+    "dependencies": [
+      "E8-08",
+      "E10-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/useWindowSizeClass.ts",
+      "tests/responsive/size-class.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-03",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add responsive value resolver and useResponsiveValue",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No way to express 'padding md on tablets' declaratively; consumers write if-chains.",
+    "value": "Mobile-first responsive props with minimal boilerplate.",
+    "scope": [
+      "resolveResponsive({base, sm, md, lg, xl}, bp) pure function with mobile-first fallback to nearest smaller key",
+      "useResponsiveValue(map) hook",
+      "Type ResponsiveValue<T> = T | Partial<Record<Breakpoint,T>> exported for component props"
+    ],
+    "outOfScope": [
+      "Applying responsive props to components (E4/E1)"
+    ],
+    "acceptance": [
+      "Fallback to nearest smaller defined key (test table)",
+      "Plain value returns itself (test)",
+      "Type test: ResponsiveValue<number> accepts both forms (tests/types)",
+      "Referentially stable result for unchanged inputs"
+    ],
+    "dependencies": [
+      "E10-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/resolve.ts",
+      "src/responsive/useResponsiveValue.ts",
+      "tests/responsive/resolve.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-06",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add Container: max-width centered layout, responsive gutters and container-size context",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "container-query",
+      "layout",
+      "web",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Three container components were planned (E4-10 Container, E10-13 PageContainer, E10-06 measured Container); ADR-R4 assigns one owner.",
+    "value": "One Container covering max-width centring, breakpoint gutters and container-size queries.",
+    "scope": [
+      "<Container> View measuring via onLayout, providing context {width, height}",
+      "useContainerSize() and useContainerBreakpoint(map?) reading nearest Container, falling back to window",
+      "Debounce/epsilon to avoid layout loops (ignore < 1px changes)",
+      "Initial render uses window width to avoid flash (document first-layout caveat)",
+      "Single Container owner (ADR-R4): centred max-width + breakpoint gutters (from E4-10/E10-13) + onLayout container-size context in src/components/Container",
+      "(from E10-13) <PageContainer maxWidth='sm|md|lg|xl|number' gutter responsive> centered, width 100% below max",
+      "(from E10-13) Gutter from theme.space by breakpoint (16 base, 24 md, 32 lg)",
+      "(from E10-13) Optional `measure` for reading width (editorial preset size.measure)",
+      "(from E4-10) Create src/components/Container/{Container.tsx,index.ts,Container.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "(from E4-10) API: <Container size='sm'|'md'|'lg'|'xl'|'full' gutter={SpaceKey | breakpoint map} center />; widths 480/720/960/1200 as exported constants CONTAINER_WIDTHS.",
+      "(from E4-10) States/variants: narrow screens full width minus gutter; wide screens capped and centered.",
+      "(from E4-10) Accessibility: No role.",
+      "(from E4-10) Theme tokens used (read-only, no new token keys): theme.space",
+      "(from E4-10) Tests: tests/components/Container.test.tsx covering caps width at size; gutters per breakpoint",
+      "(from E4-10) Catalog: src/components/Container/Container.meta.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Container.md with usage example"
+    ],
+    "outOfScope": [
+      "CSS @container on web",
+      "Full page shell (E6)",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "onLayout updates context and consumers re-render (test)",
+      "Sub-1px change does not re-render (test)",
+      "Nested Containers use nearest (test)",
+      "Fallback to window size outside a Container (test)",
+      "(from E10-13) Width 1400 content max 1024 centered with equal margins (test)",
+      "(from E10-13) Width 400 uses full width minus gutters (test)",
+      "(from E10-13) Gutters change at breakpoints (test)",
+      "(from E4-10) npm run typecheck passes and src/components/Container/index.ts exports Container and ContainerProps",
+      "(from E4-10) npm test passes including tests/components/Container.test.tsx",
+      "(from E4-10) grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Container returns no hardcoded colors",
+      "(from E4-10) Container renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Container"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-04",
+      "E2-06",
+      "E10-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Layout feedback loops if children change container size: documented guard",
+      "(from E10-13) Overlap with component tickets in E1 on shared component files; sequence per dependencies",
+      "(from E4-10) API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency",
+      "Colocated <Name>.meta.ts (src/components/Container/Container.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Container/**",
+      "src/responsive/useContainerSize.ts",
+      "tests/responsive/container.test.tsx",
+      "tests/components/Container.test.tsx",
+      "docs/components/layout/Container.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E4-10",
+      "E10-13"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-12",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add large-text layout switching (useIsLargeText, StackOnLargeText)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "a11y",
+      "dynamic-type",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Layouts do not respond to OS font scale; large text clips in rows.",
+    "value": "Rows can switch to stacked layout when text is scaled (WCAG 1.4.4/1.4.10).",
+    "scope": [
+      "useIsLargeText(threshold=1.3)",
+      "<StackOnLargeText> switching Row to Column when large",
+      "Respect theme.textStyles maxFontSizeMultiplier docs",
+      "useIsLargeText is built on useFontScale from E8-05 (no second implementation)"
+    ],
+    "outOfScope": [
+      "Changing Text components (E4)"
+    ],
+    "acceptance": [
+      "Mocked font scale 2 yields isLargeText true (test)",
+      "StackOnLargeText switches direction (test)",
+      "Updates when scale changes (test)",
+      "git diff --exit-code package.json passes for the dependencies and peerDependencies keys (CI check)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists StackOnLargeText"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-03",
+      "E2-06",
+      "E8-05",
+      "E10-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency",
+      "Colocated <Name>.meta.ts (src/responsive/StackOnLargeText.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/responsive/StackOnLargeText.tsx",
+      "tests/responsive/font-scale.test.tsx",
+      "src/responsive/useIsLargeText.ts"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-04",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add Show, Hide and Responsive components",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "components",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No declarative conditional rendering by breakpoint/size class.",
+    "value": "Readable adaptive UI without hooks in every screen.",
+    "scope": [
+      "<Show above|below|only|at='md'> and <Hide ...> by breakpoint, plus sizeClass prop",
+      "<Responsive base={...} md={...}> renders the matching node by mobile-first fallback",
+      "Unmount (not display none) by default; keepMounted option",
+      "Web: no hydration mismatch guard documented"
+    ],
+    "outOfScope": [
+      "Media-query CSS on web"
+    ],
+    "acceptance": [
+      "Show above='md' renders at 768 not 767 (test)",
+      "Hide inverse (test)",
+      "Responsive picks nearest smaller key (test)",
+      "Children unmounted when hidden (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Show, Responsive"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E10-02",
+      "E10-03",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency",
+      "Colocated <Name>.meta.ts (src/responsive/Show.meta.ts, src/responsive/Responsive.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/responsive/Show.tsx",
+      "src/responsive/Responsive.tsx",
+      "tests/responsive/show-hide.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-05",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add ResponsiveProvider for breakpoint and size class overrides",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "provider",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Breakpoints are constants; apps with different design grids cannot override.",
+    "value": "Configurable thresholds without forking and without coupling to Theme.",
+    "scope": [
+      "<ResponsiveProvider breakpoints sizeClasses> filling ResponsiveContext",
+      "Validate ascending thresholds (throw in __DEV__)",
+      "Nested providers merge"
+    ],
+    "outOfScope": [
+      "Theme integration (breakpoints slot is read-only default from E2-01)"
+    ],
+    "acceptance": [
+      "Custom md=900 changes hook results beneath provider only (test)",
+      "Non-ascending thresholds throw in dev (test)",
+      "tests/responsive/provider.test.tsx: hooks rendered without ResponsiveProvider return the default thresholds from src/tokens/breakpoints.base.ts"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E10-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/ResponsiveProvider.tsx",
+      "tests/responsive/provider.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-08",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add useDeviceClass and foldable posture adapter",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "tablet",
+      "foldable",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No phone/tablet/foldable distinction; hooks assume phone on native.",
+    "value": "Tablet-first and foldable-aware layouts without native modules.",
+    "scope": [
+      "useDeviceClass(): 'phone'|'tablet'|'desktop' from shortest side >= 600dp and Platform.isPad, web by pointer/width",
+      "useAspectPosture(): 'normal'|'wide'|'square-ish' heuristic from window aspect ratio (unfolded foldable detection)",
+      "FoldAdapter {useFoldState(): {isFolded, hingeBounds?}} optional context for consumer-supplied native posture info",
+      "Document limitations"
+    ],
+    "outOfScope": [
+      "Native hinge detection module"
+    ],
+    "acceptance": [
+      "Dimensions 800x1280 => 'tablet', 390x844 => 'phone' (test)",
+      "Platform.isPad forces 'tablet' (test)",
+      "Adapter values flow through hook (test)",
+      "No native imports"
+    ],
+    "dependencies": [
+      "E10-02"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/useDeviceClass.ts",
+      "src/responsive/FoldAdapter.tsx",
+      "tests/responsive/device-class.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-10",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Add SplitView master-detail layout for tablets",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "tablet",
+      "layout",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No master-detail pattern; tablets show stretched phone screens.",
+    "value": "Tablet split view that collapses to a single pane on compact widths.",
+    "scope": [
+      "<SplitView primary secondary showSecondary onBack ratio minPrimary maxPrimary>",
+      "Expanded/medium width: side-by-side with divider using semantic tokens; compact: stack showing one pane based on showSecondary",
+      "Primary width clamp (e.g. 320-420) from props",
+      "Uses useContainerSize when inside Container"
+    ],
+    "outOfScope": [
+      "Draggable divider",
+      "Navigation integration"
+    ],
+    "acceptance": [
+      "Width 1024 renders both panes; width 400 renders only primary or secondary per prop (test)",
+      "Pane widths respect min/max (test)",
+      "accessibilityRole and order: primary before secondary (test)",
+      "SplitView divider backgroundColor equals theme.colors.border in light and in dark (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists SplitView"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-02",
+      "E2-06",
+      "E10-02",
+      "E10-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency",
+      "Colocated <Name>.meta.ts (src/responsive/SplitView.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/responsive/SplitView.tsx",
+      "tests/responsive/split-view.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E10-14",
+    "epic": "E10",
+    "type": "Task",
+    "title": "Responsive docs, example, area barrel and public-API test",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "docs",
+      "exports",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "New responsive module needs barrel, docs and example.",
+    "value": "Discoverable and documented responsive API.",
+    "scope": [
+      "src/responsive/index.ts barrel for all E10 exports",
+      "docs/responsive.md: breakpoints, size classes, Show/Hide, containers, safe-area adapter snippet, tablet SplitView, foldables, migration note for useBreakpoint",
+      "examples/responsive.tsx",
+      "Public-API test of exported names"
+    ],
+    "outOfScope": [
+      "Root src/index.ts and api snapshot (E14)"
+    ],
+    "acceptance": [
+      "Barrel exports every public symbol from E10-01..13 (test)",
+      "examples/responsive.tsx typechecks",
+      "docs/responsive.md includes Migration section for useBreakpoint behavior change",
+      "npm run docs:compat:check passes"
+    ],
+    "dependencies": [
+      "E10-01",
+      "E10-02",
+      "E10-03",
+      "E10-04",
+      "E10-05",
+      "E10-12"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run docs:compat:check"
+    ],
+    "evidence": [
+      "Output of the validation commands (pass)",
+      "List of files changed"
+    ],
+    "risks": [
+      "Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Acceptance criteria all met",
+      "Typed public API, no `any` leaks",
+      "Light and dark verified where visuals are involved",
+      "No new runtime or native dependency"
+    ],
+    "filesTouched": [
+      "src/responsive/index.ts",
+      "docs/responsive.md",
+      "examples/responsive.tsx",
+      "tests/responsive/public-api.test.tsx"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  }
+]

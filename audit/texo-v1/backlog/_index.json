@@ -1,0 +1,7900 @@
+[
+  {
+    "id": "E1-03",
+    "epic": "E1",
+    "title": "Add token-usage lint: no hex/rgba colors in components",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "ci",
+      "design-tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-04",
+    "epic": "E1",
+    "title": "Type-check tests and examples; fix Badge smoke test",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "typescript",
+      "bug",
+      "docs",
+      "examples",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-15",
+    "epic": "E1",
+    "title": "Unify SideBar into one Platform.OS file and remove SideBar.web.tsx",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "navigation",
+      "sidebar",
+      "tech-debt",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-02",
+    "epic": "E3",
+    "title": "ADR: motion engine, Reanimated and gesture-handler peer policy",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "adr",
+      "dependencies",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-01",
+    "epic": "E9",
+    "title": "Extend a11y test helpers: focus, hidden, value, hint, targets",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-02",
+    "epic": "E11",
+    "title": "Scaffold Expo catalog app workspace in repo",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "PLRNUI-77"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-04",
+    "epic": "E12",
+    "title": "Expand type tests: props contracts, polymorphism and negative cases",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-08",
+    "epic": "E12",
+    "title": "Upgrade Expo consumer smoke to real runtime on iOS/Android/Web",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "consumer",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-02",
+    "epic": "E13",
+    "title": "Build TS-compiler-API component props extractor",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "typescript",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-01",
+    "epic": "E14",
+    "title": "Define subpath export contract (D7 set) and ADR 0009",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "exports",
+      "adr",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-06",
+    "epic": "E14",
+    "title": "Audit module side effects to justify sideEffects:false",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "tree-shaking",
+      "audit",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-07",
+    "epic": "E14",
+    "title": "Single-source package identity config (no rename)",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "migration-prep",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-13",
+    "epic": "E14",
+    "title": "Write ADR 0014 API conventions and add the prop-convention conformance check",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "api-conventions",
+      "adr",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-01",
+    "epic": "E15",
+    "title": "DECISION: final Texo package name, scope, repo name and npm availability",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "decision",
+      "human-only",
+      "migration",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E15-02",
+    "epic": "E15",
+    "title": "Record shim policy ADR 0013 (D10) with sunset window pending H4",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "decision",
+      "migration",
+      "blocked-decision",
+      "needs-h4"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E15-09",
+    "epic": "E15",
+    "title": "Codemod engine: rewrite legacy imports to a configurable target specifier",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-01",
+    "epic": "E16",
+    "title": "Replace CODEOWNERS placeholder owner",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "governance",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E16-03",
+    "epic": "E16",
+    "title": "Add SECURITY.md, CODE_OF_CONDUCT.md and SUPPORT.md",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "governance",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E16-04",
+    "epic": "E16",
+    "title": "Rewrite CONTRIBUTING for external contributors",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "docs",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-05",
+    "epic": "E16",
+    "title": "PR template and issue forms for external flow",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "github",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-09",
+    "epic": "E16",
+    "title": "Third-party license and NOTICE audit",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "legal",
+      "security",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E16-10",
+    "epic": "E16",
+    "title": "Review audit/ directory for public release",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "oss-readiness",
+      "governance",
+      "audit",
+      "blocked-decision",
+      "needs-h7"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E17-06",
+    "epic": "E17",
+    "title": "Restructure support matrix config for multiple Expo SDK / RN versions",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "support-matrix",
+      "docs",
+      "compatibility",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-07",
+    "epic": "E17",
+    "title": "Semver, API stability and deprecation policy (ADR 0011 + docs)",
+    "size": "M",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "release",
+      "policy",
+      "semver",
+      "blocked-decision",
+      "needs-h4"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E17-10",
+    "epic": "E17",
+    "title": "Supply-chain hardening: Dependabot, dependency review, SBOM, audit gate",
+    "size": "S",
+    "wave": 0,
+    "labels": [
+      "texo-v1",
+      "release",
+      "security",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-11",
+    "epic": "E9",
+    "title": "Add screen-reader order and focus traversal test helper",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E9-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-04",
+    "epic": "E11",
+    "title": "Add catalog theme switcher (light/dark/system and presets)",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "theming",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-07",
+    "epic": "E12",
+    "title": "Add native visual option via Maestro or Expo screenshots (evaluate, optional job)",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "visual-regression",
+      "native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-11",
+    "epic": "E12",
+    "title": "Harden npm tarball consumer smoke for strict TS and ESM/Metro resolution",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "consumer",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-08"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-03",
+    "epic": "E14",
+    "title": "Emit valid ESM: explicit .js specifiers, platform-file ban, extensionless-import check",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "esm",
+      "build",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-15"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-09",
+    "epic": "E14",
+    "title": "Peer and optional dependency policy for native capabilities",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "dependencies",
+      "adr",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-03",
+    "epic": "E15",
+    "title": "Build generated shim package (re-export only), parametrized by identity config",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "migration-prep",
+      "single-codebase",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-01",
+      "E14-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-11",
+    "epic": "E15",
+    "title": "Evaluate 'texo migrate' CLI subcommand vs standalone codemod",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "spike",
+      "cli",
+      "e13-link",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E15-09"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-12",
+    "epic": "E15",
+    "title": "Draft migration guide to Texo with placeholder tokens",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E15-09"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-15",
+    "epic": "E15",
+    "title": "Runbook: shim publish and npm deprecate sequence",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "runbook",
+      "release",
+      "migration-prep",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E15-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-02",
+    "epic": "E16",
+    "title": "Fix mkdocs config and add strict docs build + deploy workflow",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "oss-readiness",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-06",
+    "epic": "E16",
+    "title": "Rewrite getting-started and index docs in English with install matrix",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "oss-readiness",
+      "i18n",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-03",
+    "epic": "E17",
+    "title": "Parameterize release-guard for stable/rc, identity config and shim",
+    "size": "M",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "release",
+      "guard",
+      "semver-sensitive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-08",
+    "epic": "E17",
+    "title": "V1 release train plan: rc exit criteria and GA go/no-go checklist",
+    "size": "S",
+    "wave": 1,
+    "labels": [
+      "texo-v1",
+      "release",
+      "runbook",
+      "planning",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-01",
+    "epic": "E1",
+    "title": "Define ComponentMeta, colocated <Name>.meta.ts loader and ADR 0016 (single metadata source)",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "manifest",
+      "ai-native",
+      "adr",
+      "metadata",
+      "schema",
+      "handwritten",
+      "catalog",
+      "registry",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-01",
+    "epic": "E2",
+    "title": "Define Theme contract v2 and token layer skeleton",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "tokens",
+      "contract",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-10",
+    "epic": "E3",
+    "title": "Add useSwipe gesture primitive on PanResponder",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "gestures",
+      "interaction",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-02",
+    "epic": "E4",
+    "title": "Add useControllableState and useMergedRefs hooks",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "hook",
+      "primitive",
+      "controlled-uncontrolled",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-23",
+    "epic": "E4",
+    "title": "Add LocaleProvider, typed messages catalog, direction and Intl formatters",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "i18n",
+      "rtl",
+      "foundation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-25",
+    "epic": "E5",
+    "title": "Add input mask engine (pattern, phone, card, date, currency)",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "mask",
+      "util",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-28",
+    "epic": "E5",
+    "title": "Add inputPresets (email, password, phone, otp, url, name, search) prop bundles",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "dx",
+      "autofill",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-01",
+    "epic": "E8",
+    "title": "Define native adapter contract: CapabilityProvider and registry",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "native",
+      "architecture",
+      "adapter",
+      "contract",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-02",
+    "epic": "E14",
+    "title": "Generate package.json exports, sideEffects and typesVersions from config",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "exports",
+      "tree-shaking",
+      "semver-sensitive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-01",
+      "E14-03",
+      "E14-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-04",
+    "epic": "E14",
+    "title": "Spike: ESM-only vs dual ESM+CJS vs jest-expo/Metro resolution",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "spike",
+      "cjs",
+      "metro",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-08",
+    "epic": "E14",
+    "title": "Local development link workflow for consumer apps (Metro watchFolders)",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "dx",
+      "metro",
+      "developer-experience",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-07",
+    "epic": "E15",
+    "title": "Compat test suite: run component and theme tests through the shim",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "compat-suite",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-10",
+    "epic": "E15",
+    "title": "Wire codemod mapping and packaging to final Texo names",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "codemod",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h8"
+    ],
+    "deps": [
+      "E15-01",
+      "E15-09",
+      "E15-11"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E15-13",
+    "epic": "E15",
+    "title": "README: Texo introduction and legacy-package notice",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "readme",
+      "blocked-decision",
+      "needs-h1"
+    ],
+    "deps": [
+      "E15-01",
+      "E15-12"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E17-12",
+    "epic": "E17",
+    "title": "Local registry rehearsal (Verdaccio) of Texo + shim publish, install and deprecate",
+    "size": "M",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "release",
+      "rehearsal",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-13",
+    "epic": "E17",
+    "title": "Rollback and incident runbook for bad releases",
+    "size": "S",
+    "wave": 2,
+    "labels": [
+      "texo-v1",
+      "release",
+      "runbook",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-08"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-02",
+    "epic": "E1",
+    "title": "Add maturity checker script validating the demo bar",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "ci",
+      "script",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-06",
+    "epic": "E1",
+    "title": "Add component meta-driven render matrix test for every component",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "maturity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-07",
+    "epic": "E1",
+    "title": "Add component docs lint: Import, Props, Usage, Stability",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "ci",
+      "maturity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-08",
+    "epic": "E1",
+    "title": "Sync catalog labels and nav index pages from component meta",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "catalog",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-02",
+    "epic": "E2",
+    "title": "Add palette ramps and semantic color roles with state layers",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "tokens",
+      "color",
+      "dark-mode",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-03",
+    "epic": "E2",
+    "title": "Add text style roles, font family slots and Dynamic Type policy",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "tokens",
+      "typography",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-04",
+    "epic": "E2",
+    "title": "Complete spacing, radius, size, border and opacity scales",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "tokens",
+      "spacing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-06",
+    "epic": "E2",
+    "title": "Implement variant API (defineVariants/useVariants) (defineVariants, useVariants)",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "variants",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-07",
+    "epic": "E2",
+    "title": "Add defineTheme composition and strict createTheme merge",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "composition",
+      "overrides",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-01",
+    "epic": "E3",
+    "title": "Define motion tokens (duration, easing, spring, stagger, distance)",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-02",
+    "epic": "E5",
+    "title": "Add Resolver contract and built-in rules (required, length, pattern, email, match)",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E4-23"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-03",
+    "epic": "E8",
+    "title": "Ship /native/testing mock adapters and renderWithCapabilities",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "mock",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-05",
+    "epic": "E8",
+    "title": "Add accessibility preference hooks: reduced motion, transparency, screen reader, font scale",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "accessibility",
+      "hooks",
+      "rn-core",
+      "a11y",
+      "motion",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-06",
+    "epic": "E8",
+    "title": "Add app-state hooks: useAppState, useOnForeground, useIsAppActive",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "app-state",
+      "hooks",
+      "rn-core",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-07",
+    "epic": "E8",
+    "title": "Add network status adapter and useNetworkStatus hook",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "network",
+      "adapter",
+      "hooks",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-08",
+    "epic": "E8",
+    "title": "Add orientation and window metrics hooks",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "orientation",
+      "hooks",
+      "rn-core",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-09",
+    "epic": "E8",
+    "title": "Add device info and platform helpers with Expo Go detection",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "device",
+      "platform",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-10",
+    "epic": "E8",
+    "title": "Add keyboard hooks and keyboard-avoiding/dismiss-on-tap primitives",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "keyboard",
+      "primitives",
+      "rn-core",
+      "forms",
+      "hook",
+      "screen",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-11",
+    "epic": "E8",
+    "title": "Add safe-area adapter with RN-core fallback and useInsets hook",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "safe-area",
+      "adapter",
+      "peer-dependency",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-13",
+    "epic": "E8",
+    "title": "Add haptics adapter: useHaptics with expo-haptics and Vibration fallback",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "haptics",
+      "adapter",
+      "dependencies",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-02",
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-15",
+    "epic": "E8",
+    "title": "Add clipboard adapter and useCopyToClipboard (expo-clipboard, web, noop)",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "clipboard",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-16",
+    "epic": "E8",
+    "title": "Add share adapter and useShare (RN Share and web navigator.share)",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "share",
+      "adapter",
+      "rn-core",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-23",
+    "epic": "E8",
+    "title": "Add storage adapters: memory, async-storage, secure-store, web, useStoredState",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "storage",
+      "adapter",
+      "security",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-24",
+    "epic": "E8",
+    "title": "Add biometric prompt adapter and useBiometricPrompt",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "biometrics",
+      "adapter",
+      "security",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E8-25",
+    "epic": "E8",
+    "title": "Add splash/app-ready gate: AppReadyGate and useAppReady",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "native",
+      "splash",
+      "app-shell",
+      "adapter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E10-01",
+    "epic": "E10",
+    "title": "Unify useBreakpoint: width-based on all platforms, breakpoint tokens, ResponsiveContext",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "breakpoints",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-03",
+    "epic": "E11",
+    "title": "Build catalog navigation, component list, and search",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "search",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E11-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-09",
+    "epic": "E11",
+    "title": "Define template system and generator CLI contract for app starters",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "cli",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-14",
+    "epic": "E12",
+    "title": "Add test-coverage matrix report: component x test dimensions",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "reporting",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-03",
+    "epic": "E13",
+    "title": "Generate props manifest ai/manifests/props.json",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E13-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-05",
+    "epic": "E14",
+    "title": "Add bundle-size and tree-shaking measurement harness",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "tree-shaking",
+      "performance",
+      "testing",
+      "api",
+      "bundle",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-10",
+    "epic": "E14",
+    "title": "Subpath resolution matrix script (Node, TS bundler/node16, Metro)",
+    "size": "M",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "exports",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-02",
+      "E14-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-11",
+    "epic": "E17",
+    "title": "Pack verification: content, size and entrypoint checks on the tarball",
+    "size": "S",
+    "wave": 3,
+    "labels": [
+      "texo-v1",
+      "release",
+      "packaging",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-09",
+    "epic": "E1",
+    "title": "Fix Button info variant and pressed-state contrast",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "button",
+      "contrast",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-10",
+    "epic": "E1",
+    "title": "Fix CodeInline discarding computed style when props passed",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "typography",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-11",
+    "epic": "E1",
+    "title": "Fix Row dead flex prop and add rowGap on wrap",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-12",
+    "epic": "E5",
+    "title": "Fix Input label leak, root wrapper and optional label",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "form",
+      "input",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-17",
+    "epic": "E4",
+    "title": "Change Text default alignment from justify and apply fontFamily token",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "typography",
+      "text",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-22",
+    "epic": "E5",
+    "title": "Form toggles to demo: Checkbox, Switch, RadioGroup states and tokens",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "form",
+      "a11y",
+      "tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-25",
+    "epic": "E6",
+    "title": "Alert to demo: alert role, contrast, dismiss",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "a11y",
+      "alert",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-26",
+    "epic": "E6",
+    "title": "ProgressBar and Spinner to demo: semantics and honest indeterminate",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "a11y",
+      "progress",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-28",
+    "epic": "E6",
+    "title": "Link to demo: link role, disabled, tokenised styling",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "a11y",
+      "link",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-30",
+    "epic": "E6",
+    "title": "NavContext and NavBar to demo: hook tests and docs",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "tests",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-08",
+    "epic": "E2",
+    "title": "Add system color scheme, preset prop, ThemeScope and honest persistence",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "provider",
+      "dark-mode",
+      "persistence",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-09",
+    "epic": "E2",
+    "title": "Add density runtime (useDensity, DensityProvider)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "density",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-11",
+    "epic": "E2",
+    "title": "Add WCAG contrast validation util and CI script for themes",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "tooling",
+      "a11y",
+      "contrast",
+      "tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-03",
+    "epic": "E3",
+    "title": "Add MotionProvider and useMotionPreference consuming useReducedMotion",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "a11y",
+      "hooks",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-05"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-01",
+    "epic": "E4",
+    "title": "Add Slot primitive for asChild prop-merging composition",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "composition",
+      "as-child",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-04",
+    "epic": "E4",
+    "title": "Add Icon component with pluggable icon-set registry",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "icon",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-08",
+    "epic": "E4",
+    "title": "Add Spacer for token gaps and flex push in Row/Column",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "layout",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E4-16",
+    "epic": "E4",
+    "title": "Add List and ListItemText for bulleted, numbered and checklist content",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "typography",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-18",
+    "epic": "E4",
+    "title": "Add CodeBlock with horizontal scroll, line numbers and copy hook",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "typography",
+      "code",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E5-01",
+    "epic": "E5",
+    "title": "Add schema-agnostic useForm hook (values, errors, touched, dirty, submit)",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "hook",
+      "validation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E4-02",
+      "E5-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-03",
+    "epic": "E5",
+    "title": "Add optional zod resolver adapter via structural typing",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "zod",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E5-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-04",
+    "epic": "E5",
+    "title": "Add Label with required marker, disabled state and press-to-focus",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "typography",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-09",
+    "epic": "E5",
+    "title": "Add OTPInput one-time code / PIN input with autofill and paste",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "otp",
+      "pin",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-10",
+    "epic": "E5",
+    "title": "Add Slider (single value) with step, ticks and adjustable a11y",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "slider",
+      "gesture",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-26",
+    "epic": "E5",
+    "title": "Add MaskedInput wrapping Input with mask engine and raw value",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "mask",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E5-25",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-27",
+    "epic": "E5",
+    "title": "Add CheckboxGroup mirroring RadioGroup API",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-01",
+    "epic": "E6",
+    "title": "Add Portal, nested OverlayHost and overlay stack (ADR 0015)",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "portal",
+      "foundation",
+      "primitive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-04",
+    "epic": "E6",
+    "title": "Add Banner (persistent page/section announcement)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "banner",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-15",
+    "epic": "E6",
+    "title": "Add Tabs (scrollable, controlled, a11y)",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "tabs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-17",
+    "epic": "E6",
+    "title": "Add Stepper and Wizard (progress + step state machine)",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "stepper",
+      "wizard",
+      "e7",
+      "progress",
+      "steps",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-19",
+    "epic": "E6",
+    "title": "Add Pagination (numbered and simple prev/next)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "pagination",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-20",
+    "epic": "E6",
+    "title": "Add EmptyState, ErrorState, LoadingState and Result",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "states",
+      "e7",
+      "state",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-24",
+    "epic": "E6",
+    "title": "Add KeyboardToolbar (accessory bar with prev/next/done)",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "keyboard",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E8-10",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-31",
+    "epic": "E6",
+    "title": "Add PullToRefresh wrapper with web fallback",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "refresh",
+      "gestures",
+      "lists",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-32",
+    "epic": "E6",
+    "title": "Add SwipeActions row on useSwipe with left/right actions",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "swipe",
+      "list",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-10",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-08",
+    "epic": "E7",
+    "title": "Add useDataTable headless model: columns, sort, selection",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "headless",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-13",
+    "epic": "E7",
+    "title": "Add DescriptionList for key-value pairs",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "description-list",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-15",
+    "epic": "E7",
+    "title": "Add Pager and Carousel with page indicator",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "carousel",
+      "pager",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-19",
+    "epic": "E7",
+    "title": "Add VideoPlayer shell with controller UI and adapter contract",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "video",
+      "media",
+      "adapter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E7-27",
+    "epic": "E7",
+    "title": "Add CircularProgress with pure-View default",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "progress",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-31",
+    "epic": "E7",
+    "title": "Add Markdown renderer for a safe subset without dependencies",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "markdown",
+      "richtext",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E8-19",
+    "epic": "E8",
+    "title": "Define usePermission API and PermissionAdapter pattern",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "native",
+      "permissions",
+      "adapter",
+      "contract",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01",
+      "E8-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-12",
+    "epic": "E9",
+    "title": "Add web a11y smoke with axe in Playwright on exported web catalog",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "web",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-02",
+    "epic": "E10",
+    "title": "Add useWindowSizeClass (orientation from E8-08)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "orientation",
+      "size-class",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-08",
+      "E10-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-03",
+    "epic": "E10",
+    "title": "Add responsive value resolver and useResponsiveValue",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E10-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-06",
+    "epic": "E10",
+    "title": "Add Container: max-width centered layout, responsive gutters and container-size context",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "container-query",
+      "layout",
+      "web",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-04",
+      "E2-06",
+      "E10-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-12",
+    "epic": "E10",
+    "title": "Add large-text layout switching (useIsLargeText, StackOnLargeText)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "a11y",
+      "dynamic-type",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-03",
+      "E2-06",
+      "E8-05",
+      "E10-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-05",
+    "epic": "E11",
+    "title": "Add playground controls panel generated from props schema",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "playground",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E11-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-06",
+    "epic": "E11",
+    "title": "Add variants and states matrix view per component",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "states",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E11-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-08",
+    "epic": "E11",
+    "title": "Embed Expo web preview export into Pages build (builds on PLRNUI-77)",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "pages",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-03",
+      "E11-04",
+      "PLRNUI-77"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-10",
+    "epic": "E11",
+    "title": "Create tabs app starter template",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-09"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-12",
+    "epic": "E11",
+    "title": "Create dashboard starter template",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-09"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E12-01",
+    "epic": "E12",
+    "title": "Fix test runner glob and add coverage reporting",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-02",
+      "E14-05"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-13",
+    "epic": "E13",
+    "title": "Create minimal agent-friendly examples set",
+    "size": "M",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "examples",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-06",
+    "epic": "E15",
+    "title": "Subpath compat suite: shim subpaths resolve under all resolvers",
+    "size": "S",
+    "wave": 4,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "exports",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-10",
+      "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-16",
+    "epic": "E5",
+    "title": "Harden FormField: tokenised spacing, color safe, typed props, tests",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "bug",
+      "form",
+      "formfield",
+      "a11y",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-12",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-19",
+    "epic": "E1",
+    "title": "Layout family to demo: Box, Column, Divider tests, docs, a11y",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "layout",
+      "docs",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-11",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-23",
+    "epic": "E5",
+    "title": "Text inputs to demo: PasswordInput and Textarea",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "form",
+      "input",
+      "i18n",
+      "a11y",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-12",
+      "E2-06",
+      "E4-23",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-29",
+    "epic": "E6",
+    "title": "TopBar and BottomBar to demo: tokens, safe area, semantics",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "a11y",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-28",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-35",
+    "epic": "E14",
+    "title": "Close root export gaps for prop types and nav hooks",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "api",
+      "exports",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-30"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-04",
+    "epic": "E3",
+    "title": "Add animation primitives: useAnimatedValue and animate() honoring tokens",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "animated",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-01",
+      "E3-02",
+      "E3-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-08",
+    "epic": "E3",
+    "title": "Add layout transition helper over LayoutAnimation",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-01",
+      "E3-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-05",
+    "epic": "E4",
+    "title": "Ship a minimal built-in glyph set for Icon (about 30 UI icons)",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "icon",
+      "assets",
+      "svg-paths",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-09",
+    "epic": "E4",
+    "title": "Add Grid with responsive column counts and token gaps",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "layout",
+      "responsive",
+      "grid",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E10-01",
+      "E10-03",
+      "E10-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-19",
+    "epic": "E4",
+    "title": "Add Collapsible animated expand/collapse region",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "surface",
+      "motion",
+      "disclosure",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-01",
+      "E4-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-11",
+    "epic": "E5",
+    "title": "Add RangeSlider with two thumbs and minimum distance",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "slider",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E5-10",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-02",
+    "epic": "E6",
+    "title": "Upgrade Modal: focus, a11y, Escape, keyboard avoidance, animations",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "modal",
+      "a11y",
+      "upgrade",
+      "motion",
+      "overlays",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E6-01",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-03",
+    "epic": "E6",
+    "title": "Upgrade Alert: dismiss, icon slot, live-region, density and actions",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "alert",
+      "a11y",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-25",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-05",
+    "epic": "E6",
+    "title": "Add toast store, queue and imperative toast() API",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "toast",
+      "imperative-api",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-07",
+    "epic": "E6",
+    "title": "Upgrade BottomSheet: snap points, drag gesture and dismissal paths",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "bottom-sheet",
+      "gesture",
+      "upgrade",
+      "a11y",
+      "motion",
+      "overlays",
+      "bottomsheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E6-01",
+      "E8-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-09",
+    "epic": "E6",
+    "title": "Add Drawer (edge-anchored overlay panel, left/right/top)",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "drawer",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-10",
+    "epic": "E6",
+    "title": "Upgrade Popover: native anchored rendering, placement, collision, a11y",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "popover",
+      "upgrade",
+      "a11y",
+      "overlays",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-25",
+    "epic": "E6",
+    "title": "Add Screen page root: safe area, scroll, status bar, keyboard avoidance",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "app-shell",
+      "screen",
+      "layout",
+      "keyboard",
+      "primitive",
+      "safe-area",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E6-01",
+      "E8-10",
+      "E8-11",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-26",
+    "epic": "E6",
+    "title": "Upgrade NavContext: active state, nested routes, adapter interface",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "nav-context",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-30",
+      "E2-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-38",
+    "epic": "E6",
+    "title": "Add SwipeActions a11y custom actions, web fallback and tests",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "gesture",
+      "swipe",
+      "list",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-32",
+      "E8-05",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-20",
+    "epic": "E7",
+    "title": "Add AudioPlayer shell with compact and full variants",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "audio",
+      "media",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-19",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E7-21",
+    "epic": "E7",
+    "title": "Add expo-video and expo-audio MediaEngine adapters on subpath",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "adapter",
+      "media",
+      "dependencies",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-19",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E8-04",
+    "epic": "E8",
+    "title": "Add appearance and color-scheme hooks with theme system-mode bridge",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "native",
+      "appearance",
+      "hooks",
+      "rn-core",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-08",
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-18",
+    "epic": "E8",
+    "title": "Add useBackHandler public hook over the overlay back stack",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "native",
+      "back-handler",
+      "hooks",
+      "overlays",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E6-01",
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-20",
+    "epic": "E8",
+    "title": "Add Expo permission adapters: camera, media library, location, notifications",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "native",
+      "permissions",
+      "expo",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-19"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-04",
+    "epic": "E10",
+    "title": "Add Show, Hide and Responsive components",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "components",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E10-02",
+      "E10-03",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-05",
+    "epic": "E10",
+    "title": "Add ResponsiveProvider for breakpoint and size class overrides",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "provider",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E10-01",
+      "E10-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-08",
+    "epic": "E10",
+    "title": "Add useDeviceClass and foldable posture adapter",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "tablet",
+      "foldable",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E10-02"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E10-10",
+    "epic": "E10",
+    "title": "Add SplitView master-detail layout for tablets",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "tablet",
+      "layout",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-02",
+      "E2-06",
+      "E10-02",
+      "E10-06",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E11-17",
+    "epic": "E11",
+    "title": "Create settings starter template",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-12"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E11-18",
+    "epic": "E11",
+    "title": "Create onboarding starter template",
+    "size": "S",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E7-15",
+      "E11-12"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E12-02",
+    "epic": "E12",
+    "title": "Add per-component behavior tests: layout, typography, surfaces",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-03",
+    "epic": "E12",
+    "title": "Migrate render tests to @testing-library/react-native with shim parity",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "rntl",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-06",
+    "epic": "E12",
+    "title": "Add free visual regression with Playwright screenshots of web catalog",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "visual-regression",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-10",
+    "epic": "E12",
+    "title": "Add render-count performance baseline tests",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-16",
+    "epic": "E12",
+    "title": "Add per-component behavior tests: form controls",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-17",
+    "epic": "E12",
+    "title": "Add per-component behavior tests: feedback, overlays, navigation",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "coverage",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-10",
+    "epic": "E13",
+    "title": "Generate per-component cards ai/cards/<Name>.md",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "token-budget",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E13-03",
+      "E13-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-14",
+    "epic": "E13",
+    "title": "Author component recipes (composition patterns)",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "recipes",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-30",
+    "epic": "E13",
+    "title": "Build skill eval harness with fixtures and deterministic graders",
+    "size": "M",
+    "wave": 5,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "evals",
+      "quality-gate",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-03",
+      "E13-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-20",
+    "epic": "E1",
+    "title": "Surfaces family to demo: Card example/tests, Badge contrast",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "surfaces",
+      "docs",
+      "examples",
+      "a11y",
+      "feedback",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-04",
+      "E1-19",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-05",
+    "epic": "E3",
+    "title": "Add Presence and enter/exit transition presets",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "transitions",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-06",
+    "epic": "E3",
+    "title": "Add usePressFeedback hook (consumed by Touchable)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "interaction",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-07",
+    "epic": "E3",
+    "title": "Add useShimmer animation hook for Skeleton",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "skeleton",
+      "loading",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-02",
+      "E3-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-11",
+    "epic": "E3",
+    "title": "Add useDrag and Draggable primitive",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "gestures",
+      "drag",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-14",
+    "epic": "E3",
+    "title": "Spike: Reanimated MotionEngine adapter feasibility (Expo Go, entrypoint)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "spike",
+      "reanimated",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-05",
+    "epic": "E5",
+    "title": "Add compound Field (Label, Control, Hint, Error) with a11y wiring",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "compound",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-12",
+      "E1-16",
+      "E2-06",
+      "E5-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-22",
+    "epic": "E5",
+    "title": "Add Rating (stars/custom icon) with half steps and read-only mode",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "rating",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-04",
+      "E4-05",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E6-06",
+    "epic": "E6",
+    "title": "Add Dialog, AlertDialog and ConfirmDialog",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "dialog",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-11",
+    "epic": "E6",
+    "title": "Upgrade Tooltip: native long-press, keyboard focus, accessible description",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "tooltip",
+      "a11y",
+      "upgrade",
+      "overlays",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-14",
+    "epic": "E6",
+    "title": "Upgrade Select: listbox semantics, keyboard, search, multi, sizing",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "inputs",
+      "select",
+      "a11y",
+      "upgrade",
+      "forms",
+      "bug",
+      "form",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-10",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-18",
+    "epic": "E6",
+    "title": "Add Breadcrumb (web-first, native collapsed form)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "breadcrumb",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-26",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E6-27",
+    "epic": "E6",
+    "title": "Add expo-router and react-navigation adapters (optional, no hard dep)",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "adapter",
+      "expo-router",
+      "react-navigation",
+      "peer-dependency",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-26",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-28",
+    "epic": "E6",
+    "title": "Upgrade TopBar: back action, large title, collapse, safe area",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "top-bar",
+      "upgrade",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-29",
+      "E2-06",
+      "E6-26",
+      "E8-11",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-30",
+    "epic": "E6",
+    "title": "Upgrade SideBar: rail/collapsed modes, groups, drawer integration",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "sidebar",
+      "upgrade",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-15",
+      "E2-06",
+      "E6-09",
+      "E6-26",
+      "E9-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-36",
+    "epic": "E6",
+    "title": "Upgrade BottomSheet: keyboard, safe area, reduced motion and a11y",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "bottom-sheet",
+      "gesture",
+      "upgrade",
+      "a11y",
+      "motion",
+      "overlays",
+      "bottomsheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-07",
+      "E8-05",
+      "E8-10",
+      "E8-11",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-12",
+    "epic": "E8",
+    "title": "Add status bar and system UI sync (useSystemBars)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "native",
+      "status-bar",
+      "system-ui",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01",
+      "E8-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-17",
+    "epic": "E8",
+    "title": "Add linking helpers: openURL, canOpen, deep-link parsing, router bridge",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "native",
+      "linking",
+      "deep-link",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E6-26",
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E10-14",
+    "epic": "E10",
+    "title": "Responsive docs, example, area barrel and public-API test",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "responsive",
+      "docs",
+      "exports",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E10-01",
+      "E10-02",
+      "E10-03",
+      "E10-04",
+      "E10-05",
+      "E10-12"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-14",
+    "epic": "E11",
+    "title": "Create page recipes: login, signup, profile, settings, empty and error states",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "recipes",
+      "patterns",
+      "ai-native",
+      "templates",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E13-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-15",
+    "epic": "E12",
+    "title": "Add theme-matrix test harness running component tests under all themes",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "testing",
+      "theming",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-01",
+    "epic": "E13",
+    "title": "Define AI-layer architecture, directory layout and package files wiring",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "architecture",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-11",
+    "epic": "E13",
+    "title": "Generate per-category tier-0 component index (ai/manifests/index)",
+    "size": "S",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "generator",
+      "token-budget",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-10"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-11",
+    "epic": "E14",
+    "title": "Replace regex API snapshot with TypeScript-compiler per-subpath snapshot",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "package-architecture",
+      "api-stability",
+      "tooling",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-35",
+      "E13-02",
+      "E14-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-12",
+    "epic": "E14",
+    "title": "Add TexoProvider composition root (ADR-R1)",
+    "size": "M",
+    "wave": 6,
+    "labels": [
+      "texo-v1",
+      "provider",
+      "composition-root",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-30",
+      "E2-08",
+      "E2-09",
+      "E3-03",
+      "E4-04",
+      "E4-23",
+      "E6-01",
+      "E8-01",
+      "E10-05",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-05",
+    "epic": "E1",
+    "title": "Wire demo-bar gate into npm scripts, release:check and CI",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ci",
+      "maturity",
+      "release",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-02",
+      "E1-03",
+      "E1-04",
+      "E13-01",
+      "E16-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-21",
+    "epic": "E4",
+    "title": "Typography: Heading/Quote to demo; deprecate B, P, Small, TextGroup as aliases",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "typography",
+      "docs",
+      "examples",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-04",
+      "E1-10",
+      "E1-17",
+      "E1-20",
+      "E2-06",
+      "E10-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-05",
+    "epic": "E2",
+    "title": "Unify cross-platform elevation resolver and dark tonal surfaces",
+    "size": "S",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "elevation",
+      "cross-platform",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-19",
+      "E1-20",
+      "E2-01",
+      "E2-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E3-09",
+    "epic": "E3",
+    "title": "Add useStagger for list/entrance sequencing",
+    "size": "S",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "lists",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-05",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-03",
+    "epic": "E4",
+    "title": "Add Touchable pressable primitive with feedback, hit slop and focus ring",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "interaction",
+      "pressable",
+      "native",
+      "haptics",
+      "primitives",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-06",
+      "E4-01",
+      "E8-01",
+      "E8-13",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-06",
+    "epic": "E5",
+    "title": "Add Form provider and bound fields connecting useForm to Field",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "context",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E5-01",
+      "E5-05",
+      "E5-28",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-08",
+    "epic": "E6",
+    "title": "Add ActionSheet (iOS-style action list with cancel and destructive)",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "action-sheet",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-07",
+      "E6-36",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-21",
+    "epic": "E6",
+    "title": "Add Skeleton primitive (text/rect/circle) and SkeletonScreen/list/card presets",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "skeleton",
+      "loading",
+      "motion",
+      "e7",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E3-03",
+      "E3-07",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-34",
+    "epic": "E6",
+    "title": "Add confirm-destructive pattern (useConfirmDestructive, hold-to-confirm)",
+    "size": "S",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "patterns",
+      "destructive",
+      "confirm",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-06",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-35",
+    "epic": "E6",
+    "title": "Add ToastViewport rendering, swipe-dismiss and live-region a11y",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "feedback",
+      "toast",
+      "imperative-api",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-05",
+      "E8-05",
+      "E8-10",
+      "E8-11",
+      "E14-12",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-37",
+    "epic": "E6",
+    "title": "Add AppShell layout slots and screen presets",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "app-shell",
+      "screen",
+      "layout",
+      "keyboard",
+      "primitive",
+      "safe-area",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-04",
+      "E6-25",
+      "E10-02",
+      "E14-12",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-11",
+    "epic": "E11",
+    "title": "Create auth flow starter template (login, signup, forgot)",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "auth",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-09",
+      "E11-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-15",
+    "epic": "E11",
+    "title": "Create feature recipes: list-detail, checkout, search and filters",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "recipes",
+      "patterns",
+      "ai-native",
+      "templates",
+      "handwritten",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-14",
+      "E13-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-07",
+    "epic": "E13",
+    "title": "Backfill <Name>.meta.ts AI fields: form and input components",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-16",
+      "E1-22",
+      "E1-23",
+      "E6-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-09",
+    "epic": "E13",
+    "title": "Backfill <Name>.meta.ts AI fields: feedback, overlay and surface components",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-20",
+      "E1-26",
+      "E6-02",
+      "E6-03",
+      "E6-11",
+      "E6-36"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-17",
+    "epic": "E13",
+    "title": "Write root AGENTS.md and consumer AGENTS snippet",
+    "size": "S",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "agents-md",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-18",
+    "epic": "E13",
+    "title": "Generate llms.txt and llms-full.txt",
+    "size": "S",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "llms-txt",
+      "generator",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-10",
+      "E13-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-21",
+    "epic": "E13",
+    "title": "Skill pack scaffolding, validator and skills.sh installability",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "distribution",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-04",
+    "epic": "E15",
+    "title": "Export-parity test: shim exports equal Texo exports (values and types)",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "parity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E14-11",
+      "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-05",
+    "epic": "E15",
+    "title": "Type-parity test: identical public types through shim",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "testing",
+      "types",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-04",
+      "E14-11",
+      "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-08",
+    "epic": "E15",
+    "title": "Consumer smoke in shim mode (Node/TS consumer and Expo SDK 57 consumer)",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "shim",
+      "consumer-validation",
+      "expo",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E12-08",
+      "E12-11",
+      "E14-07",
+      "E14-12",
+      "E15-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E16-08",
+    "epic": "E16",
+    "title": "Generate API reference from TSDoc",
+    "size": "M",
+    "wave": 7,
+    "labels": [
+      "texo-v1",
+      "docs",
+      "api-reference",
+      "tooling",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-02",
+      "E14-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-24",
+    "epic": "E1",
+    "title": "Form example coverage for all form components",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "examples",
+      "form",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-04",
+      "E1-16",
+      "E1-21",
+      "E1-22",
+      "E1-23",
+      "E6-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-42",
+    "epic": "E1",
+    "title": "Migrate Button to Touchable and buttonVariants (variant/tone per ADR 0014)",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "button",
+      "variants",
+      "api-conventions",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-09",
+      "E2-06",
+      "E4-03",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-10",
+    "epic": "E2",
+    "title": "Export design tokens manifest (DTCG JSON) per preset and mode",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "tokens",
+      "tooling",
+      "ai-native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-12",
+    "epic": "E2",
+    "title": "Add 'minimal' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "minimal",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-13",
+    "epic": "E2",
+    "title": "Add 'premium' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "premium",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E2-14",
+    "epic": "E2",
+    "title": "Add 'saas' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "saas",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-15",
+    "epic": "E2",
+    "title": "Add 'consumer' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "consumer",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E2-16",
+    "epic": "E2",
+    "title": "Add 'editorial' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "editorial",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E2-17",
+    "epic": "E2",
+    "title": "Add 'ecommerce' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "ecommerce",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E2-18",
+    "epic": "E2",
+    "title": "Add 'dashboard' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "dashboard",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-19",
+    "epic": "E2",
+    "title": "Add 'social' preset theme",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "social",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-01",
+      "E2-02",
+      "E2-03",
+      "E2-04",
+      "E2-05",
+      "E2-11"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E3-15",
+    "epic": "E3",
+    "title": "Motion docs, example screen, area barrels and public-API test",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "motion",
+      "docs",
+      "exports",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E3-04",
+      "E3-05",
+      "E3-06",
+      "E3-07",
+      "E3-08",
+      "E3-09",
+      "E3-10",
+      "E3-11"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-06",
+    "epic": "E4",
+    "title": "Add Surface with semantic elevation levels and dark-mode tinting",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "surface",
+      "elevation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-05",
+      "E2-06",
+      "E4-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-15",
+    "epic": "E4",
+    "title": "Add Chip: selectable, removable, icon-capable filter/input chip",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "interaction",
+      "chip",
+      "tag",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-05",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-17",
+    "epic": "E4",
+    "title": "Add ExpandableText with read more/less toggle",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "typography",
+      "interaction",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-08",
+    "epic": "E5",
+    "title": "Add FormLayout: keyboard-avoiding scrolling form container with focus chain",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "layout",
+      "keyboard",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-25",
+      "E6-37",
+      "E8-10",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-12",
+    "epic": "E5",
+    "title": "Add ToggleGroup (single/multiple) with icon or text items",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "toggle",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-14",
+    "epic": "E5",
+    "title": "Add NumberInput with stepper buttons, min/max/step and locale parsing",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "numeric",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-05",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-15",
+    "epic": "E5",
+    "title": "Add pure-JS Calendar month grid (single/range/multiple)",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "date",
+      "calendar",
+      "e7",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-21",
+    "epic": "E5",
+    "title": "Add SearchBar with clear, debounce, loading and cancel",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "search",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-12",
+    "epic": "E6",
+    "title": "Add Menu/DropdownMenu with keyboard navigation",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "menu",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-01",
+      "E6-08",
+      "E6-10",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-33",
+    "epic": "E6",
+    "title": "Add undo and optimistic-UI hooks (useUndoableAction, useOptimisticAction)",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "patterns",
+      "undo",
+      "optimistic-ui",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-05",
+      "E6-35",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-01",
+    "epic": "E7",
+    "title": "Add ListItem row primitive with slots, press and a11y",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "primitive",
+      "surface",
+      "row",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-11",
+    "epic": "E7",
+    "title": "Add Stat KPI card with delta, trend and sparkline slot",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "stat",
+      "dashboard",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-16",
+    "epic": "E7",
+    "title": "Add Image with placeholder, fallback and optional blurhash adapter",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "image",
+      "media",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-22",
+    "epic": "E7",
+    "title": "Add chart core: scales, ticks, palette and accessible data summary",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-20",
+      "E6-21",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-02",
+    "epic": "E14",
+    "title": "Add ./native boundary check and native build emission (no package.json edits)",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "native",
+      "architecture",
+      "packaging",
+      "adr",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-21",
+      "E8-01",
+      "E14-02",
+      "E14-09"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-02",
+    "epic": "E9",
+    "title": "Add table-driven a11y contract test for all interactive components",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "testing",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-21",
+      "E1-25",
+      "E1-26",
+      "E1-28",
+      "E1-29",
+      "E1-35",
+      "E6-02",
+      "E6-07",
+      "E6-14",
+      "E6-36",
+      "E9-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-06",
+    "epic": "E13",
+    "title": "Backfill <Name>.meta.ts AI fields: typography and layout primitives",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-12",
+    "epic": "E13",
+    "title": "Generate shadcn-style registry JSON for templates and recipes",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "registry",
+      "generator",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-09",
+      "E11-14",
+      "E11-15",
+      "E13-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-22",
+    "epic": "E13",
+    "title": "Skill: texo-component-selection",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-11",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-23",
+    "epic": "E13",
+    "title": "Skill: texo-screen-generation",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E11-14",
+      "E11-15",
+      "E13-14",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-25",
+    "epic": "E13",
+    "title": "Skill: texo-forms",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "forms",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-14",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-26",
+    "epic": "E13",
+    "title": "Skill: texo-navigation",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-28",
+    "epic": "E13",
+    "title": "Skill: texo-responsive",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-29",
+    "epic": "E13",
+    "title": "Skill: texo-motion",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "motion",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-03",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-37",
+    "epic": "E13",
+    "title": "Skill: texo-overlays-feedback",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "overlays",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E6-01",
+      "E6-05",
+      "E6-06",
+      "E6-20",
+      "E6-35",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-38",
+    "epic": "E13",
+    "title": "Skill: texo-migration (shim, codemod, deprecated aliases)",
+    "size": "S",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "migration",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-21",
+      "E13-21",
+      "E15-09",
+      "E15-12"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-01",
+    "epic": "E17",
+    "title": "Adopt Changesets with pre-release mode and lockstep fixed group",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "release",
+      "changesets",
+      "tooling",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-05",
+      "E14-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-05",
+    "epic": "E17",
+    "title": "CI matrix: Node, OS, Expo/RN and job split with concurrency",
+    "size": "M",
+    "wave": 8,
+    "labels": [
+      "texo-v1",
+      "ci",
+      "support-matrix",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-05",
+      "E17-06"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-27",
+    "epic": "E1",
+    "title": "Feedback example covering Alert, ProgressBar, Spinner",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "examples",
+      "feedback",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-04",
+      "E1-24",
+      "E1-25",
+      "E1-26"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E2-20",
+    "epic": "E2",
+    "title": "Add preset registry, barrels, docs and ADR 0004 update",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "theme",
+      "preset",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-06",
+      "E2-07",
+      "E2-08",
+      "E2-09",
+      "E2-10",
+      "E2-11",
+      "E2-12",
+      "E2-14",
+      "E2-18"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-20",
+    "epic": "E4",
+    "title": "Add Accordion (single/multiple) built on Collapsible",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "surface",
+      "disclosure",
+      "accordion",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-04",
+      "E4-06",
+      "E4-19",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E4-24",
+    "epic": "E4",
+    "title": "Add ./adapters/react-native-svg icon-set convenience adapter",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "icon",
+      "adapter",
+      "optional-peer",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E4-04",
+      "E8-02",
+      "E14-09"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E5-13",
+    "epic": "E5",
+    "title": "Add SegmentedControl with animated indicator",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E5-12",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-16",
+    "epic": "E5",
+    "title": "Add DatePicker field opening Calendar in sheet/popover with native adapter hook",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "date",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-05",
+      "E4-06",
+      "E5-15",
+      "E6-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-17",
+    "epic": "E5",
+    "title": "Add TimePicker (12/24h, minute step) with JS columns",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "time",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-05",
+      "E4-06",
+      "E6-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-19",
+    "epic": "E5",
+    "title": "Add Combobox/Autocomplete with async options and creatable values",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "autocomplete",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-05",
+      "E4-06",
+      "E6-01",
+      "E7-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-23",
+    "epic": "E5",
+    "title": "Add FileField (files/images) UI with injectable picker adapter",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "upload",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E7-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E6-13",
+    "epic": "E6",
+    "title": "Add ContextMenu (long-press/right-click) built on Menu",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "overlay",
+      "context-menu",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-12",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E6-29",
+    "epic": "E6",
+    "title": "Upgrade BottomBar and NavBar: badges, More overflow, tablist a11y, adaptive layout",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "navigation",
+      "bottom-bar",
+      "nav-bar",
+      "upgrade",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-29",
+      "E1-30",
+      "E2-06",
+      "E6-12",
+      "E6-26",
+      "E6-30",
+      "E8-11",
+      "E10-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-02",
+    "epic": "E7",
+    "title": "Add List wrapper over FlatList with virtualization defaults",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-01",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-17",
+    "epic": "E7",
+    "title": "Add Avatar and AvatarGroup with overflow count",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "avatar",
+      "display",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-04",
+      "E6-21",
+      "E7-16",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-23",
+    "epic": "E7",
+    "title": "Add BarChart (pure View) vertical, horizontal and stacked",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-24",
+    "epic": "E7",
+    "title": "Add Sparkline with View-bar default and line variant",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "stat",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-25",
+    "epic": "E7",
+    "title": "Add LineChart and AreaChart via optional react-native-svg",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "adapter",
+      "dependencies",
+      "post-1.0",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": true
+  },
+  {
+    "id": "E8-31",
+    "epic": "E8",
+    "title": "Add ./adapters/safe-area-context convenience adapter",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "native",
+      "safe-area",
+      "adapter",
+      "optional-peer",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E8-02",
+      "E8-11",
+      "E14-09"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E9-07",
+    "epic": "E9",
+    "title": "Enforce 44/48 minimum touch targets via hitSlop across pressables",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "touch-target",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-09",
+      "E1-22",
+      "E1-42",
+      "E9-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-13",
+    "epic": "E9",
+    "title": "Write accessibility contract docs and per-component a11y table",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E9-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E12-13",
+    "epic": "E12",
+    "title": "Add job for catalog web export, a11y and visual checks in CI",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "ci",
+      "testing",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E9-12",
+      "E12-06",
+      "E17-05"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-04",
+    "epic": "E13",
+    "title": "Generate token manifest ai/manifests/tokens.json",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E2-10"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-31",
+    "epic": "E13",
+    "title": "Author eval tasks and run baseline vs skills uplift report",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "evals",
+      "blocked-decision",
+      "needs-h5"
+    ],
+    "deps": [
+      "E13-22",
+      "E13-23",
+      "E13-25",
+      "E13-30"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E13-33",
+    "epic": "E13",
+    "title": "Optional MCP server over manifests (read-only)",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "mcp",
+      "optional",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-10",
+      "E13-11",
+      "E13-12"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E17-02",
+    "epic": "E17",
+    "title": "Release workflow: npm trusted publishing (OIDC) with provenance",
+    "size": "M",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "release",
+      "security",
+      "github-actions",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-01",
+      "E17-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-09",
+    "epic": "E17",
+    "title": "Release notes and public changelog format",
+    "size": "S",
+    "wave": 9,
+    "labels": [
+      "texo-v1",
+      "release",
+      "changelog",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-31",
+    "epic": "E1",
+    "title": "Navigation example covering NavBar layouts, SideBar and BottomBar",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "examples",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-04",
+      "E1-15",
+      "E1-27",
+      "E1-29",
+      "E1-30"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E5-18",
+    "epic": "E5",
+    "title": "Add optional @react-native-community/datetimepicker adapter for DatePicker/TimePicker",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "adapter",
+      "native-module",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E5-16",
+      "E5-17"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E5-20",
+    "epic": "E5",
+    "title": "Add MultiSelect built from Combobox and Chip",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "forms",
+      "selection",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E4-15",
+      "E5-19",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-03",
+    "epic": "E7",
+    "title": "Add SectionList wrapper with sticky headers and A-Z index hook",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-04",
+    "epic": "E7",
+    "title": "Add optional FlashList adapter for List via subpath",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "list",
+      "adapter",
+      "dependencies",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E7-02"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E7-09",
+    "epic": "E7",
+    "title": "Add DataTable view: virtualized rows, sticky header, horizontal scroll",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "performance",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-21",
+      "E7-02",
+      "E7-08",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-12",
+    "epic": "E7",
+    "title": "Add Timeline component with status nodes and connectors",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "timeline",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-14",
+    "epic": "E7",
+    "title": "Add Tree view with expand/collapse and keyboard/a11y",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "tree",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-01",
+      "E7-02",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E7-18",
+    "epic": "E7",
+    "title": "Add Gallery grid and Lightbox viewer",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "gallery",
+      "media",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E7-15",
+      "E7-16",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E7-26",
+    "epic": "E7",
+    "title": "Add DonutChart and PieChart via optional react-native-svg",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chart",
+      "adapter",
+      "post-1.0",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-22",
+      "E7-25",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": true
+  },
+  {
+    "id": "E7-32",
+    "epic": "E7",
+    "title": "Add ChatBubble and MessageList with inverted virtualization",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "chat",
+      "list",
+      "performance",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-02",
+      "E7-31",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E8-21",
+    "epic": "E8",
+    "title": "Add image picker/camera adapter, useImagePicker and ImagePickerField",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "native",
+      "media",
+      "forms",
+      "adapter",
+      "expo",
+      "native-module",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E5-23",
+      "E8-19"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-22",
+    "epic": "E8",
+    "title": "Add document picker adapter and DocumentPickerField",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "native",
+      "media",
+      "forms",
+      "adapter",
+      "expo",
+      "native-module",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E5-23",
+      "E8-01"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-08",
+    "epic": "E9",
+    "title": "Add dynamic type and font scaling support and tests",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "dynamic-type",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-09",
+      "E1-12",
+      "E1-17",
+      "E1-42",
+      "E2-03",
+      "E8-05",
+      "E9-01",
+      "E9-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E9-14",
+    "epic": "E9",
+    "title": "Add manual device a11y verification protocol and evidence template",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "a11y",
+      "process",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E9-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-13",
+    "epic": "E11",
+    "title": "Create e-commerce starter template",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E7-02",
+      "E11-09"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E13-08",
+    "epic": "E13",
+    "title": "Backfill <Name>.meta.ts AI fields: navigation and shell components",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "handwritten",
+      "component-catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E6-28",
+      "E6-29"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-16",
+    "epic": "E13",
+    "title": "Generate style-preset metadata manifest",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "manifest",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-04"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-19",
+    "epic": "E13",
+    "title": "Add ai:build orchestrator and emit ./meta JSON manifests into dist/meta",
+    "size": "S",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "build",
+      "packaging",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-03",
+      "E13-04",
+      "E13-10",
+      "E13-11",
+      "E13-18",
+      "E17-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-14",
+    "epic": "E14",
+    "title": "Wave wiring A: root exports, API snapshot and docs nav for foundations and E4",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-05",
+      "E1-08",
+      "E1-17",
+      "E1-21",
+      "E1-35",
+      "E2-20",
+      "E3-15",
+      "E4-01",
+      "E4-02",
+      "E4-03",
+      "E4-04",
+      "E4-05",
+      "E4-06",
+      "E4-09",
+      "E4-15",
+      "E4-16",
+      "E4-17",
+      "E4-19",
+      "E4-20",
+      "E4-23",
+      "E10-14",
+      "E14-11",
+      "E14-12"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-04",
+    "epic": "E17",
+    "title": "Dist-tag promotion workflow: rc to next to latest with gates",
+    "size": "M",
+    "wave": 10,
+    "labels": [
+      "texo-v1",
+      "release",
+      "dist-tag",
+      "github-actions",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E17-02",
+      "E17-03"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-34",
+    "epic": "E1",
+    "title": "Overlay example: promote overlays.experimental to full coverage",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "examples",
+      "overlay",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-04",
+      "E1-31",
+      "E6-02",
+      "E6-07",
+      "E6-10",
+      "E6-11",
+      "E6-14",
+      "E6-36"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-10",
+    "epic": "E7",
+    "title": "Add DataTable responsive mode: collapse columns to cards",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "table",
+      "responsive",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E7-09",
+      "E7-13",
+      "E14-13"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E7-30",
+    "epic": "E7",
+    "title": "Add Agenda list grouped by day",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "calendar",
+      "list",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E5-15",
+      "E7-01",
+      "E7-03",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E7-33",
+    "epic": "E7",
+    "title": "Add NotificationList with grouping, read state and actions",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "e7",
+      "notifications",
+      "list",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E2-06",
+      "E6-20",
+      "E7-01",
+      "E7-03",
+      "E14-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E8-26",
+    "epic": "E8",
+    "title": "Add createExpoCapabilities one-line preset (/native/expo)",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "native",
+      "expo",
+      "preset",
+      "dx",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-02",
+      "E8-07",
+      "E8-09",
+      "E8-11",
+      "E8-12",
+      "E8-13",
+      "E8-15",
+      "E8-17",
+      "E8-20",
+      "E8-21",
+      "E8-22",
+      "E8-23"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-19",
+    "epic": "E11",
+    "title": "Create social feed starter template",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "templates",
+      "starter",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E7-02",
+      "E11-13"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E13-20",
+    "epic": "E13",
+    "title": "Add manifest freshness CI gate (ai:check)",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "ci",
+      "quality-gate",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-19"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-24",
+    "epic": "E13",
+    "title": "Skill: texo-design-system (tokens and theming)",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "design-system",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-04",
+      "E13-16",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-27",
+    "epic": "E13",
+    "title": "Skill: texo-accessibility",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "a11y",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-06",
+      "E13-07",
+      "E13-08",
+      "E13-09",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-32",
+    "epic": "E13",
+    "title": "Optional CLI: info and doctor commands (no add)",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "cli",
+      "optional",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-10",
+      "E13-19"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E13-36",
+    "epic": "E13",
+    "title": "Skill: texo-data-display",
+    "size": "S",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "data-display",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E6-21",
+      "E7-02",
+      "E7-09",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-15",
+    "epic": "E14",
+    "title": "Wave wiring B: root exports, API snapshot and docs nav for E5 forms",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-12",
+      "E1-16",
+      "E1-22",
+      "E1-23",
+      "E5-01",
+      "E5-02",
+      "E5-03",
+      "E5-04",
+      "E5-05",
+      "E5-06",
+      "E5-08",
+      "E5-09",
+      "E5-10",
+      "E5-11",
+      "E5-12",
+      "E5-13",
+      "E5-14",
+      "E5-15",
+      "E5-16",
+      "E5-17",
+      "E5-19",
+      "E5-20",
+      "E5-21",
+      "E5-23",
+      "E5-25",
+      "E5-26",
+      "E5-27",
+      "E5-28",
+      "E8-02",
+      "E8-10",
+      "E8-21",
+      "E14-02",
+      "E14-14"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E17-14",
+    "epic": "E17",
+    "title": "Define the 1.0 stable bar checklist and stable set",
+    "size": "M",
+    "wave": 11,
+    "labels": [
+      "texo-v1",
+      "release",
+      "stability",
+      "stable-bar",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "deps": [
+      "E1-07",
+      "E9-02",
+      "E9-14",
+      "E14-11",
+      "E14-13",
+      "E17-07"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E1-37",
+    "epic": "E1",
+    "title": "Flip existing components' meta status to demo and enable the strict gate",
+    "size": "S",
+    "wave": 12,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "release",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-05",
+      "E1-06",
+      "E1-07",
+      "E1-08",
+      "E1-09",
+      "E1-12",
+      "E1-15",
+      "E1-16",
+      "E1-19",
+      "E1-20",
+      "E1-21",
+      "E1-22",
+      "E1-23",
+      "E1-24",
+      "E1-27",
+      "E1-31",
+      "E1-34",
+      "E1-35",
+      "E1-42",
+      "E9-02",
+      "E13-06",
+      "E13-07",
+      "E13-08",
+      "E13-09"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-27",
+    "epic": "E12",
+    "title": "Add native smoke: clean Expo app and web export",
+    "size": "M",
+    "wave": 12,
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-26"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-07",
+    "epic": "E11",
+    "title": "Populate catalog stories: layout, typography, surfaces, feedback",
+    "size": "M",
+    "wave": 12,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-19",
+      "E1-20",
+      "E1-21",
+      "E1-27",
+      "E1-34",
+      "E11-02"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-16",
+    "epic": "E14",
+    "title": "Wave wiring C: root exports, API snapshot and docs nav for E6 overlays and navigation",
+    "size": "M",
+    "wave": 12,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-25",
+      "E1-26",
+      "E1-28",
+      "E1-29",
+      "E1-30",
+      "E6-01",
+      "E6-02",
+      "E6-03",
+      "E6-04",
+      "E6-05",
+      "E6-06",
+      "E6-07",
+      "E6-08",
+      "E6-09",
+      "E6-10",
+      "E6-11",
+      "E6-12",
+      "E6-14",
+      "E6-15",
+      "E6-17",
+      "E6-19",
+      "E6-20",
+      "E6-21",
+      "E6-24",
+      "E6-25",
+      "E6-26",
+      "E6-27",
+      "E6-28",
+      "E6-29",
+      "E6-30",
+      "E6-31",
+      "E6-32",
+      "E6-33",
+      "E6-34",
+      "E6-35",
+      "E6-36",
+      "E6-37",
+      "E6-38",
+      "E14-15"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E1-38",
+    "epic": "E1",
+    "title": "Promote layout and typography stable set to stable",
+    "size": "S",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "deps": [
+      "E1-11",
+      "E1-17",
+      "E1-19",
+      "E1-21",
+      "E1-37",
+      "E4-04",
+      "E17-14"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E1-39",
+    "epic": "E1",
+    "title": "Promote controls stable set to stable",
+    "size": "S",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "deps": [
+      "E1-12",
+      "E1-22",
+      "E1-23",
+      "E1-28",
+      "E1-37",
+      "E1-42",
+      "E4-03",
+      "E5-04",
+      "E5-05",
+      "E17-14"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E1-40",
+    "epic": "E1",
+    "title": "Promote feedback stable set to stable",
+    "size": "S",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "deps": [
+      "E1-20",
+      "E1-26",
+      "E1-37",
+      "E6-03",
+      "E17-14"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E1-41",
+    "epic": "E1",
+    "title": "Promote surfaces, Screen and providers to stable",
+    "size": "S",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "deps": [
+      "E1-20",
+      "E1-37",
+      "E2-08",
+      "E4-06",
+      "E6-25",
+      "E6-37",
+      "E14-12",
+      "E17-14"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E8-29",
+    "epic": "E12",
+    "title": "Add native smoke: Expo Go compatibility run",
+    "size": "S",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-27"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-30",
+    "epic": "E12",
+    "title": "Add native smoke: bare React Native app",
+    "size": "M",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "native",
+      "testing",
+      "smoke",
+      "expo-go",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-27"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E11-16",
+    "epic": "E11",
+    "title": "Populate catalog stories: forms, navigation, overlays, buttons",
+    "size": "M",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "catalog",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E1-01",
+      "E1-24",
+      "E1-31",
+      "E1-34",
+      "E11-02",
+      "E11-07"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-17",
+    "epic": "E14",
+    "title": "Wave wiring D: root exports, API snapshot and docs nav for E7 data display",
+    "size": "M",
+    "wave": 13,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E7-01",
+      "E7-02",
+      "E7-03",
+      "E7-08",
+      "E7-09",
+      "E7-10",
+      "E7-11",
+      "E7-12",
+      "E7-13",
+      "E7-15",
+      "E7-16",
+      "E7-17",
+      "E7-22",
+      "E7-23",
+      "E7-24",
+      "E7-27",
+      "E14-16"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E8-28",
+    "epic": "E16",
+    "title": "Write native layer docs, recipes and capability catalog entry",
+    "size": "M",
+    "wave": 14,
+    "labels": [
+      "texo-v1",
+      "native",
+      "docs",
+      "catalog",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-26",
+      "E8-27",
+      "E8-29",
+      "E8-30"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E14-18",
+    "epic": "E14",
+    "title": "Wave wiring E: ./native, ./native/expo and ./testing barrels, snapshots and docs nav",
+    "size": "M",
+    "wave": 14,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-01",
+      "E8-02",
+      "E8-03",
+      "E8-04",
+      "E8-05",
+      "E8-06",
+      "E8-07",
+      "E8-08",
+      "E8-09",
+      "E8-10",
+      "E8-11",
+      "E8-12",
+      "E8-13",
+      "E8-15",
+      "E8-16",
+      "E8-17",
+      "E8-18",
+      "E8-19",
+      "E8-20",
+      "E8-21",
+      "E8-22",
+      "E8-23",
+      "E8-26",
+      "E14-17"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-34",
+    "epic": "E13",
+    "title": "Add AI-layer docs page and consumer onboarding",
+    "size": "S",
+    "wave": 15,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "docs",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-17",
+      "E13-21",
+      "E14-15",
+      "E14-18"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E13-35",
+    "epic": "E13",
+    "title": "Skill: texo-native-capabilities",
+    "size": "S",
+    "wave": 15,
+    "labels": [
+      "texo-v1",
+      "ai-native",
+      "skills",
+      "native",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E8-26",
+      "E8-28",
+      "E13-21"
+    ],
+    "postV1": false,
+    "blocked": false
+  },
+  {
+    "id": "E15-14",
+    "epic": "E15",
+    "title": "Cutover: apply final identity to package.json, scripts, repo URLs and docs",
+    "size": "M",
+    "wave": 15,
+    "labels": [
+      "texo-v1",
+      "cutover",
+      "semver-sensitive",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h6"
+    ],
+    "deps": [
+      "E1-37",
+      "E2-20",
+      "E3-15",
+      "E10-14",
+      "E11-07",
+      "E11-16",
+      "E13-19",
+      "E14-02",
+      "E14-14",
+      "E14-15",
+      "E14-18",
+      "E15-01",
+      "E15-02",
+      "E15-04",
+      "E15-05",
+      "E15-06",
+      "E15-08",
+      "E15-10",
+      "E17-01",
+      "E17-05"
+    ],
+    "postV1": false,
+    "blocked": true
+  },
+  {
+    "id": "E14-19",
+    "epic": "E14",
+    "title": "Wave wiring post-1.0: exports, snapshot and nav for deferred components",
+    "size": "M",
+    "wave": 16,
+    "labels": [
+      "texo-v1",
+      "integration",
+      "exports",
+      "wave-wiring",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "deps": [
+      "E13-34",
+      "E14-18",
+      "E15-14"
+    ],
+    "postV1": true,
+    "blocked": false
+  },
+  {
+    "id": "E15-16",
+    "epic": "E15",
+    "title": "Execute cutover publish: shim release and npm deprecate of legacy versions",
+    "size": "S",
+    "wave": 16,
+    "labels": [
+      "texo-v1",
+      "release",
+      "human-only",
+      "blocked-decision",
+      "needs-h1",
+      "needs-h6"
+    ],
+    "deps": [
+      "E15-14",
+      "E15-15",
+      "E17-02",
+      "E17-04"
+    ],
+    "postV1": false,
+    "blocked": true
+  }
+]

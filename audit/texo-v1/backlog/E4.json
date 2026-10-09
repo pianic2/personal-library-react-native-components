@@ -1,0 +1,1456 @@
+[
+  {
+    "id": "E4-02",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add useControllableState and useMergedRefs hooks",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "hook",
+      "primitive",
+      "controlled-uncontrolled",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Every input re-implements controlled/uncontrolled value handling inconsistently (Input, Select, Switch, RadioGroup).",
+    "value": "One audited implementation reused by all new inputs (Slider, OTP, Rating, SegmentedControl, Accordion, Collapsible).",
+    "scope": [
+      "API: useControllableState<T>({value?, defaultValue, onChange?}): [T, (next: T | ((p:T)=>T)) => void]; useMergedRefs<T>(...refs: Ref<T>[]): RefCallback<T>.",
+      "Behavior: Warns in __DEV__ when switching controlled<->uncontrolled; onChange fires only on real change; functional updates supported.",
+      "Accessibility/platform notes: n/a",
+      "Tests: controlled never mutates internal state; uncontrolled updates and notifies; switch warning; ref merge of callback+object refs"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes",
+      "npm test passes including the new test files",
+      "Both hooks have JSDoc and are exported from their own files (barrel export is done by E4-22)"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "None significant"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog"
+    ],
+    "filesTouched": [
+      "src/hooks/useControllableState.ts",
+      "src/hooks/useMergedRefs.ts",
+      "tests/hooks/useControllableState.test.tsx",
+      "tests/hooks/useMergedRefs.test.tsx",
+      "docs/components/layout/useControllableState.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-23",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add LocaleProvider, typed messages catalog, direction and Intl formatters",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "i18n",
+      "rtl",
+      "foundation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Built-in strings and a11y labels are hardcoded English (PasswordInput 'Show'/'Hide', validation messages, announcements) and RTL is handled ad hoc (R1 M9).",
+    "value": "One place to translate every built-in string and read direction; part of TexoProvider.",
+    "scope": [
+      "src/i18n/LocaleProvider.tsx with locale and direction (from I18nManager) and partial message overrides",
+      "src/i18n/messages.ts typed default English catalog (validation, password visibility, OTP, combobox empty, toast undo, pagination, loading)",
+      "useMessages(), useLocale(), useDirection()",
+      "src/i18n/format.ts Intl number/date formatters with fallback when Intl is missing",
+      "docs/i18n.md"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "tests/i18n/locale.test.tsx: useMessages() returns the typed English default without a provider",
+      "A partial override merges over defaults and leaves other keys unchanged (test)",
+      "useDirection() returns 'rtl' when I18nManager.isRTL is mocked true (test)",
+      "formatNumber/formatDate return a string when global Intl is undefined (test)",
+      "grep -rn 'react-intl\\|i18next' package.json prints nothing (no new dependency)"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Catalog keys become semver surface; keep keys namespaced by component"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/i18n/**",
+      "tests/i18n/locale.test.tsx",
+      "docs/i18n.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E1-17",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Change Text default alignment from justify and apply fontFamily token",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "typography",
+      "text",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Text defaults align='justify' (Text.tsx:25) which is surprising; fontFamily token is not applied; truncate limited to one line.",
+    "value": "Predictable text defaults and token-driven font.",
+    "scope": [
+      "Default align to undefined (platform default)",
+      "Apply theme.typography.fontFamily.regular",
+      "Add numberOfLines prop pass-through precedence and lines option",
+      "Add accessibilityRole prop pass-through documented"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: default Text has no textAlign justify",
+      "Test: fontFamily from theme applied",
+      "tests/theme/* pass",
+      "docs text.md changelog note",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Text"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Consumers relying on justify default must opt in"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Text/Text.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Text/**",
+      "tests/components/text.test.tsx",
+      "docs/components/typography/text.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-01",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Slot primitive for asChild prop-merging composition",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "composition",
+      "as-child",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Components cannot be re-skinned without wrapper nesting; each one re-implements prop forwarding, so agents write boilerplate.",
+    "value": "asChild lets Touchable, Link, Chip, ListItem render a consumer element while keeping behavior; single merge routine for style/ref/handlers.",
+    "scope": [
+      "Create src/components/Slot/{Slot.tsx,index.ts,Slot.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Slot {...props}>{child}</Slot>; export mergeProps(slotProps, childProps) and type SlotProps = ViewProps & {children: ReactElement}. Merge rules: style arrays concatenated (child last wins), handlers chained (child first, then slot), refs merged via useMergedRefs, accessibility* props child wins unless undefined.",
+      "States/variants: Throws descriptive __DEV__ error when children is not exactly one valid element; Fragment child rejected.",
+      "Accessibility: Never drops accessibilityRole/State from either side; documents that asChild child must be pressable for onPress to work.",
+      "Theme tokens used (read-only, no new token keys): none (pure behavioral)",
+      "Tests: tests/components/Slot.test.tsx covering style/handler/ref merge order; invalid children dev error; accessibility prop precedence",
+      "Catalog: src/components/Slot/Slot.meta.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Slot.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Slot/index.ts exports Slot and SlotProps",
+      "npm test passes including tests/components/Slot.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Slot returns no hardcoded colors",
+      "Slot renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Slot"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "cloneElement semantics differ with memoized children; document limitation"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Slot/Slot.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Slot/**",
+      "tests/components/Slot.test.tsx",
+      "docs/components/layout/Slot.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-04",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Icon component with pluggable icon-set registry",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "icon",
+      "adapter",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Button/Input accept ComponentType<{size,color}> ad hoc; no shared icon API, sizing scale or decorative/labelled rule.",
+    "value": "One Icon API unifying @expo/vector-icons, react-native-svg paths and custom components; theme-sized and colored.",
+    "scope": [
+      "Create src/components/Icon/{Icon.tsx,index.ts,Icon.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Icon name='check' size='xs'|'sm'|'md'|'lg'|number color={colorToken|string} label?: string set?: string />; <IconProvider sets={{ default: IconSetAdapter }}/>; type IconSetAdapter = { render(name,{size,color}): ReactElement | null; names?: string[] }; createIconSet(map: Record<string,ComponentType<{size:number;color:string}>>): IconSetAdapter; createSvgIconSet(Svg, paths: Record<string,string>) taking the injected react-native-svg module (no import or require in src; static-import convenience adapter is E4-24, blocked on H2); helper iconFromComponent(Comp).",
+      "States/variants: unknown name renders null + __DEV__ warn; label absent => decorative (accessibilityElementsHidden + importantForAccessibility=no-hide-descendants); label present => role image.",
+      "Accessibility: Decorative by default; label makes it an image with accessibilityLabel; never receives focus.",
+      "Theme tokens used (read-only, no new token keys): theme.size.icon if present else fixed 12/16/20/24 scale; colors.* by key (default textPrimary)",
+      "Tests: tests/components/Icon.test.tsx covering registry resolves default and named sets; decorative vs labelled a11y props; unknown name warns and renders null; size token mapping; createSvgIconSet throws a descriptive error when called without the Svg module",
+      "Catalog: src/components/Icon/Icon.meta.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/Icon.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Icon/index.ts exports Icon and IconProps",
+      "npm test passes including tests/components/Icon.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Icon returns no hardcoded colors",
+      "Icon renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Icon"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "react-native-svg is injected by the consumer (D6); no require() in src"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Icon/Icon.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Icon/**",
+      "tests/components/Icon.test.tsx",
+      "docs/components/typography/Icon.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-08",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Spacer for token gaps and flex push in Row/Column",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "layout",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Pushing items apart in Row requires ad-hoc <View style={{flex:1}}/> and margins.",
+    "value": "Tiny declarative primitive; token-sized so no magic numbers.",
+    "scope": [
+      "Create src/components/Spacer/{Spacer.tsx,index.ts,Spacer.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Spacer size={SpaceKey|number} axis?: 'vertical'|'horizontal' /> and <Spacer flex /> (flex:1).",
+      "States/variants: fixed vs flexible; axis inferred from parent unsupported so axis defaults vertical.",
+      "Accessibility: accessibilityElementsHidden, importantForAccessibility no-hide-descendants.",
+      "Theme tokens used (read-only, no new token keys): theme.space",
+      "Tests: tests/components/Spacer.test.tsx covering size token maps to height/width; flex fills",
+      "Catalog: src/components/Spacer/Spacer.meta.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Spacer.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Spacer/index.ts exports Spacer and SpacerProps",
+      "npm test passes including tests/components/Spacer.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Spacer returns no hardcoded colors",
+      "Spacer renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Spacer"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Low value on its own; keep tiny"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Spacer/Spacer.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Spacer/**",
+      "tests/components/Spacer.test.tsx",
+      "docs/components/layout/Spacer.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-16",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add List and ListItemText for bulleted, numbered and checklist content",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "typography",
+      "content",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No semantic list typography; docs/content screens fake bullets with text.",
+    "value": "Readable content primitives for legal, onboarding, help screens.",
+    "scope": [
+      "Create src/components/BulletList/{BulletList.tsx,index.ts,BulletBulletList.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <BulletList type='bullet'|'number'|'check'|'none' gap={SpaceKey} start?: number marker?: ReactNode><BulletList.Item>text</BulletList.Item></BulletList>; nested lists indent.",
+      "States/variants: nested depth up to 3, custom marker.",
+      "Accessibility: Container role list, items role listitem (web), native uses accessibilityLabel \"item N of M\" fallback.",
+      "Theme tokens used (read-only, no new token keys): theme.space, theme.typography.fontSize, colors.textPrimary/textSecondary, Text/P components",
+      "Tests: tests/components/BulletList.test.tsx covering numbering with start; nested indent; marker types",
+      "Catalog: src/components/BulletList/BulletList.meta.ts exporting {name:'BulletList', category:'typography', status:'demo', summary, props, example}; docs/components/typography/BulletList.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/BulletList/index.ts exports BulletList and BulletListProps",
+      "npm test passes including tests/components/BulletList.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/BulletList returns no hardcoded colors",
+      "BulletList renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists BulletList"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/BulletList/BulletList.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/BulletList/**",
+      "tests/components/BulletList.test.tsx",
+      "docs/components/typography/BulletList.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-18",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add CodeBlock with horizontal scroll, line numbers and copy hook",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "typography",
+      "code",
+      "post-1.0",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "CodeInline exists but docs/dev screens need multi-line code.",
+    "value": "Needed by showcase/docs apps (E11); no syntax highlighter dependency.",
+    "scope": [
+      "Create src/components/CodeBlock/{CodeBlock.tsx,index.ts,CodeBlock.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <CodeBlock code language? showLineNumbers wrap onCopy?: (code)=>void />; copy action rendered only if onCopy supplied (no clipboard dependency).",
+      "States/variants: scrollable, wrapped, line numbers.",
+      "Accessibility: Container labelled \"Code, <language>\"; line numbers hidden from screen reader.",
+      "Theme tokens used (read-only, no new token keys): colors.codeBg/codeBorder/codeText, theme.radius, theme.space",
+      "Tests: tests/components/CodeBlock.test.tsx covering line numbering; copy button conditional",
+      "Catalog: src/components/CodeBlock/CodeBlock.meta.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/CodeBlock.md with usage example"
+    ],
+    "outOfScope": [
+      "Syntax highlighting (considered mediocre value vs bundle size)",
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/CodeBlock/index.ts exports CodeBlock and CodeBlockProps",
+      "npm test passes including tests/components/CodeBlock.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/CodeBlock returns no hardcoded colors",
+      "CodeBlock renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists CodeBlock"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/CodeBlock/CodeBlock.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/CodeBlock/**",
+      "tests/components/CodeBlock.test.tsx",
+      "docs/components/typography/CodeBlock.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 4,
+    "postV1": true,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-05",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Ship a minimal built-in glyph set for Icon (about 30 UI icons)",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "icon",
+      "assets",
+      "svg-paths",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Components needing chevron, check, close, eye, search, plus, minus, star cannot render them without a consumer icon library.",
+    "value": "Zero-config PasswordInput/Select/Checkbox/Rating/SearchBar/Accordion visuals; no font loading.",
+    "scope": [
+      "Create src/components/IconGlyphs/{IconGlyphs.tsx,index.ts,IconGlyphs.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: export const glyphs: Record<GlyphName,string> (24x24 SVG path d strings, MIT/own-drawn); export const glyphIconSet = createSvgIconSet(glyphs); GlyphName union; Icon falls back to glyphIconSet when no provider (wired via IconProvider default in this dir).",
+      "States/variants: Path-based, stroke/fill driven by color; names: check, close, plus, minus, chevron-up/down/left/right, search, eye, eye-off, calendar, clock, star, star-outline, info, alert, error, success, upload, trash, edit, copy, menu, more-horizontal, user, image, file, arrow-left, arrow-right, clear.",
+      "Accessibility: Decorative by default via Icon.",
+      "Theme tokens used (read-only, no new token keys): color passthrough only",
+      "Tests: tests/components/IconGlyphs.test.tsx covering every GlyphName has a non-empty path; names list stable (snapshot); no duplicate paths",
+      "Catalog: src/components/IconGlyphs/IconGlyphs.meta.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/IconGlyphs.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/IconGlyphs/index.ts exports IconGlyphs and IconGlyphsProps",
+      "npm test passes including tests/components/IconGlyphs.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/IconGlyphs returns no hardcoded colors",
+      "IconGlyphs renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists IconGlyphs"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-04",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Icon licensing: draw originals or use permissive Lucide/Feather paths with attribution in docs"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/IconGlyphs/IconGlyphs.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/IconGlyphs/**",
+      "tests/components/IconGlyphs.test.tsx",
+      "docs/components/typography/IconGlyphs.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-09",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Grid with responsive column counts and token gaps",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "layout",
+      "responsive",
+      "grid",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No way to lay out equal-width wrapping items responsively without manual width math.",
+    "value": "Galleries, dashboards, settings tiles, form columns adapt phone->tablet->web using existing useBreakpoint.",
+    "scope": [
+      "Create src/components/Grid/{Grid.tsx,index.ts,Grid.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Grid columns={number | Partial<Record<Breakpoint, number>>} gap={SpaceKey} rowGap columnGap>{children}</Grid>; <Grid.Item span={number|breakpoint map} />. Flex-wrap implementation with computed percentage widths; no CSS grid.",
+      "States/variants: span clamps to columns; remainder row left-aligned; columns change on breakpoint.",
+      "Accessibility: Pure layout; children order preserved; no role.",
+      "Theme tokens used (read-only, no new token keys): theme.space; useBreakpoint from src/hooks",
+      "Tests: tests/components/Grid.test.tsx covering width math for 2/3/4 columns with gap; breakpoint map selects columns (mock useBreakpoint); span clamps",
+      "Catalog: src/components/Grid/Grid.meta.ts exporting {name, category:'layout', status:'demo', summary, props, example}; docs/components/layout/Grid.md with usage example",
+      "(from E10-09) <AdaptiveGrid columns={{base:1, md:2, lg:4}} gap minItemWidth> using flexWrap and computed widths",
+      "(from E10-09) Uses nearest Container width when present else window",
+      "(from E10-09) Gap from theme.space tokens",
+      "(from E10-09) Supports minItemWidth auto-fit mode"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)",
+      "Virtualized grid (E7)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Grid/index.ts exports Grid and GridProps",
+      "npm test passes including tests/components/Grid.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Grid returns no hardcoded colors",
+      "Grid renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "(from E10-09) Column counts follow map at 400/800/1100 widths (test)",
+      "(from E10-09) minItemWidth 160 in 500px container gives 3 columns (test)",
+      "(from E10-09) Gap applied between items only (test)",
+      "(from E10-09) Light/dark irrelevant (layout only) noted",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Grid"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E10-01",
+      "E10-03",
+      "E10-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Percentage + gap rounding; use onLayout-free flexBasis calc and test",
+      "(from E10-09) Overlap with component tickets in E1 on shared component files; sequence per dependencies"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Grid/Grid.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Grid/**",
+      "tests/components/Grid.test.tsx",
+      "docs/components/layout/Grid.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E10-09"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-19",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Collapsible animated expand/collapse region",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "surface",
+      "motion",
+      "disclosure",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "No disclosure primitive; Accordion/FAQ/filters need animated height.",
+    "value": "Base for Accordion, ExpandableText variants, advanced filters.",
+    "scope": [
+      "Create src/components/Collapsible/{Collapsible.tsx,index.ts,Collapsible.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Collapsible open? defaultOpen onOpenChange duration animated><Collapsible.Trigger asChild/><Collapsible.Content/></Collapsible>; content measured via onLayout, animates height via Animated (LayoutAnimation not used).",
+      "States/variants: open, closed (unmounted or hidden via keepMounted), animating, reduced-motion instant.",
+      "Accessibility: Trigger accessibilityState expanded; closed content hidden from screen readers (importantForAccessibility).",
+      "Theme tokens used (read-only, no new token keys): theme.space; motion duration constant 200ms until E3 tokens exist",
+      "Tests: tests/components/Collapsible.test.tsx covering toggle open state controlled/uncontrolled; content hidden when closed; reduced motion instant",
+      "Catalog: src/components/Collapsible/Collapsible.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Collapsible.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Collapsible/index.ts exports Collapsible and CollapsibleProps",
+      "npm test passes including tests/components/Collapsible.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Collapsible returns no hardcoded colors",
+      "Collapsible renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Collapsible"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-01",
+      "E4-02",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Collapsible/Collapsible.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Collapsible/**",
+      "tests/components/Collapsible.test.tsx",
+      "docs/components/surfaces/Collapsible.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-21",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Typography: Heading/Quote to demo; deprecate B, P, Small, TextGroup as aliases",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "typography",
+      "docs",
+      "examples",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "B, P, Small are Text presets and TextGroup duplicates Column; promoting them adds permanent semver surface (R1 M8, D14).",
+    "value": "Smaller stable surface; existing imports keep working through 1.x via @deprecated aliases.",
+    "scope": [
+      "Heading: accessibilityRole='header', children ReactNode, aria-level on web",
+      "Quote: token border width, accessibilityLabel passthrough",
+      "B, P, Small, TextGroup become @deprecated aliases: B = <Text weight='bold'>, P = <Text variant='body'>, Small = <Text variant='caption'>, TextGroup = <Column>; meta status 'deprecated'",
+      "examples/typography.tsx uses Text, Heading, Quote, CodeInline; deprecated aliases appear only in a 'Migration' section",
+      "Breaking-change register entry: aliases kept through 1.x (D3/D14)"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "grep -l '@deprecated' src/components/B/*.tsx src/components/P/*.tsx src/components/Small/*.tsx src/components/TextGroup/*.tsx lists one file per component",
+      "tests/components/typography.test.tsx: B renders Text with fontWeight bold, P renders the body variant, Small renders the caption variant, TextGroup renders Column",
+      "tests/components/typography.test.tsx: Heading has accessibilityRole header",
+      "examples/typography.tsx typechecks (npm run typecheck exits 0)",
+      "Docs pages for B, P, Small and TextGroup contain a 'Deprecated' admonition naming the replacement (grep)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists B, P, Small, Quote, TextGroup, Heading"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-04",
+      "E1-10",
+      "E1-17",
+      "E1-20",
+      "E2-06",
+      "E10-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/B/B.meta.ts, src/components/P/P.meta.ts, src/components/Small/Small.meta.ts, src/components/Quote/Quote.meta.ts, src/components/TextGroup/TextGroup.meta.ts, src/components/Heading/Heading.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/B/**",
+      "src/components/P/**",
+      "src/components/Small/**",
+      "src/components/Quote/**",
+      "src/components/TextGroup/**",
+      "src/components/Heading/**",
+      "tests/components/typography.test.tsx",
+      "docs/components/typography/b.md",
+      "docs/components/typography/p.md",
+      "docs/components/typography/small.md",
+      "docs/components/typography/quote.md",
+      "docs/components/typography/text-group.md",
+      "docs/components/typography/heading.md",
+      "examples/typography.tsx",
+      "audit/migration/breaking-change-register.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-03",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Touchable pressable primitive with feedback, hit slop and focus ring",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "interaction",
+      "pressable",
+      "native",
+      "haptics",
+      "primitives",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Button, Chip, ListItem, Link each hand-roll Pressable styling, 44pt targets and disabled/pressed opacity (see src/components/Button/Button.tsx).",
+    "value": "Single source of truth for press feedback, minimum target, loading/disabled semantics, web focus-visible; all pressable components become thin.",
+    "scope": [
+      "Create src/components/Touchable/{Touchable.tsx,index.ts,Touchable.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Touchable onPress onLongPress disabled loading feedback='opacity'|'scale'|'ripple'|'none' (default 'opacity') minTarget={44} hitSlop haptic?: 'light'|'medium'|false (adapter, no-op if absent) role='button'|'link'|'tab'|'checkbox'|'radio'|'switch'|'menuitem' asChild accessibilityLabel style={StyleProp | (state)=>StyleProp} />; Touchable.defaultFeedback via theme.components?.touchable not required.",
+      "States/variants: default, pressed, focused (web focus ring using colors.primary), disabled (opacity from theme.components.button.opacity.disabled), loading (blocks presses, accessibilityState.busy).",
+      "Accessibility: Maps role to accessibilityRole; accessibilityState {disabled, busy, selected, checked}; enforces >=44x44 via minHeight/minWidth+hitSlop; label required when no text child (__DEV__ warn).",
+      "Theme tokens used (read-only, no new token keys): colors.primary, colors.surface, colors.disabled; theme.components.button.opacity.pressed/disabled; theme.space; theme.radius",
+      "Tests: tests/components/Touchable.test.tsx covering onPress blocked when disabled/loading; accessibilityState reflects props; minTarget style applied; asChild forwards props to child (Slot); feedback variants set expected pressed style; missing label dev warning",
+      "Catalog: src/components/Touchable/Touchable.meta.ts exporting {name, category:'buttons', status:'demo', summary, props, example}; docs/components/buttons/Touchable.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Touchable/index.ts exports Touchable and TouchableProps",
+      "npm test passes including tests/components/Touchable.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Touchable returns no hardcoded colors",
+      "Touchable renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "haptic prop triggers useCapability('haptics') exactly once per press on the configured phase and never when disabled or loading (test with mock haptics adapter; absorbs E8-14)",
+      "Touchable consumes usePressFeedback from src/motion (grep) and no other press component exists in src (grep -rl 'PressableScale\\|HapticPressable' src prints nothing)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Touchable"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E3-06",
+      "E4-01",
+      "E8-01",
+      "E8-13",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Ripple needs android_ripple config; iOS/web fall back to opacity",
+      "Haptics adapter must not add a hard dependency"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Touchable/Touchable.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Touchable/**",
+      "tests/components/Touchable.test.tsx",
+      "docs/components/buttons/Touchable.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E8-14"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-06",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Surface with semantic elevation levels and dark-mode tinting",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "primitive",
+      "surface",
+      "elevation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Box/Card/Alert/Popover each pick shadow and bg independently; shadows are invisible in dark mode so cards lose separation.",
+    "value": "Semantic elevation (0-4) mapping to shadow in light and tint+border in dark; base for Card, Popover, BottomSheet, ListItem groups, Accordion.",
+    "scope": [
+      "Create src/components/Surface/{Surface.tsx,index.ts,Surface.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Surface level={0|1|2|3|4} tone='default'|'muted'|'inverted' radius={RadiusKey} bordered padding={SpaceKey} material?: 'solid'|'glass' asChild style />. Implemented by composing Box. glass uses theme.materials.glass when expo-blur available else solid fallback.",
+      "States/variants: level 0 flat; 1-4 increasing; dark mode: level adds colors.surfaceElevated and border instead of shadow; glass fallback.",
+      "Accessibility: No role by default (grouping only); optional accessible/accessibilityRole pass-through.",
+      "Theme tokens used (read-only, no new token keys): colors.surface, colors.surfaceElevated, colors.border, theme.shadows, theme.radius, theme.space, theme.materials.glass",
+      "Tests: tests/components/Surface.test.tsx covering level to shadow mapping; dark mode uses border not shadow; glass fallback to solid; radius/padding token mapping",
+      "Catalog: src/components/Surface/Surface.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Surface.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Surface/index.ts exports Surface and SurfaceProps",
+      "npm test passes including tests/components/Surface.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Surface returns no hardcoded colors",
+      "Surface renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Surface"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-05",
+      "E2-06",
+      "E4-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "Overlap with Box; keep Surface strictly semantic and implemented on Box to avoid divergence"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Surface/Surface.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Surface/**",
+      "tests/components/Surface.test.tsx",
+      "docs/components/surfaces/Surface.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-15",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Chip: selectable, removable, icon-capable filter/input chip",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "interaction",
+      "chip",
+      "tag",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Badge is static; no selectable/removable token for filters, multi-select values, tags.",
+    "value": "Underpins MultiSelect, Combobox tokens, filter bars, ToggleGroup visuals.",
+    "scope": [
+      "Create src/components/Chip/{Chip.tsx,index.ts,Chip.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Chip label selected onSelectedChange onPress onRemove variant='filled'|'outline'|'soft' size='sm'|'md' color='primary'|'secondary'|'success'|'warning'|'error'|'neutral' leftIcon avatar disabled />.",
+      "States/variants: default, selected, pressed, disabled, removable (trailing close hit area 44pt via hitSlop).",
+      "Accessibility: role checkbox when selectable else button; accessibilityState selected/disabled; remove control labelled \"Remove <label>\" with action.",
+      "Theme tokens used (read-only, no new token keys): colors.primary/secondary/success/warning/error, colors.surface, colors.border, colors.textInverted, theme.radius, theme.space",
+      "Tests: tests/components/Chip.test.tsx covering select toggles and notifies; onRemove independent from onPress; a11y role/state; color variants resolve tokens",
+      "Catalog: src/components/Chip/Chip.meta.ts exporting {name, category:'buttons', status:'demo', summary, props, example}; docs/components/buttons/Chip.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Chip/index.ts exports Chip and ChipProps",
+      "npm test passes including tests/components/Chip.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Chip returns no hardcoded colors",
+      "Chip renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Chip"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-03",
+      "E4-05",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Chip/Chip.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Chip/**",
+      "tests/components/Chip.test.tsx",
+      "docs/components/buttons/Chip.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-17",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add ExpandableText with read more/less toggle",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "typography",
+      "interaction",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Truncating long text with a toggle is repeatedly hand-built and needs onTextLayout detection.",
+    "value": "Common in descriptions/reviews/feeds.",
+    "scope": [
+      "Create src/components/ExpandableText/{ExpandableText.tsx,index.ts,ExpandableText.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <ExpandableText numberOfLines={3} expanded? defaultExpanded onExpandedChange moreLabel='Read more' lessLabel='Show less' size>{string}</ExpandableText>; toggle hidden when text not truncated.",
+      "States/variants: collapsed, expanded, not truncatable.",
+      "Accessibility: Toggle is a button with accessibilityState expanded.",
+      "Theme tokens used (read-only, no new token keys): colors.primary, P typography",
+      "Tests: tests/components/ExpandableText.test.tsx covering toggle appears only when truncated (simulated onTextLayout); controlled/uncontrolled",
+      "Catalog: src/components/ExpandableText/ExpandableText.meta.ts exporting {name, category:'typography', status:'demo', summary, props, example}; docs/components/typography/ExpandableText.md with usage example"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/ExpandableText/index.ts exports ExpandableText and ExpandableTextProps",
+      "npm test passes including tests/components/ExpandableText.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/ExpandableText returns no hardcoded colors",
+      "ExpandableText renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists ExpandableText"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-02",
+      "E4-03",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/ExpandableText/ExpandableText.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/ExpandableText/**",
+      "tests/components/ExpandableText.test.tsx",
+      "docs/components/typography/ExpandableText.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-20",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add Accordion (single/multiple) built on Collapsible",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "surface",
+      "disclosure",
+      "accordion",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "FAQ/settings groupings have no accordion.",
+    "value": "Standard pattern; thin because of Collapsible.",
+    "scope": [
+      "Create src/components/Accordion/{Accordion.tsx,index.ts,Accordion.meta.ts}; one component per directory, no edits to other components or shared barrels (wiring is done by the E14 wave-wiring ticket)",
+      "API: <Accordion type='single'|'multiple' collapsible value defaultValue onValueChange><Accordion.Item value><Accordion.Header>title</Accordion.Header><Accordion.Panel/></Accordion.Item></Accordion>.",
+      "States/variants: single (optionally collapsible), multiple, disabled item.",
+      "Accessibility: Header role button with expanded state; panel labelled by header.",
+      "Theme tokens used (read-only, no new token keys): colors.border, colors.surface, theme.space, Surface",
+      "Tests: tests/components/Accordion.test.tsx covering single mode closes others; multiple mode independent; disabled item",
+      "Catalog: src/components/Accordion/Accordion.meta.ts exporting {name, category:'surfaces', status:'demo', summary, props, example}; docs/components/surfaces/Accordion.md with usage example",
+      "(from E6-16) Collapsible (single) and Accordion (single|multiple, collapsible)",
+      "(from E6-16) Animated height via LayoutAnimation-free Animated measure; reduce-motion instant",
+      "(from E6-16) Header trigger with chevron, role=button + expanded state"
+    ],
+    "outOfScope": [
+      "Editing src/index.ts, src/hooks/index.ts, audit/api snapshot, mkdocs.yml (owned by wiring ticket)",
+      "Refactoring existing components to consume this (tracked in E1)",
+      "Native dependencies in core; any optional adapter lives behind its own ticket",
+      "Package rename or Texo cutover work"
+    ],
+    "acceptance": [
+      "npm run typecheck passes and src/components/Accordion/index.ts exports Accordion and AccordionProps",
+      "npm test passes including tests/components/Accordion.test.tsx",
+      "grep -rEn '#[0-9a-fA-F]{3,8}' src/components/Accordion returns no hardcoded colors",
+      "Accordion renders under ThemeProvider in light and dark mode in tests with no console.error/warn",
+      "(from E6-16) single mode closes siblings (test)",
+      "(from E6-16) expanded state exposed to a11y",
+      "(from E6-16) Controlled value/onValueChange tested",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Accordion"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E4-04",
+      "E4-06",
+      "E4-19",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test run output",
+      "Rendered light/dark snapshot or story description",
+      "Catalog entry path"
+    ],
+    "risks": [
+      "API may need adjustment once consumers adopt it; keep exports additive",
+      "(from E6-16) Web vs native behavior divergence must be documented, not hidden"
+    ],
+    "dod": [
+      "Code merged with passing typecheck and tests",
+      "Docs page and catalog entry present",
+      "Status demo recorded in catalog",
+      "Colocated <Name>.meta.ts (src/components/Accordion/Accordion.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Accordion/**",
+      "tests/components/Accordion.test.tsx",
+      "docs/components/surfaces/Accordion.md"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E6-16"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E4-24",
+    "epic": "E4",
+    "type": "Task",
+    "title": "Add ./adapters/react-native-svg icon-set convenience adapter",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "icon",
+      "adapter",
+      "optional-peer",
+      "blocked-decision",
+      "needs-h2"
+    ],
+    "problem": "Injection (createSvgIconSet(Svg, paths)) works everywhere, but consumers want a zero-wiring adapter that statically imports react-native-svg (D6).",
+    "value": "One-line SVG icons for apps that already depend on react-native-svg.",
+    "scope": [
+      "src/adapters/react-native-svg/index.ts statically importing react-native-svg and exporting createSvgIconSet(paths) bound to it",
+      "react-native-svg declared in peerDependenciesMeta optional by the E14 package.json chain once H2 is approved"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/check-native-boundaries.mjs exits 0 (adapter unreachable from the root entry)",
+      "tests/adapters/react-native-svg.test.tsx renders an icon from a mocked react-native-svg module",
+      "grep -rn 'react-native-svg' src --include=*.ts --include=*.tsx lists only src/adapters/react-native-svg"
+    ],
+    "dependencies": [
+      "E4-04",
+      "E8-02",
+      "E14-09"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "react-native-svg version alignment with Expo SDK 57",
+      "BLOCKED on H2: Amend native-dependency gate (PLRNUI-39) to allow peerDependenciesMeta optional peers for non-Expo libs (svg, flash-list, safe-area-context, datetimepicker). Unblock condition: Human approves the 'Proposed - pending H2' section of ADR 0010 (E14-09)."
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/adapters/react-native-svg/**",
+      "tests/adapters/react-native-svg.test.tsx",
+      "docs/adapters/react-native-svg.md"
+    ],
+    "size": "S",
+    "semver": "minor",
+    "wave": 9,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H2"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  }
+]

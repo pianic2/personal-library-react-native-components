@@ -1,0 +1,1818 @@
+[
+  {
+    "id": "E1-03",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add token-usage lint: no hex/rgba colors in components",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "ci",
+      "design-tokens",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Hardcoded color (Modal rgba) slipped in; magic numbers are untracked.",
+    "value": "Enforces the 'theme support' leg of the demo bar.",
+    "scope": [
+      "scripts/check-token-usage.mjs scanning src/components/**/*.tsx for hex, rgb(a), hsl, named colors outside boxShadow templates",
+      "Allowlist file scripts/token-usage.allowlist.json with justified entries",
+      "Report (non-failing) count of numeric literals in style objects"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script exits 1 listing Modal.tsx:40 on current main before the Modal ticket lands, 0 after",
+      "Allowlist entries each require a reason string (tested)",
+      "tests/scripts/token-usage.test.ts covers detection and allowlist"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/check-token-usage.mjs"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/check-token-usage.mjs",
+      "scripts/token-usage.allowlist.json",
+      "tests/scripts/token-usage.test.ts"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-04",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Type-check tests and examples; fix Badge smoke test",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "typescript",
+      "bug",
+      "docs",
+      "examples",
+      "ci",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "tsconfig include=[src] so tests/ and examples/ are never type-checked; component-smoke.test.tsx passes nonexistent label prop to Badge (lines 129,201), so Badge children are untested.",
+    "value": "Catches invalid usage in tests/examples; makes Badge verification real.",
+    "scope": [
+      "Add tsconfig.tests.json including tests/**/*.tsx and examples/**/*.tsx with path mapping for the package name to src",
+      "Fix Badge usage in tests/components/component-smoke.test.tsx to children and assert rendered text",
+      "Fix any type errors surfaced in tests/examples that live in files this ticket owns; list others in evidence",
+      "(from E16-07) tsconfig.examples.json with paths mapping package name to src",
+      "(from E16-07) tests/examples/render.test.tsx rendering each example with test renderer",
+      "(from E16-07) Document examples naming convention"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npx tsc -p tsconfig.tests.json --noEmit passes",
+      "Smoke test asserts Badge renders its children text",
+      "git grep -n '<Badge label' tests examples returns nothing",
+      "(from E16-07) tsc -p tsconfig.examples.json passes",
+      "(from E16-07) Each examples/*.tsx renders without error in test",
+      "(from E16-07) Adding an example with a bad import fails"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npx tsc -p tsconfig.tests.json --noEmit",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Examples owned by other tickets may fail typecheck; those tickets must fix their own examples (declared in dependencies)",
+      "(from E16-07) Overlaps E11 showcase - examples dir ownership noted"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "tsconfig.tests.json",
+      "tests/components/component-smoke.test.tsx",
+      "tests/examples/**"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E16-07"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-15",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Unify SideBar into one Platform.OS file and remove SideBar.web.tsx",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "navigation",
+      "sidebar",
+      "tech-debt",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "SideBar is the only platform-extension file in src (src/components/SideBar/SideBar.web.tsx); explicit .js ESM specifiers (D9) defeat platform-extension resolution, so E14-03 cannot land until it is gone.",
+    "value": "Unblocks valid ESM emit (E14-03) and removes duplicated SideBar types; the demo lift itself is done by E6-30.",
+    "scope": [
+      "Merge SideBar.web.tsx into SideBar.tsx using Platform.OS branches (D9 platform-file ban)",
+      "Extract shared SideBarItem/types once",
+      "Typed fixed-positioning helper without any",
+      "Default variant, collapse-button a11y and docs are moved to E6-30 (R1 B3)"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "test -e src/components/SideBar/SideBar.web.tsx exits 1",
+      "grep -rn 'as any' src/components/SideBar prints nothing",
+      "Web and native render paths are covered with Platform.OS mocked in tests/components/sidebar.test.tsx",
+      "grep -rcE '(interface|type) SideBarItem\\b' src/components/SideBar sums to exactly 1"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/SideBar/**",
+      "tests/components/sidebar.test.tsx",
+      "docs/components/navigation/side-bar.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 0,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-01",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Define ComponentMeta, colocated <Name>.meta.ts loader and ADR 0016 (single metadata source)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "manifest",
+      "ai-native",
+      "adr",
+      "metadata",
+      "schema",
+      "handwritten",
+      "catalog",
+      "registry",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Five overlapping metadata registries were planned (maturity manifest, *.catalog.ts, catalog/registry.ts, ai/meta/*.json, token manifests); R1 M7 / D8 require one colocated, typed source read by the maturity gate, catalog, docs lint and AI manifests.",
+    "value": "One file per component feeds every consumer; new components carry their own metadata so the strict gate, catalog and AI cards never drift.",
+    "scope": [
+      "Add ComponentMeta type in src/meta/types.ts (JSON-serialisable: name, category, status on the maturity ladder incl. deprecated, summary <=140ch, whenToUse[], whenNotToUse[{reason,instead}], composition{parents,children,pairsWith}, a11y[], variants, states, platformNotes, examples)",
+      "Loader + lint in scripts/lib/meta.mjs (modes --lint, --strict, --json) used by E1-02 maturity gate, E1-07 docs lint, E11 catalog and E13 AI manifests",
+      "Seed a minimal src/components/<Name>/<Name>.meta.ts for each of the 36 existing components with status from audit/texo-v1/audit/E1-component-maturity.md (18 demo / 18 prototype); Button gets the full reference meta",
+      "tsconfig.build.json excludes **/*.meta.ts; component code never imports meta",
+      "Write audit/adr/0016-metadata-single-source.md; ai/meta/*.json, <Name>.catalog.ts and catalog/registry.ts are not created (D8)",
+      "(from E13-05) src/meta/types.ts (ComponentMeta): summary(<=140ch), category, status (maturity ladder), whenToUse[], whenNotToUse[{reason,instead}], composition{parents,children,pairsWith}, a11y[], platformNotes[], example path",
+      "(from E11-01) scripts/lib/meta.mjs (meta loader) with entries {name, category, maturity, props controls schema, variants, states, examples}"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets",
+      "Screens (E11-02+)"
+    ],
+    "acceptance": [
+      "ls src/components/*/*.meta.ts | wc -l equals ls -d src/components/*/ | wc -l (36 at merge time)",
+      "node scripts/lib/meta.mjs --lint exits 0 on the repo and exits 1 on a fixture whose whenNotToUse.instead names a non-existent component (tests/meta/meta-lint.test.ts)",
+      "After npm run build, find dist -name '*.meta.*' prints nothing",
+      "grep -rn \"\\.meta'\" src --include=*.tsx prints nothing (component code never imports meta)",
+      "audit/adr/0016-metadata-single-source.md exists with Status Accepted (grep)",
+      "src/meta is not re-exported from src/index.ts (npm run api:snapshot:check passes)",
+      "(from E11-01) Each entry has >=1 example and states list"
+    ],
+    "dependencies": [
+      "E14-03"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "tests/meta output",
+      "manifest entry count"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note",
+      "(from E13-05) Generated output churn; mitigated by deterministic sorted output",
+      "(from E11-01) Registry shape shared with E13 manifests; keep JSON-serialisable"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/meta/types.ts",
+      "scripts/lib/meta.mjs",
+      "tests/meta/**",
+      "audit/adr/0016-metadata-single-source.md",
+      "tsconfig.build.json",
+      "src/components/Alert/Alert.meta.ts",
+      "src/components/B/B.meta.ts",
+      "src/components/Badge/Badge.meta.ts",
+      "src/components/BottomBar/BottomBar.meta.ts",
+      "src/components/BottomSheet/BottomSheet.meta.ts",
+      "src/components/Box/Box.meta.ts",
+      "src/components/Button/Button.meta.ts",
+      "src/components/Card/Card.meta.ts",
+      "src/components/Checkbox/Checkbox.meta.ts",
+      "src/components/CodeInline/CodeInline.meta.ts",
+      "src/components/Column/Column.meta.ts",
+      "src/components/Divider/Divider.meta.ts",
+      "src/components/FormField/FormField.meta.ts",
+      "src/components/Heading/Heading.meta.ts",
+      "src/components/Input/Input.meta.ts",
+      "src/components/Link/Link.meta.ts",
+      "src/components/Modal/Modal.meta.ts",
+      "src/components/NavBar/NavBar.meta.ts",
+      "src/components/NavContext/NavContext.meta.ts",
+      "src/components/P/P.meta.ts",
+      "src/components/PasswordInput/PasswordInput.meta.ts",
+      "src/components/Popover/Popover.meta.ts",
+      "src/components/ProgressBar/ProgressBar.meta.ts",
+      "src/components/Quote/Quote.meta.ts",
+      "src/components/RadioGroup/RadioGroup.meta.ts",
+      "src/components/Row/Row.meta.ts",
+      "src/components/Select/Select.meta.ts",
+      "src/components/SideBar/SideBar.meta.ts",
+      "src/components/Small/Small.meta.ts",
+      "src/components/Spinner/Spinner.meta.ts",
+      "src/components/Switch/Switch.meta.ts",
+      "src/components/Text/Text.meta.ts",
+      "src/components/TextGroup/TextGroup.meta.ts",
+      "src/components/Textarea/Textarea.meta.ts",
+      "src/components/Tooltip/Tooltip.meta.ts",
+      "src/components/TopBar/TopBar.meta.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 2,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E11-01",
+      "E13-05"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-02",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add maturity checker script validating the demo bar",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "ci",
+      "script",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Nothing verifies that a component claiming demo has a typed root export, example, docs page, mkdocs nav entry and test.",
+    "value": "Objective, automated definition of the demo bar.",
+    "scope": [
+      "scripts/maturity-check.mjs: for each component meta entry check dir exists, exported from src/index.ts, props type exported, docs page exists and is in mkdocs.yml nav, listed in docs/components.md, example file referencing <Name>, test file referencing name",
+      "Exit non-zero with per-component failure table; flag --json",
+      "Components declared prototype may fail; demo+ must pass"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/maturity-check.mjs exits 0 on current repo with current component meta levels",
+      "Temporarily removing an example reference for a demo component makes it exit 1 (covered by test)",
+      "tests/scripts/maturity-check.test.ts has pass and fail fixtures",
+      "maturity-check exits 1 when a directory under src/components has no <Name>.meta.ts (fixture in tests/scripts/maturity-check.test.ts)",
+      "maturity-check reads component status only through scripts/lib/meta.mjs (grep shows no other meta parser in scripts/maturity-check.mjs)"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test",
+      "node scripts/maturity-check.mjs"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity component meta entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/maturity-check.mjs",
+      "tests/scripts/maturity-check.test.ts"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-06",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add component meta-driven render matrix test for every component",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "testing",
+      "maturity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "B, P, Small, Quote, TextGroup, FormField have no render test at all; test list is hand-maintained.",
+    "value": "Every component meta component is rendered in light and dark theme automatically; new components cannot skip tests.",
+    "scope": [
+      "tests/components/render-matrix.test.tsx iterating component meta with a per-component minimal props fixture in tests/helpers/fixtures.tsx",
+      "Render under ThemeProvider light and dark; assert toJSON() non-null and no console.error"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test count equals component meta entries x 2 modes",
+      "Adding a component meta entry without fixture fails the test with a clear message",
+      "tests/components/render-matrix.test.tsx contains a render case for each of B, P, Small, Quote, TextGroup and FormField (grep -c per name >= 1) and npm test passes"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity component meta entry (if present) updated"
+    ],
+    "filesTouched": [
+      "tests/components/render-matrix.test.tsx",
+      "tests/helpers/fixtures.tsx"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-07",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Add component docs lint: Import, Props, Usage, Stability",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "docs",
+      "ci",
+      "maturity",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Docs pages have only Import/Props/Notes; just 3 tsx blocks exist across docs/components/**.",
+    "value": "Guarantees every component page has a runnable usage example and stability line matching the component meta.",
+    "scope": [
+      "scripts/check-component-docs.mjs verifying each docs/components/**/<name>.md has ## Import, ## Props, ## Usage with a tsx fence, and Stability label equal to component meta maturity mapping",
+      "Report-only mode flag until family tickets land"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Script lists missing sections per page",
+      "--strict exits 1 on any missing section",
+      "tests/scripts/check-component-docs.test.ts covers both modes"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity component meta entry (if present) updated"
+    ],
+    "filesTouched": [
+      "scripts/check-component-docs.mjs",
+      "tests/scripts/check-component-docs.test.ts"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-08",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Sync catalog labels and nav index pages from component meta",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "docs",
+      "catalog",
+      "bug",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "TopBar is beta in docs/components.md but experimental in docs/components/navigation/index.md; labels are hand-written.",
+    "value": "Single consistent stability story in the catalog.",
+    "scope": [
+      "scripts/gen-catalog.mjs regenerating docs/components.md stability lists and docs/components/*/index.md from component meta",
+      "Resolve TopBar label conflict via component meta"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/gen-catalog.mjs --check exits 0 after generation",
+      "grep shows TopBar has one label in docs/",
+      "All 36 components appear in docs/components.md"
+    ],
+    "dependencies": [
+      "E1-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity component meta entry (if present) updated"
+    ],
+    "filesTouched": [
+      "docs/components.md",
+      "docs/components/*/index.md",
+      "scripts/gen-catalog.mjs"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 3,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-09",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix Button info variant and pressed-state contrast",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "button",
+      "contrast",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "variant='info' maps to transparent bg with textInverted content (Button.tsx:28-30); pressed state sets bg to colors.surface while text stays inverted, producing unreadable states.",
+    "value": "All documented variants are usable in light and dark themes.",
+    "scope": [
+      "Give info a filled bg (colors.info) and border; compute pressed state via opacity/overlay not surface swap",
+      "Add style, testID passthrough props",
+      "Replace fontWeight '600' with theme.typography.fontWeight token"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test renders each of 5 variants and asserts bg color is non-transparent for non-ghost variants",
+      "Pressed state keeps contentColor contrast >= 4.5 against computed bg for default light and dark tokens (test helper)",
+      "ButtonProps accepts style and testID (tests/types contract)",
+      "docs/components/buttons/button.md documents info",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Button"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Visual change for ghost/pressed consumers"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Button/Button.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Button/**",
+      "tests/components/button.test.tsx",
+      "docs/components/buttons/button.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-10",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix CodeInline discarding computed style when props passed",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "typography",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "CodeInline spreads {...props} after its computed style/size so caller style replaces mono font, border and padding (CodeInline.tsx:34-36).",
+    "value": "CodeInline remains styled when callers add style.",
+    "scope": [
+      "Destructure style/size, merge style array with caller style last",
+      "Add test and doc note"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: <CodeInline style={{color:'red'}}> still has fontFamily mono and border from theme",
+      "Test: size prop changes fontSize and lineHeight",
+      "Existing smoke test :245 passes",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists CodeInline"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/CodeInline/CodeInline.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/CodeInline/**",
+      "tests/components/code-inline.test.tsx",
+      "docs/components/typography/code-inline.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-11",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Fix Row dead flex prop and add rowGap on wrap",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "bug",
+      "layout",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "RowProps.flex is declared but forwarded to View as a non-style prop (no effect); wrapped rows have columnGap but no rowGap.",
+    "value": "Row API does what its types promise.",
+    "scope": [
+      "Apply flex to style when provided",
+      "Set rowGap equal to gap when wrap=true",
+      "Document in row.md"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Test: flex={1} yields style.flex===1",
+      "Test: wrap adds rowGap equal to theme.space[gap]",
+      "flex is not present in View props (findByType View props.flex undefined)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Row"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Row/Row.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Row/**",
+      "tests/components/row.test.tsx",
+      "docs/components/layout/row.md"
+    ],
+    "size": "S",
+    "semver": "patch",
+    "wave": 4,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-19",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Layout family to demo: Box, Column, Divider tests, docs, a11y",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "layout",
+      "docs",
+      "tests",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Box/Column/Divider lack dedicated tests and docs usage; Divider calls useTheme twice and types style as ViewStyle only; Column default flex/gap surprising and undocumented.",
+    "value": "Layout primitives reach demo with verification.",
+    "scope": [
+      "Divider: single hook call, StyleProp<ViewStyle>, orientation prop, accessibilityRole separator on web",
+      "Column: document flex=1 default; test key stability",
+      "Unit tests for Box/Column/Divider",
+      "Add ## Usage tsx blocks to box.md, column.md, divider.md",
+      "Extend examples/layout-primitives.tsx"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "Divider accepts style array/StyleProp (type contract)",
+      "Tests for Box bg/radius/shadow token mapping, Column gap, Divider orientation",
+      "grep -l '^## Usage' succeeds for every docs page listed in filesTouched",
+      "examples/layout-primitives.tsx typechecks",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Box, Column, Divider"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-11",
+      "E2-06",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Box/Box.meta.ts, src/components/Column/Column.meta.ts, src/components/Divider/Divider.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Box/**",
+      "src/components/Column/**",
+      "src/components/Divider/**",
+      "tests/components/layout.test.tsx",
+      "docs/components/layout/box.md",
+      "docs/components/layout/column.md",
+      "docs/components/layout/divider.md",
+      "examples/layout-primitives.tsx"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 5,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-20",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Surfaces family to demo: Card example/tests, Badge contrast",
+    "priority": "Medium",
+    "labels": [
+      "texo-v1",
+      "surfaces",
+      "docs",
+      "examples",
+      "a11y",
+      "feedback",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Card has no example; bgColor raw string bypasses tokens; Android shadow loses color; Badge text uses textPrimary on colored bg without contrast check.",
+    "value": "Card and Badge meet demo bar.",
+    "scope": [
+      "Card: bgColor accepts color token key or string (documented), forwarding shadow props on Android",
+      "Badge: contrast-safe text color per variant, optional accessibilityLabel",
+      "Create examples/surfaces.tsx",
+      "Tests for Card variants (default/elevated/outline) and Badge variants",
+      "Usage in card.md, badge.md",
+      "(from E9-04) Badge: label when count-only"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "examples/surfaces.tsx renders Card 3 variants and Badge 5 variants",
+      "Test: each Card variant produces expected border/shadow",
+      "Badge contrast helper test >= 4.5 on light and dark tokens or documented exceptions",
+      "grep -l '^## Usage' succeeds for every docs page listed in filesTouched",
+      "(from E9-04) A count-only Badge has an accessibilityLabel and the default label is overridable via prop (test)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Card, Badge"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-04",
+      "E1-19",
+      "E2-06",
+      "E9-01",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated",
+      "Colocated <Name>.meta.ts (src/components/Card/Card.meta.ts, src/components/Badge/Badge.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Card/**",
+      "src/components/Badge/**",
+      "tests/components/surfaces.test.tsx",
+      "docs/components/surfaces/card.md",
+      "docs/components/surfaces/badge.md",
+      "examples/surfaces.tsx"
+    ],
+    "size": "M",
+    "semver": "patch",
+    "wave": 6,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [
+      "E9-04"
+    ],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-05",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Wire demo-bar gate into npm scripts, release:check and CI",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "ci",
+      "maturity",
+      "release",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "CI runs only release:check; no maturity or token lint gate and no tests typecheck.",
+    "value": "Regressions below the demo bar fail the build.",
+    "scope": [
+      "package.json scripts: maturity:check, tokens:check, typecheck:tests; append to release:check",
+      "Add a CI step and a published docs/maturity.md page rendered from the component meta (script writes it)",
+      "Add Maturity page to mkdocs.yml nav"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "npm run maturity:check, tokens:check, typecheck:tests all exist and pass",
+      "release:check string contains all three",
+      "docs/maturity.md lists every component with level and is in mkdocs.yml nav",
+      "actionlint .github/workflows/ci.yml exits 0 and the workflow contains a step running `npm run maturity:check` (grep)"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-02",
+      "E1-03",
+      "E1-04",
+      "E13-01",
+      "E16-02"
+    ],
+    "validation": [
+      "npm run maturity:check",
+      "npm run tokens:check",
+      "npm run typecheck:tests"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "package.json is shared; land after bug tickets that need no script changes"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity component meta entry (if present) updated"
+    ],
+    "filesTouched": [
+      "package.json",
+      ".github/workflows/ci.yml",
+      "docs/maturity.md",
+      "mkdocs.yml",
+      "scripts/gen-maturity-docs.mjs"
+    ],
+    "size": "M",
+    "semver": "none",
+    "wave": 7,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-24",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Form example coverage for all form components",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "examples",
+      "form",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "examples/form-controls.tsx omits Select, PasswordInput, Textarea and FormField error states.",
+    "value": "Every form component appears in a consumer example.",
+    "scope": [
+      "Extend examples/form-controls.tsx with Select, PasswordInput, Textarea, FormField error/helper"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references all 9 form components (grep)",
+      "tsc -p tsconfig.tests.json passes",
+      "maturity:check example criterion passes for form family"
+    ],
+    "dependencies": [
+      "E1-04",
+      "E1-16",
+      "E1-21",
+      "E1-22",
+      "E1-23",
+      "E6-14"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/form-controls.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-42",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Migrate Button to Touchable and buttonVariants (variant/tone per ADR 0014)",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "button",
+      "variants",
+      "api-conventions",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Button hand-rolls Pressable styling and uses variant for colour; E9-07/E9-08 must wait for its migration (R1 m7) and Button is in the proposed stable set.",
+    "value": "Button becomes a thin Touchable + useVariants composition; tone/variant split with deprecated aliases.",
+    "scope": [
+      "Button renders Touchable (E4-03) and styles via useVariants(buttonVariants) (E2-06)",
+      "variant = solid|soft|outline|ghost|link; tone = primary|neutral|success|warning|danger|info; legacy variant='danger|info|primary|secondary' mapped to tone via @deprecated alias",
+      "style/testID/ref passthrough"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "tests/components/button.test.tsx: legacy variant='danger' renders the same style as tone='danger' and emits a __DEV__ deprecation warning once",
+      "grep -n 'Pressable' src/components/Button/Button.tsx prints nothing (renders Touchable)",
+      "node scripts/check-api-conventions.mjs exits 0 and scripts/api-conventions.baseline.json has no Button entry left (grep)",
+      "node scripts/check-api-conventions.mjs exits 0 and git diff --exit-code scripts/api-conventions.baseline.json passes (ADR 0014)",
+      "node scripts/lib/meta.mjs --lint exits 0 and lists Button"
+    ],
+    "dependencies": [
+      "E1-01",
+      "E1-09",
+      "E2-06",
+      "E4-03",
+      "E14-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Visual regressions in pressed state; compare light/dark snapshots before and after"
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)",
+      "Colocated <Name>.meta.ts (src/components/Button/Button.meta.ts) created or updated (ComponentMeta: status, summary, whenToUse, variants, states, a11y, examples) and `node scripts/lib/meta.mjs --lint` exits 0 (ADR-R7 / ADR 0016)",
+      "Catalog story is rendered from the meta file (no separate story ticket); docs page has Import, Props, Usage, Stability sections (`node scripts/check-component-docs.mjs --strict` exits 0)",
+      "Props conform to ADR 0014 (`node scripts/check-api-conventions.mjs` exits 0, no new baseline entry); styling via useVariants (E2-06) and semantic tokens only",
+      "No edits to src/index.ts, audit/api snapshots or mkdocs.yml (owned by the E14 wave-wiring tickets)"
+    ],
+    "filesTouched": [
+      "src/components/Button/**",
+      "tests/components/button.test.tsx",
+      "docs/components/buttons/button.md",
+      "scripts/api-conventions.baseline.json"
+    ],
+    "size": "M",
+    "semver": "minor",
+    "wave": 8,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E1-27",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Feedback example covering Alert, ProgressBar, Spinner",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "examples",
+      "feedback",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "examples/feedback.tsx omits ProgressBar.",
+    "value": "Example criterion met for feedback family.",
+    "scope": [
+      "Extend examples/feedback.tsx with ProgressBar determinate/indeterminate and Alert dismiss"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references Alert, ProgressBar, Spinner",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-04",
+      "E1-24",
+      "E1-25",
+      "E1-26"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/feedback.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 9,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-31",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Navigation example covering NavBar layouts, SideBar and BottomBar",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "examples",
+      "navigation",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "examples/navigation.tsx only shows layout='top'.",
+    "value": "Example criterion met for BottomBar and SideBar.",
+    "scope": [
+      "Extend examples/navigation.tsx with bottom and sidebar layouts"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "File references BottomBar via NavBar layout bottom and SideBar via layout sidebar",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-04",
+      "E1-15",
+      "E1-27",
+      "E1-29",
+      "E1-30"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/navigation.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 10,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-34",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Overlay example: promote overlays.experimental to full coverage",
+    "priority": "Low",
+    "labels": [
+      "texo-v1",
+      "examples",
+      "overlay",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Example is named experimental and not wired to final APIs.",
+    "value": "Overlay family example reflects demo APIs.",
+    "scope": [
+      "Rename examples/overlays.experimental.tsx to examples/overlays.tsx and cover Modal, BottomSheet, Popover, Tooltip, Select"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "examples/overlays.tsx references all 5",
+      "old file removed; no references remain (grep)",
+      "tsc -p tsconfig.tests.json passes"
+    ],
+    "dependencies": [
+      "E1-04",
+      "E1-31",
+      "E6-02",
+      "E6-07",
+      "E6-10",
+      "E6-11",
+      "E6-14",
+      "E6-36"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "examples/overlays.experimental.tsx",
+      "examples/overlays.tsx"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 11,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-37",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Flip existing components' meta status to demo and enable the strict gate",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "release",
+      "ready",
+      "awaiting-po-approval"
+    ],
+    "problem": "Manifest still lists 18 components as prototype after tickets land.",
+    "value": "Demo bar enforced for every component.",
+    "scope": [
+      "Set status 'demo' in each existing component's <Name>.meta.ts (B, P, Small, TextGroup stay 'deprecated'), run maturity:check in strict mode, set CI to fail on prototype"
+    ],
+    "outOfScope": [
+      "Renaming package, exports or namespaces (Texo cutover is E15)",
+      "Changes to files owned by other tickets"
+    ],
+    "acceptance": [
+      "node scripts/maturity-check.mjs --strict exits 0",
+      "grep -l \"status: 'prototype'\" src/components/*/*.meta.ts prints nothing",
+      "npm run maturity:check regenerates docs/maturity.md with git diff --exit-code docs/maturity.md passing",
+      "npm run release:check exits 0"
+    ],
+    "dependencies": [
+      "E1-05",
+      "E1-06",
+      "E1-07",
+      "E1-08",
+      "E1-09",
+      "E1-12",
+      "E1-15",
+      "E1-16",
+      "E1-19",
+      "E1-20",
+      "E1-21",
+      "E1-22",
+      "E1-23",
+      "E1-24",
+      "E1-27",
+      "E1-31",
+      "E1-34",
+      "E1-35",
+      "E1-42",
+      "E9-02",
+      "E13-06",
+      "E13-07",
+      "E13-08",
+      "E13-09"
+    ],
+    "validation": [
+      "node scripts/maturity-check.mjs --strict",
+      "npm run release:check"
+    ],
+    "evidence": [
+      "Test output for new/changed tests",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Behavior change visible to existing consumers; covered by tests and CHANGELOG note"
+    ],
+    "dod": [
+      "All acceptance criteria verified",
+      "npm run typecheck and npm test green",
+      "Docs page updated where behavior/API changed",
+      "Maturity manifest entry (if present) updated"
+    ],
+    "filesTouched": [
+      "src/components/Alert/Alert.meta.ts",
+      "src/components/B/B.meta.ts",
+      "src/components/Badge/Badge.meta.ts",
+      "src/components/BottomBar/BottomBar.meta.ts",
+      "src/components/BottomSheet/BottomSheet.meta.ts",
+      "src/components/Box/Box.meta.ts",
+      "src/components/Button/Button.meta.ts",
+      "src/components/Card/Card.meta.ts",
+      "src/components/Checkbox/Checkbox.meta.ts",
+      "src/components/CodeInline/CodeInline.meta.ts",
+      "src/components/Column/Column.meta.ts",
+      "src/components/Divider/Divider.meta.ts",
+      "src/components/FormField/FormField.meta.ts",
+      "src/components/Heading/Heading.meta.ts",
+      "src/components/Input/Input.meta.ts",
+      "src/components/Link/Link.meta.ts",
+      "src/components/Modal/Modal.meta.ts",
+      "src/components/NavBar/NavBar.meta.ts",
+      "src/components/NavContext/NavContext.meta.ts",
+      "src/components/P/P.meta.ts",
+      "src/components/PasswordInput/PasswordInput.meta.ts",
+      "src/components/Popover/Popover.meta.ts",
+      "src/components/ProgressBar/ProgressBar.meta.ts",
+      "src/components/Quote/Quote.meta.ts",
+      "src/components/RadioGroup/RadioGroup.meta.ts",
+      "src/components/Row/Row.meta.ts",
+      "src/components/Select/Select.meta.ts",
+      "src/components/SideBar/SideBar.meta.ts",
+      "src/components/Small/Small.meta.ts",
+      "src/components/Spinner/Spinner.meta.ts",
+      "src/components/Switch/Switch.meta.ts",
+      "src/components/Text/Text.meta.ts",
+      "src/components/TextGroup/TextGroup.meta.ts",
+      "src/components/Textarea/Textarea.meta.ts",
+      "src/components/Tooltip/Tooltip.meta.ts",
+      "src/components/TopBar/TopBar.meta.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 12,
+    "postV1": false,
+    "blocked": false,
+    "decisionsNeeded": [],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "original"
+  },
+  {
+    "id": "E1-38",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Promote layout and typography stable set to stable",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "problem": "Text, Heading, Box, Row, Column, Divider and Icon are proposed stable for 1.0 (ADR-R10) but remain demo.",
+    "value": "Non-empty stable set for the 1.0 gate.",
+    "scope": [
+      "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+      "Set status 'stable' in each <Name>.meta.ts"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/check-stable-bar.mjs --only Text,Heading,Box,Row,Column,Divider,Icon exits 0",
+      "Each listed <Name>.meta.ts has status 'stable' (grep)"
+    ],
+    "dependencies": [
+      "E1-11",
+      "E1-17",
+      "E1-19",
+      "E1-21",
+      "E1-37",
+      "E4-04",
+      "E17-14"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "Promotion freezes API; any later break needs a major",
+      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/components/Text/Text.meta.ts",
+      "src/components/Heading/Heading.meta.ts",
+      "src/components/Box/Box.meta.ts",
+      "src/components/Row/Row.meta.ts",
+      "src/components/Column/Column.meta.ts",
+      "src/components/Divider/Divider.meta.ts",
+      "src/components/Icon/Icon.meta.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H3"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E1-39",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Promote controls stable set to stable",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "problem": "Touchable, Button, Link, Input, Textarea, Checkbox, Switch, RadioGroup, Field and Label are proposed stable (ADR-R10) but remain demo.",
+    "value": "Stable form and control surface for 1.0.",
+    "scope": [
+      "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+      "Set status 'stable' in each <Name>.meta.ts"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/check-stable-bar.mjs --only Touchable,Button,Link,Input,Textarea,Checkbox,Switch,RadioGroup,Field,Label exits 0",
+      "Each listed <Name>.meta.ts has status 'stable' (grep)"
+    ],
+    "dependencies": [
+      "E1-12",
+      "E1-22",
+      "E1-23",
+      "E1-28",
+      "E1-37",
+      "E1-42",
+      "E4-03",
+      "E5-04",
+      "E5-05",
+      "E17-14"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "onChange -> onValueChange aliases must be in place before freezing",
+      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/components/Touchable/Touchable.meta.ts",
+      "src/components/Button/Button.meta.ts",
+      "src/components/Link/Link.meta.ts",
+      "src/components/Input/Input.meta.ts",
+      "src/components/Textarea/Textarea.meta.ts",
+      "src/components/Checkbox/Checkbox.meta.ts",
+      "src/components/Switch/Switch.meta.ts",
+      "src/components/RadioGroup/RadioGroup.meta.ts",
+      "src/components/Field/Field.meta.ts",
+      "src/components/Label/Label.meta.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H3"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E1-40",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Promote feedback stable set to stable",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "problem": "Badge, Spinner, ProgressBar and Alert are proposed stable (ADR-R10) but remain demo.",
+    "value": "Stable feedback primitives for 1.0.",
+    "scope": [
+      "Run node scripts/check-stable-bar.mjs for the family and fix gaps",
+      "Set status 'stable' in each <Name>.meta.ts"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/check-stable-bar.mjs --only Badge,Spinner,ProgressBar,Alert exits 0",
+      "Each listed <Name>.meta.ts has status 'stable' (grep)"
+    ],
+    "dependencies": [
+      "E1-20",
+      "E1-26",
+      "E1-37",
+      "E6-03",
+      "E17-14"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "ProgressBar color -> tone alias must exist before freezing",
+      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/components/Badge/Badge.meta.ts",
+      "src/components/Spinner/Spinner.meta.ts",
+      "src/components/ProgressBar/ProgressBar.meta.ts",
+      "src/components/Alert/Alert.meta.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H3"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  },
+  {
+    "id": "E1-41",
+    "epic": "E1",
+    "type": "Task",
+    "title": "Promote surfaces, Screen and providers to stable",
+    "priority": "High",
+    "labels": [
+      "texo-v1",
+      "maturity",
+      "stable",
+      "promotion",
+      "blocked-decision",
+      "needs-h3"
+    ],
+    "problem": "Card, Surface, Screen, ThemeProvider/TexoProvider, useTheme and tokens are proposed stable (ADR-R10) but remain demo.",
+    "value": "Stable app roots and surfaces for 1.0.",
+    "scope": [
+      "Run node scripts/check-stable-bar.mjs for these items and fix gaps",
+      "Set status 'stable' in Card, Surface, Screen meta and in src/providers/TexoProvider.meta.ts"
+    ],
+    "outOfScope": [
+      "Renaming package, repo or imports (Texo cutover is E15)"
+    ],
+    "acceptance": [
+      "node scripts/check-stable-bar.mjs --only Card,Surface,Screen,TexoProvider,ThemeProvider,useTheme,tokens exits 0",
+      "Each listed meta file has status 'stable' (grep)"
+    ],
+    "dependencies": [
+      "E1-20",
+      "E1-37",
+      "E2-08",
+      "E4-06",
+      "E6-25",
+      "E6-37",
+      "E14-12",
+      "E17-14"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm test"
+    ],
+    "evidence": [
+      "Output of the validation commands",
+      "Diff summary of files touched"
+    ],
+    "risks": [
+      "TexoProvider order becomes frozen",
+      "BLOCKED on H3: Confirm 1.0 scope cut and stable set (ADR-R10). Unblock condition: Human confirms config/stable-set.json contents and the post-1.0 list."
+    ],
+    "dod": [
+      "All acceptance criteria verified by the listed commands",
+      "npm run typecheck and npm test green",
+      "No package/repo/import rename (00-brief)"
+    ],
+    "filesTouched": [
+      "src/providers/TexoProvider.meta.ts",
+      "src/components/Card/Card.meta.ts",
+      "src/components/Surface/Surface.meta.ts",
+      "src/components/Screen/Screen.meta.ts"
+    ],
+    "size": "S",
+    "semver": "none",
+    "wave": 13,
+    "postV1": false,
+    "blocked": true,
+    "decisionsNeeded": [
+      "H3"
+    ],
+    "absorbs": [],
+    "splitFrom": null,
+    "splitInto": [],
+    "origin": "new"
+  }
+]
