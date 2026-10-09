@@ -1,0 +1,805 @@
+[
+  {
+    "id": "E12-01",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Fix test runner glob and add coverage reporting",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "ci"
+    ],
+    "problem": "package.json test script uses tests/**/*.test.tsx; tests/compatibility-docs.test.ts (.ts) may not run. No coverage output or thresholds.",
+    "value": "All tests run; coverage gate prevents erosion.",
+    "scope": [
+      "Use node --test with explicit dir or glob covering .ts and .tsx",
+      "Add c8 / node --experimental-test-coverage script test:coverage",
+      "Initial threshold set at current level"
+    ],
+    "outOfScope": [
+      "Raising coverage"
+    ],
+    "acceptance": [
+      "Counting tests before/after shows compatibility-docs test executes",
+      "npm run test:coverage prints per-file table",
+      "CI fails below threshold"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test",
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Node 22 experimental coverage flags"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "package.json",
+      "tests/setup.ts",
+      ".c8rc.json"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-02",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: layout, typography, surfaces",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "coverage"
+    ],
+    "problem": "Coverage is one 474-line smoke file plus 5 a11y tests; most components only 'render without throwing' (tests/components/component-smoke.test.tsx).",
+    "value": "Props, variants, callbacks asserted.",
+    "scope": [
+      "One test file each for Box, Row, Column, Divider, Text, Heading, P, B, Small, CodeInline, Quote, TextGroup, Card, Badge: variants, style override, ref"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "14 files exist",
+      "Each >=4 tests",
+      "Line coverage >=80% for those components"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Naming must match E12-14 matrix"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/layout/**",
+      "tests/components/typography/**",
+      "tests/components/surfaces/**"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-16",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: form controls",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "coverage"
+    ],
+    "problem": "Form controls only have smoke render and 5 a11y checks.",
+    "value": "Interaction correctness.",
+    "scope": [
+      "Tests for Input, PasswordInput, Textarea, Checkbox, Switch, RadioGroup, Select, FormField, Button: events, controlled value, disabled, error"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "9 files, >=5 tests each",
+      "Line coverage >=80%"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Shim lacks real events; use E12-03 helper if landed"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/form/**"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-17",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add per-component behavior tests: feedback, overlays, navigation",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "coverage"
+    ],
+    "problem": "Overlays and navigation only render smoke checks.",
+    "value": "Open/close, dismiss, selection behaviors verified.",
+    "scope": [
+      "Tests for Alert, ProgressBar, Spinner, Modal, BottomSheet, Popover, Tooltip, NavBar, TopBar, BottomBar, SideBar, Link, NavContext"
+    ],
+    "outOfScope": [
+      "a11y (E9)"
+    ],
+    "acceptance": [
+      "13 files, >=4 tests each",
+      "Line coverage >=80%"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm run test:coverage"
+    ],
+    "evidence": [
+      "Coverage table"
+    ],
+    "risks": [
+      "Overlay edits by E6 may conflict"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/components/feedback/**",
+      "tests/components/overlay/**",
+      "tests/components/navigation/**"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-03",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Migrate render tests to @testing-library/react-native with shim parity",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "rntl"
+    ],
+    "problem": "Tests use react-test-renderer with a hand-written react-native shim (tests/shims/react-native.tsx) mapped by loader; real RN host behavior (Pressable events, TextInput) is not exercised, queries are findByType.",
+    "value": "User-centric queries (getByRole, getByLabelText) and fireEvent; closer to real RN.",
+    "scope": [
+      "Evaluate running with real react-native via jest-expo or RNTL on node:test with real RN preset; decide and document",
+      "Add helper renderWithTheme in tests/helpers/render.tsx",
+      "Port core-controls test as proof"
+    ],
+    "outOfScope": [
+      "Port all tests"
+    ],
+    "acceptance": [
+      "ADR in docs explaining choice and trade-offs",
+      "core-controls test passes using getByRole/getByLabelText",
+      "Old shim path still works until migration done"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "ADR + test output"
+    ],
+    "risks": [
+      "RNTL requires jest or custom env; may add jest-expo dev dep"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/render.tsx",
+      "tests/accessibility/core-controls.test.tsx",
+      "docs/adr/testing-renderer.md",
+      "package.json"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-04",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Expand type tests: props contracts, polymorphism and negative cases",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "types"
+    ],
+    "problem": "tests/types has 2 tiny files (RadioGroup, 5 prop types) covering far fewer than 36 components; no expectType tooling.",
+    "value": "Prevent breaking public typings.",
+    "scope": [
+      "Add tsd-style or tsc assert helpers (Equal<>/Expect<>)",
+      "Per-component prop type test incl. @ts-expect-error cases",
+      "Theme token types"
+    ],
+    "outOfScope": [
+      "Runtime tests"
+    ],
+    "acceptance": [
+      "npm run typecheck:contracts fails when a prop is renamed (verified in PR)",
+      "Each root component type imported in contracts"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck:contracts"
+    ],
+    "evidence": [
+      "Command output"
+    ],
+    "risks": [
+      "Type tests slow"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/types/**",
+      "tsconfig.type-tests.json"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-05",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add public API snapshot test per export kind and tree-shaking check",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "api"
+    ],
+    "problem": "scripts/public-api-snapshot.mjs exists; no check for side-effect-free modules or sideEffects flag.",
+    "value": "Safe incremental exports and small bundles.",
+    "scope": [
+      "Verify sideEffects:false behavior via esbuild bundle of one component",
+      "Assert unused components absent from bundle"
+    ],
+    "outOfScope": [
+      "Size limit (E12-09)"
+    ],
+    "acceptance": [
+      "Bundling only Button excludes Modal source (test)",
+      "api:snapshot:check unchanged"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Bundle metafile"
+    ],
+    "risks": [
+      "esbuild already allowed in allowScripts"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/treeshake-check.mjs",
+      "tests/scripts/treeshake.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-06",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add free visual regression with Playwright screenshots of web catalog",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "visual-regression",
+      "ci"
+    ],
+    "problem": "No visual testing.",
+    "value": "Free, CI-friendly: Playwright toHaveScreenshot on react-native-web export, committed baselines, Linux Docker-consistent.",
+    "scope": [
+      "Playwright test iterating matrix cells (testID matrix-*) in light and dark",
+      "Baselines in tests/visual/__screenshots__",
+      "Artifact upload on diff"
+    ],
+    "outOfScope": [
+      "Native device screenshots",
+      "Paid services (Chromatic)"
+    ],
+    "acceptance": [
+      "Seeded 1px change fails the test (verified)",
+      "Run time under 10 min in CI"
+    ],
+    "dependencies": [
+      "E11-06"
+    ],
+    "validation": [
+      "npx playwright test tests/visual"
+    ],
+    "evidence": [
+      "Report artifact"
+    ],
+    "risks": [
+      "Font rendering drift: pin container image"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/visual/**",
+      "playwright.visual.config.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-07",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native visual option via Maestro or Expo screenshots (evaluate, optional job)",
+    "priority": "Low",
+    "labels": [
+      "testing",
+      "visual-regression",
+      "native"
+    ],
+    "problem": "Web screenshots do not cover native rendering.",
+    "value": "Decide a free native path (Maestro Cloud free tier avoided; local emulator on CI).",
+    "scope": [
+      "Spike: Maestro on Android emulator in GitHub Actions on catalog APK or Expo Go",
+      "Write findings + minimal flow"
+    ],
+    "outOfScope": [
+      "Mandatory gating"
+    ],
+    "acceptance": [
+      "Doc with cost, runtime and flakiness measurements",
+      "Sample flow file runs locally"
+    ],
+    "dependencies": [
+      "E11-02"
+    ],
+    "validation": [
+      "maestro test tests/native/smoke.yaml"
+    ],
+    "evidence": [
+      "Doc"
+    ],
+    "risks": [
+      "Emulator CI slow and flaky"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/native/**",
+      "docs/adr/native-visual-testing.md"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-08",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Upgrade Expo consumer smoke to real runtime on iOS/Android/Web",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "consumer",
+      "expo"
+    ],
+    "problem": "scripts/expo-consumer-smoke.mjs installs the tarball and runs expo export --platform web only; platforms android/ios declared but never bundled.",
+    "value": "Prove Metro bundles for all three platforms.",
+    "scope": [
+      "Add expo export --platform ios and android (Hermes bundle) steps",
+      "Render assertion for web via headless fetch of exported HTML/JS",
+      "Move work dir from /tmp hardcode to os.tmpdir param"
+    ],
+    "outOfScope": [
+      "Running simulators"
+    ],
+    "acceptance": [
+      "Script exits 0 with 3 bundles produced and non-empty",
+      "Test in tests/scripts updated",
+      "CI runs it"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run consumer:expo"
+    ],
+    "evidence": [
+      "Log with bundle sizes"
+    ],
+    "risks": [
+      "Runtime >7min install timeout"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/expo-consumer-smoke.mjs",
+      "tests/scripts/expo-consumer-smoke-script.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-09",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add size-limit bundle budget and CI check",
+    "priority": "High",
+    "labels": [
+      "testing",
+      "performance",
+      "bundle"
+    ],
+    "problem": "No bundle size tracking.",
+    "value": "Prevent size regressions; per-component import cost.",
+    "scope": [
+      "Add size-limit with esbuild plugin; budgets: root import, Button-only, ThemeProvider-only",
+      "Script prints table in CI"
+    ],
+    "outOfScope": [
+      "Runtime perf"
+    ],
+    "acceptance": [
+      "npm run size passes at baseline and fails when budget lowered (verified)",
+      "Budgets documented"
+    ],
+    "dependencies": [
+      "E12-05"
+    ],
+    "validation": [
+      "npm run size"
+    ],
+    "evidence": [
+      "Size table"
+    ],
+    "risks": [
+      "peer deps externalized"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "package.json",
+      ".size-limit.json"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-10",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add render-count performance baseline tests",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "performance"
+    ],
+    "problem": "No tests for unnecessary rerenders (theme context, lists).",
+    "value": "Catch regressions in memoization.",
+    "scope": [
+      "Profiler-based helper counting commits",
+      "Tests: Button rerender on parent update with same props, ThemeProvider toggle only rerenders consumers, Input typing"
+    ],
+    "outOfScope": [
+      "Benchmarking device FPS"
+    ],
+    "acceptance": [
+      "Baselines in tests/perf/baselines.json compared with tolerance",
+      "Helper unit-tested"
+    ],
+    "dependencies": [
+      "E12-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Baseline file"
+    ],
+    "risks": [
+      "Brittle numbers; use relative thresholds"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/perf/**",
+      "tests/helpers/render-count.tsx"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-11",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Harden npm tarball consumer smoke for strict TS and ESM/Metro resolution",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "consumer"
+    ],
+    "problem": "scripts/consumer-smoke.mjs (395 lines) validates the pack; confirm it covers moduleResolution bundler/node16, skipLibCheck false, isolatedModules.",
+    "value": "Types work in strict consumer configs.",
+    "scope": [
+      "Matrix of tsconfig variants compiled against tarball",
+      "Fail on any error with skipLibCheck false"
+    ],
+    "outOfScope": [
+      "Expo (E12-08)"
+    ],
+    "acceptance": [
+      "Matrix of >=3 tsconfigs passes",
+      "Script test updated"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run consumer:smoke"
+    ],
+    "evidence": [
+      "Log"
+    ],
+    "risks": [
+      "Increased runtime"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/consumer-smoke.mjs",
+      "tests/scripts/consumer-smoke-script.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-12",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Split CI into parallel jobs with caching and artifacts",
+    "priority": "High",
+    "labels": [
+      "ci",
+      "testing"
+    ],
+    "problem": ".github/workflows/ci.yml has a single job running release:check (npm ci, tests, builds, expo smoke) sequentially for every push.",
+    "value": "Faster feedback, clearer failures, hooks for visual/a11y jobs.",
+    "scope": [
+      "Jobs: lint-typecheck, unit-tests (node 22 and 24 matrix), consumer-smoke, expo-smoke, size, docs",
+      "needs: for release gate",
+      "Concurrency cancel in progress"
+    ],
+    "outOfScope": [
+      "Pages deploy (PLRNUI-77)",
+      "Release workflow (E17)"
+    ],
+    "acceptance": [
+      "actionlint passes",
+      "Workflow shows >=5 jobs in a PR run",
+      "npm run release:check still works locally"
+    ],
+    "dependencies": [],
+    "validation": [
+      "actionlint .github/workflows/ci.yml"
+    ],
+    "evidence": [
+      "CI run link"
+    ],
+    "risks": [
+      "Branch protection names change"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      ".github/workflows/ci.yml"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E12-13",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add job for catalog web export, a11y and visual checks in CI",
+    "priority": "Medium",
+    "labels": [
+      "ci",
+      "testing"
+    ],
+    "problem": "Catalog and Playwright jobs have no CI wiring.",
+    "value": "Gate PRs on catalog build, axe, screenshots.",
+    "scope": [
+      "New workflow quality-web.yml calling catalog export, a11y:web, visual tests; upload artifacts"
+    ],
+    "outOfScope": [
+      "Pages deploy"
+    ],
+    "acceptance": [
+      "Workflow passes on PR",
+      "Artifacts present on failure"
+    ],
+    "dependencies": [
+      "E9-12",
+      "E12-06",
+      "E12-12"
+    ],
+    "validation": [
+      "actionlint .github/workflows/quality-web.yml"
+    ],
+    "evidence": [
+      "CI run link"
+    ],
+    "risks": [
+      "Install time of Playwright browsers; cache them"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      ".github/workflows/quality-web.yml"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-14",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add test-coverage matrix report: component x test dimensions",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "reporting"
+    ],
+    "problem": "No view of which component has which kinds of tests.",
+    "value": "Drive V1 maturity gating (demo requires minimal verification).",
+    "scope": [
+      "Script produces docs/test-matrix.md columns: unit, a11y, theme, types, catalog, visual, perf",
+      "Check mode for CI"
+    ],
+    "outOfScope": [
+      "Raising coverage"
+    ],
+    "acceptance": [
+      "Script lists all 36 components",
+      "--check fails on stale file"
+    ],
+    "dependencies": [
+      "E11-01"
+    ],
+    "validation": [
+      "node scripts/test-matrix.mjs --check"
+    ],
+    "evidence": [
+      "Generated doc"
+    ],
+    "risks": [
+      "Heuristic by filename; keep naming conventions"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/test-matrix.mjs",
+      "docs/test-matrix.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E12-15",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add theme-matrix test harness running component tests under all themes",
+    "priority": "Medium",
+    "labels": [
+      "testing",
+      "theming"
+    ],
+    "problem": "Theme tests exist for Button, Card, Input only (tests/theme).",
+    "value": "Every component verified under light, dark, and presets.",
+    "scope": [
+      "Helper forEachTheme(name, fn)",
+      "Apply to smoke render for all components"
+    ],
+    "outOfScope": [
+      "Preset creation (E2)"
+    ],
+    "acceptance": [
+      "All components render under light and dark with no undefined style values (test)",
+      "Preset list auto-extends"
+    ],
+    "dependencies": [
+      "E12-03"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Overlaps E12-02 files; helper only here"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/theme-matrix.tsx",
+      "tests/theme/theme-matrix.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  }
+]

@@ -1,0 +1,693 @@
+[
+  {
+    "id": "E9-01",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Extend a11y test helpers: focus, hidden, value, hint, targets",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "testing"
+    ],
+    "problem": "tests/helpers/accessibility.ts only checks role/label/state/value and a min-size on style; no hint, hidden, focus order, selected or live-region helpers; touch target helper cannot see hitSlop/padding.",
+    "value": "One shared vocabulary so every component test asserts a11y the same way.",
+    "scope": [
+      "Add assertAccessibilityHint, assertNotAccessible/hidden, assertLiveRegion, assertTouchTargetWithHitSlop (44 iOS / 48 Android via Platform), collectInteractiveNodes",
+      "Add negative tests per helper"
+    ],
+    "outOfScope": [
+      "Per-component tests",
+      "Runtime AT testing"
+    ],
+    "acceptance": [
+      "New helpers exported from tests/helpers/accessibility.ts",
+      "Each helper has a passing and a failing (assert.throws) test",
+      "assertMinimumTouchTarget accepts platform minimum 44/48"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Style-only target checks can false-pass; document limits"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/accessibility.ts",
+      "tests/accessibility/accessibility-harness.test.tsx"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E9-02",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add table-driven a11y contract test for all interactive components",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "testing"
+    ],
+    "problem": "Only Button, Input, Checkbox, Switch, RadioGroup have a11y tests (tests/accessibility/core-controls.test.tsx). Select, Link, PasswordInput, NavBar, BottomBar, SideBar, Alert, ProgressBar, Spinner, Modal, Tooltip, Popover, BottomSheet, TopBar, Badge have none; src grep shows 0 a11y props in Modal, Popover, Tooltip, BottomSheet, TopBar, Spinner, Textarea.",
+    "value": "Registry-driven coverage that fails when a new component ships without a11y expectations.",
+    "scope": [
+      "Create a contract table {component, props, expected role/label/state/hint}",
+      "Iterate with test() per row",
+      "Fail if a root-exported component is missing from table or has explicit waiver"
+    ],
+    "outOfScope": [
+      "Fixing component source (see E9-03..E9-07)"
+    ],
+    "acceptance": [
+      "Every public interactive component has a row or a documented waiver",
+      "Test fails when a component export is added without a row (verified by negative test)"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Table + test output"
+    ],
+    "risks": [
+      "Will initially red for components lacking props; land with waivers referencing E9-03..07"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/accessibility/contract-table.test.tsx",
+      "tests/accessibility/contract-table.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E9-03",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Fix a11y semantics for Modal, BottomSheet, Popover, Tooltip",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "overlays"
+    ],
+    "problem": "Overlay components expose no accessibility props (0 matches in src/components/{Modal,BottomSheet,Popover,Tooltip}); no focus entry, dismiss action, or accessibilityViewIsModal.",
+    "value": "Overlays usable with screen readers.",
+    "scope": [
+      "accessibilityViewIsModal / importantForAccessibility on content siblings, accessibilityLabel on dialog, escape/dismiss accessible action, announce on open"
+    ],
+    "outOfScope": [
+      "Focus trap on web (see E9-09)",
+      "Animation changes"
+    ],
+    "acceptance": [
+      "Modal content has accessibilityViewIsModal true",
+      "Backdrop dismiss exposes accessibilityRole button + label",
+      "Tests added in tests/accessibility/overlays.test.tsx"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test",
+      "npm run typecheck"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Overlay files also touched by E6 tickets; coordinate via rebase"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/Modal/Modal.tsx",
+      "src/components/BottomSheet/BottomSheet.tsx",
+      "src/components/Popover/Popover.tsx",
+      "src/components/Tooltip/Tooltip.tsx",
+      "tests/accessibility/overlays.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E9-04",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Fix a11y semantics for Spinner, ProgressBar, Alert, Badge",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "feedback"
+    ],
+    "problem": "Spinner has no a11y props; ProgressBar/Alert/Badge have minimal props; no progressbar value or alert live region contract tested.",
+    "value": "Status changes are announced and perceivable.",
+    "scope": [
+      "Spinner: role progressbar/busy + label",
+      "ProgressBar: accessibilityValue min/max/now",
+      "Alert: role alert + accessibilityLiveRegion by severity",
+      "Badge: label when count-only"
+    ],
+    "outOfScope": [
+      "Toast (E6)"
+    ],
+    "acceptance": [
+      "Each component asserts role/value/live region in tests",
+      "Default labels overridable via prop"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Default English labels vs i18n (E14); expose props"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/Spinner/Spinner.tsx",
+      "src/components/ProgressBar/ProgressBar.tsx",
+      "src/components/Alert/Alert.tsx",
+      "src/components/Badge/Badge.tsx",
+      "tests/accessibility/feedback.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E9-05",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Fix a11y semantics for TopBar, SideBar, BottomBar, NavBar, Link",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "navigation"
+    ],
+    "problem": "TopBar has 0 a11y props; BottomBar 1; no selected-state or header role contract; Link exposes role but link vs button semantics not tested per platform.",
+    "value": "Navigation landmarks and current-item state exposed.",
+    "scope": [
+      "role header on TopBar title, tablist/tab + selected on BottomBar items, accessibilityState selected on current NavItem, Link role link with href"
+    ],
+    "outOfScope": [
+      "Router integration"
+    ],
+    "acceptance": [
+      "Tests assert tab selected state and header role",
+      "No visual regressions in existing smoke tests"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Overlaps E6 app-shell work; keep to semantics only"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/TopBar/TopBar.tsx",
+      "src/components/BottomBar/BottomBar.tsx",
+      "src/components/SideBar/SideBar.tsx",
+      "src/components/NavBar/NavBar.tsx",
+      "src/components/Link/Link.tsx",
+      "tests/accessibility/navigation.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E9-06",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Fix a11y semantics for Select, Textarea, FormField, PasswordInput",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "forms"
+    ],
+    "problem": "Select has 2 a11y refs, Textarea 0; FormField error not linked via hint/live region; no test for error announcement.",
+    "value": "Form errors and select state are accessible.",
+    "scope": [
+      "Select: role combobox/button, expanded state, selected value in label",
+      "Textarea: label/hint parity with Input",
+      "FormField: error exposed via accessibilityHint + liveRegion polite"
+    ],
+    "outOfScope": [
+      "Validation library"
+    ],
+    "acceptance": [
+      "Tests assert expanded state and error announcement props"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Role combobox support varies RN web/iOS"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/Select/Select.tsx",
+      "src/components/Textarea/Textarea.tsx",
+      "src/components/FormField/FormField.tsx",
+      "src/components/PasswordInput/PasswordInput.tsx",
+      "tests/accessibility/forms.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E9-07",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Enforce 44/48 minimum touch targets via hitSlop across pressables",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "touch-target"
+    ],
+    "problem": "No hitSlop usage in src (grep); assertMinimumTouchTarget only inspects style. Small Button size, Checkbox, Switch, Link, Badge-pressable can be below 44pt (iOS) / 48dp (Android).",
+    "value": "WCAG 2.5.8 / platform HIG compliance.",
+    "scope": [
+      "Add internal useTouchTarget(minimum) util returning minHeight/hitSlop",
+      "Apply to Button(sm), Checkbox, Switch, RadioGroup, Link, PasswordInput toggle",
+      "Test each at smallest size"
+    ],
+    "outOfScope": [
+      "Visual size changes of components"
+    ],
+    "acceptance": [
+      "Smallest variant of each pressable passes assertMinimumTouchTarget(44) or has hitSlop closing gap",
+      "Platform.select 48 on Android in test"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output with sizes table"
+    ],
+    "risks": [
+      "Internal util must not leak to public API (api:snapshot:check)"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/utils/touch-target.ts",
+      "src/components/Button/Button.tsx",
+      "src/components/Checkbox/Checkbox.tsx",
+      "src/components/Switch/Switch.tsx",
+      "src/components/RadioGroup/RadioGroup.tsx",
+      "tests/accessibility/touch-targets.test.tsx"
+    ],
+    "size": "M",
+    "semver": "patch"
+  },
+  {
+    "id": "E9-08",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add dynamic type and font scaling support and tests",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "dynamic-type"
+    ],
+    "problem": "No allowFontScaling/maxFontSizeMultiplier/fontScale references in src; fixed-height controls will clip at 200% text.",
+    "value": "Text scaling up to 200% without clipping (WCAG 1.4.4).",
+    "scope": [
+      "Text base honours allowFontScaling default true and optional maxFontSizeMultiplier prop/theme token",
+      "Controls use minHeight not height",
+      "Test via PixelRatio.getFontScale mock with 2.0"
+    ],
+    "outOfScope": [
+      "Responsive layout (E10)"
+    ],
+    "acceptance": [
+      "No fixed height on Button/Input/Select style (assert minHeight)",
+      "Test sets fontScale 2 and asserts rendered text style does not disable scaling"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test",
+      "npm run typecheck"
+    ],
+    "evidence": [
+      "Test output",
+      "Screenshot at 200% from catalog"
+    ],
+    "risks": [
+      "Touches Text which E4 also edits; keep to props only"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/components/Text/Text.tsx",
+      "src/components/Button/Button.tsx",
+      "src/components/Input/Input.tsx",
+      "tests/accessibility/dynamic-type.test.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E9-09",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add reduced-motion hook and gate animated components",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "motion"
+    ],
+    "problem": "No AccessibilityInfo.isReduceMotionEnabled usage in src; Spinner, BottomSheet, Modal animate unconditionally.",
+    "value": "Respect OS reduce-motion; shared with E3.",
+    "scope": [
+      "useReducedMotion hook (AccessibilityInfo + listener) in src/hooks",
+      "Components use it to swap animation for instant transition",
+      "Shim exposes AccessibilityInfo in tests/shims"
+    ],
+    "outOfScope": [
+      "Motion presets (E3)"
+    ],
+    "acceptance": [
+      "Hook returns true when mocked reduce-motion enabled",
+      "BottomSheet and Modal skip animation when true (test)",
+      "Hook exported and in api snapshot"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test",
+      "npm run api:snapshot:check"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Collision with E3 motion tickets; E3 should consume this hook"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "src/hooks/useReducedMotion.ts",
+      "tests/accessibility/reduced-motion.test.tsx",
+      "tests/shims/react-native.tsx"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E9-10",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add token contrast checker and test every theme pair",
+    "priority": "High",
+    "labels": [
+      "a11y",
+      "contrast",
+      "tokens"
+    ],
+    "problem": "docs/accessibility-testing.md states contrast is unproven; no automated check of foreground/background token pairs in light/dark.",
+    "value": "Objective WCAG AA gate on all themes and future presets (E2).",
+    "scope": [
+      "tests/helpers/contrast.ts (WCAG luminance ratio)",
+      "Pair list: text/surface, text/primary, onPrimary/primary, danger, disabled exempt, border non-text 3:1",
+      "Run against light and dark themes"
+    ],
+    "outOfScope": [
+      "Changing token values (separate fix tickets from findings)"
+    ],
+    "acceptance": [
+      "Helper unit-tested with known ratios (black/white 21)",
+      "Test fails on a deliberately low pair (negative test)",
+      "Report lists current ratios; failing pairs filed as follow-ups or waived with reason"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Ratio table"
+    ],
+    "risks": [
+      "Existing tokens may fail; waivers must be explicit"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/contrast.ts",
+      "tests/accessibility/contrast.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E9-11",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add screen-reader order and focus traversal test helper",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "testing"
+    ],
+    "problem": "No test asserts reading order or that decorative nodes are hidden.",
+    "value": "Detect reading-order regressions in recipes/templates.",
+    "scope": [
+      "Helper getAccessibleTree(renderer) returning ordered accessible nodes honouring accessible/importantForAccessibility/accessibilityElementsHidden",
+      "Tests for Card, FormField, Modal"
+    ],
+    "outOfScope": [
+      "Real device TalkBack/VoiceOver"
+    ],
+    "acceptance": [
+      "Helper returns nodes in tree order and omits hidden nodes (tests)",
+      "Used by at least 3 component tests"
+    ],
+    "dependencies": [
+      "E9-01"
+    ],
+    "validation": [
+      "npm test"
+    ],
+    "evidence": [
+      "Test output"
+    ],
+    "risks": [
+      "Shim-based tree is an approximation; labelled as such"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "tests/helpers/accessibility-tree.ts",
+      "tests/accessibility/reading-order.test.tsx"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E9-12",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add web a11y smoke with axe in Playwright on exported web catalog",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "web",
+      "ci"
+    ],
+    "problem": "No automated check of rendered DOM a11y on react-native-web; expo-consumer-smoke only exports web.",
+    "value": "Free CI axe-core scan of every catalog screen on web.",
+    "scope": [
+      "Playwright + @axe-core/playwright script serving exported catalog",
+      "Fail on serious/critical violations, allowlist with reason"
+    ],
+    "outOfScope": [
+      "Native AT"
+    ],
+    "acceptance": [
+      "npm run a11y:web exits non-zero on a seeded violation fixture",
+      "Runs on catalog routes list generated from registry"
+    ],
+    "dependencies": [
+      "E11-03"
+    ],
+    "validation": [
+      "npm run a11y:web"
+    ],
+    "evidence": [
+      "axe JSON report artifact"
+    ],
+    "risks": [
+      "Catalog needed first; flaky timing"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "scripts/a11y-web.mjs",
+      "tests/e2e/a11y-web.spec.ts",
+      "playwright.config.ts"
+    ],
+    "size": "M",
+    "semver": "none"
+  },
+  {
+    "id": "E9-13",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Write accessibility contract docs and per-component a11y table",
+    "priority": "Medium",
+    "labels": [
+      "a11y",
+      "docs"
+    ],
+    "problem": "docs/accessibility-testing.md is 17 lines; no consumer-facing a11y guarantees per component.",
+    "value": "Consumers and agents know what is guaranteed and what is not.",
+    "scope": [
+      "Rewrite doc with evidence levels (static, web axe, device manual)",
+      "Generated table of role/label/state per component from contract table",
+      "Manual device checklist VoiceOver/TalkBack"
+    ],
+    "outOfScope": [
+      "Per-component page edits (E16)"
+    ],
+    "acceptance": [
+      "Doc links to checklist and table",
+      "mkdocs build --strict passes"
+    ],
+    "dependencies": [
+      "E9-02"
+    ],
+    "validation": [
+      "mkdocs build --strict"
+    ],
+    "evidence": [
+      "Built page"
+    ],
+    "risks": [
+      "Table generation drift; add check script"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "docs/accessibility-testing.md",
+      "docs/accessibility-checklist.md"
+    ],
+    "size": "S",
+    "semver": "none"
+  },
+  {
+    "id": "E9-14",
+    "epic": "E9",
+    "type": "Task",
+    "title": "Add manual device a11y verification protocol and evidence template",
+    "priority": "Low",
+    "labels": [
+      "a11y",
+      "process"
+    ],
+    "problem": "Docs disclaim device behavior but no process exists to produce evidence.",
+    "value": "Repeatable VoiceOver/TalkBack signoff for production-ready maturity.",
+    "scope": [
+      "Template with per-component steps, device/OS matrix, pass/fail, screenshots",
+      "Link from maturity ladder"
+    ],
+    "outOfScope": [
+      "Executing the protocol"
+    ],
+    "acceptance": [
+      "Template file exists with all 36 components listed (script check)",
+      "Referenced from docs"
+    ],
+    "dependencies": [
+      "E9-13"
+    ],
+    "validation": [
+      "node scripts/check-a11y-protocol.mjs"
+    ],
+    "evidence": [
+      "Template"
+    ],
+    "risks": [
+      "Manual effort"
+    ],
+    "dod": [
+      "Merged to main with CI green",
+      "Docs/notes updated where behavior changes",
+      "No change to package name or import paths"
+    ],
+    "filesTouched": [
+      "docs/a11y-device-protocol.md",
+      "scripts/check-a11y-protocol.mjs"
+    ],
+    "size": "S",
+    "semver": "none"
+  }
+]

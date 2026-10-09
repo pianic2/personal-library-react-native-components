@@ -1,0 +1,1991 @@
+[
+ {
+  "id": "E7-01",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ListItem row primitive with slots, press and a11y",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "list",
+   "primitive"
+  ],
+  "problem": "No standard row (leading/title/subtitle/trailing) exists; apps hand-roll rows with Box/Row/Text.",
+  "value": "Single memoized row used by List, SectionList, NotificationList, Settings screens.",
+  "scope": [
+   "leading/trailing/title/subtitle/meta slots",
+   "pressable with disabled/selected states",
+   "density sm|md|lg",
+   "accessibilityRole button when onPress, minHeight 44",
+   "React.memo with stable default styles"
+  ],
+  "outOfScope": [
+   "Swipe actions",
+   "Selection state management"
+  ],
+  "acceptance": [
+   "ListItem is wrapped in React.memo and does not re-render when parent re-renders with identical props (test with render counter)",
+   "Touch target >= 44dp when pressable",
+   "Supports accessibilityLabel derived from title+subtitle by default",
+   "Does not create new style objects per render for static variants (StyleSheet or memoized)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListItem/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ListItem/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-02",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add List wrapper over FlatList with virtualization defaults",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "list",
+   "performance"
+  ],
+  "problem": "Raw FlatList needs repeated config (keyExtractor, getItemLayout, windowSize, separators, empty/error/loading).",
+  "value": "Safe-by-default virtualized list that cuts boilerplate and agent tokens.",
+  "scope": [
+   "Props: data, renderItem, keyExtractor required or id/key inference with dev warning",
+   "Defaults: initialNumToRender, windowSize 7, maxToRenderPerBatch, removeClippedSubviews on Android",
+   "estimatedItemSize/getItemLayout passthrough",
+   "slots: ListEmpty, ListError, loading skeleton, header/footer",
+   "onEndReached pagination with loadingMore footer",
+   "pull-to-refresh prop",
+   "renderer prop typed ListRenderer for adapter injection (default FlatList)"
+  ],
+  "outOfScope": [
+   "FlashList import (see adapter ticket)",
+   "Sections (SectionList ticket)"
+  ],
+  "acceptance": [
+   "Default props documented in a table and asserted in a test",
+   "Test with 10,000 items: mounted item count never exceeds initialNumToRender + window budget (<= 60) after mount",
+   "renderItem and keyExtractor are not re-created by List internals per render (referential stability test)",
+   "Dev-only warning when keyExtractor missing and items lack id/key",
+   "No ScrollView-with-map fallback path exists (grep)",
+   "Perf budget recorded: 1,000-item list initial render < 100ms on mid-tier Android reference (measure per E12, attach numbers)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-01"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/List/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Defaults tuned for FlatList; may differ for FlashList (handled in adapter)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/List/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-03",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add SectionList wrapper with sticky headers and A-Z index hook",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "list",
+   "performance"
+  ],
+  "problem": "Grouped lists need separate wrapper config; sticky header theming repeated.",
+  "value": "Themed grouped list sharing List defaults.",
+  "scope": [
+   "Wrap RN SectionList with List defaults",
+   "themed SectionHeader, stickySectionHeadersEnabled default on iOS",
+   "empty/error/loading slots reused from List",
+   "scrollToSection imperative ref"
+  ],
+  "outOfScope": [
+   "Alphabetical side index UI",
+   "FlashList sections"
+  ],
+  "acceptance": [
+   "Test with 5 sections x 2,000 items: mounted rows bounded (<= 60)",
+   "Section header has accessibilityRole header",
+   "Shares default constants with List via exported const (no duplicated magic numbers)",
+   "scrollToSection(i) covered by a test",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/SectionList/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/SectionList/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-04",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add optional FlashList adapter for List via subpath",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "list",
+   "adapter",
+   "dependencies"
+  ],
+  "problem": "FlashList gives large perf wins but must not become a core dependency.",
+  "value": "Opt-in high-perf list without touching core peers.",
+  "scope": [
+   "Adapter implementing ListRenderer using @shopify/flash-list",
+   "Subpath entry (e.g. @personal-library/react-native-components/list-flash)",
+   "Declare as optional peer proposal in package metadata via E14 decision, not edited here",
+   "Doc: install and Expo compatibility notes"
+  ],
+  "outOfScope": [
+   "Editing package.json (E14 owns)",
+   "Making FlashList a default"
+  ],
+  "acceptance": [
+   "Root entry has zero import of @shopify/flash-list (grep src/index.ts and src/components/List)",
+   "Adapter type-checks against ListRenderer contract",
+   "Missing peer produces a clear error message naming the package, tested by mock",
+   "Native dependency gate checklist from peer-dependency-policy.md filled in the ticket evidence",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListFlashAdapter/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "FlashList v2 API differences; pin compatible range in E14"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ListFlashAdapter/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-05",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Define component meta sidecar schema and lint",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "schema",
+   "handwritten"
+  ],
+  "problem": "when-to-use, anti-patterns, composition rules, a11y notes are not machine-readable anywhere.",
+  "value": "Fixed contract for the human-judgement layer that cannot be generated from types.",
+  "scope": [
+   "ai/schema/meta.schema.json: summary(<=140ch), category, status (maturity ladder), whenToUse[], whenNotToUse[{reason,instead}], composition{parents,children,pairsWith}, a11y[], platformNotes[], example (path)",
+   "Lint script checking schema, that instead/pairsWith resolve to real components, and one meta per exported component",
+   "One reference file ai/meta/Button.meta.json"
+  ],
+  "outOfScope": [
+   "Schema validates Button.meta.json",
+   "Lint fails when an exported component has no meta file (flag --strict) and warns otherwise",
+   "Lint fails on dangling instead reference"
+  ],
+  "acceptance": [
+   "E13-03",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/schema/meta.schema.json",
+   "scripts/ai/lint-meta.mjs",
+   "ai/meta/Button.meta.json",
+   "tests/scripts/meta-lint.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/meta-lint.test.ts"
+  ]
+ },
+ {
+  "id": "E7-06",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author component meta for typography and layout primitives",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "handwritten",
+   "component-catalog"
+  ],
+  "problem": "Meta sidecars missing for: Box, Column/Stack, Row, Divider, Text, Heading, P, B, Small, Quote, CodeInline, TextGroup.",
+  "value": "Accurate when-to-use and anti-pattern guidance for component-selection skill.",
+  "scope": [
+   "Write one meta.json per listed component, grounded in the source and docs/components/*.md",
+   "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+  ],
+  "outOfScope": [
+   "lint-meta passes for all listed files",
+   "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+  ],
+  "acceptance": [
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/meta/{Box,Column,Row,Divider,Text,Heading,P,B,Small,Quote,CodeInline,TextGroup}.meta.json"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/lint-meta.mjs"
+  ]
+ },
+ {
+  "id": "E7-07",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author component meta for form and input components",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "handwritten",
+   "component-catalog"
+  ],
+  "problem": "Meta sidecars missing for: Input, PasswordInput, Textarea, Checkbox, RadioGroup, Switch, Select, FormField.",
+  "value": "Accurate when-to-use and anti-pattern guidance for component-selection skill.",
+  "scope": [
+   "Write one meta.json per listed component, grounded in the source and docs/components/*.md",
+   "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+  ],
+  "outOfScope": [
+   "lint-meta passes for all listed files",
+   "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+  ],
+  "acceptance": [
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/meta/{Input,PasswordInput,Textarea,Checkbox,RadioGroup,Switch,Select,FormField}.meta.json"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/lint-meta.mjs"
+  ]
+ },
+ {
+  "id": "E7-08",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author component meta for navigation and shell components",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "handwritten",
+   "component-catalog"
+  ],
+  "problem": "Meta sidecars missing for: NavBar, TopBar, BottomBar, SideBar, NavProvider/useNav/useNavigate, Link.",
+  "value": "Accurate when-to-use and anti-pattern guidance for component-selection skill.",
+  "scope": [
+   "Write one meta.json per listed component, grounded in the source and docs/components/*.md",
+   "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+  ],
+  "outOfScope": [
+   "lint-meta passes for all listed files",
+   "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+  ],
+  "acceptance": [
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/meta/{NavBar,TopBar,BottomBar,SideBar,NavContext,Link}.meta.json"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/lint-meta.mjs"
+  ]
+ },
+ {
+  "id": "E7-09",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author component meta for feedback, overlay and surface components",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "handwritten",
+   "component-catalog"
+  ],
+  "problem": "Meta sidecars missing for: Alert, Badge, Card, Spinner, ProgressBar, Modal, BottomSheet, Popover, Tooltip, Button.",
+  "value": "Accurate when-to-use and anti-pattern guidance for component-selection skill.",
+  "scope": [
+   "Write one meta.json per listed component, grounded in the source and docs/components/*.md",
+   "Each has >=2 whenToUse, >=1 whenNotToUse with instead, composition and a11y notes"
+  ],
+  "outOfScope": [
+   "lint-meta passes for all listed files",
+   "Every a11y note is traceable to source (accessibilityRole/Label/State) or tests/accessibility"
+  ],
+  "acceptance": [
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/meta/{Alert,Badge,Card,Spinner,ProgressBar,Modal,BottomSheet,Popover,Tooltip}.meta.json"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/lint-meta.mjs"
+  ]
+ },
+ {
+  "id": "E7-10",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Generate per-component cards ai/cards/<Name>.md",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "generator",
+   "token-budget"
+  ],
+  "problem": "Agents currently read full docs pages or .tsx source (thousands of tokens) to use one component.",
+  "value": "~300-600 token card per component: import, signature, props table, when/not-when, one minimal example.",
+  "scope": [
+   "scripts/ai/build-cards.mjs merges props.json + meta + example snippet",
+   "Card budget: <=700 tokens (chars/4 heuristic) enforced; over-budget fails build",
+   "Cards in English, stable section order"
+  ],
+  "outOfScope": [
+   "ai/cards/Button.md exists and contains import line, props table with variant union, whenNotToUse, example",
+   "Budget check fails when a fixture card exceeds 700 tokens",
+   "All cards regenerate byte-identical"
+  ],
+  "acceptance": [
+   "E13-03",
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/cards/*.md",
+   "scripts/ai/build-cards.mjs",
+   "tests/scripts/cards.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "npm run ai:build:cards && node --test tests/scripts/cards.test.ts"
+  ]
+ },
+ {
+  "id": "E7-11",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Generate tiny component index ai/manifests/index.json (tier 0)",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "generator",
+   "token-budget"
+  ],
+  "problem": "No cheap discovery layer; agent must open many files to pick a component.",
+  "value": "Whole library catalog in <=1.5k tokens so it fits in AGENTS.md/llms.txt.",
+  "scope": [
+   "index.json: [{name,category,summary,status,card}] sorted; plus compact line format ai/manifests/index.txt (name - summary)",
+   "Hard budget gate: index.txt <= 6000 chars"
+  ],
+  "outOfScope": [
+   "index.txt <= 6000 chars (test)",
+   "Every entry links to existing card path",
+   "Categories match meta category enum"
+  ],
+  "acceptance": [
+   "E13-10",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/manifests/index.json",
+   "ai/manifests/index.txt",
+   "scripts/ai/build-index.mjs",
+   "tests/scripts/index-manifest.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/index-manifest.test.ts"
+  ]
+ },
+ {
+  "id": "E7-12",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Generate shadcn-style registry JSON for templates and recipes",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "registry",
+   "generator"
+  ],
+  "problem": "Library is npm-import only; copyable recipes/templates (screens, forms) have no distribution format.",
+  "value": "registry.json + registry-item files compatible with shadcn registry schema so `shadcn add` style tooling and MCP can consume it.",
+  "scope": [
+   "ai/registry/registry.json with $schema, name, homepage, items; items of type registry:block / registry:example for recipes and templates",
+   "Item files with files[{path,content,type}], dependencies on this package, description",
+   "Validate against shadcn registry-item schema (vendored copy)"
+  ],
+  "outOfScope": [
+   "registry.json validates against vendored schema in test",
+   "Each item content compiles under tsc (fixture project)",
+   "No item duplicates component implementation (imports package only)"
+  ],
+  "acceptance": [
+   "E13-13",
+   "E13-14",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/registry/**",
+   "scripts/ai/build-registry.mjs",
+   "tests/scripts/registry.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Do not ship component source copies (single-codebase rule)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/registry.test.ts"
+  ]
+ },
+ {
+  "id": "E7-13",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Create minimal agent-friendly examples set",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "examples",
+   "docs"
+  ],
+  "problem": "examples/*.tsx are broad demos, not minimal copyable snippets; no check that they compile.",
+  "value": "One <=25 line, compiling example per component; reused by cards, llms-full, evals.",
+  "scope": [
+   "ai/examples/<Name>.tsx per component using only public root imports",
+   "Type-check them with tsconfig.ai-examples.json",
+   "Example marker comment // @ai-example for extraction"
+  ],
+  "outOfScope": [
+   "tsc -p ai/tsconfig.examples.json passes",
+   "Every exported component has an example (test)",
+   "Each example <=25 non-blank lines"
+  ],
+  "acceptance": [
+   "E13-05",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/examples/*.tsx",
+   "ai/tsconfig.examples.json",
+   "tests/scripts/examples.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "npx tsc -p ai/tsconfig.examples.json --noEmit"
+  ]
+ },
+ {
+  "id": "E7-14",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author component recipes (composition patterns)",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "recipes",
+   "handwritten"
+  ],
+  "problem": "No documented compositions (form row with label+error, list item, confirm dialog, empty state).",
+  "value": "Agents reuse tested compositions instead of inventing layout.",
+  "scope": [
+   "8-12 recipes in ai/recipes/*.md + .tsx using only existing components (login form, settings row, confirm modal, search header, empty state, status banner, tabbed bottom bar shell, sheet picker)",
+   "Frontmatter: name, uses[], when, platforms"
+  ],
+  "outOfScope": [
+   "Each recipe tsx compiles under ai tsconfig",
+   "uses[] entries all resolve to exported components",
+   "Recipes listed in index"
+  ],
+  "acceptance": [
+   "E13-13",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/recipes/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "npx tsc -p ai/tsconfig.examples.json --noEmit"
+  ]
+ },
+ {
+  "id": "E7-15",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author page recipes and feature templates",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "templates",
+   "handwritten"
+  ],
+  "problem": "No whole-screen starting points (auth, settings, profile, list/detail).",
+  "value": "Fast screen generation with correct shell/theme setup; coordinates with E11 templates.",
+  "scope": [
+   "Page recipes in ai/templates/<name>/ (auth, settings, profile, onboarding, list-detail) with README.md and Screen.tsx",
+   "Each uses ThemeAppShell/NavProvider correctly, responsive via useBreakpoint",
+   "Feature template: ai/templates/feature-form-flow (multi-step form with validation)"
+  ],
+  "outOfScope": [
+   "Each template compiles under ai tsconfig",
+   "Each README lists components used and states covered (loading/empty/error)",
+   "No component duplicated locally"
+  ],
+  "acceptance": [
+   "E13-14",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/templates/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Overlap with E11 showcase templates - E11 owns app-level, E13 owns agent-oriented copies; share source via import"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "npx tsc -p ai/tsconfig.examples.json --noEmit"
+  ]
+ },
+ {
+  "id": "E7-16",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Generate style-preset metadata manifest",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "manifest",
+   "design-system"
+  ],
+  "problem": "Theme presets (E2) will exist but agents cannot pick one from intent.",
+  "value": "Agents can recommend preset by mood/density/brand constraints.",
+  "scope": [
+   "Define ai/schema/presets.schema.json: id, name, mood tags, density, contrast, radius character, fonts, primary hue, darkModeSupported",
+   "Generator reads preset registry exported by E2 and emits ai/manifests/presets.json",
+   "Fallback: single default preset until E2 lands"
+  ],
+  "outOfScope": [
+   "presets.json validates; includes default preset",
+   "Test fails if an E2 preset lacks metadata",
+   "Mood tags drawn from fixed enum"
+  ],
+  "acceptance": [
+   "E13-04",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "ai/manifests/presets.json",
+   "ai/schema/presets.schema.json",
+   "scripts/ai/build-presets.mjs"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/build-presets.mjs --check"
+  ]
+ },
+ {
+  "id": "E7-17",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Write root AGENTS.md for library contributors and consumers",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "agents-md"
+  ],
+  "problem": "No AGENTS.md or CLAUDE.md; coding agents in this repo re-discover commands and conventions each session.",
+  "value": "Cross-tool (Codex, Cursor, Copilot, Claude Code) instructions in <=150 lines.",
+  "scope": [
+   "AGENTS.md: commands (typecheck, test, ai:build, api:snapshot), repo map, rules (no rename, single codebase, generated files not hand-edited), where tier-0 index lives",
+   "CLAUDE.md containing only '@AGENTS.md' import",
+   "Consumer-facing section lives in ai/AGENTS.consumer.md (shipped template users copy)"
+  ],
+  "outOfScope": [
+   "AGENTS.md <=150 lines and <=32KiB",
+   "All commands referenced exist in package.json scripts (test script)",
+   "CLAUDE.md imports AGENTS.md"
+  ],
+  "acceptance": [
+   "E13-01",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "AGENTS.md",
+   "CLAUDE.md",
+   "ai/AGENTS.consumer.md",
+   "tests/scripts/agents-md.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/agents-md.test.ts"
+  ]
+ },
+ {
+  "id": "E7-18",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Generate llms.txt and llms-full.txt",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "llms-txt",
+   "generator"
+  ],
+  "problem": "No llms.txt; docs are Italian MkDocs pages not LLM-optimised.",
+  "value": "llms.txt (index with links to cards, ~2k tokens) and llms-full.txt (all cards + tokens summary) per llmstxt.org format; usable offline from npm package.",
+  "scope": [
+   "Generator emits llms.txt: H1, blockquote summary, H2 sections (Components, Tokens, Recipes, Skills, Optional) with relative links",
+   "llms-full.txt concatenates tier-1 cards and token summary, budget-tracked",
+   "Also deployable under docs site root via mkdocs extra files"
+  ],
+  "outOfScope": [
+   "llms.txt starts with '# ' H1 and blockquote, links all resolve to existing files (test)",
+   "llms-full.txt size reported; fails if >120k chars",
+   "Files listed in package.json files[]"
+  ],
+  "acceptance": [
+   "E13-10",
+   "E13-11",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "llms.txt",
+   "llms-full.txt",
+   "scripts/ai/build-llms.mjs",
+   "tests/scripts/llms-txt.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/llms-txt.test.ts"
+  ]
+ },
+ {
+  "id": "E7-19",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ai:build orchestrator and package AI artifacts for npm",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "build",
+   "packaging"
+  ],
+  "problem": "Generators run individually; nothing guarantees artifacts are in the tarball.",
+  "value": "One command builds all manifests; tarball contains ai/, skills/, llms*.txt.",
+  "scope": [
+   "scripts/ai/build-all.mjs sequencing generators",
+   "prepack runs ai:build and ai:check",
+   "Extend scripts/release-guard.mjs check that ai artifacts present"
+  ],
+  "outOfScope": [
+   "npm run ai:build is idempotent (git diff empty on second run)",
+   "npm pack --dry-run lists ai/manifests/*.json, ai/cards, skills, llms.txt",
+   "release:guard fails if ai/manifests/index.json missing"
+  ],
+  "acceptance": [
+   "E13-03",
+   "E13-04",
+   "E13-10",
+   "E13-11",
+   "E13-18",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "scripts/ai/build-all.mjs",
+   "scripts/release-guard.mjs"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "patch",
+  "semver": [
+   "npm run ai:build && git diff --exit-code ai llms.txt llms-full.txt",
+   "npm run package:dry-run"
+  ]
+ },
+ {
+  "id": "E7-20",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add manifest freshness CI gate (ai:check)",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "ci",
+   "quality-gate"
+  ],
+  "problem": "Generated metadata silently drifts from source types.",
+  "value": "Fails CI when manifests, cards or llms files differ from regenerated output; mirrors api:snapshot:check.",
+  "scope": [
+   "scripts/ai/check.mjs regenerates to temp dir and diffs; prints fix command",
+   "Also checks: every exported component has meta+example; skills frontmatter valid",
+   "Add step to release:check and CI workflow"
+  ],
+  "outOfScope": [
+   "Mutating a prop type in a fixture makes ai:check exit 1 (test)",
+   "Clean tree exits 0",
+   "release:check includes ai:check"
+  ],
+  "acceptance": [
+   "E13-19",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "scripts/ai/check.mjs",
+   "tests/scripts/ai-check.test.ts",
+   ".github/workflows/ai-check.yml"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/ai-check.test.ts"
+  ]
+ },
+ {
+  "id": "E7-21",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-skill pack scaffolding, validator and skills.sh installability",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "distribution"
+  ],
+  "problem": "No skills directory; npx skills add cannot find anything in this repo.",
+  "value": "`npx skills add pianic2/personal-library-react-native-components` installs a validated skill set into Claude Code, Codex, Cursor (.claude/skills, .agents/skills).",
+  "scope": [
+   "skills/ root with one folder per skill (name == folder, lowercase-hyphen, <=64), SKILL.md with name+description(<=1024)+license+metadata.version",
+   "scripts/ai/validate-skills.mjs: frontmatter rules, SKILL.md <=500 lines, references one level deep, no broken links",
+   "Skills reference ../../ai/cards paths via shipped references/ symlink-free copy step (build copies tier-1 index into each skill references/)",
+   "README section: install via npx skills add, -a claude-code/codex/cursor, --copy, update with npx skills update"
+  ],
+  "outOfScope": [
+   "npx skills add ./ --list in a temp checkout lists all E13 skills",
+   "validate-skills exits 0 and fails on a fixture with 70-char name",
+   "Skills install into temp project .claude/skills and .agents/skills (verified by smoke script)"
+  ],
+  "acceptance": [
+   "E13-01",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/README.md",
+   "scripts/ai/validate-skills.mjs",
+   "scripts/ai/skills-install-smoke.mjs",
+   "tests/scripts/validate-skills.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/validate-skills.test.ts",
+   "node scripts/ai/skills-install-smoke.mjs"
+  ]
+ },
+ {
+  "id": "E7-22",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-component-selection",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills"
+  ],
+  "problem": "Agents pick wrong components (raw Pressable instead of Button, TextInput instead of Input).",
+  "value": "Decision procedure from UI intent to component using index and cards.",
+  "scope": [
+   "skills/texo-component-selection/SKILL.md (<=200 lines): read index.txt first, open only needed cards, decision table, anti-patterns",
+   "references/index.txt (build-copied), references/decision-table.md"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "Eval fixtures (E13-33) for selection tasks included",
+   "SKILL.md instructs reading tier 0 before tier 1 explicitly"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-11",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-component-selection/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-23",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-screen-generation",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills"
+  ],
+  "problem": "Generating a screen needs shell setup, theming, responsive and state coverage that agents omit.",
+  "value": "Repeatable workflow: pick template -> adapt -> check states -> verify with typecheck.",
+  "scope": [
+   "skills/texo-screen-generation/SKILL.md with workflow, references to templates and recipes, checklist (loading/empty/error, theme, a11y labels)",
+   "scripts/verify-screen.mjs (tsc + banned-pattern grep: hardcoded hex, raw Pressable)"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "verify-screen flags a fixture screen with hex colors",
+   "Workflow references templates from E13-15"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-15",
+   "E13-14",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-screen-generation/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node skills/texo-screen-generation/scripts/verify-screen.mjs --self-test"
+  ]
+ },
+ {
+  "id": "E7-24",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-design-system (tokens and theming)",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "design-system"
+  ],
+  "problem": "Agents hardcode colors/spacing or invent token names.",
+  "value": "Token-first styling guidance with exact paths.",
+  "scope": [
+   "SKILL.md: use useTheme(), semantic color roles, spacing scale, dark mode, preset selection",
+   "references/tokens-summary.md (build-copied from tokens.json)",
+   "scripts/lint-tokens.mjs flags literals not in token manifest"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "lint-tokens flags #fff and padding: 13 in fixture, passes tokenised fixture",
+   "tokens-summary <=1500 tokens"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-04",
+   "E13-16",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-design-system/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node skills/texo-design-system/scripts/lint-tokens.mjs --self-test"
+  ]
+ },
+ {
+  "id": "E7-25",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-forms",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "forms"
+  ],
+  "problem": "Form generation misses labels, errors, keyboard flow, password handling.",
+  "value": "Correct FormField/Input/Select composition and validation UX.",
+  "scope": [
+   "SKILL.md: FormField wrapper, error/helper text pattern, submit disabled/loading, keyboard types, PasswordInput",
+   "references/form-recipes.md linking recipes"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "Eval fixture 'login form' included (E13-33)",
+   "Every referenced component exists in index"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-14",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-forms/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-26",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-navigation",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "navigation"
+  ],
+  "problem": "Agents mix NavBar/TopBar/BottomBar/SideBar and misuse NavProvider and Link router adapter.",
+  "value": "Shell selection by breakpoint and router integration (Expo Router, React Navigation).",
+  "scope": [
+   "SKILL.md: shell decision table (phone/tablet/web), NavProvider/useNav, LinkRouterAdapter wiring",
+   "references/expo-router.md"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "Examples compile under ai tsconfig",
+   "Eval fixture 'app shell' included"
+  ],
+  "acceptance": [
+   "E13-21",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-navigation/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-27",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-accessibility",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "a11y"
+  ],
+  "problem": "Generated UI lacks roles, labels, 44pt targets, contrast.",
+  "value": "A11y checklist tied to library guarantees and tests/accessibility conventions.",
+  "scope": [
+   "SKILL.md: required props per component, touch target, focus/screen reader, contrast via tokens",
+   "references/a11y-by-component.md (derived from meta a11y[])"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "a11y-by-component generated from meta files, no hand edits",
+   "Eval fixture 'icon-only button needs label' included"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-06",
+   "E13-07",
+   "E13-08",
+   "E13-09",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-accessibility/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-28",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-responsive",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "responsive"
+  ],
+  "problem": "Agents hardcode widths and ignore useBreakpoint / platform differences.",
+  "value": "Adaptive layout guidance.",
+  "scope": [
+   "SKILL.md: useBreakpoint, Row/Column wrap patterns, shell swap, web vs native notes (isWeb etc.)",
+   "references/breakpoints.md from hook source"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "Breakpoint names in doc equal Breakpoint type (test)",
+   "Eval fixture 'two-pane tablet' included"
+  ],
+  "acceptance": [
+   "E13-21",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-responsive/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-29",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Skill: texo-motion",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "ai-native",
+   "skills",
+   "motion"
+  ],
+  "problem": "Motion primitives arrive with E3; agents will otherwise import ad-hoc Animated code.",
+  "value": "Reduced-motion-aware animation guidance using library primitives.",
+  "scope": [
+   "SKILL.md describing E3 primitives, duration/easing tokens, reduced motion",
+   "Stub with current state (no motion API yet) and TODO-free gating: skill lists only APIs present in props manifest"
+  ],
+  "outOfScope": [
+   "validate-skills passes",
+   "Skill claims only APIs that exist in props.json (test greps backticked identifiers)"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-03",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "skills/texo-motion/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/validate-skills.mjs"
+  ]
+ },
+ {
+  "id": "E7-30",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Build skill eval harness with fixtures and deterministic graders",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "evals",
+   "quality-gate"
+  ],
+  "problem": "No evidence skills improve output; risk of shipping token-expensive no-ops.",
+  "value": "Prove uplift: same tasks with and without skills/manifests, graded mechanically.",
+  "scope": [
+   "evals/ai/tasks/*.json: prompt, expected components, banned patterns, must-compile",
+   "Graders: tsc compile in fixture Expo-less project, component usage (AST), banned hex/raw Pressable, prop validity against props.json, token count of context consumed",
+   "Runner scripts/ai/eval.mjs with pluggable agent command (default: claude -p); arms: baseline, +index, +skills; results JSON + markdown table"
+  ],
+  "outOfScope": [
+   "Grader unit tests pass on golden good/bad outputs",
+   "eval.mjs --dry-run works offline using recorded transcripts",
+   "Results file schema documented"
+  ],
+  "acceptance": [
+   "E13-03",
+   "E13-13",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "evals/ai/**",
+   "scripts/ai/eval.mjs",
+   "tests/scripts/eval-graders.test.ts"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Running live agents in CI (cost/non-determinism)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/eval-graders.test.ts",
+   "node scripts/ai/eval.mjs --dry-run"
+  ]
+ },
+ {
+  "id": "E7-31",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Author eval task fixtures and run baseline vs skills uplift report",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "ai-native",
+   "evals"
+  ],
+  "problem": "Harness needs tasks covering selection, forms, nav, a11y, tokens, responsive.",
+  "value": "Documented evidence of uplift (pass rate, hallucinated props, tokens used).",
+  "scope": [
+   "20 tasks across skill areas with expected outcomes",
+   "Run 3 arms x N=5 and commit evals/ai/results/<date>.md",
+   "Gate: skills arm pass rate >= baseline + agreed margin, else skills revised"
+  ],
+  "outOfScope": [
+   "20 task files validate against task schema",
+   "Report committed with per-arm pass rate, invalid-prop count, mean context tokens",
+   "Report states agent/model and CLI version"
+  ],
+  "acceptance": [
+   "E13-30",
+   "E13-22",
+   "E13-23",
+   "E13-25",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "evals/ai/tasks/**",
+   "evals/ai/results/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "none",
+  "semver": [
+   "node scripts/ai/eval.mjs --report"
+  ]
+ },
+ {
+  "id": "E7-32",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Decide and implement optional CLI: info and doctor (no add)",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "ai-native",
+   "cli",
+   "optional"
+  ],
+  "problem": "Question whether a CLI is worth it; skills + shipped manifests already give agents offline data.",
+  "value": "`npx @personal-library/react-native-components info <Component>` prints card; `doctor` checks Expo/RN/React peer versions, ThemeProvider presence, ai artifacts. Only if ADR (audit doc) decision D2 = yes.",
+  "scope": [
+   "bin entry package.json -> dist/cli.js, zero runtime deps",
+   "info [name] [--json], doctor [--json]",
+   "`add` NOT included: library is imported, not copied; registry recipes covered by E13-12"
+  ],
+  "outOfScope": [
+   "info Button prints card identical to ai/cards/Button.md",
+   "doctor exits non-zero on fixture with RN 0.70",
+   "CLI adds <50KB to tarball"
+  ],
+  "acceptance": [
+   "E13-10",
+   "E13-19",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "src/cli/**",
+   "tests/cli/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Anything beyond info/doctor/add (scaffolding is E14)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "minor",
+  "semver": [
+   "npm test",
+   "npm run package:dry-run"
+  ]
+ },
+ {
+  "id": "E7-33",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Decide and implement optional MCP server over manifests (read-only)",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "ai-native",
+   "mcp",
+   "optional"
+  ],
+  "problem": "MCP can serve queries (search_components, get_component, get_tokens, list_recipes) but adds a process and install step; value over skills+files is marginal.",
+  "value": "Only build if ADR decision D3 = yes: thin stdio server reading shipped ai/manifests, no network.",
+  "scope": [
+   "packages-free stdio MCP in src/mcp/server.ts (official SDK), 4 read-only tools, responses capped at card budget",
+   "Config snippets for Claude Code/Cursor/Codex in README",
+   "Stay out of shadcn registry-MCP compatibility except via E13-12"
+  ],
+  "outOfScope": [
+   "MCP inspector lists 4 tools; get_component Button equals card",
+   "Server starts offline <500ms",
+   "Response size <= 700 tokens per call (test)"
+  ],
+  "acceptance": [
+   "E13-10",
+   "E13-11",
+   "E13-12",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "src/mcp/**",
+   "tests/mcp/**"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" M returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Write tools, remote hosting"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "M",
+  "size": "minor",
+  "semver": [
+   "npm test"
+  ]
+ },
+ {
+  "id": "E7-34",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add AI-layer docs page and consumer onboarding",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "ai-native",
+   "docs"
+  ],
+  "problem": "Consumers do not know about skills, llms.txt or AGENTS template.",
+  "value": "Discoverable setup: one page, copy-paste commands.",
+  "scope": [
+   "docs/ai.md: install skills, add AGENTS snippet, llms.txt URL, freshness policy, token budget tiers",
+   "Add to mkdocs.yml nav"
+  ],
+  "outOfScope": [
+   "mkdocs nav contains AI page",
+   "All commands on page exist (test greps package scripts and skills list)"
+  ],
+  "acceptance": [
+   "E13-21",
+   "E13-17",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "docs/ai.md",
+   "mkdocs.yml"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" S returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Italian translation (E16)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": "S",
+  "size": "none",
+  "semver": [
+   "node --test tests/scripts/agents-md.test.ts"
+  ]
+ }
+]

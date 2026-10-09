@@ -1,0 +1,1935 @@
+[
+ {
+  "id": "E7-01",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ListItem row primitive with slots, press and a11y",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "list",
+   "primitive"
+  ],
+  "problem": "No standard row (leading/title/subtitle/trailing) exists; apps hand-roll rows with Box/Row/Text.",
+  "value": "Single memoized row used by List, SectionList, NotificationList, Settings screens.",
+  "scope": [
+   "leading/trailing/title/subtitle/meta slots",
+   "pressable with disabled/selected states",
+   "density sm|md|lg",
+   "accessibilityRole button when onPress, minHeight 44",
+   "React.memo with stable default styles"
+  ],
+  "outOfScope": [
+   "Swipe actions",
+   "Selection state management"
+  ],
+  "acceptance": [
+   "ListItem is wrapped in React.memo and does not re-render when parent re-renders with identical props (test with render counter)",
+   "Touch target >= 44dp when pressable",
+   "Supports accessibilityLabel derived from title+subtitle by default",
+   "Does not create new style objects per render for static variants (StyleSheet or memoized)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListItem/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ListItem/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-02",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add List wrapper over FlatList with virtualization defaults",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "list",
+   "performance"
+  ],
+  "problem": "Raw FlatList needs repeated config (keyExtractor, getItemLayout, windowSize, separators, empty/error/loading).",
+  "value": "Safe-by-default virtualized list that cuts boilerplate and agent tokens.",
+  "scope": [
+   "Props: data, renderItem, keyExtractor required or id/key inference with dev warning",
+   "Defaults: initialNumToRender, windowSize 7, maxToRenderPerBatch, removeClippedSubviews on Android",
+   "estimatedItemSize/getItemLayout passthrough",
+   "slots: ListEmpty, ListError, loading skeleton, header/footer",
+   "onEndReached pagination with loadingMore footer",
+   "pull-to-refresh prop",
+   "renderer prop typed ListRenderer for adapter injection (default FlatList)"
+  ],
+  "outOfScope": [
+   "FlashList import (see adapter ticket)",
+   "Sections (SectionList ticket)"
+  ],
+  "acceptance": [
+   "Default props documented in a table and asserted in a test",
+   "Test with 10,000 items: mounted item count never exceeds initialNumToRender + window budget (<= 60) after mount",
+   "renderItem and keyExtractor are not re-created by List internals per render (referential stability test)",
+   "Dev-only warning when keyExtractor missing and items lack id/key",
+   "No ScrollView-with-map fallback path exists (grep)",
+   "Perf budget recorded: 1,000-item list initial render < 100ms on mid-tier Android reference (measure per E12, attach numbers)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-01"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/List/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Defaults tuned for FlatList; may differ for FlashList (handled in adapter)"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/List/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-03",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add SectionList wrapper with sticky headers and A-Z index hook",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "list",
+   "performance"
+  ],
+  "problem": "Grouped lists need separate wrapper config; sticky header theming repeated.",
+  "value": "Themed grouped list sharing List defaults.",
+  "scope": [
+   "Wrap RN SectionList with List defaults",
+   "themed SectionHeader, stickySectionHeadersEnabled default on iOS",
+   "empty/error/loading slots reused from List",
+   "scrollToSection imperative ref"
+  ],
+  "outOfScope": [
+   "Alphabetical side index UI",
+   "FlashList sections"
+  ],
+  "acceptance": [
+   "Test with 5 sections x 2,000 items: mounted rows bounded (<= 60)",
+   "Section header has accessibilityRole header",
+   "Shares default constants with List via exported const (no duplicated magic numbers)",
+   "scrollToSection(i) covered by a test",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/SectionList/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/SectionList/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-04",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add optional FlashList adapter for List via subpath",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "list",
+   "adapter",
+   "dependencies"
+  ],
+  "problem": "FlashList gives large perf wins but must not become a core dependency.",
+  "value": "Opt-in high-perf list without touching core peers.",
+  "scope": [
+   "Adapter implementing ListRenderer using @shopify/flash-list",
+   "Subpath entry (e.g. @personal-library/react-native-components/list-flash)",
+   "Declare as optional peer proposal in package metadata via E14 decision, not edited here",
+   "Doc: install and Expo compatibility notes"
+  ],
+  "outOfScope": [
+   "Editing package.json (E14 owns)",
+   "Making FlashList a default"
+  ],
+  "acceptance": [
+   "Root entry has zero import of @shopify/flash-list (grep src/index.ts and src/components/List)",
+   "Adapter type-checks against ListRenderer contract",
+   "Missing peer produces a clear error message naming the package, tested by mock",
+   "Native dependency gate checklist from peer-dependency-policy.md filled in the ticket evidence",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ListFlashAdapter/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "FlashList v2 API differences; pin compatible range in E14"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ListFlashAdapter/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-05",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Skeleton primitive and SkeletonList presets",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "loading",
+   "skeleton"
+  ],
+  "problem": "Spinner and ProgressBar only; no content-shaped loading states.",
+  "value": "Perceived-performance loading for lists, cards, tables.",
+  "scope": [
+   "Skeleton shapes: rect, circle, text lines",
+   "shimmer via Animated native driver, single shared animated value per group",
+   "reduce-motion respected (static when enabled)",
+   "SkeletonList presets: row, card, avatar+text",
+   "accessibilityState busy, hidden from screen reader per item with one group label"
+  ],
+  "outOfScope": [
+   "Lottie/gradient shimmer (needs deps)"
+  ],
+  "acceptance": [
+   "Shimmer uses useNativeDriver true (grep) and one Animated.Value per SkeletonGroup",
+   "Renders static block when reduce motion enabled (test with mocked AccessibilityInfo)",
+   "SkeletonList of 20 rows mounts without per-row timers (assert no more than 1 animation loop)",
+   "Group exposes single accessibilityLabel 'Loading'",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Skeleton/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Skeleton/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-06",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add EmptyState component with illustration slot and action",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "state",
+   "feedback"
+  ],
+  "problem": "No standard empty view; every list reinvents it.",
+  "value": "Consistent empty/no-results/first-use states.",
+  "scope": [
+   "title, description, icon/illustration slot, primary/secondary action",
+   "variants: empty, no-results, offline",
+   "compact vs full size"
+  ],
+  "outOfScope": [
+   "Illustrations assets"
+  ],
+  "acceptance": [
+   "Action buttons use existing Button",
+   "Title uses Heading, centered in container with flex 1",
+   "accessibilityRole summary-compatible text order (title then description then action) verified by inspection test",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/EmptyState/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/EmptyState/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-07",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ErrorState component with retry and error detail",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "state",
+   "feedback"
+  ],
+  "problem": "No inline error view for failed data loads (Alert is for messages).",
+  "value": "Retryable failure state for lists, tables, charts.",
+  "scope": [
+   "title, message, retry action, optional collapsible technical detail",
+   "variants: inline, fullscreen",
+   "loading state on retry button"
+  ],
+  "outOfScope": [
+   "Error reporting integration"
+  ],
+  "acceptance": [
+   "onRetry fired once per press and button disabled while retrying (test)",
+   "Technical detail hidden by default",
+   "Message announced via accessibilityLiveRegion polite on Android / role alert",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ErrorState/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ErrorState/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-08",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add useDataTable headless model: columns, sort, selection",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "table",
+   "headless",
+   "performance"
+  ],
+  "problem": "Tables need sorting/selection logic separate from rendering for testability.",
+  "value": "Pure TS model reused by view, responsive layout and other UIs.",
+  "scope": [
+   "Column def type (key, header, accessor, sortable, comparator, width, align, priority)",
+   "Hook useDataTable: stable sorted row ids, sort state cycle asc/desc/none, selection (single/multi/all)",
+   "Optional controlled sort/selection",
+   "Pure functions exported for unit testing"
+  ],
+  "outOfScope": [
+   "Rendering",
+   "Server-side pagination UI"
+  ],
+  "acceptance": [
+   "Sorting 50,000 rows completes < 150ms in Node benchmark (attach result)",
+   "Sorted output memoized: same inputs return same array reference (test)",
+   "Stable sort verified (ties keep input order)",
+   "Sort/selection reducers have 100% branch coverage",
+   "No React Native imports in model files (grep) so it runs in plain Node",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/model/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/DataTable/model/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-09",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add DataTable view: virtualized rows, sticky header, horizontal scroll",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "table",
+   "performance"
+  ],
+  "problem": "No table component for RN; ScrollView-based tables collapse at scale.",
+  "value": "Native-friendly table with sticky header on large data.",
+  "scope": [
+   "Render via List with row virtualization",
+   "sticky header (ListHeaderComponent sticky or fixed outside scroll synced to horizontal offset)",
+   "horizontal scroll when columns exceed width, pinned first column option",
+   "sortable header press with aria sort state",
+   "row press/selection, loading skeleton and empty/error slots",
+   "memoized Row and Cell"
+  ],
+  "outOfScope": [
+   "Cell editing",
+   "Column resize/drag reorder",
+   "Grouping"
+  ],
+  "acceptance": [
+   "Test 10,000 rows: mounted rows <= 60",
+   "Header stays visible while body scrolls vertically (render test asserts header outside scroll content or sticky indices)",
+   "Row/Cell are React.memo; sort change does not re-render unaffected rows with unchanged props (render counter test)",
+   "Header cells expose accessibilityRole header and sort state in accessibilityLabel",
+   "Perf budget: 1,000 rows x 8 columns initial render < 150ms reference device (attach numbers)",
+   "Built on useDataTable from E7-08 without duplicating sort logic",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02",
+   "E7-08",
+   "E7-05"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/DataTable.tsx returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Sticky + horizontal sync is platform-sensitive (web vs native); test on iOS and Android"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/DataTable/DataTable.tsx",
+   "src/components/DataTable/index.ts",
+   "src/components/DataTable/view/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-10",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add DataTable responsive mode: collapse columns to cards",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "table",
+   "responsive"
+  ],
+  "problem": "Wide tables are unusable on phones.",
+  "value": "Same data renders as table on wide screens and card list on narrow.",
+  "scope": [
+   "Use useBreakpoint to switch table | card layout",
+   "column priority hides low-priority columns progressively",
+   "card renderer uses DescriptionList pairs",
+   "mode override prop"
+  ],
+  "outOfScope": [
+   "Custom per-breakpoint column templates beyond priority"
+  ],
+  "acceptance": [
+   "Layout switches at breakpoint boundary in a test with mocked useBreakpoint",
+   "Columns with priority above cutoff not rendered (assert)",
+   "Card mode retains sort via a sort control and selection",
+   "Switching mode does not remount the list when data unchanged (key stability test)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-09",
+   "E7-13"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DataTable/responsive/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/DataTable/responsive/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-11",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Stat KPI card with delta, trend and sparkline slot",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "stat",
+   "dashboard"
+  ],
+  "problem": "Dashboards need a KPI tile; Card+Text composition is repeated.",
+  "value": "Standard metric tile.",
+  "scope": [
+   "label, value, unit, delta with direction semantic color (up/down/neutral), helper text",
+   "loading skeleton state",
+   "trend slot accepting Sparkline",
+   "number formatting via Intl-safe util with fallback (Hermes Intl caveat)"
+  ],
+  "outOfScope": [
+   "Chart rendering"
+  ],
+  "acceptance": [
+   "Delta announced with textual direction ('up 4.2%'), not color alone (a11y test)",
+   "Large values truncated with ellipsis and accessibilityLabel holds full value",
+   "Loading state renders Skeleton without layout shift (same height asserted)",
+   "Built on Card; no new color literals",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-05"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Stat/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Stat/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-12",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Timeline component with status nodes and connectors",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "timeline"
+  ],
+  "problem": "No vertical event sequence component.",
+  "value": "Order tracking, activity history, changelogs.",
+  "scope": [
+   "items with title, time, description, icon/status",
+   "connector lines, alignment left/alternate",
+   "last/active/completed states",
+   "renders in List when long (virtualized prop)"
+  ],
+  "outOfScope": [
+   "Horizontal timeline",
+   "Gantt"
+  ],
+  "acceptance": [
+   "Items beyond 100 render via List virtualization when `virtualized` is set (mounted count test)",
+   "Each item exposes accessible label with status text",
+   "Connector line height adapts to content via onLayout-free flex layout (no measured state)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Timeline/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Timeline/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-13",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add DescriptionList for key-value pairs",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "description-list",
+   "layout"
+  ],
+  "problem": "Label/value detail screens are hand-built.",
+  "value": "Composable details view reused by DataTable cards.",
+  "scope": [
+   "items [{label, value}] or compound DescriptionList.Item",
+   "layouts: stacked, inline, grid columns by breakpoint",
+   "copyable hook via consumer onCopy (no clipboard dependency per policy)"
+  ],
+  "outOfScope": [
+   "Clipboard implementation"
+  ],
+  "acceptance": [
+   "No import of expo-clipboard (grep)",
+   "Label/value pairs read together by screen reader (single accessible element per pair)",
+   "Inline layout wraps long values without overlap (render test with long string)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DescriptionList/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/DescriptionList/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-14",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Tree view with expand/collapse and keyboard/a11y",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "tree"
+  ],
+  "problem": "No hierarchical display component.",
+  "value": "File trees, categories, org charts as lists.",
+  "scope": [
+   "nodes with id/children, controlled or uncontrolled expanded set",
+   "flattened visible-node array fed to List for virtualization",
+   "indentation, chevron, selection (single/multi), lazy loadChildren",
+   "accessibilityState expanded"
+  ],
+  "outOfScope": [
+   "Drag and drop",
+   "Checkbox tri-state (E5)"
+  ],
+  "acceptance": [
+   "Flatten function pure, tested with 10,000 nodes in < 50ms",
+   "Collapsed subtrees not mounted (assert)",
+   "Toggling one node re-renders only its row and descendants appearing/disappearing (render counter)",
+   "Rows expose expanded/collapsed accessibilityState",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02",
+   "E7-01"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Tree/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Tree/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-15",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Pager and Carousel with page indicator",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "carousel",
+   "pager"
+  ],
+  "problem": "No paging primitive; carousels rely on third-party deps.",
+  "value": "Zero-dep paging for onboarding, galleries, banners.",
+  "scope": [
+   "Pager: horizontal paging via FlatList/ScrollView pagingEnabled, controlled index",
+   "Carousel: peek, loop-less snap, autoplay optional with pause on touch",
+   "PageIndicator dots",
+   "lazy mount adjacent pages only"
+  ],
+  "outOfScope": [
+   "Infinite loop mode",
+   "Vertical pager",
+   "Parallax"
+  ],
+  "acceptance": [
+   "Only current +/- 1 pages mounted for lazy mode (test with 100 pages)",
+   "Autoplay disabled when reduce motion enabled and on unmount timers cleared (test)",
+   "Indicator exposes 'page X of Y' label",
+   "onIndexChange fires once per settle (no duplicate on momentum events)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Pager/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Pager/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-16",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Image with placeholder, fallback and optional blurhash adapter",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "image",
+   "media"
+  ],
+  "problem": "RN Image lacks loading/error states and consistent sizing.",
+  "value": "Reliable image with progressive placeholder, error fallback, aspect ratio.",
+  "scope": [
+   "Wrapper over RN Image: aspectRatio, resizeMode/fit, loading placeholder (color or Skeleton), error fallback slot, fade-in",
+   "placeholder adapter interface (renderPlaceholder) so blurhash/thumbhash decoders plug in; no decoder bundled",
+   "optional expo-image adapter on subpath",
+   "alt text required prop or decorative flag"
+  ],
+  "outOfScope": [
+   "Bundling blurhash decoder",
+   "Caching layer"
+  ],
+  "acceptance": [
+   "Missing alt without decorative flag logs dev warning and test asserts",
+   "onError switches to fallback and onLoad removes placeholder (test)",
+   "Fade animation uses native driver",
+   "Root and component dir import neither expo-image nor blurhash (grep); adapter lives in subfolder with gate checklist",
+   "Layout does not shift when image loads (aspectRatio reserved)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-05"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Image/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Image/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-17",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Avatar and AvatarGroup with overflow count",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "avatar"
+  ],
+  "problem": "No user identity glyph or stacked group.",
+  "value": "Common social/collab primitive.",
+  "scope": [
+   "Avatar: image via Image component, initials fallback, size scale, status dot",
+   "AvatarGroup: overlap, max with +N, size inherit, spacing",
+   "deterministic color from name via token palette"
+  ],
+  "outOfScope": [
+   "Presence logic"
+  ],
+  "acceptance": [
+   "Initials fallback when image fails (test)",
+   "AvatarGroup with 500 items renders at most max+1 children (assert)",
+   "+N chip has accessibilityLabel 'and N more'",
+   "Colors drawn from theme tokens",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-16"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Avatar/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Avatar/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-18",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Gallery grid and Lightbox viewer",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "gallery",
+   "media"
+  ],
+  "problem": "No photo grid or full-screen viewer.",
+  "value": "Browse media and view fullscreen.",
+  "scope": [
+   "Gallery: virtualized grid (List numColumns) with square tiles",
+   "Lightbox: Modal + Pager, close button, index counter, caption, swipe-down dismiss optional",
+   "zoom via pluggable renderItem (gesture lib optional, not bundled)"
+  ],
+  "outOfScope": [
+   "Pinch zoom implementation",
+   "Video items"
+  ],
+  "acceptance": [
+   "Grid of 2,000 images keeps mounted tiles <= 60",
+   "Lightbox opens at tapped index and Back/hardware close dismisses (test)",
+   "Focus/accessibility: close button labelled, modal announces",
+   "Images use E7-16 Image with placeholder",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02",
+   "E7-15",
+   "E7-16"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Gallery/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Gallery/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-19",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add VideoPlayer shell with controller UI and adapter contract",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "video",
+   "media",
+   "adapter"
+  ],
+  "problem": "Video playback needs native libs; core must stay dep-free.",
+  "value": "UI shell (controls, poster, progress, error) over a MediaEngine interface.",
+  "scope": [
+   "MediaEngine interface (load, play, pause, seek, events)",
+   "VideoPlayer renders poster, play/pause, scrubber, time, fullscreen callback",
+   "state machine idle|loading|playing|paused|error",
+   "controls auto-hide"
+  ],
+  "outOfScope": [
+   "Any engine implementation",
+   "Streaming/DRM",
+   "Captions rendering"
+  ],
+  "acceptance": [
+   "Shell works with a mock MediaEngine in tests covering all states",
+   "No import of expo-av/expo-video in this dir (grep)",
+   "Scrubber has accessibilityRole adjustable with increment/decrement actions",
+   "Controls auto-hide timer cleared on unmount (test)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/VideoPlayer/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/VideoPlayer/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-20",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add AudioPlayer shell with compact and full variants",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "audio",
+   "media"
+  ],
+  "problem": "Same need as video for audio content.",
+  "value": "Reuses MediaEngine contract for podcasts/voice notes.",
+  "scope": [
+   "compact bar and full layout",
+   "play/pause, seek, speed, time",
+   "waveform bar placeholder using View bars (static data prop)"
+  ],
+  "outOfScope": [
+   "Recording",
+   "Background audio session"
+  ],
+  "acceptance": [
+   "Uses MediaEngine from E7-19 only",
+   "Seek adjustable role and speed button labelled",
+   "Waveform of 200 bars renders within one memoized component, no per-bar state",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-19"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/AudioPlayer/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/AudioPlayer/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-21",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add expo-video and expo-av MediaEngine adapters on subpath",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "adapter",
+   "media",
+   "dependencies"
+  ],
+  "problem": "Shells need real engines but expo packages are optional.",
+  "value": "Official adapters keep core zero-native-dep.",
+  "scope": [
+   "Adapter modules createExpoVideoEngine and createExpoAvEngine",
+   "subpath entries; optional peers proposed to E14",
+   "docs for Expo Go support status"
+  ],
+  "outOfScope": [
+   "Editing package.json",
+   "Bundling engines"
+  ],
+  "acceptance": [
+   "Root entry and shell dirs contain no expo-av/expo-video imports (grep)",
+   "Adapters type-check against MediaEngine",
+   "Missing package yields clear error message (mock test)",
+   "Native dependency gate checklist attached",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-19"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/MediaAdapters/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "expo-av deprecation status vs SDK 56; verify before choosing which adapter to ship first"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/MediaAdapters/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-22",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add chart core: scales, ticks, palette and accessible data summary",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "chart",
+   "performance"
+  ],
+  "problem": "Each chart would duplicate scale math and a11y.",
+  "value": "Shared pure-TS foundation across chart components.",
+  "scope": [
+   "linear/band scales, nice ticks, formatters",
+   "categorical palette from tokens with contrast validation",
+   "ChartFrame: title, legend, axes slots, loading/empty/error states",
+   "accessibleSummary generator and optional data-table fallback",
+   "downsample (LTTB) util"
+  ],
+  "outOfScope": [
+   "Rendering of marks"
+  ],
+  "acceptance": [
+   "Scales and ticks have unit tests incl. empty, single-point, negative, equal values",
+   "LTTB reduces 100,000 points to 500 in < 50ms Node benchmark",
+   "Palette: adjacent series colors differ by test-defined contrast threshold in light and dark",
+   "ChartFrame exposes accessibilityLabel summary built from data",
+   "No react-native-svg import (grep) in core files",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-05",
+   "E7-06",
+   "E7-07"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Chart/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Chart/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-23",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add BarChart (pure View) vertical, horizontal and stacked",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "chart",
+   "performance"
+  ],
+  "problem": "Most dashboard charts are bars; no zero-dep option.",
+  "value": "Dependency-free bar charts with animated grow.",
+  "scope": [
+   "vertical/horizontal, grouped, stacked",
+   "value labels, axis, gridlines as Views",
+   "animation via transform scale with native driver",
+   "press handler per bar with tooltip hook"
+  ],
+  "outOfScope": [
+   "SVG rendering",
+   "Zoom/pan"
+  ],
+  "acceptance": [
+   "Renders 200 bars with no more than 3 Views per bar (assert)",
+   "Bars computed in one useMemo keyed by data/size; re-render on unrelated parent update does not recompute (test)",
+   "Animation uses native driver (grep)",
+   "No react-native-svg import (grep)",
+   "Perf budget: 100 bars initial render < 60ms reference device (attach)",
+   "Built on E7-22 scales and ChartFrame",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-22"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/BarChart/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/BarChart/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-24",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Sparkline with View-bar default and line variant",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "chart",
+   "stat"
+  ],
+  "problem": "Inline trend visuals needed in Stat and tables.",
+  "value": "Tiny chart usable in cells.",
+  "scope": [
+   "variants: bars, win-loss (pure View); line via SvgRenderer if provided",
+   "fixed height, no axes, min/max markers",
+   "memoized, cell-safe"
+  ],
+  "outOfScope": [
+   "Interactions"
+  ],
+  "acceptance": [
+   "Renders 50 points under 10ms Node render benchmark (react-test-renderer)",
+   "Default variant imports no svg module (grep)",
+   "accessibilityLabel summarises trend (min, max, last)",
+   "Safe to render 500 times in a DataTable column without layout cost: memoized with stable props test",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-22"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Sparkline/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Sparkline/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-25",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add LineChart and AreaChart via optional react-native-svg",
+  "priority": "High",
+  "labels": [
+   "e7",
+   "chart",
+   "adapter",
+   "dependencies"
+  ],
+  "problem": "Lines/areas/curves cannot be drawn faithfully with Views.",
+  "value": "Production-grade line/area charts as opt-in subpath.",
+  "scope": [
+   "LineChart/AreaChart using react-native-svg Path",
+   "multi-series, curves (monotone), gradient fills, points, crosshair via PanResponder",
+   "LTTB downsample above threshold",
+   "subpath entry; react-native-svg optional peer proposed to E14"
+  ],
+  "outOfScope": [
+   "Core import of svg",
+   "Zoom/pan",
+   "Real-time streaming"
+  ],
+  "acceptance": [
+   "Root entry has no react-native-svg import (grep src/index.ts and E7 core dirs)",
+   "Missing peer yields named error, tested by mock",
+   "10,000-point series renders as <= 1,000 path points after downsampling (assert)",
+   "Single Path per series (no per-point elements) except optional point markers capped at 200",
+   "Crosshair handler throttled; no setState per move beyond rAF (test via spy)",
+   "Native dependency gate checklist attached",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-22"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/LineChart/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "react-native-svg version alignment with Expo SDK 56"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/LineChart/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-26",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add DonutChart and PieChart via optional react-native-svg",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "chart",
+   "adapter"
+  ],
+  "problem": "Proportions need arcs.",
+  "value": "Segmented donut with center label.",
+  "scope": [
+   "arc path generator (pure), segments, center slot, legend",
+   "selected-segment highlight",
+   "subpath shared with E7-25 optional peer"
+  ],
+  "outOfScope": [
+   "3D, exploded pies"
+  ],
+  "acceptance": [
+   "Arc generator unit-tested for 0, 100 and tiny slices (<1%) merge-into-other option",
+   "Segment angles sum to 360 within 1e-6",
+   "Legend text provides values (not color-only)",
+   "No core import of react-native-svg (grep)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-22",
+   "E7-25"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/DonutChart/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/DonutChart/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-27",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add CircularProgress with pure-View default",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "progress"
+  ],
+  "problem": "ProgressBar is only linear.",
+  "value": "Ring progress for goals/loading, no dependency.",
+  "scope": [
+   "determinate ring using two clipped half-circle rotated Views, indeterminate rotation",
+   "size, thickness, center label, color variants matching ProgressBar",
+   "svg-based smooth variant only through E7-25 optional renderer"
+  ],
+  "outOfScope": [
+   "Gradient rings"
+  ],
+  "acceptance": [
+   "Value clamped to 0-100 like ProgressBar (test)",
+   "Role progressbar with accessibilityValue min/max/now",
+   "Animation native driver",
+   "No svg import (grep)",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/CircularProgress/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/CircularProgress/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-28",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ProgressSteps stepper for multi-step flows",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "progress",
+   "steps"
+  ],
+  "problem": "No step indicator for wizards/checkouts.",
+  "value": "Horizontal and vertical step tracker.",
+  "scope": [
+   "steps with label/status (complete, current, upcoming, error)",
+   "orientation, compact mode on small breakpoints",
+   "press to navigate completed steps optional"
+  ],
+  "outOfScope": [
+   "Wizard navigation logic"
+  ],
+  "acceptance": [
+   "Current step has accessibilityState selected and 'step X of Y' label",
+   "Compact mode switches via useBreakpoint (test)",
+   "Error state uses icon/text, not color alone",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/ProgressSteps/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/ProgressSteps/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-29",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Calendar month grid with range and marked dates",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "calendar",
+   "date"
+  ],
+  "problem": "No date grid; date libs are heavy.",
+  "value": "Dependency-free month view for pickers and agendas.",
+  "scope": [
+   "pure date utils (no moment/date-fns), locale via Intl with fallback",
+   "single/range selection, min/max, disabled dates, marked dots",
+   "week start prop, today highlight",
+   "month change callbacks"
+  ],
+  "outOfScope": [
+   "Time picker (E5)",
+   "Recurring events"
+  ],
+  "acceptance": [
+   "Date utils unit-tested across month/leap/DST boundaries and week start 0 and 1",
+   "Grid 6x7 cells memoized; selecting a day re-renders only affected cells (render counter)",
+   "Cells have accessibilityLabel full date and selected state",
+   "Arrow keys/focus on web not required; touch target >= 44dp",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Calendar/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Calendar/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-30",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Agenda list grouped by day",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "calendar",
+   "list"
+  ],
+  "problem": "Event schedules need grouped day list.",
+  "value": "Agenda view over SectionList with day headers.",
+  "scope": [
+   "events grouped by date, all-day vs timed, empty day handling",
+   "scrollToDate",
+   "optional connection to Calendar marked dates via callback"
+  ],
+  "outOfScope": [
+   "Event creation/drag",
+   "Recurrence"
+  ],
+  "acceptance": [
+   "Built on SectionList wrapper (E7-03); 2,000 events mounted rows bounded",
+   "scrollToDate unit-tested",
+   "Event rows use ListItem",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-03",
+   "E7-01",
+   "E7-29"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Agenda/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Agenda/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-31",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add Markdown renderer for a safe subset without dependencies",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "markdown",
+   "richtext"
+  ],
+  "problem": "AI and CMS content arrives as markdown; no renderer.",
+  "value": "Zero-dep renderer for headings, emphasis, lists, code, links, quotes.",
+  "scope": [
+   "tokenizer to AST (pure) and renderer using Text/Heading/CodeInline/Quote/Link",
+   "links via Link adapter, images via Image",
+   "no HTML, sanitized URLs (allow http, https, mailto)",
+   "custom component overrides map"
+  ],
+  "outOfScope": [
+   "Tables, footnotes, HTML, MDX",
+   "Streaming incremental parse (follow-up)"
+  ],
+  "acceptance": [
+   "javascript: and data: URLs rejected (test)",
+   "Parser handles 100KB document < 100ms Node (attach)",
+   "Unsupported syntax degrades to plain text, never throws (fuzz test over 1,000 random strings)",
+   "Headings expose header role; links expose link role",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/Markdown/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Scope creep toward CommonMark compliance; define supported subset in docs"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/Markdown/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-32",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add ChatBubble and MessageList with inverted virtualization",
+  "priority": "Medium",
+  "labels": [
+   "e7",
+   "chat",
+   "list",
+   "performance"
+  ],
+  "problem": "Chat UIs are common (AI-native apps) and tricky to virtualize.",
+  "value": "Message bubble and list with grouping, timestamps, typing indicator.",
+  "scope": [
+   "ChatBubble: own/other, status (sending, sent, failed), slots for Markdown",
+   "MessageList on List with inverted, keep-scroll-position on prepend, scroll-to-bottom button",
+   "typing indicator, date separators",
+   "auto-scroll only when near bottom"
+  ],
+  "outOfScope": [
+   "Composer input (E5)",
+   "Attachments upload",
+   "Realtime transport"
+  ],
+  "acceptance": [
+   "10,000 messages keep mounted <= 60",
+   "Appending a message does not re-render existing bubbles (render counter)",
+   "Auto-scroll suppressed when user scrolled up >1 screen (test)",
+   "Failed bubble exposes retry action with label",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-02",
+   "E7-31"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/MessageList/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/MessageList/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E7-33",
+  "epic": "E7",
+  "type": "Task",
+  "title": "Add NotificationList with grouping, read state and actions",
+  "priority": "Low",
+  "labels": [
+   "e7",
+   "notifications",
+   "list"
+  ],
+  "problem": "Notification feeds recur in apps.",
+  "value": "Feed built on List/ListItem with unread semantics.",
+  "scope": [
+   "items with icon/avatar, title, body, time, unread dot",
+   "group by Today/Earlier via SectionList",
+   "mark read, dismiss callbacks",
+   "empty state"
+  ],
+  "outOfScope": [
+   "Push notifications (E8)",
+   "Swipe gestures"
+  ],
+  "acceptance": [
+   "Unread state announced in accessibilityLabel",
+   "Grouping util unit-tested with timezone-boundary cases",
+   "Built on E7-03 and E7-01; 5,000 items bounded mount",
+   "Typed props exported from the component index.ts; `npx tsc --noEmit` passes with strict mode",
+   "Renders under light and dark ThemeProvider using tokens only (no hard-coded colors); verified by a rendered example",
+   "Ships an example and catalog entry data (props table source) at demo maturity per brief"
+  ],
+  "dependencies": [
+   "E7-03",
+   "E7-01",
+   "E7-06"
+  ],
+  "validation": [
+   "npx tsc --noEmit",
+   "unit/render tests per E12 harness for new component",
+   "grep -R \"from 'react-native-svg'\\|expo-\" src/components/NotificationList/** returns no match unless ticket scope states an optional adapter"
+  ],
+  "evidence": [
+   "tsc output",
+   "test output",
+   "screenshot or render snapshot of main states, light and dark"
+  ],
+  "risks": [
+   "Barrel/subpath wiring in src/index.ts is owned by E14; this ticket exports only from its own index.ts"
+  ],
+  "dod": [
+   "Acceptance met",
+   "Example + catalog data present",
+   "No new runtime dependency in core (peer policy PLRNUI-44)"
+  ],
+  "filesTouched": [
+   "src/components/NotificationList/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ }
+]

@@ -1,0 +1,1738 @@
+[
+  {
+    "id": "E8-01",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Define native adapter contract: CapabilityProvider and registry",
+    "priority": "High",
+    "labels": [
+      "native",
+      "architecture",
+      "adapter",
+      "contract"
+    ],
+    "problem": "No shared way exists to expose device APIs without hard native deps; src/index.ts has ad-hoc adapters (LinkRouterAdapter, ThemeStorageAdapter) and clipboard-dependency-strategy.md only sketches ClipboardAdapter.",
+    "value": "One deterministic pattern (provider + registry + noop fallbacks) that all E8 adapters, tests and web share; cuts per-feature boilerplate.",
+    "scope": [
+      "CapabilityMap interface (module-augmentable) keyed by capability id",
+      "CapabilityAdapter<T> {id, status:'available'|'unavailable'|'noop', api:T}",
+      "createCapabilityRegistry(), CapabilityProvider, useCapability(id), useCapabilityStatus(id)",
+      "Resolution order: provider adapter > registry default > RN-core fallback > noop (never throws)",
+      "defineExpoAdapter helper: structural module types (no expo type imports) + optional lazyRequire(loader) wrapper that catches missing module",
+      "createNoopAdapters()",
+      "Contract doc in JSDoc + src/native/core/README.md"
+    ],
+    "outOfScope": [
+      "Concrete capability adapters",
+      "package.json/exports changes (E8-02)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "useCapability returns a noop api with status 'noop' when no provider is mounted (test)",
+      "Missing optional module yields status 'unavailable', never a thrown error (test with throwing loader)",
+      "Provider nesting: inner overrides outer per-id (test)",
+      "Module augmentation of CapabilityMap type-checks in tests/native/core/contract.types.ts",
+      "src/native/core imports only react and react-native (grep check)"
+    ],
+    "dependencies": [],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Over-generic contract; keep to <150 LOC runtime",
+      "Augmentation may fragment types; document naming rule"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/core/**",
+      "tests/native/core/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-02",
+    "epic": "E14",
+    "type": "Task",
+    "title": "Add /native/* subpath exports, ADR and import-boundary check",
+    "priority": "High",
+    "labels": [
+      "native",
+      "architecture",
+      "packaging",
+      "adr"
+    ],
+    "problem": "package.json exports only has '.' and './package.json'; native-dependency-gate.md requires ADR when public API is split to isolate optional native features, and breaking-change register update.",
+    "value": "Guarantees root import stays native-free while adapters ship from subpaths.",
+    "scope": [
+      "exports wildcards: './native' , './native/*' and './native/*/expo' -> dist types/js",
+      "tsconfig.build.json emits src/native/**",
+      "ADR docs/adr/native-adapter-contract.md (subpath vs optional peer decision; recommends no peerDependenciesMeta)",
+      "scripts/check-native-boundaries.mjs: fails if src/index.ts transitive graph reaches src/native/**/expo.* or imports expo-*/react-native-safe-area-context/async-storage/netinfo",
+      "Update audit/migration/breaking-change-register.md entry as 'additive, no break'"
+    ],
+    "outOfScope": [
+      "Writing adapters",
+      "Choosing final entry naming for Texo cutover (E15)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "npm pack --dry-run lists dist/native/** files",
+      "Node resolution test: import('@personal-library/react-native-components/native/haptics') resolves types and js from packed tarball",
+      "Boundary script exits 1 on a fixture that imports expo-haptics from src/index.ts, 0 on the repo",
+      "ADR file exists with Decision, Expo Go, managed, prebuild, bare, alternatives sections from the gate checklist",
+      "Root package still declares only react and react-native peers"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "package.json is shared with E14 tickets; coordinate: only the exports block here"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "package.json",
+      "tsconfig.build.json",
+      "scripts/check-native-boundaries.mjs",
+      "docs/adr/native-adapter-contract.md",
+      "audit/migration/breaking-change-register.md"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-03",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Ship /native/testing mock adapters and renderWithCapabilities",
+    "priority": "High",
+    "labels": [
+      "native",
+      "testing",
+      "mock"
+    ],
+    "problem": "Tests that touch device APIs are non-deterministic or need jest-style native mocks; repo uses node:test with a react-native loader.",
+    "value": "Deterministic native tests for library and consumers with one import.",
+    "scope": [
+      "createMockAdapters(overrides) with call recording (jest-free spies) for every capability id",
+      "renderWithCapabilities(ui, adapters)",
+      "controllable fake clock/state emitters (setNetwork, setAppState, setKeyboard, setPermission)",
+      "Mocks typed against CapabilityMap so new capabilities fail typecheck until mocked"
+    ],
+    "outOfScope": [
+      "Real device tests",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Every CapabilityMap key has a mock (type-level exhaustiveness test)",
+      "Mock calls are recorded and resettable (test)",
+      "Zero imports of expo-* in src/native/testing (grep)",
+      "Works under npm test node:test runner"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/testing/**",
+      "tests/native/testing/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-04",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add appearance and color-scheme hooks with theme system-mode bridge",
+    "priority": "High",
+    "labels": [
+      "native",
+      "appearance",
+      "hooks",
+      "rn-core"
+    ],
+    "problem": "ThemeMode is only 'light'|'dark'; consumers hand-wire Appearance and flicker on first paint.",
+    "value": "useColorScheme + useSystemThemeMode remove the most common theme boilerplate.",
+    "scope": [
+      "useColorScheme() over RN Appearance with 'light' fallback",
+      "useSystemThemeMode() returning ThemeMode, plus resolveThemeMode('system'|ThemeMode)",
+      "Web: matchMedia via RN-web Appearance, SSR-safe default",
+      "Mock override through CapabilityMap 'appearance'"
+    ],
+    "outOfScope": [
+      "Changing ThemeProvider props (E2 owns theme)",
+      "expo-system-ui (E8-12)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Hook reacts to Appearance change listener (test with mock)",
+      "resolveThemeMode('system') maps null scheme to light (test)",
+      "No new dependency; imports only react-native",
+      "Documented ThemeProvider usage snippet compiles in contracts test"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/appearance/**",
+      "tests/native/appearance/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-05",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add accessibility preference hooks: reduced motion, transparency, screen reader, font scale",
+    "priority": "High",
+    "labels": [
+      "native",
+      "accessibility",
+      "hooks",
+      "rn-core"
+    ],
+    "problem": "No central hooks for reduce motion, reduce transparency, bold text, screen reader or font scale; E3 motion and E9 a11y need a single source.",
+    "value": "Single deterministic source feeding motion, blur/glass and typography components.",
+    "scope": [
+      "useReducedMotion, useReduceTransparency, useScreenReaderEnabled, useBoldText, useGrayscale/invertColors where RN exposes them",
+      "useFontScale() + useDynamicTypeStyle(base, {max}) clamping via PixelRatio.getFontScale and AccessibilityInfo",
+      "useAccessibilityPreferences() aggregate",
+      "Web: matchMedia prefers-reduced-motion / prefers-reduced-transparency, others false"
+    ],
+    "outOfScope": [
+      "Implementing motion behaviors (E3)",
+      "Changing Text component (E4)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Each hook subscribes and unsubscribes to the AccessibilityInfo event (test with mock emitter)",
+      "useDynamicTypeStyle clamps fontSize*scale to max (table test)",
+      "Unsupported platform values default to false without throwing",
+      "Mock capability 'accessibility' drives all hooks in tests"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "API availability differs iOS/Android; guard each call"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/accessibility/**",
+      "tests/native/accessibility/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-06",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add app-state hooks: useAppState, useOnForeground, useIsAppActive",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "app-state",
+      "hooks",
+      "rn-core"
+    ],
+    "problem": "Refresh-on-resume and pause-on-background logic is rewritten per app.",
+    "value": "Three tiny hooks replace repeated AppState subscription code.",
+    "scope": [
+      "useAppState(), useIsAppActive(), useOnForeground(cb), useOnBackground(cb)",
+      "Web: document.visibilitychange mapped to active/background",
+      "Capability id 'appState' for mock injection"
+    ],
+    "outOfScope": [
+      "Navigation focus (router-owned)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Callbacks fire only on transitions (test)",
+      "Listener removed on unmount (test)",
+      "Web mapping verified via mock visibility emitter",
+      "No dependency added"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/app-state/**",
+      "tests/native/app-state/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-07",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add network status adapter and useNetworkStatus hook",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "network",
+      "adapter",
+      "hooks"
+    ],
+    "problem": "Offline UI requires picking netinfo or expo-network and wiring subscriptions manually.",
+    "value": "One hook, three backends, deterministic offline tests.",
+    "scope": [
+      "NetworkAdapter {getState, subscribe}; NetworkState {isConnected, isInternetReachable, type}",
+      "Web fallback built-in: navigator.onLine + online/offline events",
+      "Expo adapter /native/network/expo wrapping expo-network (injected module) ; netinfo adapter variant wrapping @react-native-community/netinfo",
+      "useNetworkStatus(), useIsOnline()",
+      "Without adapter on native: status 'noop' with isConnected null (unknown), never assumes online false"
+    ],
+    "outOfScope": [
+      "Offline queue / retry (app concern)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Unknown state is null not false (test)",
+      "Subscribe/unsubscribe lifecycle tested with mock",
+      "expo adapter file type-checks without expo-network installed (structural types)",
+      "Boundary script passes"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/network/**",
+      "tests/native/network/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-08",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add orientation and window metrics hooks",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "orientation",
+      "hooks",
+      "rn-core"
+    ],
+    "problem": "E10 needs orientation; useBreakpoint exists but no orientation/window-size/scale hook set; orientation lock needs expo-screen-orientation.",
+    "value": "Orientation awareness with optional lock, without boilerplate.",
+    "scope": [
+      "useOrientation(): 'portrait'|'landscape'; useWindowMetrics() {width,height,scale,fontScale}",
+      "OrientationLockAdapter wrapping expo-screen-orientation (/native/orientation/expo) with lock/unlock",
+      "No lock capability on web/Expo-less: lock() resolves false with status 'noop'",
+      "Compose with existing useBreakpoint without modifying it"
+    ],
+    "outOfScope": [
+      "Responsive layout primitives (E10)",
+      "Editing src/hooks/useBreakpoint.ts",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Orientation derived from Dimensions change (test with mock)",
+      "lock() on noop adapter resolves false and does not throw",
+      "Existing useBreakpoint tests unchanged and passing",
+      "Expo adapter structurally typed, no expo-screen-orientation import at type level"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/orientation/**",
+      "tests/native/orientation/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-09",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add device info and platform helpers with Expo Go detection",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "device",
+      "platform"
+    ],
+    "problem": "src/utils/platform.ts only has isWeb/isIOS/isAndroid; consumers need model, OS version, tablet, Expo Go and emulator flags.",
+    "value": "Single usePlatformInfo()/getPlatformInfo() for branching without importing expo-device/constants.",
+    "scope": [
+      "PlatformInfo {os, osVersion, isTablet, isEmulator, isExpoGo, isWeb, hasNotch?}",
+      "Core fields from RN Platform (always available); enriched fields from optional DeviceInfoAdapter (expo-device / expo-constants injected)",
+      "isExpoGo via adapter else null (unknown)",
+      "Does not modify src/utils/platform.ts"
+    ],
+    "outOfScope": [
+      "Replacing src/utils/platform.ts (E14)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Without adapter, enriched fields are null and core fields are filled (test)",
+      "Adapter overrides core fields only when provided (test)",
+      "Web returns os 'web' and userAgent-based isTablet false default",
+      "No dependency added"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/device/**",
+      "tests/native/device/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-10",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add keyboard hooks and keyboard-avoiding/dismiss-on-tap primitives",
+    "priority": "High",
+    "labels": [
+      "native",
+      "keyboard",
+      "primitives",
+      "rn-core"
+    ],
+    "problem": "Forms re-implement KeyboardAvoidingView platform behaviours and tap-outside dismissal; existing Input/Textarea do not.",
+    "value": "Reliable form screens in two lines; foundation for E5 forms.",
+    "scope": [
+      "useKeyboard() {visible, height, duration}; useKeyboardVisible()",
+      "KeyboardAvoidingContainer (RN KeyboardAvoidingView with platform-correct behavior, offset prop, theme-aware)",
+      "DismissKeyboardView (Pressable/TouchableWithoutFeedback wrapper, keyboardShouldPersistTaps-safe)",
+      "dismissKeyboard() helper; web is a no-op avoiding view"
+    ],
+    "outOfScope": [
+      "Third-party react-native-keyboard-controller (rejected, see proposals)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "useKeyboard reflects show/hide mock events incl. iOS keyboardWillShow (test)",
+      "DismissKeyboardView calls Keyboard.dismiss on outside press, not on child press (test)",
+      "Behavior default is 'padding' iOS, 'height' Android (render test)",
+      "Components documented as primitives with accessibilityRole untouched"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/keyboard/**",
+      "tests/native/keyboard/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-11",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add safe-area adapter with RN-core fallback and useInsets hook",
+    "priority": "High",
+    "labels": [
+      "native",
+      "safe-area",
+      "adapter"
+    ],
+    "problem": "safe-area-provider-dependency-contract.md defers safe-area; ThemeAppShell has no insets, consumers compose it manually.",
+    "value": "useInsets() works with or without react-native-safe-area-context; unblocks app-shell E6 without a hard dep.",
+    "scope": [
+      "SafeAreaAdapter {useInsets(), Provider?, Consumer view}; /native/safe-area/expo wrapping react-native-safe-area-context (injected)",
+      "Fallback: insets from StatusBar.currentHeight (Android) + iOS conservative zero, status 'noop'; web uses env(safe-area-inset-*) via style helper",
+      "SafeAreaView-like primitive SafeAreaBox applying edges prop with adapter insets",
+      "Explicit statement of non-goal: no change to ThemeProvider (PLRNUI-28 contract)"
+    ],
+    "outOfScope": [
+      "Modifying ThemeAppShell (E6 consumes this)",
+      "Adding react-native-safe-area-context to package.json",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Without adapter useInsets returns zeros and status 'noop' (test)",
+      "With mock adapter insets propagate to SafeAreaBox padding by edges (test)",
+      "grep shows no import of react-native-safe-area-context outside src/native/safe-area/expo.ts, and that file uses injection/lazyRequire only",
+      "Contract doc notes PLRNUI-37/28 compatibility"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Duplicate insets provider if consumer already mounts SafeAreaProvider; document no-double-provider rule"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/safe-area/**",
+      "tests/native/safe-area/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-12",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add status bar and system UI sync (useSystemBars)",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "status-bar",
+      "system-ui"
+    ],
+    "problem": "Dark/light theme switching leaves status bar style, Android navigation bar and root view background mismatched.",
+    "value": "useSystemBars(theme) applies correct style in one call.",
+    "scope": [
+      "StatusBar from RN core: <ThemedStatusBar/> choosing barStyle from ThemeMode",
+      "SystemUiAdapter wrapping expo-system-ui setBackgroundColorAsync and expo-navigation-bar (injected, optional, Android)",
+      "useSystemBars({mode, backgroundColor}) effect; web sets meta theme-color",
+      "All steps best-effort; failures swallowed with dev-only warning"
+    ],
+    "outOfScope": [
+      "Edge-to-edge config (app.json, consumer)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "ThemedStatusBar maps dark mode to 'light-content' (render test)",
+      "Adapter errors do not throw (test with rejecting mock)",
+      "Web path sets meta theme-color via injected document mock",
+      "No dependency added"
+    ],
+    "dependencies": [
+      "E8-01",
+      "E8-04"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/system-ui/**",
+      "tests/native/system-ui/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-13",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add haptics adapter: useHaptics with expo-haptics and Vibration fallback",
+    "priority": "High",
+    "labels": [
+      "native",
+      "haptics",
+      "adapter"
+    ],
+    "problem": "No feedback layer; consumers import expo-haptics per component.",
+    "value": "Semantic haptics (selection, success, warning, error, impact levels) behind one hook.",
+    "scope": [
+      "HapticsAdapter {impact(level), notification(type), selection()}",
+      "/native/haptics/expo wraps expo-haptics (injected or lazyRequire)",
+      "Fallback Android: RN Vibration short patterns; iOS without module: noop; web: navigator.vibrate if present else noop",
+      "useHaptics(); global enable flag + respects reduce-motion preference (E8-05 optional)"
+    ],
+    "outOfScope": [
+      "Pressable integration (E8-14)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Semantic call maps to expected expo-haptics method (mock table test)",
+      "Noop path resolves without throwing on web and when module missing",
+      "Global disable flag suppresses all calls (test)",
+      "Boundary script passes"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/haptics/**",
+      "tests/native/haptics/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-14",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add HapticPressable and useHapticPress for haptic-feedback in Pressable",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "haptics",
+      "primitives",
+      "interaction"
+    ],
+    "problem": "Adding haptics to every Pressable/Button means repeated onPressIn wiring.",
+    "value": "Opt-in haptic prop with zero overhead when disabled; consumed later by Button/Switch/Checkbox.",
+    "scope": [
+      "HapticPressable (drop-in Pressable) with haptic?: 'selection'|'light'|'medium'|'success'|... and hapticOn?: 'pressIn'|'press'",
+      "useHapticPress(handlers, kind) returning merged handlers",
+      "Documented integration recipe for Button/Switch/Checkbox (E1 owns actual wiring)"
+    ],
+    "outOfScope": [
+      "Editing src/components/** (E1)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Haptic fires once per press on configured phase (test)",
+      "User onPress/onPressIn still called with original event (test)",
+      "Disabled/ loading Pressable fires no haptic (test)",
+      "Renders with no CapabilityProvider mounted"
+    ],
+    "dependencies": [
+      "E8-01",
+      "E8-13"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/haptic-pressable/**",
+      "tests/native/haptic-pressable/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-15",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add clipboard adapter and useCopyToClipboard (expo-clipboard, web, noop)",
+    "priority": "High",
+    "labels": [
+      "native",
+      "clipboard",
+      "adapter"
+    ],
+    "problem": "clipboard-dependency-strategy.md defines ClipboardAdapter but nothing implements it.",
+    "value": "Copy buttons and 'copied' feedback without boilerplate; honors PLRNUI-39.",
+    "scope": [
+      "ClipboardAdapter exactly {setString, getString?} per strategy doc",
+      "/native/clipboard/expo wraps expo-clipboard via injection (Clipboard.setStringAsync/getStringAsync)",
+      "Web adapter: navigator.clipboard with execCommand fallback",
+      "useCopyToClipboard({resetMs}) -> {copy, copied, error}"
+    ],
+    "outOfScope": [
+      "CopyButton visual component (E1/E4)",
+      "Any package.json change (PLRNUI-39 forbids expo-clipboard in all sections)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Core files contain no 'expo-clipboard' string except src/native/clipboard/expo.ts using structural injection",
+      "copied resets after resetMs (fake timer test)",
+      "No adapter => copy resolves false, error null, status 'noop'",
+      "Strategy doc checklist items all satisfied"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/clipboard/**",
+      "tests/native/clipboard/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-16",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add share adapter and useShare (RN Share and web navigator.share)",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "share",
+      "adapter",
+      "rn-core"
+    ],
+    "problem": "Share sheet code differs per platform and web.",
+    "value": "One call with typed result.",
+    "scope": [
+      "ShareAdapter.share({message,url,title}) -> {action:'shared'|'dismissed'|'unsupported'}",
+      "Default RN Share.share; web navigator.share with copy-link fallback hook",
+      "No Expo package needed (expo-sharing intentionally excluded; file sharing documented as rejected/consumer-owned)"
+    ],
+    "outOfScope": [
+      "File sharing (expo-sharing)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Maps RN dismissedAction to 'dismissed' (test)",
+      "Web unsupported returns 'unsupported' not throw",
+      "useShare exposes pending state",
+      "No dependency added"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/share/**",
+      "tests/native/share/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-17",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add linking helpers: openURL, canOpen, deep-link parsing, router bridge",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "linking",
+      "deep-link",
+      "adapter"
+    ],
+    "problem": "Link component has LinkRouterAdapter but no safe openURL with mailto/tel/maps handling or deep-link parsing.",
+    "value": "Safe external opening and typed deep links reusing existing LinkRouterAdapter.",
+    "scope": [
+      "useOpenURL(): validates scheme allowlist, uses RN Linking, web window.open noopener",
+      "LinkingAdapter optionally wrapping expo-linking (createURL, parse) and expo-web-browser (in-app browser) via injection",
+      "parseDeepLink(url, patterns) pure function; useInitialURL(), useURLListener()",
+      "toLinkRouterAdapter(linking) adapter producing existing LinkRouterAdapter"
+    ],
+    "outOfScope": [
+      "Router implementation (expo-router stays consumer-owned)",
+      "Editing src/components/Link",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Disallowed schemes (javascript:) rejected (test)",
+      "parseDeepLink table tests incl. params and query",
+      "Result type is compatible with LinkRouterAdapter (type test)",
+      "In-app browser falls back to Linking when module missing"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/linking/**",
+      "tests/native/linking/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-18",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add back-handler hook with prioritized layer stack",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "back-handler",
+      "hooks",
+      "overlays"
+    ],
+    "problem": "Modal, BottomSheet, Popover each need hardware-back handling; ordering conflicts are unsolved.",
+    "value": "One stack: topmost overlay consumes back first.",
+    "scope": [
+      "useBackHandler(handler, {enabled, priority})",
+      "BackLayerProvider stack (id, priority) built on RN BackHandler",
+      "iOS/web: noop (web optional popstate off by default)",
+      "Documented recipe for Modal/BottomSheet (E6 wires)"
+    ],
+    "outOfScope": [
+      "Editing overlay components (E6)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Highest priority handler wins, others not called (test)",
+      "Falls through to default exit when no handler returns true",
+      "Removes subscription on unmount (test)",
+      "Works without provider using module-level fallback stack"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/back-handler/**",
+      "tests/native/back-handler/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-19",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Define usePermission API and PermissionAdapter pattern",
+    "priority": "High",
+    "labels": [
+      "native",
+      "permissions",
+      "adapter",
+      "contract"
+    ],
+    "problem": "Each Expo module reports permissions differently; apps duplicate request/denied/blocked UI logic.",
+    "value": "Unified status model and hook.",
+    "scope": [
+      "PermissionKind: camera|location|notifications|mediaLibrary|microphone|contacts (augmentable)",
+      "PermissionState 'undetermined'|'granted'|'denied'|'blocked'|'limited'|'unavailable'",
+      "PermissionAdapter {check, request, openSettings?}",
+      "usePermission(kind) -> {status, request, openSettings, canAskAgain, isLoading}; refreshes on app foreground (E8-06 compatible)",
+      "mapExpoPermission(response) normalizer (pure)",
+      "Capability id 'permissions' with per-kind adapters"
+    ],
+    "outOfScope": [
+      "Concrete Expo adapters (E8-20)",
+      "Permission rationale UI component",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "mapExpoPermission table test: granted/denied+canAskAgain/denied+!canAskAgain->blocked/limited",
+      "Unregistered kind resolves 'unavailable' with request() resolving same",
+      "openSettings falls back to Linking.openSettings",
+      "Mock setPermission drives hook in tests"
+    ],
+    "dependencies": [
+      "E8-01",
+      "E8-06"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/permissions/**",
+      "tests/native/permissions/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-20",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add Expo permission adapters: camera, media library, location, notifications",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "permissions",
+      "expo",
+      "adapter"
+    ],
+    "problem": "Normalizing four Expo permission APIs by hand is error prone.",
+    "value": "Drop-in adapters for the unified usePermission.",
+    "scope": [
+      "/native/permissions-expo exports createExpoCameraPermission, createExpoMediaLibraryPermission, createExpoLocationPermission, createExpoNotificationsPermission",
+      "Each takes injected module (expo-camera, expo-media-library, expo-location, expo-notifications) with structural types",
+      "Document Expo Go limits (remote push on Android, media library scope) and config-plugin keys required by consumer"
+    ],
+    "outOfScope": [
+      "Camera view / location tracking / notification scheduling (rejected)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Each adapter maps module responses via mapExpoPermission (mock test)",
+      "Module absent => adapter factory returns status 'unavailable' adapter",
+      "No expo-* package in package.json",
+      "Docs table lists Expo Go support per module with verified SDK 57 note"
+    ],
+    "dependencies": [
+      "E8-19"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Expo Go support for notifications/media-library is partial and changes by SDK; verify in E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/permissions-expo/**",
+      "tests/native/permissions-expo/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-21",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add image picker/camera adapter, useImagePicker and ImagePickerField",
+    "priority": "High",
+    "labels": [
+      "native",
+      "media",
+      "forms",
+      "adapter"
+    ],
+    "problem": "Avatar and attachment fields repeat expo-image-picker permission, cancel and result-shape code.",
+    "value": "Form-ready image field integrated with FormField.",
+    "scope": [
+      "ImagePickerAdapter {pickFromLibrary, takePhoto} returning normalized {uri,width,height,mimeType,fileSize}[] or cancelled",
+      "/native/image-picker/expo wraps expo-image-picker (injected)",
+      "useImagePicker({multiple, quality}) coupled to usePermission",
+      "ImagePickerField (value/onChange, FormField label/error, thumbnail, remove) with theme tokens",
+      "Web: <input type=file accept=image/*> adapter"
+    ],
+    "outOfScope": [
+      "Cropping/editing UI",
+      "Upload logic",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Cancel returns {cancelled:true} without error (test)",
+      "Denied/blocked permission surfaces status and no picker call (test)",
+      "ImagePickerField renders states: empty, filled, error, disabled (render tests)",
+      "Works with mock adapter only; Expo adapter structurally typed"
+    ],
+    "dependencies": [
+      "E8-19"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/image-picker/**",
+      "tests/native/image-picker/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-22",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add document picker adapter and DocumentPickerField",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "media",
+      "forms",
+      "adapter"
+    ],
+    "problem": "File attachment fields require expo-document-picker result normalization.",
+    "value": "Typed file field for forms.",
+    "scope": [
+      "DocumentPickerAdapter.pick({types, multiple}) -> normalized files",
+      "/native/document-picker/expo wraps expo-document-picker (injected)",
+      "Web <input type=file> adapter",
+      "DocumentPickerField with file chip list, size/type validation props"
+    ],
+    "outOfScope": [
+      "Uploads, previews",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Normalizes {canceled, assets} to library shape (test)",
+      "Rejects files over maxSize with validation error (test)",
+      "Renders empty/filled/error/disabled (render tests)",
+      "No permission needed path documented"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/document-picker/**",
+      "tests/native/document-picker/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-23",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add storage adapters: memory, async-storage, secure-store, web, useStoredState",
+    "priority": "High",
+    "labels": [
+      "native",
+      "storage",
+      "adapter",
+      "security"
+    ],
+    "problem": "ThemeStorageAdapter exists but there is no ready backend; secure vs non-secure storage is conflated.",
+    "value": "Drop-in persistence for theme and app state; secure values never silently downgraded.",
+    "scope": [
+      "StorageAdapter {getItem,setItem,removeItem} structurally assignable to ThemeStorageAdapter (type test)",
+      "createMemoryStorage, createWebStorage (localStorage guarded)",
+      "/native/storage/async-storage wraps @react-native-async-storage (injected); /native/storage/secure-store wraps expo-secure-store with kind:'secure'",
+      "Secure adapter has no web fallback: unavailable on web unless explicit allowInsecureWeb",
+      "useStoredState(key, default, {storage, serialize}) with hydrated flag"
+    ],
+    "outOfScope": [
+      "Encryption library",
+      "Modifying ThemeProvider",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Each adapter passes a shared conformance suite run against mock backends",
+      "ThemeStorageAdapter assignability type test passes",
+      "Secure adapter on web without flag returns status 'unavailable' (test)",
+      "useStoredState exposes hydrated=false until read resolves (test)"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Privacy-sensitive: Risk Assessment required by gate for secure storage; attach to this ticket"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/storage/**",
+      "tests/native/storage/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-24",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add biometric prompt adapter and useBiometricPrompt",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "biometrics",
+      "adapter",
+      "security"
+    ],
+    "problem": "expo-local-authentication results/errors are bespoke per app; iOS Face ID needs config.",
+    "value": "Normalized authenticate() with enrolled/hardware checks.",
+    "scope": [
+      "BiometricAdapter {isAvailable, authenticate({reason, fallbackToPasscode})} -> {success, error:'cancelled'|'notEnrolled'|'lockout'|'unavailable'}",
+      "/native/biometrics/expo wraps expo-local-authentication (injected)",
+      "Web/noop: isAvailable false, authenticate resolves unavailable",
+      "useBiometricPrompt() hook with loading state"
+    ],
+    "outOfScope": [
+      "Credential storage (E8-23)",
+      "WebAuthn",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Error codes mapped from module result table (test)",
+      "Noop never reports success (security test)",
+      "Docs state iOS Face ID is unavailable in Expo Go and needs dev build with NSFaceIDUsageDescription",
+      "No dependency added"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/biometrics/**",
+      "tests/native/biometrics/**"
+    ],
+    "size": "S",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-25",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add splash/app-ready gate: AppReadyGate and useAppReady",
+    "priority": "High",
+    "labels": [
+      "native",
+      "splash",
+      "app-shell",
+      "adapter"
+    ],
+    "problem": "Splash hide, font load and theme hydration orchestration is repeated; flash of wrong theme.",
+    "value": "One gate that waits for tasks then hides splash.",
+    "scope": [
+      "AppReadyGate({tasks:[()=>Promise], fallback, timeoutMs}) rendering children when ready",
+      "SplashAdapter {preventAutoHide, hide}; /native/app-ready/expo wraps expo-splash-screen (injected)",
+      "Task for theme storage hydration helper (accepts hydrated flags from E8-23)",
+      "Timeout and error path render children with onError callback; web noop adapter"
+    ],
+    "outOfScope": [
+      "Font loading implementation (consumer passes expo-font task)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Splash hide called exactly once after tasks resolve (test)",
+      "Timeout renders children and calls onError (fake timers)",
+      "Task rejection does not leave app blank (test)",
+      "Without adapter gate still works (noop splash)"
+    ],
+    "dependencies": [
+      "E8-01"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/app-ready/**",
+      "tests/native/app-ready/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-26",
+    "epic": "E8",
+    "type": "Task",
+    "title": "Add createExpoCapabilities one-line preset (/native/expo)",
+    "priority": "High",
+    "labels": [
+      "native",
+      "expo",
+      "preset",
+      "dx"
+    ],
+    "problem": "Wiring ten adapters by hand defeats the boilerplate goal.",
+    "value": "One call auto-registers every installed Expo module, deterministic for tests/web.",
+    "scope": [
+      "createExpoCapabilities({include?, exclude?, modules?}) building registry from lazyRequire of each known expo-* module, skipping missing ones",
+      "modules option for explicit injection (Metro-safe)",
+      "Returns {adapters, report} where report lists available/unavailable per capability",
+      "<ExpoCapabilityProvider> convenience"
+    ],
+    "outOfScope": [
+      "Adding peers",
+      "Auto-requesting permissions at startup",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "With all modules mocked, report lists them available (test)",
+      "With none, every capability falls back and no error is thrown (test)",
+      "Web platform returns web/noop adapters (test)",
+      "Preset never imported from root entry (boundary script)"
+    ],
+    "dependencies": [
+      "E8-02",
+      "E8-07",
+      "E8-09",
+      "E8-11",
+      "E8-12",
+      "E8-13",
+      "E8-15",
+      "E8-17",
+      "E8-20",
+      "E8-21",
+      "E8-22",
+      "E8-23",
+      "E8-24",
+      "E8-25"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Dynamic require in Metro; modules injection is the safe path"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "src/native/expo-preset/**",
+      "tests/native/expo-preset/**"
+    ],
+    "size": "M",
+    "semver": "minor"
+  },
+  {
+    "id": "E8-27",
+    "epic": "E12",
+    "type": "Task",
+    "title": "Add native smoke matrix: clean Expo app, Expo Go, web, bare RN",
+    "priority": "High",
+    "labels": [
+      "native",
+      "testing",
+      "smoke",
+      "expo-go"
+    ],
+    "problem": "native-dependency-gate.md requires PLRNUI-46 coverage per optional peer candidate; no scenarios exist for adapters.",
+    "value": "Evidence for Expo Go/managed/prebuild/web claims in the proposals.",
+    "scope": [
+      "Fixture app scripts under tests/native-smoke: root import with zero expo-* installed; each /native/* subpath with module absent and present",
+      "Matrix doc: capability x (Expo Go, dev build, bare, web) x SDK 57/RN 0.86",
+      "Metro bundling check for missing optional modules",
+      "Findings feed docs/native compatibility table"
+    ],
+    "outOfScope": [
+      "Release pipeline (E17)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "Matrix file lists every capability from CapabilityMap",
+      "Root import renders with none of expo-* installed (script exit 0)",
+      "Result recorded as artifact file tests/native-smoke/results.md",
+      "Any unsupported Expo Go row has linked limitation note"
+    ],
+    "dependencies": [
+      "E8-26"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Needs a real Expo environment; may be split by platform when scheduled"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "tests/native-smoke/**"
+    ],
+    "size": "L",
+    "semver": "none"
+  },
+  {
+    "id": "E8-28",
+    "epic": "E16",
+    "type": "Task",
+    "title": "Write native layer docs, recipes and capability catalog entry",
+    "priority": "Medium",
+    "labels": [
+      "native",
+      "docs",
+      "catalog"
+    ],
+    "problem": "Adapters are invisible without docs; AI layer (E13) needs a machine-readable capability list.",
+    "value": "Discoverable recipes reduce agent token use.",
+    "scope": [
+      "docs/native/*.md: overview, per-capability recipe (install, inject, fallback, Expo Go, web, testing)",
+      "docs/native/capabilities.json manifest (id, subpath, expo packages, fallback, expoGo, web)",
+      "Cross-link rejected-ideas list"
+    ],
+    "outOfScope": [
+      "Showcase UI (E11)",
+      "Adding any native package to package.json (gate: Per native-dependency-gate.md: no packag...)"
+    ],
+    "acceptance": [
+      "capabilities.json validates against its JSON schema and lists all CapabilityMap ids",
+      "Every doc recipe code block type-checks under typecheck:contracts",
+      "Links resolve (link check)"
+    ],
+    "dependencies": [
+      "E8-26",
+      "E8-27"
+    ],
+    "validation": [
+      "npm run typecheck",
+      "npm run typecheck:contracts",
+      "npm test",
+      "npm run build",
+      "node scripts/check-native-boundaries.mjs (from E8-02)"
+    ],
+    "evidence": [
+      "Passing test output for tests/native/<name>/**",
+      "Output of boundary check proving no expo-*/native import is root-reachable",
+      "Typed usage snippet compiled under typecheck:contracts"
+    ],
+    "risks": [
+      "Metro optional-require behaviour differs across versions; covered by E8-27"
+    ],
+    "dod": [
+      "Typed API exported only from its /native/* subpath, never from src/index.ts",
+      "Works with no optional package installed (noop/RN/web fallback documented in JSDoc)",
+      "Tests run against mock adapters only, no real native module",
+      "semver impact recorded in migration changelog"
+    ],
+    "filesTouched": [
+      "docs/native/**"
+    ],
+    "size": "M",
+    "semver": "none"
+  }
+]

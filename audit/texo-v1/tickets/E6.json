@@ -1,0 +1,1919 @@
+[
+ {
+  "id": "E6-01",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Portal and overlay stack manager (OverlayHost, useOverlay)",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "portal",
+   "foundation"
+  ],
+  "problem": "Overlays use RN Modal directly (Modal, BottomSheet, Select); no shared stack, z-order, back-handler or scrim coordination, and Toast/Popover cannot render above a Modal.",
+  "value": "One zero-dep overlay root that Toast, Dialog, Drawer, Menu, Popover, Tooltip and ActionSheet build on; consistent back-button/Escape dismissal order.",
+  "scope": [
+   "OverlayHost provider (View-based layer, no native lib) with Portal component",
+   "Stack manager: push/pop/id, z-order, topmost-only back handling (BackHandler on Android, Escape on web)",
+   "useOverlay() imperative open/close API",
+   "modal=true mode may delegate to RN Modal for native focus trapping",
+   "useOverlayAnchor(ref) measure helper for anchored overlays"
+  ],
+  "outOfScope": [
+   "Gesture handling",
+   "Router integration"
+  ],
+  "acceptance": [
+   "Portal renders children at OverlayHost, unmounts cleanly on host unmount",
+   "Back/Escape closes only the topmost dismissable overlay (test)",
+   "Works without OverlayHost via documented RN Modal fallback and dev warning",
+   "Exported from src/index.ts; no new deps in package.json"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Layer inside a RN Modal does not stack above it; document and use per-modal host"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Portal/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-02",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade Modal: focus, a11y, Escape, keyboard avoidance, animations",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "modal",
+   "a11y",
+   "upgrade"
+  ],
+  "problem": "Modal has no focus management, role/label, Escape handling, keyboard avoidance or transition options (overlay-platform-contract-plrnui-23.md Modal section).",
+  "value": "Gets Modal from experimental to demo/stable candidate and gives Dialog/Drawer a solid base.",
+  "scope": [
+   "accessibilityViewIsModal, role=dialog, label/described-by props",
+   "Escape and hardware back dismissal; initialFocus/restoreFocus props where RN allows (AccessibilityInfo.setAccessibilityFocus)",
+   "animationType presets (fade/slide/none) via Animated, reduce-motion aware",
+   "avoidKeyboard prop",
+   "Safe-area-aware padding via Safe-area context (E6-23) if present, otherwise zero"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Tests: backdrop press, Escape, onRequestClose each call onClose once",
+   "Rendered tree exposes accessibilityViewIsModal and a label prop",
+   "Existing props remain backward compatible (type test)",
+   "Platform matrix in the contract doc updated by evidence attachment"
+  ],
+  "dependencies": [
+   "E6-01"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Modal/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-03",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade Alert: dismiss, icon slot, live-region, density and actions",
+  "priority": "Medium",
+  "labels": [
+   "feedback",
+   "alert",
+   "a11y",
+   "upgrade"
+  ],
+  "problem": "Alert (src/components/Alert/Alert.tsx) is a single-action coloured box: no dismiss, icon, role=alert, inverted/soft/outline appearances, or multi-action slot; text colour is hard inverted on warning.",
+  "value": "Reliable inline feedback with correct contrast and accessibility announcements.",
+  "scope": [
+   "appearance: solid|soft|outline; contrast-safe text per variant",
+   "onDismiss with close button (accessible label)",
+   "icon slot and actions slot (keeps actionLabel/onAction)",
+   "accessibilityRole=alert and liveRegion polite/assertive by variant"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Existing props unchanged (type-level test)",
+   "Contrast of text on each variant background >= 4.5:1 for default theme (test computes ratio)",
+   "Dismiss button has accessibilityLabel and triggers onDismiss"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Alert/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-04",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Banner (persistent page/section announcement)",
+  "priority": "Medium",
+  "labels": [
+   "feedback",
+   "banner"
+  ],
+  "problem": "No persistent, full-width, dismissible announcement; Alert is inline-card styled.",
+  "value": "App-level notices (offline, update available, trial ending) without custom code.",
+  "scope": [
+   "Banner with variant, title, message, icon, actions, dismissible, sticky position prop",
+   "Uses safe-area top inset when provided by SafeArea (E6-23)",
+   "Optional persistence key callback (onDismiss only; no storage dependency)"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Renders all variants and dismiss path in tests",
+   "role=alert/status chosen by variant",
+   "No import of AsyncStorage or other native modules (grep check)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Banner/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-05",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Toast/Snackbar system (ToastProvider, useToast, imperative toast API)",
+  "priority": "High",
+  "labels": [
+   "feedback",
+   "toast",
+   "imperative-api"
+  ],
+  "problem": "No transient feedback system; apps hand-roll toasts. Needs provider + imperative API usable outside React.",
+  "value": "Single call: toast.success('Saved') from components or non-React code; replaces large boilerplate.",
+  "scope": [
+   "ToastProvider rendering into OverlayHost; position top/bottom, max visible, queue",
+   "Imperative API: toast(), toast.success/error/info/warning/loading, toast.promise, dismiss(id), update(id)",
+   "Duration, persistent, action button, swipe-to-dismiss via Animated+PanResponder (no gesture-handler)",
+   "Announce via AccessibilityInfo.announceForAccessibility and web aria-live",
+   "Pause on hover/focus (web) and while keyboard open; safe-area offset"
+  ],
+  "outOfScope": [
+   "Haptics (E8)",
+   "Persisted notification history"
+  ],
+  "acceptance": [
+   "toast() before provider mount queues and flushes on mount (test)",
+   "Max N visible honoured; queue order FIFO (test)",
+   "toast.promise transitions loading->success/error (test)",
+   "Announcement called once per toast (mock AccessibilityInfo)",
+   "Respects reduce-motion"
+  ],
+  "dependencies": [
+   "E6-01"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Module-level singleton must be multi-provider safe"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Toast/**"
+  ],
+  "size": "L",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-06",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Dialog, AlertDialog and ConfirmDialog",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "dialog",
+   "a11y"
+  ],
+  "problem": "Only raw Modal exists; no title/description/actions anatomy, no alert-dialog semantics (no backdrop dismissal), no promise confirm.",
+  "value": "Standard confirm/alert flows with consistent anatomy and a11y.",
+  "scope": [
+   "Dialog compound parts (Header, Title, Description, Body, Footer) over Modal",
+   "AlertDialog: role=alertdialog, no backdrop dismiss, initial focus on least destructive action",
+   "ConfirmDialog with destructive tone and loading state on confirm",
+   "Imperative confirm() returning Promise<boolean> via provider"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Backdrop press does not close AlertDialog (test)",
+   "confirm() resolves true/false per button and false on Escape (test)",
+   "Title/description wired to accessibility label/hint",
+   "Destructive button visually and semantically distinct"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-02"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Dialog/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-07",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade BottomSheet: snap points, drag, keyboard, safe area",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "bottom-sheet",
+   "gesture",
+   "upgrade"
+  ],
+  "problem": "BottomSheet is Modal-backed with two fixed snaps (35%/70%), no drag, keyboard avoidance or safe-area handling (contract doc).",
+  "value": "Production-usable sheet without gesture-handler/reanimated.",
+  "scope": [
+   "Snap points array (numbers, %, 'content') and controlled snapIndex",
+   "Drag handle + PanResponder/Animated drag, velocity-based snap, drag-to-dismiss",
+   "Keyboard-aware (via useKeyboard, E6-22) and safe-area bottom padding",
+   "Scrollable content hand-off prop; role/label; Escape/back dismissal",
+   "Optional adapter hook `gestureDriver` for gesture-handler users (interface only)"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Existing snap='collapsed'|'expanded' still works (test)",
+   "Snap resolution function unit-tested incl. velocity cases",
+   "Closes via back/Escape/backdrop/drag",
+   "Reduce-motion disables spring animation"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-22"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "PanResponder vs ScrollView conflict; document limitation and gestureDriver escape hatch"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/BottomSheet/**"
+  ],
+  "size": "L",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-08",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add ActionSheet (iOS-style action list with cancel and destructive)",
+  "priority": "Medium",
+  "labels": [
+   "overlay",
+   "action-sheet"
+  ],
+  "problem": "No action list sheet; common for share/delete flows.",
+  "value": "Consistent native-feeling choice sheet with imperative API.",
+  "scope": [
+   "ActionSheet built on BottomSheet; options with icon, destructive, disabled; cancel row",
+   "Imperative showActionSheet() returning chosen index/key",
+   "Web renders as centered menu panel"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Selection resolves promise with key, cancel resolves null (test)",
+   "Destructive option has distinct role label",
+   "Each option min touch target 44pt (style assertion)"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-07"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/ActionSheet/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-09",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Drawer (edge-anchored overlay panel, left/right/top)",
+  "priority": "Medium",
+  "labels": [
+   "overlay",
+   "drawer",
+   "navigation"
+  ],
+  "problem": "SideBar is a static list; no overlay drawer for mobile navigation or filters (navigation contract: drawer excluded).",
+  "value": "Mobile nav drawer / filter panel with zero-dep implementation.",
+  "scope": [
+   "Drawer with side, size, modal vs persistent mode (persistent collapses into layout on wide screens via useBreakpoint)",
+   "Edge swipe-to-close with PanResponder; backdrop; focus and Escape",
+   "DrawerContent compatible with SideBar as child"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Open/close controlled and uncontrolled tested",
+   "Persistent mode renders inline at >= breakpoint (test with mocked dimensions)",
+   "RTL side flipping test"
+  ],
+  "dependencies": [
+   "E6-01"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Drawer/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-10",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade Popover: native anchored rendering, placement, collision, a11y",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "popover",
+   "upgrade"
+  ],
+  "problem": "Popover renders nothing on native (trigger-only) and has no placement/flip logic, roles or focus handling.",
+  "value": "Popover works on iOS/Android/Web and unlocks Menu/Select.",
+  "scope": [
+   "Render through Portal on all platforms, anchored via measureInWindow",
+   "placement + auto flip/shift within window and safe area",
+   "Outside press / Escape dismissal; controlled open",
+   "accessibilityRole, expanded state on trigger, restore focus"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Content renders on native in test (previous trigger-only fallback removed)",
+   "Placement function unit-tested for flip at edges",
+   "Trigger exposes accessibilityState.expanded"
+  ],
+  "dependencies": [
+   "E6-01"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Popover/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-11",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade Tooltip: native long-press, keyboard focus, accessible description",
+  "priority": "Medium",
+  "labels": [
+   "overlay",
+   "tooltip",
+   "a11y",
+   "upgrade"
+  ],
+  "problem": "Tooltip is web-only (children-only on native), no keyboard focus trigger or screen reader relationship.",
+  "value": "Tooltip semantics across platforms with explicit hint behaviour.",
+  "scope": [
+   "Native: long-press shows tooltip via Portal, auto-hide",
+   "Web: hover + focus triggers, aria-describedby equivalent",
+   "Always sets accessibilityHint from content when string",
+   "Delay props and placement shared with Popover util"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Native long-press shows content in test",
+   "Web focus shows and blur hides (test)",
+   "Child receives accessibilityHint"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-10"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Tooltip/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-12",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Menu/DropdownMenu with keyboard navigation",
+  "priority": "High",
+  "labels": [
+   "overlay",
+   "menu",
+   "a11y"
+  ],
+  "problem": "No menu primitive; Select is the only option list.",
+  "value": "Action menus for toolbars, row actions and overflow.",
+  "scope": [
+   "Menu, MenuItem, MenuSeparator, MenuLabel, check/radio items, submenu-free v1",
+   "Anchored via Popover; arrow/Home/End/typeahead on web; roving focus",
+   "Native: opens as Popover or ActionSheet per `nativePresentation` prop",
+   "Closes on select unless closeOnSelect=false"
+  ],
+  "outOfScope": [
+   "Nested submenus"
+  ],
+  "acceptance": [
+   "Arrow-key navigation moves focus (web test)",
+   "Disabled items skipped",
+   "role=menu/menuitem(+checked state) exposed",
+   "Select closes menu and fires onSelect once"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-10",
+   "E6-08"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Menu/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-13",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add ContextMenu (long-press/right-click) built on Menu",
+  "priority": "Low",
+  "labels": [
+   "overlay",
+   "context-menu"
+  ],
+  "problem": "No long-press / right-click menu pattern.",
+  "value": "Row and card contextual actions.",
+  "scope": [
+   "Wrap child; open on long-press (native) and contextmenu event (web)",
+   "Positioned at touch point; reuses Menu items",
+   "onOpenChange and disabled props"
+  ],
+  "outOfScope": [
+   "Native iOS preview-peek (needs native module)"
+  ],
+  "acceptance": [
+   "Long-press opens menu in test",
+   "Web contextmenu preventDefault called",
+   "Positions clamp within window"
+  ],
+  "dependencies": [
+   "E6-12"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/ContextMenu/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-14",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade Select: listbox semantics, keyboard, search, multi, sizing",
+  "priority": "High",
+  "labels": [
+   "inputs",
+   "select",
+   "a11y",
+   "upgrade"
+  ],
+  "problem": "Select is modal-only, no keyboard/typeahead, selected-state a11y, search or multi-select (contract doc).",
+  "value": "Meets form-grade select for demo+ maturity.",
+  "scope": [
+   "Popover presentation on web wide screens, sheet on native/compact (responsive)",
+   "listbox/option roles, selected + expanded states, typeahead, Arrow/Enter/Escape",
+   "Optional searchable and multiple props",
+   "Error/disabled/size props aligned with FormField"
+  ],
+  "outOfScope": [
+   "Async option loading (E5/E7 data layer)"
+  ],
+  "acceptance": [
+   "Keyboard navigation test on web path",
+   "Selected option exposes accessibilityState.selected",
+   "Existing value/onChange API unchanged (type test)",
+   "Multiple returns array and has clear tests"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-10"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Overlaps E5 Inputs stream: coordinate, E5 must not touch src/components/Select"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Select/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-15",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Tabs and SegmentedTabs (scrollable, controlled, a11y)",
+  "priority": "High",
+  "labels": [
+   "navigation",
+   "tabs"
+  ],
+  "problem": "No tab primitive; BottomBar is nav-bound only.",
+  "value": "In-page sectioning with a11y tablist semantics.",
+  "scope": [
+   "Tabs, TabList, Tab, TabPanel compound API; controlled/uncontrolled",
+   "Variants: underline, pill, segmented; scrollable overflow; badge slot",
+   "Lazy panel mounting, keepMounted option",
+   "Arrow-key switching on web, role=tab/tabpanel states"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Selected state in accessibilityState (test)",
+   "Lazy panel not rendered until visited (test)",
+   "Segmented variant has equal width mode",
+   "Works in RTL (flip test)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Tabs/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-16",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Accordion and Collapsible with animated height",
+  "priority": "Medium",
+  "labels": [
+   "disclosure",
+   "accordion"
+  ],
+  "problem": "No disclosure primitive.",
+  "value": "FAQ/settings sections without custom animation.",
+  "scope": [
+   "Collapsible (single) and Accordion (single|multiple, collapsible)",
+   "Animated height via LayoutAnimation-free Animated measure; reduce-motion instant",
+   "Header trigger with chevron, role=button + expanded state"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "single mode closes siblings (test)",
+   "expanded state exposed to a11y",
+   "Controlled value/onValueChange tested"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Accordion/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-17",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Stepper and Wizard (progress + step state machine)",
+  "priority": "Medium",
+  "labels": [
+   "navigation",
+   "stepper",
+   "wizard"
+  ],
+  "problem": "No multi-step flow primitive.",
+  "value": "Onboarding/checkout flows with validation gating.",
+  "scope": [
+   "Stepper (horizontal/vertical, states: complete/current/error/disabled)",
+   "useWizard hook: next/back/goTo, per-step validate (sync/async), linear lock",
+   "Wizard container rendering current step with transition slot"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "next() blocked when validate returns false (test)",
+   "Async validate shows pending state (test)",
+   "Step statuses exposed to a11y (progress text)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Stepper/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-18",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Breadcrumb (web-first, native collapsed form)",
+  "priority": "Low",
+  "labels": [
+   "navigation",
+   "breadcrumb"
+  ],
+  "problem": "No breadcrumb; Link exists.",
+  "value": "Hierarchical navigation on web/desktop layouts.",
+  "scope": [
+   "Breadcrumb with items, separator slot, maxItems collapse to ellipsis",
+   "Uses Link/NavProvider navigate; current item aria-current",
+   "Native renders compact back-chain"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Collapse renders ellipsis for N>maxItems (test)",
+   "Last item has accessibilityState selected / aria-current",
+   "No router dependency"
+  ],
+  "dependencies": [
+   "E6-26"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Breadcrumb/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-19",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Pagination (numbered and simple prev/next)",
+  "priority": "Low",
+  "labels": [
+   "navigation",
+   "pagination"
+  ],
+  "problem": "No pagination control for tables/lists.",
+  "value": "Server and client paging UI.",
+  "scope": [
+   "Pagination with page, pageCount, siblingCount, boundary and ellipses",
+   "Simple variant (prev/next + 'Page x of y')",
+   "Pure usePagination range function exported"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Range function table-tested (incl. edge pages)",
+   "Disabled prev on first and next on last",
+   "a11y labels on buttons"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Pagination/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-20",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add EmptyState, ErrorState, LoadingState and Result",
+  "priority": "High",
+  "labels": [
+   "feedback",
+   "states"
+  ],
+  "problem": "Every screen re-implements empty/error/loading blocks.",
+  "value": "Consistent async-view states, big cut in boilerplate.",
+  "scope": [
+   "EmptyState (icon/illustration slot, title, description, actions)",
+   "ErrorState with retry and error-detail collapse",
+   "LoadingState (spinner/label/inline/full)",
+   "Result (success/info/warning/error/403/404 presets)",
+   "AsyncBoundary helper choosing state from {status,data,error}"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "AsyncBoundary renders correct state for each status (test)",
+   "Retry callback fired (test)",
+   "All parts themed, no hardcoded colors (grep check)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/StateView/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-21",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Skeleton and SkeletonScreen presets",
+  "priority": "Medium",
+  "labels": [
+   "feedback",
+   "skeleton",
+   "loading"
+  ],
+  "problem": "No loading placeholder; Spinner only.",
+  "value": "Perceived-performance loading screens.",
+  "scope": [
+   "Skeleton primitive (text/rect/circle) with shimmer via Animated, reduce-motion static",
+   "Presets: SkeletonList, SkeletonCard, SkeletonProfile",
+   "accessibilityState busy and hidden children from AT"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Static when reduce-motion on (test)",
+   "Preset line counts configurable",
+   "Container sets busy state"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Overlap with E3 Motion/E7: E3 must supply shimmer util only, not a Skeleton component"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Skeleton/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-22",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add useKeyboard and KeyboardAvoidingScreen",
+  "priority": "High",
+  "labels": [
+   "keyboard",
+   "screen"
+  ],
+  "problem": "Keyboard handling is left to each app; RN KeyboardAvoidingView is inconsistent across platforms.",
+  "value": "Predictable keyboard-aware screens and shared keyboard state.",
+  "scope": [
+   "useKeyboard() returning height, visible, duration (Keyboard events, iOS will/Android did)",
+   "KeyboardAvoidingScreen: padding/translate strategy per platform, scroll-to-focused-input, tap-outside dismiss",
+   "KeyboardProvider optional singleton to share state"
+  ],
+  "outOfScope": [
+   "react-native-keyboard-controller adapter (separate optional ticket if needed)"
+  ],
+  "acceptance": [
+   "Mocked Keyboard events update height (test)",
+   "Dismiss-on-tap-outside configurable",
+   "Cleans up listeners on unmount"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/KeyboardAvoidingScreen/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-23",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add SafeArea context with optional react-native-safe-area-context adapter",
+  "priority": "High",
+  "labels": [
+   "safe-area",
+   "adapter",
+   "peer-dependency"
+  ],
+  "problem": "Library has no inset source; safe-area-provider-dependency-contract.md forbids importing react-native-safe-area-context in src.",
+  "value": "Components get insets with zero native deps, apps can plug the real library.",
+  "scope": [
+   "SafeAreaInsetsProvider + useSafeAreaInsets() defaulting to zeros (web: env() via CSS, iOS fallback via StatusBar height)",
+   "Adapter file safeAreaContextAdapter.ts using require in try/catch, not imported by index (document optional peer approval path per peer-dependency-policy.md)",
+   "SafeAreaView-like Edge component with edges prop"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "grep finds no static import of react-native-safe-area-context in src/index graph",
+   "Provider override values flow to consumers (test)",
+   "Doc states the optional peer gate steps"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Optional peer flag requires approved decision per policy; ticket must not edit package.json"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/SafeArea/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-24",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add KeyboardToolbar (accessory bar with prev/next/done)",
+  "priority": "Medium",
+  "labels": [
+   "keyboard",
+   "forms"
+  ],
+  "problem": "No input accessory bar; form navigation between fields is manual.",
+  "value": "Faster form entry on mobile.",
+  "scope": [
+   "KeyboardToolbar rendered above keyboard using useKeyboard offset (no native InputAccessoryView requirement)",
+   "Field registry hook: register inputs, next/prev focus, done dismiss",
+   "Slots for custom actions"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Prev/next focus order follows registration (test)",
+   "Hidden when keyboard hidden",
+   "Done calls Keyboard.dismiss"
+  ],
+  "dependencies": [
+   "E6-22"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/KeyboardToolbar/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-25",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add Screen and AppShell scaffolds (header, content, footer, insets, keyboard)",
+  "priority": "High",
+  "labels": [
+   "app-shell",
+   "screen",
+   "layout"
+  ],
+  "problem": "ThemeAppShell only gives background/scroll; no header/footer slots, safe areas or keyboard handling (src/theme/ThemeAppShell.tsx).",
+  "value": "One import to scaffold a screen: removes the repeated SafeArea+Scroll+KeyboardAvoiding stack.",
+  "scope": [
+   "Screen: header slot (TopBar), scroll|static body, sticky footer, insets, keyboard avoidance, refresh slot",
+   "AppShell: composes ThemeProvider-agnostic layout with Banner slot, Toast/Overlay host, NavBar region and responsive sidebar",
+   "Presets: centered form screen, list screen, detail screen",
+   "Does not edit src/theme; wraps ThemeAppShell by composition"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Renders with and without SafeArea provider (test)",
+   "Footer stays above keyboard (mocked event test)",
+   "AppShell mounts OverlayHost once (test)",
+   "ThemeAppShell file unchanged (git diff check)"
+  ],
+  "dependencies": [
+   "E6-01",
+   "E6-22",
+   "E6-23"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Screen/**"
+  ],
+  "size": "L",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-26",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade NavContext: active state, nested routes, adapter interface",
+  "priority": "High",
+  "labels": [
+   "navigation",
+   "nav-context",
+   "upgrade"
+  ],
+  "problem": "NavContext only lists items and navigate; no current route, activeMatch, nested items, or typed adapter contract.",
+  "value": "Basis for router adapters and nav components.",
+  "scope": [
+   "NavAdapter interface: navigate, replace, back, currentPath, subscribe",
+   "NavProvider accepts adapter or legacy navigate (backward compatible)",
+   "useActiveItem/isActive matching with exact|prefix",
+   "NavItem gains badge, children, hidden, disabled"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Legacy NavProvider usage compiles and passes tests",
+   "isActive prefix matching unit-tested",
+   "No router import (grep)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/NavContext/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-27",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add expo-router and react-navigation adapters (optional, no hard dep)",
+  "priority": "Medium",
+  "labels": [
+   "navigation",
+   "adapter",
+   "expo-router",
+   "react-navigation",
+   "peer-dependency"
+  ],
+  "problem": "Apps wire routers manually to NavProvider and Link.",
+  "value": "Two-line integration for common routers without making them dependencies.",
+  "scope": [
+   "createExpoRouterAdapter(router, pathname) taking injected objects (no import of expo-router)",
+   "createReactNavigationAdapter(navigation, state) likewise",
+   "useExpoRouterNav hook file that lazy-requires expo-router only when called, documented as optional",
+   "Type-only structural interfaces for router shapes"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "grep finds no import of expo-router or @react-navigation/* in package entry graph",
+   "Adapters tested with fake router objects",
+   "Link navigates through adapter (test)"
+  ],
+  "dependencies": [
+   "E6-26"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Lazy require breaks bundlers; prefer injection and document"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/RouterAdapters/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-28",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade TopBar: back action, large title, collapse, safe area",
+  "priority": "Medium",
+  "labels": [
+   "navigation",
+   "top-bar",
+   "upgrade"
+  ],
+  "problem": "TopBar has title/left/right only; no back affordance, large title, scroll collapse or inset handling.",
+  "value": "Native-feeling headers.",
+  "scope": [
+   "backButton auto from adapter.canGoBack, large-title variant, scrollY-driven collapse prop",
+   "Top inset via SafeArea, centered/left title alignment",
+   "a11y heading role"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Back renders only when adapter reports canGoBack (test)",
+   "Existing slots unchanged (test)",
+   "Title has header role"
+  ],
+  "dependencies": [
+   "E6-23",
+   "E6-26"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/TopBar/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-29",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade BottomBar and NavBar: badges, More overflow, tablist a11y",
+  "priority": "Medium",
+  "labels": [
+   "navigation",
+   "bottom-bar",
+   "nav-bar",
+   "upgrade"
+  ],
+  "problem": "BottomBar drops items beyond maxItems with no overflow; no badges, active state or tab semantics.",
+  "value": "Complete bottom nav pattern; resolves contract's deferred overflow menu.",
+  "scope": [
+   "Active highlight from useActiveItem",
+   "Overflow 'More' using Menu/ActionSheet when items > maxItems (opt-in overflow='menu')",
+   "Badge and haptic-free press feedback; safe-area bottom padding",
+   "role=tablist/tab and selected states"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "overflow='none' keeps legacy behaviour (test)",
+   "overflow='menu' lists remaining items (test)",
+   "Selected tab exposes accessibilityState.selected"
+  ],
+  "dependencies": [
+   "E6-26",
+   "E6-23",
+   "E6-12"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/BottomBar/**",
+   "src/components/NavBar/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-30",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Upgrade SideBar: rail/collapsed modes, groups, drawer integration",
+  "priority": "Medium",
+  "labels": [
+   "navigation",
+   "sidebar",
+   "upgrade"
+  ],
+  "problem": "Native SideBar is a minimal list; web variant collapsible but without groups, rail mode or active state.",
+  "value": "Desktop/tablet navigation shell.",
+  "scope": [
+   "Modes: expanded, rail (icons only), hidden; controlled collapsed",
+   "Groups/headings and nested items from NavItem.children",
+   "Active state; keyboard navigation on web",
+   "Render inside Drawer when compact (documented example)"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Rail mode hides labels but keeps accessibilityLabel (test)",
+   "Web and native files share one prop type",
+   "Nested items collapse/expand (test)"
+  ],
+  "dependencies": [
+   "E6-26",
+   "E6-09"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/SideBar/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-31",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add PullToRefresh wrapper with web fallback",
+  "priority": "Medium",
+  "labels": [
+   "gesture",
+   "refresh"
+  ],
+  "problem": "Apps use RefreshControl directly; no web support or consistent control.",
+  "value": "Uniform refresh behaviour.",
+  "scope": [
+   "PullToRefresh wrapping ScrollView/FlatList via RefreshControl on native",
+   "Web: Animated pull indicator via touch events, threshold prop",
+   "Controlled refreshing, onRefresh promise-aware"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "onRefresh promise resolution clears refreshing (test)",
+   "Web threshold trigger tested with simulated events",
+   "Theme tint colors used"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/PullToRefresh/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-32",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add SwipeActions (swipeable row) with PanResponder core",
+  "priority": "Medium",
+  "labels": [
+   "gesture",
+   "swipe",
+   "list"
+  ],
+  "problem": "No swipe-to-reveal/delete row.",
+  "value": "Common list-row action pattern with zero native deps.",
+  "scope": [
+   "SwipeableRow with left/right action slots, full-swipe commit, spring back",
+   "Animated + PanResponder with ScrollView gesture arbitration; web pointer support",
+   "gestureDriver interface for optional gesture-handler adapter",
+   "a11y custom actions fallback (accessibilityActions) so actions reachable without swipe"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "accessibilityActions list matches actions (test)",
+   "Full swipe fires action once (test)",
+   "Closes other rows via SwipeGroup (test)"
+  ],
+  "dependencies": [],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Gesture conflict with vertical scroll; thresholds must be documented"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/SwipeActions/**"
+  ],
+  "size": "L",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-33",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add undo and optimistic-UI hooks (useUndoableAction, useOptimisticAction)",
+  "priority": "Medium",
+  "labels": [
+   "patterns",
+   "undo",
+   "optimistic-ui"
+  ],
+  "problem": "No standard pattern for delayed-commit undo or optimistic updates; each screen hand-rolls it.",
+  "value": "Patterns agents can reuse with minimal tokens.",
+  "scope": [
+   "useUndoableAction: apply now, commit after timeout, undo via Toast action",
+   "useOptimisticAction: optimistic state, rollback on failure, error toast hook",
+   "Pure state-machine core, UI-agnostic"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Timer-based commit/undo tested with fake timers",
+   "Rollback restores previous value on rejection (test)",
+   "No hard dependency on Toast (accepts notifier callback)"
+  ],
+  "dependencies": [
+   "E6-05"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Patterns/Undo/**",
+   "src/components/Patterns/Optimistic/**"
+  ],
+  "size": "M",
+  "semver": "minor"
+ },
+ {
+  "id": "E6-34",
+  "epic": "E6",
+  "type": "Task",
+  "title": "Add confirm-destructive pattern (useConfirmDestructive, hold-to-confirm)",
+  "priority": "Medium",
+  "labels": [
+   "patterns",
+   "destructive",
+   "confirm"
+  ],
+  "problem": "Destructive actions have no standard confirm flow.",
+  "value": "Safe, consistent destructive UX.",
+  "scope": [
+   "useConfirmDestructive(action,{title,type-to-confirm?}) built on ConfirmDialog",
+   "HoldToConfirmButton variant (press-and-hold progress)",
+   "Integrates with undo hook as alternative strategy"
+  ],
+  "outOfScope": [
+   "Native dependencies in core; any optional adapter lives behind its own ticket",
+   "Package rename or Texo cutover work"
+  ],
+  "acceptance": [
+   "Action not run until confirmed (test)",
+   "Type-to-confirm requires exact text (test)",
+   "Hold button cancels on early release (test)"
+  ],
+  "dependencies": [
+   "E6-06"
+  ],
+  "validation": [
+   "npm run typecheck",
+   "npm test",
+   "npm run build (if defined)"
+  ],
+  "evidence": [
+   "Passing test output",
+   "Example usage snippet added to the component folder",
+   "Platform matrix (iOS/Android/Web) with verified vs unverified cells"
+  ],
+  "risks": [
+   "Web vs native behavior divergence must be documented, not hidden"
+  ],
+  "dod": [
+   "Typed public API exported from the component index.ts",
+   "Theme tokens used, no hardcoded colors",
+   "a11y roles/labels set",
+   "Maturity reached: demo (documented if higher)",
+   "No new runtime or native dependency (peer-dependency-policy.md)"
+  ],
+  "filesTouched": [
+   "src/components/Patterns/ConfirmDestructive/**"
+  ],
+  "size": "S",
+  "semver": "minor"
+ }
+]
