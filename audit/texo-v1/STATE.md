@@ -82,3 +82,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-299 (E1-15: unify SideBar into one Platform.OS file, remove SideBar.web.tsx) | #37 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-153 (E16-09: license check scripts/license-check.mjs, NOTICE, docs/policies/licensing.md) | #36 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-212 (E14-06: import-time side-effects audit, test and sideEffects recommendation) | #38 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-161 (E16-10: audit/ public-release review, secretlint scan, subtree classification) | #40 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
