@@ -1,2 +1,8 @@
-# Replace @optimus with the canonical GitHub owner before enabling protected branches.
-* @optimus
+# Default owner for everything (PO decision 2026-10-09: CODEOWNERS handle pianic2).
+* @pianic2
+
+# Path owners.
+/src/ @pianic2
+/scripts/ @pianic2
+/.github/ @pianic2
+/docs/ @pianic2
