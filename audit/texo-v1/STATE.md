@@ -71,5 +71,6 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (E18-09: texo-v1-pr workflow, branch protection docs) | #23 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-95 (E9-01: a11y test helpers: hint, hidden, live region, hitSlop, interactive nodes) | #26 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-108 (E12-04: type contract tests: props contracts, polymorphism, negative cases) | #27 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-118 (E16-03: SECURITY.md, CODE_OF_CONDUCT.md, SUPPORT.md) | #29 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-110 (E16-01: CODEOWNERS owner @pianic2 and path owners) | #28 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-125 (E16-04: CONTRIBUTING rewrite for external contributors, commands test) | #30 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
