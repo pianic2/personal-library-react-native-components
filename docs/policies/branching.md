@@ -23,3 +23,17 @@ git config core.hooksPath .githooks
 Hooks are a local aid: `git commit --no-verify` or not setting `core.hooksPath` bypasses them. The CI checks of E18-09 and branch protection on `main` are the enforced gate.
 
 Known limitation: git-generated `fixup!`, `squash!`, `amend!` and `Revert "..."` subjects do not match the convention; reword them to `add|fix|chore(PLRNUI-<n>): ...` before committing.
+
+## Branch protection
+Applied by the PO in the GitHub repository settings; a session cannot change them.
+
+Required status checks on `texo/v1` (exact names, as shown in the PR checks list):
+- `package-baseline` (workflow `CI`, `.github/workflows/ci.yml`)
+- `fast-checks` (workflow `Texo V1 PR`, `.github/workflows/texo-v1-pr.yml`): typecheck, tests, script tests, build, docs check
+- `commit-and-ownership` (workflow `Texo V1 PR`): commit-message check (`scripts/check-commit-msg.mjs`) on every commit of the PR and file-ownership check (`scripts/check-ownership.mjs`) from the branch name `texo/PLRNUI-<n>-<slug>`
+
+Rules for `texo/v1`: pull request required, the three checks above must pass, no force-push, no deletion. Review approvals are not required, because ADR 0020 has the author session merge after an independent review.
+
+Rules for `main`: changes only through a pull request, no bypass for anyone, no direct push (the local pre-push hook is only a first barrier). Merging `texo/v1` into `main` belongs to the PO.
+
+Ownership exceptions: the backlog JSON is generated and not hand-edited, so files added to a ticket by an explicit PO decision are listed in the `File ownership` step of `texo-v1-pr.yml` (currently `PLRNUI-450`: `skills/texo-execute/SKILL.md`; `PLRNUI-452`: `docs/policies/branching.md`). The `Execution log` row of `audit/texo-v1/STATE.md` is always allowed.
