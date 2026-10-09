@@ -4,7 +4,8 @@
 //   node scripts/check-doc-tokens.mjs --typecheck [file...]
 //       extracts every ```tsx block, replaces the placeholders with the current package name and type-checks
 //       the blocks against src/ with the TypeScript compiler API; exit 0 if they compile, 1 if not
-// Default file: docs/migration-to-texo.md. Exit 2 on usage errors or unreadable files.
+// Default file: docs/migration-to-texo.md (relative to the repository; other paths are relative to the cwd).
+// Exit 2 on usage errors, unreadable files, an unterminated fence or a document without tsx blocks.
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -15,6 +16,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_FILES = ['docs/migration-to-texo.md'];
 const TOKEN = /<[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+>/g;
 const CURRENT_NAME = '@personal-library/react-native-components';
+const PACKAGE_TOKENS = /<(?:TEXO|LEGACY)_PACKAGE>/g;
 
 class UsageError extends Error {}
 
@@ -30,7 +32,8 @@ function parseArgs(argv) {
 }
 
 function read(file) {
-  const path = resolve(root, file);
+  // Relative paths are taken from the current directory; the default file is relative to the repository.
+  const path = DEFAULT_FILES.includes(file) ? resolve(root, file) : resolve(process.cwd(), file);
   if (!existsSync(path)) throw new UsageError(`file not found: ${file}`);
   return { path, text: readFileSync(path, 'utf8') };
 }
@@ -44,11 +47,19 @@ export function findTokens(text) {
 }
 
 export function tsxBlocks(text) {
+  // Line scanner for ``` fences: a tsx block is checked, any other fence is skipped, an unterminated fence is an error.
   const blocks = [];
-  const re = /^```tsx[^\n]*\n([\s\S]*?)^```/gm;
-  for (const match of text.matchAll(re)) {
-    blocks.push({ code: match[1], line: text.slice(0, match.index).split('\n').length + 1 });
-  }
+  const lines = text.split(/\r?\n/);
+  let open = null;
+  lines.forEach((line, index) => {
+    const fence = /^```(\S*)/.exec(line);
+    if (!open && fence) open = { lang: fence[1].toLowerCase(), start: index + 2, body: [] };
+    else if (open && /^```\s*$/.test(line)) {
+      if (open.lang === 'tsx') blocks.push({ code: `${open.body.join('\n')}\n`, line: open.start });
+      open = null;
+    } else if (open) open.body.push(line);
+  });
+  if (open) throw new UsageError(`unterminated code fence starting at line ${open.start - 1}`);
   return blocks;
 }
 
@@ -63,7 +74,7 @@ function typecheck(files) {
         const name = `block-${sources.length + 1}.tsx`;
         mkdirSync(dir, { recursive: true });
         // Each block is its own module so identical component names in different blocks do not clash.
-        writeFileSync(join(dir, name), `${block.code.replace(TOKEN, CURRENT_NAME)}\nexport {};\n`);
+        writeFileSync(join(dir, name), `${block.code.replace(PACKAGE_TOKENS, CURRENT_NAME)}\nexport {};\n`);
         sources.push({ name, origin: `${file}:${block.line}` });
       });
     }

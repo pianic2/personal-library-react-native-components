@@ -28,7 +28,7 @@ export function SaveButton() {
 
 ### Step 2: run the codemod
 
-The codemod rewrites import, export, `require`, dynamic `import()` and `jest.mock` specifiers from the legacy name to the new name, subpaths included, and keeps comments and type-only imports. It is a dry run unless you pass `--write`. Run it from a checkout of the Texo repository, pointing at your sources (the packaged `npx` command is decided with the codemod packaging tickets):
+The codemod rewrites import, export, `require`, dynamic `import()` and `jest.mock` specifiers from the legacy name to the new name, subpaths included, and keeps comments and type-only imports. It is a dry run unless you pass `--write`. The target name comes from `tools/codemod/mapping.json` (`from` and `to`; `--mapping <file>` selects another file, and `--check` exits 1 when anything would change). Run it from a checkout of the Texo repository, pointing at your sources (the packaged `npx` command is decided with the codemod packaging tickets):
 
 ```sh
 node tools/codemod/codemod.mjs src            # preview
@@ -76,18 +76,18 @@ Deep imports into `src/` or `dist/` were never public and are not mapped.
 
 ## FAQ
 
-**Which peer dependencies do I need?** The same as today: `react` and `react-native` within the ranges in [Compatibility](compatibility.md) (Expo 57 / React Native 0.86 for 1.0). Optional adapters add their own optional peers only when you use them, see ADR 0010.
+**Which peer dependencies do I need?** The same as today: `react` and `react-native` within the ranges in [Compatibility](compatibility.md) (Expo 57 / React Native 0.86 for 1.0). Optional adapters add their own optional peers only when you use them, see [ADR 0010](../audit/adr/0010-peer-dependency-policy.md).
 
 **I see two copies of React, or hooks fail with "Invalid hook call".** Check `npm ls react`; only one copy may exist. The shim depends on `<TEXO_PACKAGE>` with a caret range so the package manager can share one copy; if both names are installed at different majors, upgrade them together.
 
 **Metro still serves the old code.** Clear the cache after changing imports or reinstalling: `npx expo start --clear` (or `npx react-native start --reset-cache`).
 
-**Can I roll back?** Yes. Reinstall the previous version of `<LEGACY_PACKAGE>` and revert the codemod commit; nothing else changes. Nothing is unpublished: old versions are only deprecated.
+**Can I roll back?** Yes. Reinstall the previous version of `<LEGACY_PACKAGE>` and revert the codemod commit; nothing else changes. The runbook for the cutover plans deprecation, not unpublishing, so older versions stay installable.
 
 **Does the shim warn at runtime?** No. Deprecation is shown in the package metadata and in these docs, not in your console.
 
 ## Timeline
 
-- The shim is released in lockstep with `<TEXO_PACKAGE>` and stays installable for 12 months after the cutover date set by the release plan (decision H4, ADR 0013).
+- The shim is released in lockstep with `<TEXO_PACKAGE>` and is supported for 12 months (decision H4). The calendar start of that window is not decided yet; the release plan sets it (ADR 0013, "Pending H4").
 - Deprecated aliases of renamed props stay available through 1.x (ADR 0011).
-- After the sunset window the shim latest version is marked deprecated; the versions keep resolving.
+- What happens to the shim after the window (for example marking its latest version deprecated) is decided by the release plan and announced here before it takes effect.
