@@ -1,0 +1,22 @@
+{
+ "epics": {
+  "E1": "PLRNUI-78",
+  "E2": "PLRNUI-79",
+  "E3": "PLRNUI-80",
+  "E4": "PLRNUI-81",
+  "E5": "PLRNUI-82",
+  "E6": "PLRNUI-83",
+  "E7": "PLRNUI-84",
+  "E8": "PLRNUI-85",
+  "E9": "PLRNUI-86",
+  "E10": "PLRNUI-87",
+  "E11": "PLRNUI-88",
+  "E12": "PLRNUI-89",
+  "E13": "PLRNUI-90",
+  "E14": "PLRNUI-91",
+  "E15": "PLRNUI-92",
+  "E16": "PLRNUI-93",
+  "E17": "PLRNUI-94"
+ },
+ "tickets": {}
+}
