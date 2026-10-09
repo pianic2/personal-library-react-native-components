@@ -24,7 +24,7 @@ One session executes one ticket, with minimal context, following this page. Star
 ## Branching
 
 - One branch per ticket: `texo/PLRNUI-<n>-<slug>`, created from `texo/v1`.
-- Touch only the files in the ticket `filesTouched`.
+- Touch only the files in the ticket `filesTouched`. The only exception is the `Execution log` of `audit/texo-v1/STATE.md`: the row for the ticket is committed on the ticket branch before the merge, so it lands with the merge.
 - Commit messages: `add(PLRNUI-<n>): ...`, `fix(PLRNUI-<n>): ...` or `chore(PLRNUI-<n>): ...`.
 - Open a PR to `texo/v1` with the acceptance-criteria checklist. Merge into `texo/v1` only when every configured integration check on the PR is green (`package-baseline` and, once E18-09 adds them, the commit-message and file-ownership checks) and the independent review passed.
 - Merging `texo/v1` into `main` belongs to the PO.
@@ -32,7 +32,7 @@ One session executes one ticket, with minimal context, following this page. Star
 
 ## Token economy
 
-- Read only the files owned by the ticket and the ADR ids it names.
+- Read only the files owned by the ticket and the ADR ids it names, plus the protocol files this ADR requires: the backlog JSON, `jira-map.json` and `STATE.md`.
 - No repo-wide exploration.
 - Run the ticket `validation` commands; at most 3 attempts, then stop and report the cause.
 
@@ -44,6 +44,7 @@ One session executes one ticket, with minimal context, following this page. Star
 ## Forbidden actions
 
 - Applying `po-approved` or changing the PO gate.
+- Changing the Jira status of a ticket (sessions only add the evidence comment).
 - Publishing to npm, creating tags or Releases.
 - Pushing or merging `main`: `main` is never pushed or merged by a session.
 - Skipping or disabling tests.
