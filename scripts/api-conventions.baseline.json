@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "props": "AlertProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "AlertProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "AlertProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "BadgeProps",
+      "rule": "size-values"
+    },
+    {
+      "props": "BadgeProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "BottomBarProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "BottomBarProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "BProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "ButtonProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "ButtonProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "ButtonProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "CardProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "CheckboxProps",
+      "rule": "controlled-onChange"
+    },
+    {
+      "props": "CheckboxProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "CheckboxProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "CodeInlineProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "DividerProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "FormFieldProps",
+      "rule": "color-prop"
+    },
+    {
+      "props": "FormFieldProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "HeadingProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "InputProps",
+      "rule": "error-boolean"
+    },
+    {
+      "props": "LinkProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "NavBarProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "NavBarProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "PasswordInputProps",
+      "rule": "error-boolean"
+    },
+    {
+      "props": "PProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "ProgressBarProps",
+      "rule": "color-prop"
+    },
+    {
+      "props": "ProgressBarProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "ProgressBarProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "QuoteProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "QuoteProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "RadioGroupProps",
+      "rule": "controlled-onChange"
+    },
+    {
+      "props": "RadioGroupProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "RadioGroupProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "SideBarProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "SideBarProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "SmallProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "SpinnerProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "SpinnerProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "SwitchProps",
+      "rule": "controlled-onChange"
+    },
+    {
+      "props": "SwitchProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "SwitchProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "TextareaProps",
+      "rule": "error-boolean"
+    },
+    {
+      "props": "TextProps",
+      "rule": "variant-colour"
+    },
+    {
+      "props": "ThemeAppShellProps",
+      "rule": "passthrough-testID"
+    },
+    {
+      "props": "TopBarProps",
+      "rule": "passthrough-style"
+    },
+    {
+      "props": "TopBarProps",
+      "rule": "passthrough-testID"
+    }
+  ]
+}
