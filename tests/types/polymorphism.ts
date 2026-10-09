@@ -42,4 +42,12 @@ export type PasswordFromInput = [
   Expect<Equal<"rightIcon" extends keyof PasswordInputProps ? true : false, false>>,
   Expect<Equal<"secureTextEntry" extends keyof PasswordInputProps ? true : false, false>>,
   Expect<HasKeys<PasswordInputProps, "passwordVisible" | "onPasswordVisibilityChange">>,
+  // Everything else is inherited from Input: same keys, same requiredness.
+  Expect<HasKeys<PasswordInputProps, Exclude<keyof InputProps, "rightIcon" | "secureTextEntry">>>,
+  Expect<
+    Equal<
+      Omit<PasswordInputProps, "passwordVisible" | "defaultPasswordVisible" | "onPasswordVisibilityChange" | "showPasswordLabel" | "hidePasswordLabel">,
+      Omit<InputProps, "rightIcon" | "secureTextEntry">
+    >
+  >,
 ];

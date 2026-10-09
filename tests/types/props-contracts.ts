@@ -183,6 +183,19 @@ export type RequiredContracts = [
   Expect<Equal<RequiredKeys<RowProps>, "children">>,
   Expect<Equal<RequiredKeys<BadgeProps>, "children">>,
   Expect<Equal<RequiredKeys<InputProps>, "label">>,
+  Expect<Equal<RequiredKeys<AlertProps>, never>>,
+  Expect<Equal<RequiredKeys<BottomBarProps>, never>>,
+  Expect<Equal<RequiredKeys<CardProps>, never>>,
+  Expect<Equal<RequiredKeys<DividerProps>, never>>,
+  Expect<Equal<RequiredKeys<ProgressBarProps>, never>>,
+  Expect<Equal<RequiredKeys<SideBarProps>, never>>,
+  Expect<Equal<RequiredKeys<SpinnerProps>, never>>,
+  Expect<Equal<RequiredKeys<TextGroupProps>, "children">>,
+  Expect<Equal<RequiredKeys<TextareaProps>, "label">>,
+  Expect<Equal<RequiredKeys<TopBarProps>, never>>,
+  Expect<Equal<RequiredKeys<TextProps>, never>>,
+  Expect<Equal<RequiredKeys<BoxProps>, never>>,
+  Expect<Equal<RequiredKeys<PasswordInputProps>, "label">>,
 ];
 
 // Components whose props interface is not exported are pinned through their component signature.
@@ -207,7 +220,26 @@ export type UnnamedPropsContracts = [
 
 // Theme and provider contracts.
 export type ThemeContracts = [
-  Expect<HasKeys<Theme, "space" | "radius" | "typography" | "colors">>,
+  Expect<
+    Equal<
+      keyof Theme,
+      | "colors"
+      | "mode"
+      | "spacing"
+      | "space"
+      | "radius"
+      | "typography"
+      | "shadows"
+      | "zIndex"
+      | "size"
+      | "components"
+      | "materials"
+      | "globalStyles"
+      | "screens"
+    >
+  >,
+  Expect<Equal<RequiredKeys<Theme>, "colors" | "spacing" | "space" | "radius" | "typography" | "shadows" | "zIndex" | "size" | "components">>,
+  Expect<Equal<RequiredKeys<Theme["components"]>, "button" | "input">>,
   Expect<
     Equal<
       keyof ThemeProviderProps,
