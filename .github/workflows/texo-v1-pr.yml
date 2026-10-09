@@ -102,14 +102,15 @@ jobs:
             PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
             PLRNUI-452) exceptions="docs/policies/branching.md" ;;
           esac
-          output="$(node scripts/check-ownership.mjs "$ticket" "$BASE_SHA" 2>&1)"
-          code=$?
+          # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
+          code=0
+          output="$(node scripts/check-ownership.mjs "$ticket" "$BASE_SHA" 2>&1)" || code=$?
           echo "$output"
           if [ "$code" -eq 0 ]; then exit 0; fi
           if [ "$code" -ne 1 ]; then exit "$code"; fi
           remaining=""
           while IFS= read -r path; do
-            [ -z "$path" ] && continue
+            if [ -z "$path" ]; then continue; fi
             allowed=0
             for exception in $exceptions; do
               if [ "$path" = "$exception" ]; then allowed=1; fi

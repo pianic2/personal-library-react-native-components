@@ -37,3 +37,5 @@ Rules for `texo/v1`: pull request required, the three checks above must pass, no
 Rules for `main`: changes only through a pull request, no bypass for anyone, no direct push (the local pre-push hook is only a first barrier). Merging `texo/v1` into `main` belongs to the PO.
 
 Ownership exceptions: the backlog JSON is generated and not hand-edited, so files added to a ticket by an explicit PO decision are listed in the `File ownership` step of `texo-v1-pr.yml` (currently `PLRNUI-450`: `skills/texo-execute/SKILL.md`; `PLRNUI-452`: `docs/policies/branching.md`). The `Execution log` row of `audit/texo-v1/STATE.md` is always allowed.
+
+Trust model: the workflow and the check scripts are read from the pull request head, and no approvals are required, so a PR could weaken its own gates. The independent review (ADR 0020) must therefore read every change to `.github/workflows`, `scripts/check-*.mjs` and the exception list. Exceptions are keyed on the ticket id taken from the branch name and do not expire; remove an entry when its ticket is merged. Branches that do not match `texo/PLRNUI-<n>-<slug>` (for example bot branches) fail `commit-and-ownership` on purpose.
