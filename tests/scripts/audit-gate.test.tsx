@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 // @ts-expect-error plain ESM script without type declarations
-import { evaluateAudit } from "../../scripts/audit-gate.mjs";
+import { evaluateAudit } from "../../scripts/audit-gate-lib.mjs";
 
 const advisory = (id: string, severity: string) => ({
   source: 1,
@@ -37,6 +37,19 @@ describe("PLRNUI-457 npm audit gate", () => {
     assert.equal(errors.length, 1);
     assert.match(errors[0], /expired/);
     assert.deepEqual(evaluateAudit(report({}), "2027-01-09"), []);
+  });
+
+  it("blocks unknown or missing severities and malformed entries", () => {
+    assert.equal(evaluateAudit(report({ foo: { via: [advisory("GHSA-u", "unknown")] } }), TODAY).length, 1);
+    assert.equal(evaluateAudit(report({ foo: { via: [{ url: "https://github.com/advisories/GHSA-n" }] } }), TODAY).length, 1);
+    assert.equal(evaluateAudit(report({ foo: null }), TODAY).length, 1);
+    assert.equal(evaluateAudit(report({ foo: { via: "braces" } }), TODAY).length, 1);
+  });
+
+  it("rejects the exemption when expired even if the advisory is present", () => {
+    const errors = evaluateAudit(report({ braces: { via: [advisory(BRACES, "high")] } }), "2027-01-10");
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /expired/);
   });
 
   it("fails closed on error-shaped, empty or malformed reports", () => {
