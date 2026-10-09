@@ -1,0 +1,56 @@
+# Dependency updates (PLRNUI-248). GitHub reads this file from the default branch.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      dev-tooling:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+      runtime:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # The supported runtime baseline (Expo 57 / React Native 0.86, docs/compatibility.md) only moves
+      # through a compatibility decision, never through an automated bump.
+      - dependency-name: react-native
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+      - dependency-name: react
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+      - dependency-name: react-test-renderer
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+      - dependency-name: "@types/react"
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      actions:
+        patterns:
+          - "*"

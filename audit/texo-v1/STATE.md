@@ -89,3 +89,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-190 (E14-01: subpath export contract config/exports.json, validator, ADR 0009) | #43 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-155 (E17-07: ADR 0011 semver/stability/deprecation policy pages) | #42 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-265 (E15-09: codemod engine tools/codemod, legacy import specifier rewrite) | #46 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-248 (E17-10: supply-chain hardening: Dependabot, dependency review, CodeQL, scheduled audit, SBOM) | #45 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
