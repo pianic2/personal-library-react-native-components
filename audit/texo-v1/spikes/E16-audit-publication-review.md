@@ -21,11 +21,11 @@
 | Credentials, API keys, tokens, private keys | none found |
 | Email addresses | one: `info@theopificium.it` in `audit/texo-v1/DECISIONS.md` (the security contact chosen for publication, H1) |
 | Internal URLs (Atlassian, Confluence, Slack, localhost, private IPs) | none; the only "atlassian" hit is prose; "confluence" appears 114 times as a word in migration plans, not as a link |
-| Local absolute paths | `/home/optimus/Documenti/GitHub/personal-library-react-native-components` and `/home/optimus/.npm` in 13 files (`audit/release/*`, `audit/theme/*`, `audit/api/internal-experimental-export-fencing-plrnui-26.md`, and similar). These expose a local username and folder layout; low risk but should be scrubbed or accepted |
-| Personal name | "Niccolo Piazzi" in `audit/texo-v1/backlog/E16.json` and `tickets/E16.json` (quoting the MIT `LICENSE` holder, which is public anyway); first names/handle `niccolo` in 3 files discussing the GitHub owner mismatch |
+| Local absolute paths | `/home/optimus/Documenti/GitHub/personal-library-react-native-components` and `/home/optimus/.npm` in 11 files (`audit/release/` 8, `audit/theme/` 2, `audit/api/` 1: `internal-experimental-export-fencing-plrnui-26.md`). These expose a local username and folder layout; low risk but should be scrubbed or accepted |
+| Personal name and handles | "Niccolo Piazzi" in `audit/texo-v1/backlog/E16.json` and `tickets/E16.json` (quoting the MIT `LICENSE` holder, which is public anyway); the handle `niccolo` in 4 files (the mkdocs `repo_url` owner mismatch in the E16 JSON files, the E14-E17 audit and R1 review); the GitHub owner `pianic2` in 11 files; the placeholder CODEOWNERS handle `@optimus` quoted in `audit/texo-v1/audit/E14-E17-package-migration.md`. Handles are not secrets but belong to the same publication decision |
 | Internal project names | `AURA` (55 files) and `UI Experience` (11 files) refer to the source product the library was extracted from; confirm the owner is fine naming it publicly |
 
-Command used (config kept outside the repository because the ticket owns only this report):
+Command used (config kept outside the repository because the ticket owns only this report; the scan prints nothing on success, so the log is the exit code `0`, and the control prints the two findings and exits `1`):
 
 ```sh
 secretlint --secretlintrc <rc with the recommend preset> --secretlintignore /dev/null "audit/**"
@@ -47,12 +47,23 @@ Decision key: **keep** = stays in `audit/`, public; **keep (tooling)** = cannot 
 | `dependencies/` | 10 | 70 | 114 | native dependency gate, peer policy, strategies | **keep**: live policy referenced by ADR 0012/0013 and tickets (`native-dependency-gate.md`, `peer-dependency-policy.md`, `motion-dependency-strategy.md`) |
 | `docs/` | 11 | 70 | 136 | audit-era documentation notes | **move**; overlaps `docs/` |
 | `migration/` | 3 | 66 | 264 | breaking-change register, migration governance | **keep**: the breaking-change register is a gate in `native-dependency-gate.md` |
-| `release/` | 20 | 137 | 397 | per-RC release notes, validation reports, readiness reviews | **keep** the two release notes and `release-readiness-current.md`; **move** the per-ticket validation reports; **scrub** local paths (6 files) |
+| `release/` | 20 | 137 | 397 | per-RC release notes, validation reports, readiness reviews | **keep** the two release notes and `release-readiness-current.md`; **move** the per-ticket validation reports; **scrub** local paths (8 files) |
 | `risk-assessment/` | 10 | 31 | 43 | risk assessments referenced by the dependency gate | **keep** |
 | `texo-v1/` | 57 | 2335 | 548 | V1 program: backlog JSON (generated), tickets, STATE, DECISIONS, reviews, spikes, scripts | **keep (tooling)** while the E18 execution protocol runs; revisit after 1.0 (history branch or private); 2.3 MB of generated JSON is the bulk of `audit/` |
 | `theme/` | 12 | 54 | 118 | theme/token audits per ticket | **move** (history); **scrub** local paths (2 files) |
 
 Totals: keep or keep (tooling): `adr`, `dependencies`, `migration`, `risk-assessment`, `texo-v1`, the snapshot in `api`, selected `release` files. Move candidates: root files, `backlog`, `components`, `docs`, most of `api`, `theme`, per-ticket `release` reports. No subtree needs to be excluded for security reasons.
+
+## Inbound links to `audit/` (moves would break these)
+
+Moving or excluding a subtree must be done together with fixing the links that point into it:
+
+- `docs/platform-support.md:3` links to `audit/components/component-platform-support-matrix-plrnui-25.md` (`components/` is a move candidate);
+- `docs/preview-runtime-limits.md:77` links to `audit/docs/expo-rn-metro-troubleshooting-outline.md` (`docs/` is a move candidate);
+- `CONTRIBUTING.md` links to `audit/adr/0003-component-stability-classification.md` and explains the role of `audit/`; `README.md:62-66` and `docs/migration.md:35` describe `audit/` as governance evidence and historical migration material;
+- inside `audit/`, files cross-reference each other by path (for example `audit/dependencies/dependency-classification.md` points at other `audit/dependencies/*` files).
+
+A move ticket must include a link check (`grep -rn "audit/"` across `README.md`, `CONTRIBUTING.md`, `docs/`, `skills/`, `scripts/`, `tests/`) and rewrite the links it changes.
 
 ## Proposed ADR layout and English index
 
@@ -84,7 +95,7 @@ Notes: ADRs 0001-0008 are still "Proposto"; the owner decides whether to mark th
 
 1. **H7: public or private `audit/`?** The recorded answer is "Default accepted" without the value. The owner must state it (recommended: keep the tooling-referenced parts public, move the rest to `docs/internal/` or a history branch).
 2. Whether the internal product names `AURA` and `UI Experience` and the ticket keys may appear in the public repository.
-3. Whether to scrub the local paths (`/home/optimus/...`, 13 files) or accept them. Scrubbing edits files outside this ticket and needs its own ticket.
+3. Whether to scrub the local paths (`/home/optimus/...`, 11 files) or accept them. Scrubbing edits files outside this ticket and needs its own ticket.
 4. Whether ADRs 0001-0008 are translated, accepted, or marked historical.
 5. Whether `texo-v1/` (2.3 MB of generated backlog JSON, ticket keys, review notes) stays public after 1.0.
 6. A `.secretlintrc` (or gitleaks config) in the repository so the scan can run in CI (`npx secretlint "audit/**"` needs it).
