@@ -11,10 +11,11 @@
 
 - The latest published version (see the supported versions table in [SECURITY.md](SECURITY.md)).
 - Expo SDK 57 with React Native 0.86 for 1.0.
-- Components documented in the repository documentation. Component stability levels (demo, prototype, stable) follow the repository's component stability classification (ADR 0003).
+- Public components as classified in `docs/components.md`: `beta` components are public API and supported, but their contract may still change; no component is classified `stable` yet.
 
 ## What is not supported
 
+- `experimental` components (provisional API, not recommended as a production dependency) and `internal` ones (not part of the public consumer API).
 - Older pre-release versions and unreleased branches.
 - Versions of Expo or React Native outside the support matrix.
 - Custom forks and private patches.
