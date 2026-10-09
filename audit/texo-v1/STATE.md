@@ -55,3 +55,4 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 | PLRNUI-444 (E18-01: ADR 0020 ticket execution protocol) | #12 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-445 (E18-02: skill texo-execute + 6 class templates) | #14 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-447 (E18-04: commit-msg check, pre-push no-main guard, branching policy) | #16 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-446 (E18-03: JQL set docs/policies/jql.md, link from texo-execute skill) | #15 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |

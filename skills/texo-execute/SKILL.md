@@ -8,7 +8,7 @@ description: Execute exactly one approved Texo V1 Jira ticket (PLRNUI-n) with mi
 Protocol: `audit/adr/0020-ticket-execution-protocol.md` (read it once; do not re-derive it).
 
 ## Steps
-1. **Gate.** Queue: JQL in ADR 0020 (Selection), skipping tickets already in the `STATE.md` Execution log. On Jira check the labels `po-approved` and `ready`. If `po-approved` is missing, stop and tell the PO. Never add it.
+1. **Gate.** Queue: JQL set in `docs/policies/jql.md` (ready queue, by wave, blocked), rules in ADR 0020 (Selection), skipping tickets already in the `STATE.md` Execution log. On Jira check the labels `po-approved` and `ready`. If `po-approved` is missing, stop and tell the PO. Never add it.
 2. **Read the ticket** from `audit/texo-v1/backlog/E*.json` (local id from `audit/texo-v1/jira-map.json`). Do NOT use the Jira description: its markdown alters some characters.
 3. **Dependencies.** Every id in `dependencies` must already be merged into `texo/v1` (check `STATE.md` Execution log or the PR list). Otherwise stop and report.
 4. **Branch** `texo/PLRNUI-<n>-<slug>` from `texo/v1`. Touch only `filesTouched` (exception: your row in the `STATE.md` Execution log).
