@@ -59,6 +59,6 @@ Every breaking, deprecation and `beta` change needs a release note describing th
 
 - The stable set is non-empty and listed in [Components](../components.md).
 - The public API snapshots are committed and checked (`npm run api:snapshot:check`).
-- The support matrix is verified: [Compatibility](../compatibility.md) has at least one `supported` entry with evidence (`npm run docs:compat:check`).
+- The support matrix is verified: `npm run docs:compat:check` passes, and [Compatibility](../compatibility.md) lists the Expo 57 / React Native 0.86 baseline (decision H4) as `supported`, with evidence.
 
-At the time of writing no component is classified `stable`, so these criteria are not met yet. The supported Expo and React Native versions for `1.0.0` are listed in [Compatibility](../compatibility.md).
+At the time of writing no component is classified `stable`, so these criteria are not met yet. The validated runtime baseline is listed in [Compatibility](../compatibility.md); extending the supported versions beyond it for `1.0.0` is an owner decision. This policy is defined by [ADR 0011](../../audit/adr/0011-semver-and-deprecation-policy.md), whose status is Proposed until the owner confirms it.

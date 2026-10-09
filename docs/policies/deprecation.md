@@ -15,7 +15,7 @@ Marking an API deprecated is a **minor** release.
 - The API stays for at least **one minor release and at least 6 months** after the deprecation is released, whichever is longer.
 - It is removed only in a **major** release.
 - Deprecated aliases kept for migration stay through the whole `1.x` line (decision H4).
-- The legacy package name is kept alive by a re-export shim with its own sunset window of 12 months (ADR 0013).
+- The legacy package name is kept alive by a re-export shim with its own sunset window of 12 months (ADR 0013). Open: the calendar start of that window is set by the release plan.
 
 ## Exceptions
 
