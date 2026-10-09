@@ -22,14 +22,14 @@ Review PR <number> for PLRNUI-<n> with the texo-review skill, in this fresh sess
 ```
 
 ## Wave checkpoint
-Give it to the author of the last ticket of a wave, together with the author prompt and before that ticket's merge (see [checkpoint](checkpoint.md)). Replace `<N>` (wave number) and `<n>` (that ticket's number). The Wave progress row has the columns Wave, Merged, Total, Closed by.
+Give it to the author of the last ticket of a wave, together with the author prompt and before that ticket's merge (see [checkpoint](checkpoint.md)). The rows go in before the PR is reviewed and merged. Replace `<N>` (wave number) and `<n>` (that ticket's number). The Wave progress row has the columns Wave, Merged, Total, Closed by.
 
 ```
 Close wave <N> with PLRNUI-<n>, the last ticket of the wave. On its branch, before the merge, add to audit/texo-v1/STATE.md its Execution log row and one Wave progress row in a single commit chore(PLRNUI-<n>): checkpoint wave <N>. Do not edit jira-map.json or DECISIONS.md: list in your report what needs them.
 ```
 
 ## Resume
-Same text as in [checkpoint](checkpoint.md); keep the two identical.
+Same text as in [checkpoint](checkpoint.md); keep the two identical. Before pasting it, check the open PR list and the existing `texo/PLRNUI-*` branches: the prompt skips logged and merged tickets only, so continue any ticket with an open PR or a pushed branch with the author prompt instead. A follow-up ticket should add this check to `checkpoint.md`, and both copies change together.
 
 ```
 Resume the Texo V1 run. Before starting, read only audit/texo-v1/STATE.md for the state: Execution log, Wave progress, Recommended next work. Pick the next ticket with the JQL in docs/policies/jql.md, skip tickets in the Execution log, and skip any whose PR is already merged into texo/v1 (backfill its log row instead). Then execute it with the texo-execute skill. Never change a Jira status. If po-approved is missing or a dependency is unmerged, stop and tell me.
@@ -37,7 +37,7 @@ Resume the Texo V1 run. Before starting, read only audit/texo-v1/STATE.md for th
 
 ## Pause
 - Pause at a ticket boundary when you can: let the current PR merge, or stop before the merge.
-- If you stop mid-ticket, push the branch and say in the report which step is next, so it is never left in an unreported state. Do not change the Jira status and do not add an Execution log row: rows exist only for merged tickets.
+- If you stop mid-ticket, push the branch and say in the report which step is next, so it is never left in an unreported state (a pushed branch without a PR is continued with the author prompt). Do not change the Jira status and do not add an Execution log row: rows exist only for merged tickets.
 - Nothing else is needed: the resume prompt rebuilds the position from `STATE.md` and the merged PR list.
 
 ## Evidence
