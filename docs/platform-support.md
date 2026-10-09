@@ -13,6 +13,18 @@ For clean consumer install, peer alignment, Metro resolver and native runtime
 triage, see
 [Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
 
+## Validated runtimes
+
+<!-- BEGIN GENERATED: validated runtimes (npm run docs:compat) -->
+
+| Platform | Runtime | Expo | React Native | React | Tier | Last verified |
+| --- | --- | --- | --- | --- | --- | --- |
+| Android | Expo Go | `57.0.21` | `0.86.3` | `19.2.3` | supported | 2026-09-09 |
+
+Generated from `config/compatibility.json`; see [Consumer Compatibility](compatibility.md) for tiers and evidence.
+
+<!-- END GENERATED: validated runtimes -->
+
 Stability labels:
 
 - `beta`: public consumer API, usable but contract may still change.

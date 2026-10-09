@@ -1,10 +1,21 @@
 {
-  "expoSdk": "57",
-  "validatedConsumer": {
-    "expo": "57.0.21",
-    "reactNative": "0.86.3",
-    "react": "19.2.3",
-    "runtime": "Expo Go Android"
+  "schemaVersion": 2,
+  "claim": "validated-consumer-baseline",
+  "tiers": {
+    "supported": "Validated by a maintainer-approved run on this lane and covered by the release gates. Part of the support claim.",
+    "residual": "Expected to work but without a validated pass. Owner-accepted gap; not part of the support claim.",
+    "unsupported": "Known not to work or explicitly out of scope."
   },
-  "claim": "validated-consumer-baseline"
+  "entries": [
+    {
+      "expo": "57.0.21",
+      "rn": "0.86.3",
+      "react": "19.2.3",
+      "platform": "android",
+      "runtime": "Expo Go",
+      "tier": "supported",
+      "lastVerified": "2026-09-09",
+      "evidence": "audit/release/plrnui-62-native-runtime-publication-closure.md"
+    }
+  ]
 }

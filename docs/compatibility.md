@@ -7,6 +7,21 @@
 - React Native peer: `>=0.86.0 <0.87.0`
 - Node engine: `>=22.13.0`
 - Expo SDK validated baseline: `57`
-- Validated consumer: Expo `57.0.21`, React Native `0.86.3`, React `19.2.3`, Expo Go Android.
 
 Expo is a governed validation baseline; it is not inferred from the React Native peer range.
+
+## Support tiers
+
+| Tier | Meaning |
+| --- | --- |
+| `supported` | Validated by a maintainer-approved run on this lane and covered by the release gates. Part of the support claim. |
+| `residual` | Expected to work but without a validated pass. Owner-accepted gap; not part of the support claim. |
+| `unsupported` | Known not to work or explicitly out of scope. |
+
+## Validated consumers
+
+| Platform | Runtime | Expo | React Native | React | Tier | Last verified | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Android | Expo Go | `57.0.21` | `0.86.3` | `19.2.3` | supported | 2026-09-09 | `audit/release/plrnui-62-native-runtime-publication-closure.md` |
+
+Every row has evidence. Adding a version or runtime means adding an entry with its evidence in `config/compatibility.json`, then running `npm run docs:compat`.
