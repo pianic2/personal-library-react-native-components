@@ -154,7 +154,7 @@ describe("PLRNUI-449 hardening", () => {
     write("apps/catalog/app/c/[name].tsx");
     commit("change");
     assert.equal(run("E99-01", "base").status, 0);
-    write("apps/catalog/app/c/n.tsx");
+    write("apps/catalog/app/c/other.tsx");
     commit("another file");
     assert.equal(run("E99-01", "base").status, 1);
   });
