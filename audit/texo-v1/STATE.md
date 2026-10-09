@@ -77,3 +77,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-125 (E16-04: CONTRIBUTING rewrite for external contributors, commands test) | #30 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-131 (E16-05: PR template and issue forms for the external flow) | #33 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-129 (E15-02: ADR 0013 legacy shim policy, Pending H4 section) | #32 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-185 (E1-04: tsconfig.tests.json, Badge smoke fix, examples render test) | #35 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
