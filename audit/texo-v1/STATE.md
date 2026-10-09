@@ -48,6 +48,11 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 3. Optional hardening pass: re-send mangled descriptions as ADF; tighten flagged acceptance criteria; fix E4-16.
 4. When execution begins, first tickets on the critical path: E1-15 -> E14-03 (ESM) -> E2-01 -> E2-06 -> API-conventions ADR.
 
+## Wave progress
+One row per closed wave, added by the closing ticket (docs/policies/checkpoint.md). Empty until the first wave closes.
+| Wave | Merged | Total | Closed by |
+|---|---|---|---|
+
 ## Execution log (ticket sessions)
 | Ticket | PR | Result |
 |---|---|---|
@@ -57,3 +62,7 @@ H1 name/scope/org/repo/license holder/CODEOWNERS · H2 allow optional peerDepend
 | PLRNUI-447 (E18-04: commit-msg check, pre-push no-main guard, branching policy) | #16 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-446 (E18-03: JQL set docs/policies/jql.md, link from texo-execute skill) | #15 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-449 (E18-06: file-ownership guard scripts/check-ownership.mjs) | #17 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-453 (E18-10: checkpoint and resume protocol docs/policies/checkpoint.md) | #19 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-448 (E18-05: scripts/ticket-prompt.mjs minimal execution prompt) | #20 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-451 (E18-08: skill texo-review) | #21 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-456 (E18-13: execution runbook docs/policies/execution-runbook.md) | #22 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
