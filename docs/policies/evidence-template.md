@@ -14,12 +14,12 @@ Used by ticket sessions (ADR 0020, `audit/adr/0020-ticket-execution-protocol.md`
 ```
 Evidence PLRNUI-<n> (<local id>), PR <link> merged into texo/v1 (<merge sha>).
 
-Files changed: <one path per line, or a diff summary>. Outside filesTouched: the `STATE.md` Execution log row (the only exception allowed by ADR 0020).
+Files changed: <one path per line, or a diff summary>. Outside filesTouched: the `STATE.md` Execution log row (the exception allowed by ADR 0020) and, only for the ticket that closes a wave, the `Wave progress` row and the "Recommended next work" list of `STATE.md` (`docs/policies/checkpoint.md`), plus any file the PO added to the ticket in writing (name that written approval, for example the Jira comment or PR comment, in the evidence).
 
 Commands (exit code):
 - <command> <exit code> (<short result: n pass, n fail>)
 - <manual check, for example "inspection"> n/a (no exit code): <what was inspected and the result>
-- CI package-baseline: <green|red> on <commit sha>
+- CI on the PR head <head sha> (not the merge sha), one line per required check listed in `docs/policies/branching.md` (currently `package-baseline`, `fast-checks`, `commit-and-ownership`): <check name> <green|red>
 
 Test output: <the validation commands' summary lines>
 
@@ -30,7 +30,7 @@ Acceptance criteria:
 Ticket evidence entries (EVERY entry of the ticket's `evidence` array as its own line, verbatim):
 - <entry text>: <path, link or pasted output that satisfies it, or "see Files changed" / "see Test output" when a dedicated field above already holds it>
 
-Independent review: <verdict, number of rounds, blockers/majors fixed>. Changes after the last review: <none|list>.
+Independent review: <verdict, number of rounds, blockers/majors fixed>. Changes after the last review: <none|list each change>. Any change after a PASS needs a new independent review of the new head (`skills/texo-review/SKILL.md`), and the Independent review field then reports the verdict on that head. If a change was merged without the new review, say so under "Not verified" below: the merge is then outside the protocol, and the PO decides whether to accept it.
 Not verified, known limits and deviations: <list, or none>.
 ```
 
