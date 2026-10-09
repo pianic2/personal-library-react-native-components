@@ -20,4 +20,6 @@ git config core.hooksPath .githooks
 - `.githooks/commit-msg` runs `scripts/check-commit-msg.mjs` on the commit message.
 - `.githooks/pre-push` refuses any push whose remote ref is `refs/heads/main`.
 
-Hooks are a local aid; the CI checks of E18-09 are the enforced gate.
+Hooks are a local aid: `git commit --no-verify` or not setting `core.hooksPath` bypasses them. The CI checks of E18-09 and branch protection on `main` are the enforced gate.
+
+Known limitation: git-generated `fixup!`, `squash!`, `amend!` and `Revert "..."` subjects do not match the convention; reword them to `add|fix|chore(PLRNUI-<n>): ...` before committing.

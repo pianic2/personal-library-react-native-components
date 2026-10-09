@@ -1,7 +1,9 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 // @ts-expect-error plain ESM script without type declarations
 import { validateCommitMessage } from "../../scripts/check-commit-msg.mjs";
 
@@ -15,7 +17,7 @@ describe("PLRNUI-447 commit message convention", () => {
   });
 
   it("rejects other subjects", () => {
-    for (const message of ["feat: x", "add(PLRNUI-): x", "add(PLRNUI-12):x", "add(PLRNUI-12): ", "update(PLRNUI-1): x", "", " add(PLRNUI-1): x"]) {
+    for (const message of ["feat: x", "add(PLRNUI-): x", "add(PLRNUI-12):x", "add(PLRNUI-12): ", "add(PLRNUI-1):  ", "add(PLRNUI-1): \r", "update(PLRNUI-1): x", "", " add(PLRNUI-1): x"]) {
       assert.equal(ok(message), false, message);
     }
   });
@@ -30,13 +32,25 @@ describe("PLRNUI-447 commit message convention", () => {
     assert.equal(ok("Merged something"), false);
   });
 
-  it("commit-msg hook exits non-zero for a bad message file", () => {
-    const run = (text: string) => {
-      const file = `${process.env.TMPDIR ?? "/tmp"}/commit-msg-test-${process.pid}.txt`;
-      return spawnSync("sh", ["-c", `printf '%s' "$1" > "${file}" && sh .githooks/commit-msg "${file}"`, "sh", text], { encoding: "utf8" });
-    };
-    assert.equal(run("feat: x").status, 1);
-    assert.equal(run("add(PLRNUI-12): x").status, 0);
+  it("commit-msg hook exits non-zero for a bad message file, also via a symlinked script path", () => {
+    const dir = mkdtempSync(join(tmpdir(), "commit-msg-test-"));
+    try {
+      const run = (text: string) => {
+        const file = join(dir, "msg.txt");
+        writeFileSync(file, text);
+        return spawnSync("sh", [".githooks/commit-msg", file], { encoding: "utf8" });
+      };
+      assert.equal(run("feat: x").status, 1);
+      assert.equal(run("add(PLRNUI-12): x").status, 0);
+      const link = join(dir, "link.mjs");
+      symlinkSync(resolve("scripts/check-commit-msg.mjs"), link);
+      const bad = join(dir, "bad.txt");
+      writeFileSync(bad, "feat: x");
+      assert.equal(spawnSync("node", [link, bad], { encoding: "utf8" }).status, 1);
+      assert.equal(spawnSync("node", [link], { encoding: "utf8" }).status, 2);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
