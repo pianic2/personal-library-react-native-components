@@ -70,6 +70,20 @@ describe("PLRNUI-199 component docs lint", () => {
     }
   });
 
+  it("ignores headings and labels inside code fences, and flags an unclosed fence or a capitalised label", () => {
+    const fenced = "# Foo\n\n```md\n**Stability:** beta\n## Import\n## Props\n## Usage\n```\n";
+    const result = run("demo", fenced, "--strict");
+    assert.equal(result.status, 1);
+    for (const message of ['missing "## Import"', 'missing "## Props"', 'missing "## Usage"', 'missing "**Stability:**" label']) assert.ok(result.stdout.includes(message), message);
+    const nested = completePage("beta").replace("## Usage\n\n```tsx\n<Foo />\n```\n", "## Usage\n\n````md\n```tsx\n<Foo />\n```\n````\n");
+    assert.match(run("demo", nested, "--strict").stdout, /no ```tsx fence/);
+    const cut = completePage("beta").replace("## Usage\n\n```tsx\n<Foo />\n```\n", "## Usage\n\n```tsx\n## not a heading\n<Foo />\n```\n");
+    assert.equal(run("demo", cut, "--strict").status, 0);
+    assert.match(run("demo", `${completePage("beta")}\n~~~ts\nunclosed\n`, "--strict").stdout, /unclosed code fence/);
+    assert.match(run("demo", completePage("Beta"), "--strict").stdout, /must be lower case/);
+    assert.equal(run("demo", completePage("beta").replace("```tsx", "~~~tsx").replace(/```\n$/, "~~~\n"), "--strict").status, 1);
+  });
+
   it("checks the Stability label against the meta status (ADR 0011 mapping)", () => {
     assert.equal(run("prototype", completePage("experimental"), "--strict").status, 0);
     assert.equal(run("prototype", completePage("internal"), "--strict").status, 0);
