@@ -158,9 +158,8 @@ describe("check-templates", () => {
     expectFail(app(`import {\n a, // c\n} from "${LIB}/src/x";\n`), /deep import/);
   });
 
-  it("does not flag a deep path that only appears in a comment", () => {
-    const r = run(fixture(app(`// import "${LIB}/src/x"\nexport default 1;\n`)));
-    assert.equal(r.status, 0, r.stderr);
+  it("reports a deep import that only appears in a comment (documented fail-closed false positive)", () => {
+    expectFail(app(`// import "${LIB}/src/x"\nexport default 1;\n`), /deep import/);
   });
 
   it("fails on absolute and escaping relative imports, including backslashes", () => {
@@ -215,5 +214,41 @@ describe("check-templates", () => {
     const r = spawnSync(process.execPath, [script, "--root", dir, "--package-json", other], { encoding: "utf8" });
     assert.equal(r.status, 1, "template depends on a different library name");
     assert.match(r.stderr, /must depend on @other\/lib/);
+  });
+
+  it("detects imports after regex literals, JSX apostrophes, nested templates and fake comment markers", () => {
+    expectFail(app(`const r = /'/; const u = 'http://x'; import('${LIB}/src/x');\n`), /deep import/);
+    expectFail(app(`const a = <Text>don't</Text>; const u = 'http://x'; require('${LIB}/src/x');\n`), /deep import/);
+    expectFail(app("const a = `${ `'` }`;\nconst b = '//'; import('" + LIB + "/src/x');\n"), /deep import/);
+    expectFail(app(`const a = '/*';\nimport('${LIB}/src/x');\nconst b = '*/';\n`), /deep import/);
+  });
+
+  it("fails on string-named bindings importing from a deep path", () => {
+    expectFail(app(`import { "a-b" as c } from '${LIB}/src/x';\n`), /deep import/);
+    expectFail(app(`export { "a" as b } from '${LIB}/src/x';\n`), /deep import/);
+  });
+
+  it("fails on overrides/resolutions keys of the form name@range and variants", () => {
+    expectFail(pkg({ overrides: { [`${LIB}@^0.1.0`]: "link:../x" } }), /semver range/);
+    expectFail(pkg({ resolutions: { [`${LIB}@^0.1.0`]: "link:../x" } }), /semver range/);
+    expectFail(pkg({ resolutions: { [`**/${LIB}@^0.1.0`]: "file:../x" } }), /semver range/);
+    expectFail(pkg({ resolutions: { [`foo>${LIB}@1`]: "file:../x" } }), /semver range/);
+    expectFail(lib({ [LIB]: "^0.1.0", [`${LIB}@1`]: "^0.1.0" }), /non-canonical/);
+  });
+
+  it("fails on import.meta.resolve and createRequire", () => {
+    expectFail(app(`const u = import.meta.resolve('${LIB}/src/x');\n`), /import\.meta\.resolve/);
+    expectFail(app(`import { createRequire } from 'node:module';\n`), /createRequire/);
+  });
+
+  it("scans other extensions case-insensitively", () => {
+    expectFail(valid("tabs", { "app/x.TS": `import "${LIB}/src/x";\n` }), /deep import/);
+    expectFail(valid("tabs", { "app/x.vue": `import "${LIB}/src/x";\n` }), /deep import/);
+    expectFail(valid("tabs", { "app/x.html": `<script>import "${LIB}/src/x";</script>\n` }), /deep import/);
+  });
+
+  it("fails on workspaces and bundledDependencies", () => {
+    expectFail(pkg({ workspaces: ["packages/*"] }), /workspaces/);
+    expectFail(pkg({ bundledDependencies: [LIB] }), /bundledDependencies/);
   });
 });

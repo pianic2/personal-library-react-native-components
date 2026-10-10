@@ -66,7 +66,7 @@ const PUBLIC = new Set([LIB, ...publicSubpaths]);
 const errors = [];
 const fail = (where, message) => errors.push(`${where}: ${message}`);
 
-const SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx)$/;
+const SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx|vue|html?|es6)$/i;
 const FORBIDDEN_DIRS = new Set(["node_modules", ".expo", "dist", "build"]);
 
 // Lists source files of a template; fails on symlinks and on build/dependency dirs (fail-closed, nothing is skipped silently).
@@ -113,6 +113,7 @@ function stripComments(text) {
 const STATIC_RE = [
   /\b(?:import|export)\b[^'"`;]*?\bfrom\s*(['"`])([^'"`]*)\1/g,
   /\bimport\s*(['"`])([^'"`]*)\1/g,
+  /\bfrom\s*(['"`])([^'"`]*)\1/g, // also covers string-named bindings: import { "a-b" as c } from "x"
 ];
 const CALL_RE =
   /\b(?:import|require(?:\.resolve)?|jest\.(?:requireActual|requireMock|mock|doMock|unmock|dontMock|setMock|createMockFromModule)|vi\.(?:mock|doMock|importActual|importMock))\s*\(\s*(?:(['"`])([^'"`]*)\1\s*[,)]|([^\s]))/g;
@@ -132,14 +133,23 @@ function checkSpecifier(spec, file, tplDir, where) {
 }
 
 function checkSpecifiers(file, tplDir, label) {
-  const text = stripComments(readFileSync(file, "utf8"));
+  const raw = readFileSync(file, "utf8");
   const where = `${label}/${relative(tplDir, file).split(sep).join("/")}`;
   const specs = new Set();
-  for (const re of STATIC_RE) for (const m of text.matchAll(re)) specs.add(m[2]);
-  for (const m of text.matchAll(CALL_RE)) {
-    if (m[2] === undefined || m[2].includes("${")) fail(where, "dynamic import/require specifier cannot be verified");
-    else specs.add(m[2]);
+  const problems = new Set();
+  // Detection runs on BOTH the raw text and the comment-stripped text: the comment stripper is not
+  // regex-literal/JSX aware and can desync, so the raw pass keeps it fail-closed. Side effect: an
+  // import written only inside a comment is also reported (accepted false positive).
+  for (const text of [raw, stripComments(raw)]) {
+    for (const re of STATIC_RE) for (const m of text.matchAll(re)) specs.add(m[2]);
+    for (const m of text.matchAll(CALL_RE)) {
+      if (m[2] === undefined || m[2].includes("${")) problems.add("dynamic import/require specifier cannot be verified");
+      else specs.add(m[2]);
+    }
+    if (/\bcreateRequire\b/.test(text)) problems.add("createRequire cannot be verified statically");
+    if (/\bimport\s*\.\s*meta\s*\.\s*resolve\b/.test(text)) problems.add("import.meta.resolve cannot be verified statically");
   }
+  for (const problem of [...problems].sort()) fail(where, problem);
   for (const spec of [...specs].sort()) checkSpecifier(spec, file, tplDir, where);
 }
 
@@ -160,7 +170,9 @@ function checkLibraryVersions(label, p) {
       continue;
     }
     for (const [key, value] of Object.entries(deps)) {
-      if (key === LIB) {
+      if (key !== LIB && key.includes(LIB)) {
+        fail(label, `${section}["${key}"] names ${LIB} under a non-canonical key`);
+      } else if (key === LIB) {
         if (!isSemverRange(value)) fail(label, `${section}["${LIB}"] must be a semver range, got ${JSON.stringify(value)}`);
       } else if (typeof value === "string" && value.includes(LIB)) {
         fail(label, `${section}["${key}"] aliases ${LIB}; only a semver range under the real name is allowed`);
@@ -170,17 +182,25 @@ function checkLibraryVersions(label, p) {
   const visit = (node, where) => {
     if (typeof node !== "object" || node === null) return;
     for (const [key, value] of Object.entries(node)) {
-      const isLib = key === LIB || key.endsWith(`>${LIB}`) || key.endsWith(`/${LIB}`);
-      if (isLib && typeof value === "string" && !isSemverRange(value)) fail(label, `${where}["${key}"] must be a semver range, got ${JSON.stringify(value)}`);
-      else if (typeof value === "string" && !isLib && value.includes(LIB)) fail(label, `${where}["${key}"] aliases ${LIB}`);
-      else if (typeof value === "object" && value !== null) {
+      const isLib = key.includes(LIB); // any key naming the library (LIB@range, a>LIB, **/LIB, ...) is treated as the library
+      if (typeof value === "string") {
+        if (isLib && !isSemverRange(value)) fail(label, `${where}["${key}"] must be a semver range, got ${JSON.stringify(value)}`);
+        else if (!isLib && value.includes(LIB)) fail(label, `${where}["${key}"] aliases ${LIB}`);
+      } else if (typeof value === "object" && value !== null) {
         if (isLib && typeof value["."] === "string" && !isSemverRange(value["."])) fail(label, `${where}["${key}"]["."] must be a semver range`);
         visit(value, `${where}["${key}"]`);
-      }
+      } else if (isLib) fail(label, `${where}["${key}"] must be a semver range`);
     }
   };
   for (const field of ["overrides", "resolutions"]) visit(p[field], field);
   visit(p.pnpm, "pnpm");
+  if (p.workspaces !== undefined) fail(label, 'package.json must not declare "workspaces"');
+  for (const field of ["bundledDependencies", "bundleDependencies"]) {
+    if (p[field] !== undefined) fail(label, `package.json must not declare "${field}"`);
+  }
+  if (p.dependenciesMeta !== undefined && JSON.stringify(p.dependenciesMeta).includes(LIB)) {
+    fail(label, `dependenciesMeta must not mention ${LIB}`);
+  }
 }
 
 const entries = readdirSync(root, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1));
