@@ -12,7 +12,10 @@ const Context = createContext<Resolution>({ adapters: {} });
 const noopAdapters = createNoopAdapters();
 
 export interface CapabilityProviderProps {
-  /** Adapters for this subtree. A provider overrides an outer provider per id and inherits the other ids. */
+  /**
+   * Adapters for this subtree. A provider overrides an outer provider per id and inherits the other ids; an `undefined`
+   * entry is ignored. Hoist or memoize this object: a new object on every render re-renders every consumer.
+   */
   adapters?: CapabilityAdapters;
   /** Default adapters, used for ids no provider supplies. The nearest registry wins. */
   registry?: CapabilityRegistry;
@@ -21,7 +24,11 @@ export interface CapabilityProviderProps {
 
 export function CapabilityProvider({ adapters, registry, children }: CapabilityProviderProps) {
   const parent = useContext(Context);
-  const value = useMemo<Resolution>(() => ({ adapters: { ...parent.adapters, ...adapters }, registry: registry ?? parent.registry }), [parent, adapters, registry]);
+  const value = useMemo<Resolution>(() => {
+    const merged: Record<string, unknown> = { ...parent.adapters };
+    for (const [id, adapter] of Object.entries(adapters ?? {})) if (adapter !== undefined) merged[id] = adapter;
+    return { adapters: merged as CapabilityAdapters, registry: registry ?? parent.registry };
+  }, [parent, adapters, registry]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

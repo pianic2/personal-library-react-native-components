@@ -5,6 +5,9 @@ export function createCapabilityRegistry(defaults: CapabilityAdapters = {}): Cap
   const adapters = new Map<string, unknown>(Object.entries(defaults));
   return {
     get: ((id: CapabilityId) => adapters.get(id)) as CapabilityRegistry["get"],
-    set: ((id: CapabilityId, adapter: unknown) => void adapters.set(id, adapter)) as CapabilityRegistry["set"],
+    set: ((id: CapabilityId, adapter: { id?: string }) => {
+      if (adapter?.id !== id) throw new Error(`adapter id "${adapter?.id}" does not match capability "${id}"`);
+      adapters.set(id, adapter);
+    }) as CapabilityRegistry["set"],
   };
 }

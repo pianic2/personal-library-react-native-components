@@ -14,6 +14,7 @@ import {
   useCapabilityStatus,
 } from "../../../src/native/core/index.js";
 import type { AdapterFor, CapabilityId, CapabilityStatus } from "../../../src/native/core/index.js";
+import { coreFallback } from "../../../src/native/core/fallbacks.js";
 import "./contract.types.js";
 
 const root = resolve(import.meta.dirname, "../../..");
@@ -129,6 +130,47 @@ describe("PLRNUI-138 capability layer", () => {
     assert.ok(existsSync(join(dir, "README.md")));
     const walk = (d: string): string[] => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]));
     for (const file of walk(join(root, "src")).filter((f) => /\.tsx?$/.test(f))) assert.doesNotMatch(readFileSync(file, "utf8"), /\brequire\(/, file);
+  });
+
+  it("an undefined provider entry does not clobber an outer adapter", async () => {
+    const tree = (
+      <CapabilityProvider adapters={{ clipboard: mockClipboard("outer") }}>
+        <CapabilityProvider adapters={{ clipboard: undefined }} />
+      </CapabilityProvider>
+    );
+    let seen!: AdapterFor<"clipboard">;
+    function Probe() {
+      seen = useCapability("clipboard");
+      return null;
+    }
+    act(() => {
+      TestRenderer.create(React.cloneElement(tree, undefined, React.cloneElement(tree.props.children, undefined, <Probe />)));
+    });
+    assert.equal(await seen.api.getString(), "outer");
+  });
+
+  it("a registry rejects an adapter whose id does not match", () => {
+    const registry = createCapabilityRegistry();
+    assert.throws(() => registry.set("clipboard", { ...mockClipboard("x"), id: "share" } as never), /does not match/);
+  });
+
+  it("RN-core fallbacks: haptics through Vibration, share through Share, none when the host lacks them", async () => {
+    const pulses: number[] = [];
+    const host = {
+      Vibration: { vibrate: (ms?: number | number[]) => void pulses.push(ms as number) },
+      Share: { dismissedAction: "gone", share: async (_: object) => ({ action: _ && "sharedAction" in _ ? "gone" : "done" }) },
+    };
+    const haptics = coreFallback("haptics", host)!;
+    assert.equal(haptics.status, "available");
+    await haptics.api.impact();
+    await haptics.api.selection();
+    assert.deepEqual(pulses, [10, 5]);
+    const share = coreFallback("share", host)!;
+    assert.equal(await share.api.share({ message: "hi" }), "shared");
+    assert.equal(await share.api.share({ message: "hi", url: "u", title: "t", sharedAction: 1 } as never), "dismissed");
+    assert.equal(coreFallback("clipboard", host), undefined);
+    assert.equal(coreFallback("haptics", {}), undefined);
+    assert.equal(coreFallback("haptics"), coreFallback("haptics"), "stable identity for the real host");
   });
 
   it("is not exported from the root entry", () => {

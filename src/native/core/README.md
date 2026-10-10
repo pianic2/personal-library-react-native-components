@@ -20,6 +20,8 @@ without a native dependency. This folder is the contract only; concrete adapters
 3. the React Native core fallback (`haptics` through `Vibration`, `share` through `Share`, when the host has them);
 4. a `noop` adapter whose api does nothing.
 
+Notes: an adapter given to a provider wins even when its status is `unavailable` (it does not fall through to the registry or the RN-core fallback), so supply an adapter only when you want it to decide. Hoist or memoize the `adapters` object you pass to a provider. The registry is read at render time and does not notify on `set`. The RN-core haptics fallback ignores the impact style.
+
 With no provider mounted and no optional package installed, `useCapability` returns a `noop` (or RN-core) adapter.
 
 ## Injection (no `require`)
