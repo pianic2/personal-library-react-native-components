@@ -144,6 +144,18 @@ describe("PLRNUI-166 component metadata", () => {
     });
     assert.equal(sneaky.status, 2);
     assert.match(sneaky.stderr, /cannot evaluate/);
+    for (const escape of [
+      "(exports.constructor.constructor('return process')()).exit(0);",
+      "(this.constructor.constructor('return process')()).exit(0);",
+      "(module.constructor('return process')()).exit(0);",
+      "Promise.resolve().then(() => { while (true) {} });",
+    ]) {
+      const result = lint({
+        Foo: { ...valid, whenNotToUse: [{ reason: "no", instead: "Ghost" }] },
+        Bar: `${escape}\nexport const meta = {};`,
+      });
+      assert.notEqual(result.status, 0, escape);
+    }
   });
 
   it("keeps metadata out of the build, the root entry and component code", () => {

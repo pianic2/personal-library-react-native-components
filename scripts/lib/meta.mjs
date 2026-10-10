@@ -8,8 +8,8 @@
 //   --json    print the entries as sorted JSON (exit 1 if the lint fails, nothing printed then)
 // Exit 2 on usage errors, unreadable input or a meta file that cannot be evaluated.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
-import { runInNewContext } from 'node:vm';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { createContext, runInContext } from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
@@ -38,22 +38,21 @@ function evaluate(file) {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   if (diagnostics && diagnostics.length > 0) throw new MetaError(`${file}: syntax error: ${ts.flattenDiagnosticMessageText(diagnostics[0].messageText, '\n')}`);
-  const module = { exports: {} };
-  // Empty context: the file sees no `process`, `fs` or other host globals, so it cannot exit or touch the lint.
-  const sandbox = {
-    module,
-    exports: module.exports,
-    require: () => {
-      throw new MetaError(`${file}: meta files may only use \`import type\``);
-    },
-  };
+  // Defence in depth, not a security boundary (meta files are trusted in-repo code reviewed like any source file):
+  // an empty context with a null-prototype global, and `module`/`exports` created inside it, so the file has no host
+  // objects to reach `process` through. There is no `require`: only `import type` is allowed, which transpiles away.
+  const context = createContext(Object.create(null), { microtaskMode: 'afterEvaluate' });
+  let exported;
   try {
-    runInNewContext(outputText, sandbox, { filename: file, timeout: 1000 });
+    const module = runInContext('({ exports: {} })', context);
+    context.module = module;
+    context.exports = module.exports;
+    runInContext(outputText, context, { filename: file, timeout: 1000 });
+    exported = module.exports.meta;
   } catch (error) {
-    if (error instanceof MetaError) throw error;
     throw new MetaError(`${file}: cannot evaluate: ${error.message}`);
   }
-  return module.exports.meta;
+  return exported;
 }
 
 /** Loads every component directory; entries carry `file` (repo-relative) and `meta` (undefined when the file is missing). */
@@ -117,7 +116,7 @@ export function lintMetas(entries, { root, strict = false } = {}) {
         else if (isText(example.path) && root) {
           const target = resolve(root, example.path);
           const rel = relative(root, target);
-          if (isAbsolute(example.path) || rel.startsWith('..') || isAbsolute(rel)) fail(entry, `example path must stay inside the repository: ${example.path}`);
+          if (isAbsolute(example.path) || rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) fail(entry, `example path must stay inside the repository: ${example.path}`);
           else if (!existsSync(target)) fail(entry, `example path does not exist: ${example.path}`);
         }
       }
