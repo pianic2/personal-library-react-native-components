@@ -105,7 +105,7 @@ jobs:
             PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
             PLRNUI-452) exceptions="docs/policies/branching.md" ;;
             PLRNUI-134) exceptions="package.json package-lock.json" ;;
-            PLRNUI-144) exceptions="src/tokens/types.ts tests/types/props-contracts.ts" ;;
+            PLRNUI-144) exceptions="src/tokens/types.ts tests/types/props-contracts.ts config/size-limits.json" ;;
             PLRNUI-172) exceptions="src/native/core/types.ts src/native/core/noop.ts src/native/testing/mockAdapters.ts tests/native/core/capabilities.test.tsx tests/native/testing/testing.test.tsx tests/native/core/contract.types.ts tests/native/testing/mockAdapters.types.ts" ;;
             PLRNUI-178) exceptions="src/native/core/types.ts src/native/core/noop.ts src/native/testing/mockAdapters.ts tests/native/core/capabilities.test.tsx tests/native/testing/testing.test.tsx tests/native/core/contract.types.ts tests/native/testing/mockAdapters.types.ts" ;;
             PLRNUI-202) exceptions="docs/components/navigation/top-bar.md docs/getting-started.md docs/platform-support.md" ;;
