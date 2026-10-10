@@ -29,7 +29,24 @@ export function componentDirs(root) {
   return readdirSync(base, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort();
 }
 
-// Evaluates a meta file: transpile (no type check) to CommonJS and run it in a function scope with a private `exports`.
+const SNAPSHOT = `(() => {
+  const walk = (v, depth) => {
+    if (depth > 50) throw new Error('meta is nested too deeply');
+    if (v === null || typeof v === 'string' || typeof v === 'boolean') return v;
+    if (typeof v === 'number' && Number.isFinite(v)) return v;
+    if (Array.isArray(v)) return Array.from({ length: v.length }, (_, i) => walk(v[i], depth + 1));
+    if (typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype) {
+      const out = {};
+      for (const k of Object.keys(v)) Object.defineProperty(out, k, { value: walk(v[k], depth + 1), enumerable: true, writable: true, configurable: true });
+      return out;
+    }
+    throw new Error('meta is not plain JSON data');
+  };
+  const m = snapshotSource.meta;
+  return m === undefined ? undefined : JSON.stringify(walk(m, 0));
+})()`;
+
+// Evaluates a meta file: transpile (no type check) to CommonJS, run it in an isolated context and return a plain-data snapshot.
 function evaluate(file) {
   const source = readFileSync(file, 'utf8');
   const { outputText, diagnostics } = ts.transpileModule(source, {
@@ -48,7 +65,11 @@ function evaluate(file) {
     context.module = module;
     context.exports = module.exports;
     runInContext(outputText, context, { filename: file, timeout: 1000 });
-    exported = module.exports.meta;
+    // Snapshot inside the context (timeout applies): one read per property, plain data only, returned as a string and
+    // parsed in the host so lint never touches context-realm objects, getters or proxies.
+    context.snapshotSource = module.exports;
+    const json = runInContext(SNAPSHOT, context, { filename: 'meta-snapshot', timeout: 1000 });
+    exported = json === undefined ? undefined : JSON.parse(json);
   } catch (error) {
     throw new MetaError(`${file}: cannot evaluate: ${error.message}`);
   }

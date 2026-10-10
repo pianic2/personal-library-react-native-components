@@ -115,8 +115,9 @@ describe("PLRNUI-166 component metadata", () => {
     const missing = lint({ Foo: null });
     assert.equal(missing.status, 1);
     assert.match(missing.stderr, /missing meta file/);
-    const fn = lint({ Foo: `export const meta = { ...${JSON.stringify(valid)}, summary: (() => "x")() , extra: () => 1 };\n` });
-    assert.equal(fn.status, 1);
+    const fn = lint({ Foo: `export const meta = { ...${JSON.stringify(valid)}, extra: () => 1 };\n` });
+    assert.equal(fn.status, 2);
+    assert.match(fn.stderr, /not plain JSON data/);
   });
 
   it("--strict adds the stricter bar", () => {
@@ -135,6 +136,18 @@ describe("PLRNUI-166 component metadata", () => {
     assert.equal(lint({ Foo: "export const meta = {" }).status, 2);
     assert.equal(lint({ Foo: 'import x from "fs"; export const meta = x;' }).status, 2);
     assert.equal(lint({ Foo: "export const meta = (() => { while (true) {} })();" }).status, 2);
+  });
+
+  it("reads each property once as plain data: getters, proxies and toJSON cannot change what the lint sees or hang it", () => {
+    const flip = `let reads = 0;\nexport const meta = { ...${JSON.stringify(valid)}, get summary() { reads += 1; return reads < 5 ? "ok" : "x".repeat(500); } };\n`;
+    assert.equal(lint({ Foo: flip }).status, 2);
+    const hang = `export const meta = { ...${JSON.stringify(valid)}, get summary() { while (true) {} } };\n`;
+    assert.equal(lint({ Foo: hang }).status, 2);
+    const toJson = `export const meta = { ...${JSON.stringify(valid)}, toJSON() { while (true) {} } };\n`;
+    assert.equal(lint({ Foo: toJson }).status, 2);
+    // A proxy is snapshotted once like any object, so what the lint checks is what --json prints.
+    const proxy = `export const meta = new Proxy(${JSON.stringify(valid)}, {});\n`;
+    assert.equal(lint({ Foo: proxy }).status, 0);
   });
 
   it("cannot be made to pass by a meta file: no process access, so no exit or output tampering", () => {
