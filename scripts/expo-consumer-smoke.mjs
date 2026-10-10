@@ -1,15 +1,109 @@
-import { existsSync } from "node:fs";
+// Expo consumer smoke (PLRNUI-64, extended by PLRNUI-119): packs the library, installs the tarball into an Expo 57
+// consumer and exports it for web, iOS and Android (Hermes bundles).
+//   node scripts/expo-consumer-smoke.mjs [--platform web|ios|android|all] [--work-dir <dir>]
+// Default platform: all. Default work dir: <os.tmpdir()>/plrnui-64-expo-consumer. Exit 0 ok, 1 a step failed, 2 usage.
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { createServer } from "node:http";
+import { tmpdir } from "node:os";
+import { extname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 const packageName = "@personal-library/react-native-components";
-const smokeRoot = "/tmp/plrnui-64-expo-consumer";
-const artifactsDir = join(smokeRoot, "artifacts");
-const consumerDir = join(smokeRoot, "consumer");
-const npmCache = "/tmp/plrnui-expo57-npm-cache";
+const PLATFORMS = ["web", "ios", "android"];
 const installTimeoutMs = 7 * 60 * 1000;
+// Markers rendered by the consumer app; they must appear in every exported bundle.
+const APP_MARKERS = ["Increment", "Toggle theme"];
+
+let smokeRoot = "";
+let artifactsDir = "";
+let consumerDir = "";
+let npmCache = "";
+
+export function defaultWorkDir() {
+  return join(tmpdir(), "plrnui-64-expo-consumer");
+}
+
+export function parseArgs(argv) {
+  const opts = { platforms: PLATFORMS, workDir: defaultWorkDir() };
+  for (let i = 0; i < argv.length; i += 2) {
+    const value = argv[i + 1];
+    if (argv[i] === "--platform" && value !== undefined) {
+      if (value === "all") opts.platforms = PLATFORMS;
+      else if (PLATFORMS.includes(value)) opts.platforms = [value];
+      else throw new UsageError(`--platform must be one of ${PLATFORMS.join(", ")}, all`);
+    } else if (argv[i] === "--work-dir" && value !== undefined && !value.startsWith("--")) {
+      opts.workDir = resolve(value);
+    } else {
+      throw new UsageError(`unknown or incomplete argument: ${argv[i]}`);
+    }
+  }
+  return opts;
+}
+
+export class UsageError extends Error {}
+
+function listFiles(dir) {
+  const found = [];
+  for (const name of readdirSync(dir)) {
+    const full = join(dir, name);
+    if (statSync(full).isDirectory()) found.push(...listFiles(full));
+    else found.push(full);
+  }
+  return found;
+}
+
+/** Asserts that an export directory holds a non-empty bundle for the platform and returns its path and size. */
+export function assertBundle(outputDir, platform) {
+  if (!existsSync(outputDir)) throw new Error(`${platform}: export directory missing: ${outputDir}`);
+  const files = listFiles(outputDir);
+  const extensions = platform === "web" ? [".js"] : [".hbc"];
+  const bundles = files.filter((file) => extensions.includes(extname(file)) && statSync(file).size > 0);
+  if (bundles.length === 0) throw new Error(`${platform}: no non-empty ${extensions.join("/")} bundle in ${outputDir}`);
+  const bundle = bundles.sort((a, b) => statSync(b).size - statSync(a).size)[0];
+  return { bundle, bytes: statSync(bundle).size };
+}
+
+/** Serves the exported web build on an ephemeral local port and checks that the HTML and its script load. */
+export async function assertWebRender(outputDir) {
+  const html = await readFile(join(outputDir, "index.html"), "utf8");
+  const scriptSrc = /<script[^>]+src="([^"]+\.js)"/.exec(html)?.[1];
+  if (!scriptSrc) throw new Error("web: index.html references no script bundle");
+  if (!/id="root"/.test(html)) throw new Error('web: index.html has no element with id="root"');
+  const server = createServer(async (request, response) => {
+    try {
+      const path = join(outputDir, decodeURIComponent((request.url ?? "/").split("?")[0]));
+      if (!path.startsWith(outputDir)) throw new Error("outside the export directory");
+      const body = await readFile(path.endsWith("/") ? join(path, "index.html") : path);
+      response.writeHead(200).end(body);
+    } catch {
+      response.writeHead(404).end();
+    }
+  });
+  await new Promise((resolveListen) => server.listen(0, "127.0.0.1", resolveListen));
+  try {
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const page = await fetch(`${base}/`);
+    if (page.status !== 200) throw new Error(`web: GET / returned ${page.status}`);
+    const script = await fetch(new URL(scriptSrc, `${base}/`));
+    if (script.status !== 200) throw new Error(`web: GET ${scriptSrc} returned ${script.status}`);
+    const code = await script.text();
+    for (const marker of APP_MARKERS) {
+      if (!code.includes(marker)) throw new Error(`web: exported script does not contain the app marker "${marker}"`);
+    }
+  } finally {
+    await new Promise((resolveClose) => server.close(resolveClose));
+  }
+}
+
+async function assertNativeMarkers(bundle, platform) {
+  const code = await readFile(bundle, "latin1");
+  for (const marker of APP_MARKERS) {
+    if (!code.includes(marker)) throw new Error(`${platform}: Hermes bundle does not contain the app marker "${marker}"`);
+  }
+}
 
 let packageVersion = "";
 
@@ -211,7 +305,7 @@ export default function App() {
   );
 }
 
-async function validateConsumer(tarballPath) {
+async function validateConsumer(tarballPath, platforms) {
   await writeConsumerFixture(tarballPath);
 
   run(
@@ -232,18 +326,38 @@ async function validateConsumer(tarballPath) {
     { cwd: consumerDir }
   );
   run("npm", ["run", "typecheck"], { cwd: consumerDir });
-  run("npx", ["expo", "export", "--platform", "web", "--output-dir", "dist-web"], {
-    cwd: consumerDir,
-  });
+  for (const platform of platforms) {
+    const outputDir = `dist-${platform}`;
+    run("npx", ["expo", "export", "--platform", platform, "--output-dir", outputDir], { cwd: consumerDir });
+    const { bundle, bytes } = assertBundle(join(consumerDir, outputDir), platform);
+    if (platform === "web") await assertWebRender(join(consumerDir, outputDir));
+    else await assertNativeMarkers(bundle, platform);
+    console.log(`${platform}: bundle ${bundle.replace(consumerDir + "/", "")} ${bytes} bytes`);
+  }
 }
 
-await assertPackageSurface();
-await rm(smokeRoot, { recursive: true, force: true });
-await mkdir(artifactsDir, { recursive: true });
-await mkdir(consumerDir, { recursive: true });
-await mkdir(npmCache, { recursive: true });
+async function main() {
+  const opts = parseArgs(process.argv.slice(2));
+  smokeRoot = opts.workDir;
+  artifactsDir = join(smokeRoot, "artifacts");
+  consumerDir = join(smokeRoot, "consumer");
+  npmCache = join(tmpdir(), "plrnui-expo57-npm-cache");
 
-const tarballPath = await packLibrary();
-await validateConsumer(tarballPath);
+  await assertPackageSurface();
+  await rm(smokeRoot, { recursive: true, force: true });
+  await mkdir(artifactsDir, { recursive: true });
+  await mkdir(consumerDir, { recursive: true });
+  await mkdir(npmCache, { recursive: true });
 
-console.log(`PLRNUI-64 Expo 57 consumer smoke passed using ${tarballPath}`);
+  const tarballPath = await packLibrary();
+  await validateConsumer(tarballPath, opts.platforms);
+
+  console.log(`PLRNUI-64 Expo 57 consumer smoke passed (${opts.platforms.join(", ")}) using ${tarballPath}`);
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = error instanceof UsageError ? 2 : 1;
+  });
+}
