@@ -1,10 +1,12 @@
 # Form
 
-- [Input](input.md) — beta
-- [PasswordInput](password-input.md) — internal / non-stable
-- [Textarea](textarea.md) — internal / non-stable
+<!-- catalog:begin -->
 - [Checkbox](checkbox.md) — beta
-- [Switch](switch.md) — beta
+- [FormField](form-field.md) — experimental
+- [Input](input.md) — beta
+- [PasswordInput](password-input.md) — experimental
 - [RadioGroup](radio-group.md) — beta
 - [Select](select.md) — experimental
-- [FormField](form-field.md) — beta
+- [Switch](switch.md) — beta
+- [Textarea](textarea.md) — experimental
+<!-- catalog:end -->
