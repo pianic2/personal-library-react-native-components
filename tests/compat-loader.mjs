@@ -15,7 +15,7 @@ const root = resolvePath(dirname(fileURLToPath(import.meta.url)), "..");
 const rnShim = pathToFileURL(join(root, "tests", "shims", "react-native.tsx")).href;
 const mode = process.env.COMPAT_MODE ?? "shim";
 if (mode !== "shim" && mode !== "target") throw new Error(`COMPAT_MODE must be shim or target (got ${mode})`);
-const targetPackage = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const targetPackage = readManifest(root);
 const target = process.env.COMPAT_TARGET ?? targetPackage.name;
 const legacy = process.env.COMPAT_LEGACY ?? "@legacy-placeholder/shim";
 const shimDir = resolvePath(root, process.env.COMPAT_SHIM_DIR ?? "dist-shim");
@@ -29,7 +29,8 @@ function subpath(specifier, name) {
 function fromExports(manifestDir, manifest, sub, what) {
   const entry = manifest.exports?.[sub];
   const file = typeof entry === "string" ? entry : entry?.import ?? entry?.default;
-  if (!file) throw new Error(`compat loader: ${what} has no export "${sub}"`);
+  if (file === undefined) throw new Error(`compat loader: ${what} has no export "${sub}"`);
+  if (typeof file !== "string") throw new Error(`compat loader: ${what} export "${sub}" has no string import/default target`);
   const path = join(manifestDir, file);
   if (!existsSync(path)) throw new Error(`compat loader: ${path} does not exist (${mode === "shim" ? "run npm run build and node scripts/build-shim.mjs" : "run npm run build"})`);
   return pathToFileURL(path).href;
@@ -38,7 +39,11 @@ function fromExports(manifestDir, manifest, sub, what) {
 function readManifest(dir) {
   const file = join(dir, "package.json");
   if (!existsSync(file)) throw new Error(`compat loader: ${file} does not exist (run npm run build and node scripts/build-shim.mjs)`);
-  return JSON.parse(readFileSync(file, "utf8"));
+  try {
+    return JSON.parse(readFileSync(file, "utf8"));
+  } catch (error) {
+    throw new Error(`compat loader: ${file} is not valid JSON: ${error.message}`);
+  }
 }
 
 function mapSpecifier(specifier) {
@@ -54,7 +59,11 @@ function mapSpecifier(specifier) {
   return undefined;
 }
 
+// Activation sentinel: tests/compat/api.ts resolves it to know the loader is registered. Everything else is fatal then.
+export const ACTIVE = "compat-loader:active";
+
 export function resolve(specifier, context, nextResolve) {
+  if (specifier === ACTIVE) return { shortCircuit: true, url: "data:text/javascript,export default true" };
   const url = mapSpecifier(specifier);
   return url ? { shortCircuit: true, url } : nextResolve(specifier, context);
 }

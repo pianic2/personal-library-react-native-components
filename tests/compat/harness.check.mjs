@@ -26,13 +26,15 @@ function runSuite(env) {
     ["--import", "tsx", "--import", "./tests/setup.ts", "--experimental-loader", "./tests/compat-loader.mjs", "--test", ...["accessibility", "render", "surface"].map((n) => `tests/compat/${n}.test.tsx`)],
     { cwd: root, env: { ...process.env, ...env }, encoding: "utf8" }
   );
-  return result.status;
+  return { status: result.status, output: `${result.stdout}${result.stderr}` };
 }
 
 if (!existsSync(join(shimDir, "package.json"))) fail(`${shimDir} is missing: run npm run build and node scripts/build-shim.mjs first`);
 
-const shimStatus = runSuite({ COMPAT_MODE: "shim" });
-const controlStatus = runSuite({ COMPAT_MODE: "target" });
+const shimRun = runSuite({ COMPAT_MODE: "shim" });
+const controlRun = runSuite({ COMPAT_MODE: "target" });
+const shimStatus = shimRun.status;
+const controlStatus = controlRun.status;
 
 // Export names of the built target, read in a child process with the react-native stub (dist imports react-native).
 const listing = spawnSync(
@@ -44,18 +46,21 @@ if (listing.status !== 0) fail(`cannot read the built target (run npm run build)
 const exported = JSON.parse(listing.stdout.trim().split("\n").pop());
 if (!exported.includes(omit)) fail(`the built target has no export "${omit}"`);
 const broken = mkdtempSync(join(tmpdir(), "plrnui-162-"));
-let brokenStatus;
+let brokenRun;
 try {
   cpSync(shimDir, broken, { recursive: true });
   const names = exported.filter((name) => name !== omit);
   writeFileSync(join(broken, "dist", "index.js"), `export { ${names.join(", ")} } from "${target}";\n`);
-  brokenStatus = runSuite({ COMPAT_MODE: "shim", COMPAT_SHIM_DIR: broken });
+  brokenRun = runSuite({ COMPAT_MODE: "shim", COMPAT_SHIM_DIR: broken });
 } finally {
   rmSync(broken, { recursive: true, force: true });
 }
 
+const brokenStatus = brokenRun.status;
 console.log(`shim mode: exit ${shimStatus}; control mode: exit ${controlStatus}; shim without "${omit}": exit ${brokenStatus}`);
 if (shimStatus !== 0) fail("the suite must pass against the shim");
 if (controlStatus !== 0) fail("the control run must pass against the target");
+if (brokenStatus === null) fail("the broken-shim run was killed");
+if (!brokenRun.output.includes(omit)) fail(`the broken-shim run did not fail because of "${omit}"`);
 if (brokenStatus === 0) fail(`the suite must fail when the shim lacks "${omit}"`);
 console.log("compat harness ok");

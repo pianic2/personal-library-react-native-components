@@ -64,7 +64,7 @@ describe("PLRNUI-162 legacy specifier: rendering", () => {
     assert.deepEqual(calls, ["button", "switch:true", "checkbox:true", "input:Grace", "radio:b"]);
   });
 
-  it("does not render outside a ThemeProvider-free tree without throwing for plain text", () => {
+  it("renders plain text under the legacy ThemeProvider", () => {
     let renderer!: TestRenderer.ReactTestRenderer;
     act(() => {
       renderer = TestRenderer.create(
@@ -95,5 +95,31 @@ describe("PLRNUI-162 legacy specifier: theme", () => {
     assert.equal(out.mode, "dark");
     assert.equal(out.primary, "#123456");
     assert.equal(out.spaceMd, base.spaceMd);
+  });
+
+  it("merges nested overrides (radius, size, component tokens) without erasing siblings", () => {
+    type Probe = { radiusSm?: unknown; radiusMd?: unknown; heightXs?: unknown; heightMd?: unknown; buttonHeight?: unknown; buttonPressed?: unknown; inputRadius?: unknown };
+    function Reader({ out }: { out: Probe }) {
+      const { theme } = useTheme();
+      out.radiusSm = theme.radius.sm;
+      out.radiusMd = theme.radius.md;
+      out.heightXs = theme.size.height.xs;
+      out.heightMd = theme.size.height.md;
+      out.buttonHeight = theme.components.button.height.md;
+      out.buttonPressed = theme.components.button.opacity.pressed;
+      out.inputRadius = theme.components.input.radius;
+      return null;
+    }
+    const base: Probe = {};
+    const over: Probe = {};
+    render(<Reader out={base} />);
+    render(<Reader out={over} />, { themeOverrides: { radius: { md: 12 }, size: { height: { md: 44 } }, components: { button: { height: { md: 42 }, opacity: { pressed: 0.72 } } } } });
+    assert.equal(over.radiusMd, 12);
+    assert.equal(over.heightMd, 44);
+    assert.equal(over.buttonHeight, 42);
+    assert.equal(over.buttonPressed, 0.72);
+    assert.equal(over.radiusSm, base.radiusSm);
+    assert.equal(over.heightXs, base.heightXs);
+    assert.equal(over.inputRadius, base.inputRadius);
   });
 });

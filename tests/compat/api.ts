@@ -1,17 +1,17 @@
 // Loads the public API through the legacy specifier (mapped by tests/compat-loader.mjs to the shim, or in the control
 // run straight to the built target). Typed as the source API: the shim re-exports it unchanged.
 //
-// `npm test` also globs this folder but runs without the compat loader: there the specifier cannot be resolved and the
-// suite falls back to the source API (a plain control run). When the loader IS active it never falls back: a loader
-// error (for example a missing dist-shim) is rethrown and fails the suite.
+// `npm test` also globs this folder but runs without the compat loader: there the sentinel cannot be resolved and the
+// suite falls back to the source API (a plain control run). When the loader IS active it never falls back.
 export const LEGACY = process.env.COMPAT_LEGACY ?? "@legacy-placeholder/shim";
 
+// The loader answers the sentinel specifier; without the loader it is unresolvable. Once the sentinel resolves, nothing
+// below may fall back: every later error (bad COMPAT_LEGACY, corrupt shim manifest, missing dist) fails the suite.
 function loaderActive(): boolean {
   try {
-    import.meta.resolve(LEGACY);
+    import.meta.resolve("compat-loader:active");
     return true;
-  } catch (error) {
-    if (error instanceof Error && error.message.startsWith("compat loader")) throw error;
+  } catch {
     return false;
   }
 }

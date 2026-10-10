@@ -24,15 +24,19 @@ describe("PLRNUI-162 legacy specifier: public surface", () => {
 
   it("re-exports the same values (identity), not copies", () => {
     for (const key of Object.keys(built)) assert.equal((legacy as Record<string, unknown>)[key], built[key], key);
+    for (const key of Object.keys(builtTheme)) assert.equal((legacyTheme as Record<string, unknown>)[key], builtTheme[key], `theme/${key}`);
+    for (const key of Object.keys(builtTokens)) assert.equal((legacyTokens as Record<string, unknown>)[key], builtTokens[key], `tokens/${key}`);
   });
 
-  it("still exposes every export listed in the public API snapshot, and fences internal helpers", () => {
-    const missing = snapshot
+  it("still exposes every value export listed in the public API snapshot, and fences internal helpers", () => {
+    // Snapshot lines look like "value:Name" / "type:Name"; types are erased at runtime.
+    const values = snapshot
       .split(/\r?\n/)
       .map((line) => line.trim())
-      .filter((line) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(line))
-      .filter((name) => name in built && !(name in legacy));
-    assert.deepEqual(missing, []);
+      .filter((line) => line.startsWith("value:"))
+      .map((line) => line.slice("value:".length));
+    assert.ok(values.includes("Button"), "the snapshot lists the root value exports");
+    assert.deepEqual(values.filter((name) => !(name in legacy)), []);
     for (const name of ["Button", "ThemeProvider", "Text", "Input", "useTheme"]) assert.ok(name in legacy, name);
     assert.equal("cn" in legacy, false);
     assert.equal("useIsMounted" in legacy, false);
