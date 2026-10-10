@@ -84,6 +84,7 @@ ${outputText}
   } catch (error) {
     // Only host-created errors reach this point (our MetaError, the vm timeout, or an engine compile error that ran no user code).
     if (error instanceof MetaError) throw error;
+    if (error?.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') throw new MetaError(`${file}: cannot evaluate: timed out after 1s`);
     throw new MetaError(`${file}: cannot evaluate: ${error instanceof Error ? error.message : 'syntax error'}`);
   }
 }
