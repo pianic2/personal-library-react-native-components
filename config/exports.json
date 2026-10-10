@@ -41,6 +41,7 @@
         "type:LinkProps",
         "type:LinkRouterAdapter",
         "type:NavBarProps",
+        "type:NavContextValue",
         "type:NavItem",
         "type:PProps",
         "type:PasswordInputProps",
