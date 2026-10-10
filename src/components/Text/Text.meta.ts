@@ -33,7 +33,35 @@ export const meta: ComponentMeta = {
   "a11y": [
     "The default alignment is justify, which is surprising"
   ],
-  "variants": {},
+  "variants": {
+    "variant": [
+      "default",
+      "muted",
+      "danger",
+      "success"
+    ],
+    "size": [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "xxl",
+      "xxxl"
+    ],
+    "weight": [
+      "regular",
+      "medium",
+      "semibold",
+      "bold"
+    ],
+    "align": [
+      "left",
+      "center",
+      "right",
+      "justify"
+    ]
+  },
   "states": [
     "default"
   ],

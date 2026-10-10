@@ -8,7 +8,8 @@
 //   --json    print the entries as sorted JSON (exit 1 if the lint fails, nothing printed then)
 // Exit 2 on usage errors, unreadable input or a meta file that cannot be evaluated.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 
@@ -38,10 +39,16 @@ function evaluate(file) {
   });
   if (diagnostics && diagnostics.length > 0) throw new MetaError(`${file}: syntax error: ${ts.flattenDiagnosticMessageText(diagnostics[0].messageText, '\n')}`);
   const module = { exports: {} };
-  try {
-    new Function('module', 'exports', 'require', outputText)(module, module.exports, () => {
+  // Empty context: the file sees no `process`, `fs` or other host globals, so it cannot exit or touch the lint.
+  const sandbox = {
+    module,
+    exports: module.exports,
+    require: () => {
       throw new MetaError(`${file}: meta files may only use \`import type\``);
-    });
+    },
+  };
+  try {
+    runInNewContext(outputText, sandbox, { filename: file, timeout: 1000 });
   } catch (error) {
     if (error instanceof MetaError) throw error;
     throw new MetaError(`${file}: cannot evaluate: ${error.message}`);
@@ -107,7 +114,12 @@ export function lintMetas(entries, { root, strict = false } = {}) {
     else
       for (const example of meta.examples) {
         if (!isObject(example) || !isText(example.title) || (!isText(example.path) && !isText(example.code))) fail(entry, 'each example needs a title and a path or code');
-        else if (isText(example.path) && root && !existsSync(join(root, example.path))) fail(entry, `example path does not exist: ${example.path}`);
+        else if (isText(example.path) && root) {
+          const target = resolve(root, example.path);
+          const rel = relative(root, target);
+          if (isAbsolute(example.path) || rel.startsWith('..') || isAbsolute(rel)) fail(entry, `example path must stay inside the repository: ${example.path}`);
+          else if (!existsSync(target)) fail(entry, `example path does not exist: ${example.path}`);
+        }
       }
     if (strict) for (const rule of STRICT_RULES) rule.check(meta, (message) => fail(entry, `[strict] ${message}`));
   }

@@ -35,7 +35,7 @@ export interface ComponentMeta {
   };
   /** Accessibility behavior and known gaps. */
   a11y: string[];
-  /** Prop name to the values it accepts, for example `{ size: ["sm", "md"] }`. */
+  /** Prop name to the values it accepts, for example `{ size: ["sm", "md"] }`. Numeric values are written as strings. */
   variants: Record<string, string[]>;
   /** User-visible states, at least one. */
   states: string[];

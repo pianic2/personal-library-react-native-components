@@ -27,7 +27,14 @@ export const meta: ComponentMeta = {
   "a11y": [
     "The toggle is an unstyled hardcoded English Show/Hide text"
   ],
-  "variants": {},
+  "variants": {
+    "size": [
+      "xs",
+      "sm",
+      "md",
+      "lg"
+    ]
+  },
   "states": [
     "hidden",
     "revealed",

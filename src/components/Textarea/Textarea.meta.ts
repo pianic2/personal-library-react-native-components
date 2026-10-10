@@ -25,7 +25,14 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [],
-  "variants": {},
+  "variants": {
+    "size": [
+      "xs",
+      "sm",
+      "md",
+      "lg"
+    ]
+  },
   "states": [
     "default",
     "focused",

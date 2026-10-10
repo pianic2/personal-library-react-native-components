@@ -36,6 +36,33 @@ export const meta: ComponentMeta = {
       "4",
       "5",
       "6"
+    ],
+    "variant": [
+      "default",
+      "muted",
+      "danger",
+      "success"
+    ],
+    "size": [
+      "xs",
+      "sm",
+      "md",
+      "lg",
+      "xl",
+      "xxl",
+      "xxxl"
+    ],
+    "weight": [
+      "regular",
+      "medium",
+      "semibold",
+      "bold"
+    ],
+    "align": [
+      "left",
+      "center",
+      "right",
+      "justify"
     ]
   },
   "states": [

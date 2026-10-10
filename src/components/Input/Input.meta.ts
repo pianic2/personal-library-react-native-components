@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   "name": "Input",
   "category": "form",
   "status": "demo",
-  "summary": "Single-line text input with a label, helper text and an error state.",
+  "summary": "Text input with a label, helper text and an error state.",
   "whenToUse": [
     "Collect short free text such as a name or an email address"
   ],
@@ -32,7 +32,14 @@ export const meta: ComponentMeta = {
   "a11y": [
     "The label and helper text are announced as the accessible name and hint"
   ],
-  "variants": {},
+  "variants": {
+    "size": [
+      "xs",
+      "sm",
+      "md",
+      "lg"
+    ]
+  },
   "states": [
     "default",
     "focused",

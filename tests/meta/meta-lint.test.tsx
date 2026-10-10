@@ -101,6 +101,8 @@ describe("PLRNUI-166 component metadata", () => {
       [{ ...valid, states: [] }, /states must list at least one/],
       [{ ...valid, examples: [] }, /examples must list at least one/],
       [{ ...valid, examples: [{ title: "x", path: "missing/file.tsx" }] }, /example path does not exist/],
+      [{ ...valid, examples: [{ title: "x", path: "../outside.tsx" }] }, /must stay inside the repository/],
+      [{ ...valid, examples: [{ title: "x", path: "/etc/hosts" }] }, /must stay inside the repository/],
     ];
     for (const [meta, pattern] of cases) {
       const result = lint({ Foo: meta });
@@ -132,6 +134,16 @@ describe("PLRNUI-166 component metadata", () => {
     assert.equal(run(["--root"]).status, 2);
     assert.equal(lint({ Foo: "export const meta = {" }).status, 2);
     assert.equal(lint({ Foo: 'import x from "fs"; export const meta = x;' }).status, 2);
+    assert.equal(lint({ Foo: "export const meta = (() => { while (true) {} })();" }).status, 2);
+  });
+
+  it("cannot be made to pass by a meta file: no process access, so no exit or output tampering", () => {
+    const sneaky = lint({
+      Foo: { ...valid, whenNotToUse: [{ reason: "no", instead: "Ghost" }] },
+      Bar: 'export const meta = (() => { process.exit(0); return {}; })();',
+    });
+    assert.equal(sneaky.status, 2);
+    assert.match(sneaky.stderr, /cannot evaluate/);
   });
 
   it("keeps metadata out of the build, the root entry and component code", () => {
