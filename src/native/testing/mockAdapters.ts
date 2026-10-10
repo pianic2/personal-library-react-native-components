@@ -83,8 +83,16 @@ const defaults: Defaults = {
     isAvailable: () =>  run(() => true),
     authenticate: () => run(() => true),
   }),
+  // Synchronous api: a denied permission throws synchronously (a sync method cannot reject), see the rule above.
+  appState: (ctx) => ({
+    getState: () => ctx.state.appState.get(),
+    subscribe: (listener) => ctx.state.appState.subscribe(listener),
+  }),
   network: (ctx) => ({ getStatus: () =>  run(() => ({ ...ctx.state.network.get() })) }),
 };
+
+/** Capabilities whose api is synchronous: a denied permission throws instead of rejecting. */
+const syncIds: ReadonlySet<CapabilityId> = new Set<CapabilityId>(["appState"]);
 
 const ids = Object.keys(defaults) as CapabilityId[];
 
@@ -116,6 +124,7 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
         typeof impl === "function"
           ? (...args: unknown[]) => {
               calls.push({ id, method, args });
+              if (state.permissions[id] === "denied" && syncIds.has(id)) throw new Error(`permission denied: ${id}`);
               if (state.permissions[id] === "denied") return Promise.reject(new Error(`permission denied: ${id}`));
               return (impl as (...a: unknown[]) => unknown)(...args);
             }

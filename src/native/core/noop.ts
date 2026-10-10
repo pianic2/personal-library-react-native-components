@@ -9,6 +9,7 @@ const noopApis: CapabilityMap = {
   storage: { getItem: async () => null, setItem: none, removeItem: none },
   biometric: { isAvailable: async () => false, authenticate: async () => false },
   network: { getStatus: async () => ({ connected: null }) },
+  appState: { getState: () => "active", subscribe: () => () => undefined },
 };
 
 /** The api of a capability that does nothing and never throws. */

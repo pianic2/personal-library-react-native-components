@@ -31,6 +31,14 @@ export interface NetworkApi {
   getStatus(): Promise<{ connected: boolean | null }>;
 }
 
+export type AppStateValue = "active" | "background" | "inactive";
+
+export interface AppStateApi {
+  getState(): AppStateValue;
+  /** Calls `listener` on every change of the app state; returns the function that removes it. */
+  subscribe(listener: (state: AppStateValue) => void): () => void;
+}
+
 /**
  * Every capability the library knows, keyed by id. The map is closed in 1.0: it is an interface of this package and is
  * not meant to be extended by module augmentation (the ids are semver surface). A new capability is a minor release.
@@ -42,6 +50,7 @@ export interface CapabilityMap {
   storage: StorageApi;
   biometric: BiometricApi;
   network: NetworkApi;
+  appState: AppStateApi;
 }
 
 export type CapabilityId = keyof CapabilityMap;
