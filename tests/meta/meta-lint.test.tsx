@@ -140,7 +140,11 @@ describe("PLRNUI-166 component metadata", () => {
 
   it("reads each property once as plain data: getters, proxies and toJSON cannot change what the lint sees or hang it", () => {
     const flip = `let reads = 0;\nexport const meta = { ...${JSON.stringify(valid)}, get summary() { reads += 1; return reads < 5 ? "ok" : "x".repeat(500); } };\n`;
-    assert.equal(lint({ Foo: flip }).status, 2);
+    // One read per property: the value the lint checks is the value --json prints.
+    assert.equal(lint({ Foo: flip }).status, 0);
+    const printed = lint({ Foo: flip }, "--json");
+    assert.equal(printed.status, 0);
+    assert.equal((JSON.parse(printed.stdout) as Array<{ summary: string }>)[0].summary, "ok");
     const hang = `export const meta = { ...${JSON.stringify(valid)}, get summary() { while (true) {} } };\n`;
     assert.equal(lint({ Foo: hang }).status, 2);
     const toJson = `export const meta = { ...${JSON.stringify(valid)}, toJSON() { while (true) {} } };\n`;
