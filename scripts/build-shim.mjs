@@ -93,7 +93,18 @@ function write(file, content) {
   writeFileSync(file, content);
 }
 
+function assertSafeOut(out) {
+  const unsafe = [root, process.cwd(), process.env.HOME, "/"].filter(Boolean).map((p) => resolve(p));
+  for (const path of unsafe) {
+    if (out === path || path.startsWith(`${out}/`)) throw new UsageError(`refusing to use ${out} as the output directory (it is or contains ${path})`);
+  }
+  if (existsSync(out) && statSync(out).isDirectory() && readdirSync(out).length > 0 && !existsSync(join(out, "package.json"))) {
+    throw new UsageError(`refusing to overwrite the non-empty directory ${out} (it is not a previous shim output)`);
+  }
+}
+
 export function build(out, inputs) {
+  assertSafeOut(out);
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out, { recursive: true });
   write(join(out, "package.json"), renderPackageJson(inputs));
@@ -135,6 +146,8 @@ export function verify(dir, inputs) {
   const all = files(dir);
   const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
   const major = inputs.version.split(".")[0];
+  if (readFileSync(join(dir, "package.json"), "utf8") !== renderPackageJson(inputs)) problems.push("package.json differs from the generated template (unexpected fields or values)");
+  if (major === "0" && !inputs.preparatory) problems.push("the caret range ^0.0.0 of a 0.x target does not match its releases; a real shim needs a target of major 1 or higher");
   if (pkg.name !== inputs.legacy) problems.push(`package name must be ${inputs.legacy}`);
   if (pkg.version !== inputs.version) problems.push("shim version must equal the target version (lockstep)");
   const deps = Object.keys(pkg.dependencies ?? {});
