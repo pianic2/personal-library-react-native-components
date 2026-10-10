@@ -106,6 +106,7 @@ jobs:
             PLRNUI-452) exceptions="docs/policies/branching.md" ;;
             PLRNUI-134) exceptions="package.json package-lock.json" ;;
             PLRNUI-144) exceptions="src/tokens/types.ts" ;;
+            PLRNUI-202) exceptions="docs/components/navigation/top-bar.md docs/getting-started.md docs/platform-support.md" ;;
           esac
           # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
           code=0
