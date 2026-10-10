@@ -17,7 +17,8 @@ function useControllableState<T>(options: {
 - Controlled: the returned value is always `value`; the setter never changes internal state, it only calls `onChange`.
 - Uncontrolled: the setter updates internal state and calls `onChange`.
 - `onChange` fires only when the next value differs from the current one (`Object.is`).
-- Functional updates receive the current value, also when called twice in the same batch.
+- Functional updates receive the current value. Uncontrolled: two updates in the same batch chain (0 -> 1 -> 2). Controlled: the parent owns the value, so both updates see the same `value` until the parent re-renders with a new one.
+- Switching from controlled to uncontrolled falls back to the internal state (initially `defaultValue`); the `__DEV__` warning covers this case.
 - The setter keeps a stable identity.
 - In `__DEV__`, switching between controlled and uncontrolled logs a warning.
 
