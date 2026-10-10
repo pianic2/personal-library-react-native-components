@@ -29,23 +29,6 @@ export function componentDirs(root) {
   return readdirSync(base, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort();
 }
 
-const SNAPSHOT = `(() => {
-  const walk = (v, depth) => {
-    if (depth > 50) throw new Error('meta is nested too deeply');
-    if (v === null || typeof v === 'string' || typeof v === 'boolean') return v;
-    if (typeof v === 'number' && Number.isFinite(v)) return v;
-    if (Array.isArray(v)) return Array.from({ length: v.length }, (_, i) => walk(v[i], depth + 1));
-    if (typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype) {
-      const out = {};
-      for (const k of Object.keys(v)) Object.defineProperty(out, k, { value: walk(v[k], depth + 1), enumerable: true, writable: true, configurable: true });
-      return out;
-    }
-    throw new Error('meta is not plain JSON data');
-  };
-  const m = snapshotSource.meta;
-  return m === undefined ? undefined : JSON.stringify(walk(m, 0));
-})()`;
-
 // Evaluates a meta file: transpile (no type check) to CommonJS, run it in an isolated context and return a plain-data snapshot.
 function evaluate(file) {
   const source = readFileSync(file, 'utf8');
@@ -55,25 +38,44 @@ function evaluate(file) {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   });
   if (diagnostics && diagnostics.length > 0) throw new MetaError(`${file}: syntax error: ${ts.flattenDiagnosticMessageText(diagnostics[0].messageText, '\n')}`);
-  // Defence in depth, not a security boundary (meta files are trusted in-repo code reviewed like any source file):
-  // an empty context with a null-prototype global, and `module`/`exports` created inside it, so the file has no host
-  // objects to reach `process` through. There is no `require`: only `import type` is allowed, which transpiles away.
-  const context = createContext(Object.create(null), { microtaskMode: 'afterEvaluate' });
-  let exported;
+  // Defence in depth, not a security boundary (meta files are trusted in-repo code reviewed like any source file).
+  // One script in an empty null-prototype context does everything that touches context objects, under one timeout:
+  // it captures the builtins it needs before the file runs, runs the file, reads `module.exports.meta` once and returns
+  // a JSON string. The host only ever receives that primitive. There is no `require`: only `import type` is allowed.
+  const script = `(() => {
+  'use strict';
+  const stringify = JSON.stringify, getProto = Object.getPrototypeOf, keys = Object.keys, define = Object.defineProperty;
+  const isArray = Array.isArray, isFinite_ = Number.isFinite, objectProto = Object.prototype;
+  const walk = (v, depth) => {
+    if (depth > 50) throw new Error('meta is nested too deeply');
+    if (v === null || typeof v === 'string' || typeof v === 'boolean') return v;
+    if (typeof v === 'number' && isFinite_(v)) return v;
+    if (isArray(v)) {
+      const list = [];
+      for (let i = 0, n = v.length; i < n; i += 1) list[i] = walk(v[i], depth + 1);
+      return list;
+    }
+    if (typeof v === 'object' && getProto(v) === objectProto) {
+      const out = {};
+      for (const k of keys(v)) define(out, k, { value: walk(v[k], depth + 1), enumerable: true, writable: true, configurable: true });
+      return out;
+    }
+    throw new Error('meta is not plain JSON data');
+  };
+  const module = { exports: {} };
+  (function (module, exports) {
+${outputText}
+  })(module, module.exports);
+  const meta = module.exports.meta;
+  return meta === undefined ? undefined : stringify(walk(meta, 0));
+})()`;
   try {
-    const module = runInContext('({ exports: {} })', context);
-    context.module = module;
-    context.exports = module.exports;
-    runInContext(outputText, context, { filename: file, timeout: 1000 });
-    // Snapshot inside the context (timeout applies): one read per property, plain data only, returned as a string and
-    // parsed in the host so lint never touches context-realm objects, getters or proxies.
-    context.snapshotSource = module.exports;
-    const json = runInContext(SNAPSHOT, context, { filename: 'meta-snapshot', timeout: 1000 });
-    exported = json === undefined ? undefined : JSON.parse(json);
+    const json = runInContext(script, createContext(Object.create(null), { microtaskMode: 'afterEvaluate' }), { filename: file, timeout: 1000 });
+    if (json !== undefined && typeof json !== 'string') throw new Error('meta did not serialise to JSON');
+    return json === undefined ? undefined : JSON.parse(json);
   } catch (error) {
     throw new MetaError(`${file}: cannot evaluate: ${error.message}`);
   }
-  return exported;
 }
 
 /** Loads every component directory; entries carry `file` (repo-relative) and `meta` (undefined when the file is missing). */

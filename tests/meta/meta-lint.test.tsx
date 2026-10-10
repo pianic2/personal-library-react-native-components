@@ -149,6 +149,18 @@ describe("PLRNUI-166 component metadata", () => {
     assert.equal(lint({ Foo: hang }).status, 2);
     const toJson = `export const meta = { ...${JSON.stringify(valid)}, toJSON() { while (true) {} } };\n`;
     assert.equal(lint({ Foo: toJson }).status, 2);
+    const hostile = [
+      "JSON.stringify = () => ({ toString() { for (;;); } });",
+      "Object.defineProperty(module, 'exports', { get() { for (;;); } });",
+      "Object.defineProperty(globalThis, 'snapshotSource', { set() { for (;;); } });",
+      "Array.from = () => { for (;;); };",
+      "Object.keys = () => { for (;;); };",
+    ];
+    for (const code of hostile) {
+      const result = lint({ Foo: `${code}\nexport const meta = ${JSON.stringify(valid)};\n` });
+      assert.ok(result.status === 0 || result.status === 2, `${code}: ${result.status}`);
+      assert.notEqual(result.signal, "SIGTERM");
+    }
     // A proxy is snapshotted once like any object, so what the lint checks is what --json prints.
     const proxy = `export const meta = new Proxy(${JSON.stringify(valid)}, {});\n`;
     assert.equal(lint({ Foo: proxy }).status, 0);
