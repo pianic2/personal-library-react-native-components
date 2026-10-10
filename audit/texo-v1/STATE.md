@@ -103,3 +103,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-119 (E12-08: Expo consumer smoke exports web, iOS and Android Hermes bundles with render assertion) | #60 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-136 (E15-03: generated legacy shim build scripts/build-shim.mjs and template) | #59 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception scripts/consumer-smoke.mjs for PLRNUI-201, PO-approved 2026-10-10) | #62 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-254 (E17-12: local Verdaccio rehearsal of target and shim publish, install and deprecate) | #61 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
