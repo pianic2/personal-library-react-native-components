@@ -116,3 +116,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-199 (E1-07: component docs lint scripts/check-component-docs.mjs, report-only and --strict) | #71 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-174 (E1-02: maturity checker scripts/maturity-check.mjs over component meta) | #69 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception for PLRNUI-174: NavContextValue root export, export contract symbol, snapshot, TopBar example; PO-approved 2026-10-10) | #70 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-195 (E1-06: meta-driven render matrix over every component, light and dark) | #73 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
