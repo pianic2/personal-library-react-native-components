@@ -62,19 +62,29 @@ function evaluate(file) {
     }
     throw new Error('meta is not plain JSON data');
   };
-  const module = { exports: {} };
-  (function (module, exports) {
+  // Anything thrown by the file (or by the walk) is caught here and reduced to a fixed marker, so the host never reads
+  // properties of a thrown context value. Results are prefixed: "J" + JSON, "U" for no export, "E" for a throw.
+  try {
+    const module = { exports: {} };
+    (function (module, exports) {
 ${outputText}
-  })(module, module.exports);
-  const meta = module.exports.meta;
-  return meta === undefined ? undefined : stringify(walk(meta, 0));
+    })(module, module.exports);
+    const meta = module.exports.meta;
+    return meta === undefined ? 'U' : 'J' + stringify(walk(meta, 0));
+  } catch (_) {
+    return 'E';
+  }
 })()`;
   try {
     const json = runInContext(script, createContext(Object.create(null), { microtaskMode: 'afterEvaluate' }), { filename: file, timeout: 1000 });
-    if (json !== undefined && typeof json !== 'string') throw new Error('meta did not serialise to JSON');
-    return json === undefined ? undefined : JSON.parse(json);
+    if (typeof json !== 'string') throw new MetaError(`${file}: cannot evaluate: unexpected result`);
+    if (json === 'U') return undefined;
+    if (json === 'E') throw new MetaError(`${file}: cannot evaluate: the file threw, is not plain JSON data or nests too deeply`);
+    return JSON.parse(json.slice(1));
   } catch (error) {
-    throw new MetaError(`${file}: cannot evaluate: ${error.message}`);
+    // Only host-created errors reach this point (our MetaError, the vm timeout, or an engine compile error that ran no user code).
+    if (error instanceof MetaError) throw error;
+    throw new MetaError(`${file}: cannot evaluate: ${error instanceof Error ? error.message : 'syntax error'}`);
   }
 }
 

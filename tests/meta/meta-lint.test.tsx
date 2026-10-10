@@ -156,6 +156,15 @@ describe("PLRNUI-166 component metadata", () => {
       "Array.from = () => { for (;;); };",
       "Object.keys = () => { for (;;); };",
     ];
+    hostile.push(
+      "throw { get message() { for (;;); } };",
+      "throw { message: { toString() { for (;;); } } };",
+      "throw new Proxy({}, { get() { for (;;); } });",
+      "throw { message: 'x', get stack() { for (;;); } };",
+      "throw null;",
+      "throw undefined;",
+      "throw Symbol();"
+    );
     for (const code of hostile) {
       const result = lint({ Foo: `${code}\nexport const meta = ${JSON.stringify(valid)};\n` });
       assert.ok(result.status === 0 || result.status === 2, `${code}: ${result.status}`);
