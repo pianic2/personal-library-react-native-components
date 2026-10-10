@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import TestRenderer, { act } from "react-test-renderer";
 
@@ -29,6 +29,21 @@ describe("getPlatformInfo", () => {
     assert.equal(getPlatformInfo(undefined, { OS: "ios", Version: "17.0", isPad: true }).isTablet, true);
   });
 
+  it("web isTablet comes from the user agent and defaults to false; the adapter can not set it", () => {
+    const ua = (userAgent?: string) => getPlatformInfo(undefined, { OS: "web", userAgent }).isTablet;
+    assert.equal(ua(undefined), false);
+    assert.equal(ua("Mozilla/5.0 (Windows NT 10.0) Chrome/120"), false);
+    assert.equal(ua("Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X)"), true);
+    assert.equal(ua("Mozilla/5.0 (Linux; Android 13; Pixel Tablet) Chrome/120"), true);
+    assert.equal(ua("Mozilla/5.0 (Linux; Android 13; Pixel 7) Mobile Safari"), false);
+    assert.equal(getPlatformInfo({ isTablet: true }, { OS: "web" }).isTablet, false);
+  });
+
+  it("does not detect Android tablets without an adapter (documented)", () => {
+    assert.equal(getPlatformInfo(undefined, { OS: "android", Version: 33 }).isTablet, false);
+    assert.equal(getPlatformInfo({ isTablet: true }, { OS: "android" }).isTablet, true);
+  });
+
   it("returns os web, isWeb and isTablet false by default on web", () => {
     const info = getPlatformInfo(undefined, { OS: "web" });
     assert.equal(info.os, "web");
@@ -39,7 +54,8 @@ describe("getPlatformInfo", () => {
 
   it("maps an unknown OS to unknown and never throws", () => {
     assert.equal(getPlatformInfo(undefined, { OS: "test" }).os, "unknown");
-    assert.equal(getPlatformInfo().os, "unknown"); // default source is the RN shim (OS 'test')
+    // Default source is the test RN shim whose Platform.OS is "test": documented result is "unknown".
+    assert.equal(getPlatformInfo().os, "unknown");
   });
 
   it("lets the adapter override core fields only when it provides them", () => {
@@ -69,6 +85,101 @@ describe("getPlatformInfo", () => {
 
   it("derives isWeb from the effective os", () => {
     assert.equal(getPlatformInfo({ os: "web" }, { OS: "ios" }).isWeb, true);
+  });
+});
+
+describe("robustness", () => {
+  const boom = () => {
+    throw new Error("boom");
+  };
+
+  it("never throws on a throwing Platform source and degrades to unknown/null", () => {
+    const source = {
+      get OS(): string {
+        return boom();
+      },
+      get Version(): string {
+        return boom();
+      },
+      get isPad(): boolean {
+        return boom();
+      },
+      get userAgent(): string {
+        return boom();
+      },
+    };
+    const info = getPlatformInfo(undefined, source);
+    assert.equal(info.os, "unknown");
+    assert.equal(info.osVersion, null);
+    assert.equal(info.isTablet, false);
+  });
+
+  it("never throws on a throwing adapter", () => {
+    const adapter = {
+      get os(): "ios" {
+        return boom();
+      },
+      get osVersion(): string {
+        return boom();
+      },
+      get isEmulator(): boolean {
+        return boom();
+      },
+      get isExpoGo(): boolean {
+        return boom();
+      },
+    };
+    const info = getPlatformInfo(adapter, { OS: "android", Version: 30 });
+    assert.equal(info.os, "android");
+    assert.equal(info.osVersion, "30");
+    assert.equal(info.isEmulator, null);
+    assert.equal(info.isExpoGo, null);
+  });
+
+  it("createExpoDeviceInfoAdapter survives throwing device and constants getters", () => {
+    const device = {
+      get osName(): string {
+        return boom();
+      },
+      get osVersion(): string {
+        return boom();
+      },
+      get isDevice(): boolean {
+        return boom();
+      },
+      get deviceType(): number {
+        return boom();
+      },
+    };
+    const constants = {
+      get executionEnvironment(): string {
+        return boom();
+      },
+      get appOwnership(): string {
+        return boom();
+      },
+    };
+    assert.deepEqual(createExpoDeviceInfoAdapter({ device, constants }), {});
+    const throwingModules = {
+      get device(): never {
+        return boom();
+      },
+      get constants(): never {
+        return boom();
+      },
+    };
+    assert.deepEqual(createExpoDeviceInfoAdapter(throwingModules), {});
+  });
+
+  it("an unrecognised adapter os never overrides a valid core os", () => {
+    assert.equal(getPlatformInfo({ os: "tvOS" as never }, { OS: "android" }).os, "android");
+    assert.equal(getPlatformInfo({ os: "unknown" }, { OS: "android" }).os, "android");
+    assert.equal(createExpoDeviceInfoAdapter({ device: { osName: "tvOS" } }).os, undefined);
+  });
+
+  it("an empty adapter osVersion never beats a real core version", () => {
+    assert.equal(getPlatformInfo({ osVersion: "" }, { OS: "android", Version: 30 }).osVersion, "30");
+    assert.equal(createExpoDeviceInfoAdapter({ device: { osVersion: "" } }).osVersion, undefined);
   });
 });
 
@@ -107,11 +218,37 @@ describe("usePlatformInfo", () => {
   });
 });
 
-describe("device module boundaries", () => {
-  it("imports no expo-* module and does not touch src/utils/platform.ts", () => {
-    for (const f of ["types.ts", "platformInfo.ts", "index.ts"]) {
-      const src = readFileSync(resolve(root, "src/native/device", f), "utf8");
-      assert.doesNotMatch(src, /from\s+["']expo|require\(/, f);
+describe("device module source scan (no expo-*, no native, no require)", () => {
+  const dir = resolve(root, "src/native/device");
+  const forbidden: Array<[string, RegExp]> = [
+    ["from expo-*", /from\s+["']expo[-/]/],
+    ["side-effect import of expo-*", /import\s+["']expo[-/]/],
+    ["dynamic import of expo-*", /import\s*\(\s*["']expo[-/]/],
+    ["@expo/*", /["']@expo\//],
+    ["require(", /\brequire\s*\(/],
+    ["import x = require", /import\s+\w+\s*=\s*require/],
+    ["react-native/Libraries", /react-native\/Libraries/],
+  ];
+
+  it("scans every file under src/native/device", () => {
+    const files = readdirSync(dir);
+    assert.ok(files.length >= 3);
+    for (const f of files) {
+      const src = readFileSync(resolve(dir, f), "utf8");
+      for (const [name, re] of forbidden) assert.doesNotMatch(src, re, `${f}: ${name}`);
     }
+  });
+
+  it("the forbidden patterns do catch each import form", () => {
+    const samples = [
+      'import x from "expo-device";',
+      'import "expo-device";',
+      'const m = await import("expo-device");',
+      'import c from "@expo/vector-icons";',
+      'const m = require("x");',
+      'import fs = require("fs");',
+      'import p from "react-native/Libraries/Utilities/Platform";',
+    ];
+    for (const sample of samples) assert.ok(forbidden.some(([, re]) => re.test(sample)), sample);
   });
 });

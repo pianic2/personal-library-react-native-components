@@ -7,7 +7,11 @@ export interface PlatformInfo {
   os: PlatformOs;
   /** OS version as a string; null when neither React Native nor the adapter knows it (for example on web). */
   osVersion: string | null;
-  /** Always a boolean. Core default: iOS `Platform.isPad`, otherwise false (web included). */
+  /**
+   * Always a boolean. Core default: iOS `Platform.isPad`; web: from the user agent when available (iPad, "Tablet",
+   * Android without "Mobile"), else false; Android tablets are NOT detected without an adapter (React Native has no
+   * core signal). On web the adapter's `isTablet` is ignored (the user agent is the only source).
+   */
   isTablet: boolean;
   /** null = unknown (no adapter, or the adapter does not know). */
   isEmulator: boolean | null;
@@ -50,4 +54,6 @@ export interface PlatformSource {
   OS: string;
   Version?: string | number;
   isPad?: boolean;
+  /** Web only: navigator.userAgent. Used for the web isTablet default. */
+  userAgent?: string;
 }
