@@ -3,8 +3,8 @@ import {
   Modal as RNModal,
   Pressable,
 } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { Box } from "../Box";
+import { useTheme } from "../../theme/useTheme.js";
+import { Box } from "../Box/index.js";
 
 interface ModalProps {
   visible: boolean;

@@ -2,7 +2,7 @@
 
 import React, { ComponentType } from "react";
 import { Pressable, Text } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "../../theme/useTheme.js";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "info";
 type Size = "xs" | "sm" | "md" | "lg";

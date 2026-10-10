@@ -6,7 +6,7 @@ import {
   type ViewStyle,
 } from "react-native";
 
-import { useTheme } from "./useTheme";
+import { useTheme } from "./useTheme.js";
 
 export interface ThemeAppShellProps {
   children: React.ReactNode;

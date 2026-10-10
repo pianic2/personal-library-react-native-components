@@ -1,2 +1,2 @@
-export { Link } from "./Link";
-export type { LinkProps, LinkRouterAdapter } from "./Link";
+export { Link } from "./Link.js";
+export type { LinkProps, LinkRouterAdapter } from "./Link.js";

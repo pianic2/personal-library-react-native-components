@@ -1,2 +1,2 @@
-export { Row } from "./Row";
-export type { RowProps } from "./Row";
+export { Row } from "./Row.js";
+export type { RowProps } from "./Row.js";

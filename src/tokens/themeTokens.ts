@@ -1,8 +1,8 @@
-import { darkColors, lightColors, type ColorScheme } from "./colors.base";
-import { radius } from "./radius.base";
-import { shadows } from "./shadows.base";
-import { space } from "./spacing.base";
-import { typography } from "./typography.base";
+import { darkColors, lightColors, type ColorScheme } from "./colors.base.js";
+import { radius } from "./radius.base.js";
+import { shadows } from "./shadows.base.js";
+import { space } from "./spacing.base.js";
+import { typography } from "./typography.base.js";
 
 export interface ThemeTokens {
   readonly typography: {

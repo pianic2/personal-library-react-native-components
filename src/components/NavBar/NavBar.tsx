@@ -1,9 +1,9 @@
 import React from "react";
 import { Platform } from "react-native";
-import { NavProvider, type NavItem } from "../NavContext";
-import { TopBar } from "../TopBar";
-import { BottomBar } from "../BottomBar";
-import { SideBar, type SideBarVariant } from "../SideBar";
+import { NavProvider, type NavItem } from "../NavContext/index.js";
+import { TopBar } from "../TopBar/index.js";
+import { BottomBar } from "../BottomBar/index.js";
+import { SideBar, type SideBarVariant } from "../SideBar/index.js";
 
 export interface NavBarProps {
   items?: NavItem[];

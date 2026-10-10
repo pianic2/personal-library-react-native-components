@@ -2,8 +2,8 @@
 
 import React, { useRef, useState } from "react";
 import { Platform, Pressable, View } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { Text } from "../Text";
+import { useTheme } from "../../theme/useTheme.js";
+import { Text } from "../Text/index.js";
 
 type Placement = "top" | "bottom" | "left" | "right";
 

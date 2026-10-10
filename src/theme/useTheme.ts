@@ -1,6 +1,6 @@
 // src/theme/useTheme.ts
 
-import { useThemeContext } from "./ThemeProvider";
+import { useThemeContext } from "./ThemeProvider.js";
 
 export function useTheme() {
   const { theme, mode, toggleTheme, setMode } = useThemeContext();

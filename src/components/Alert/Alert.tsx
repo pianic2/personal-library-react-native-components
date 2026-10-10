@@ -2,9 +2,9 @@
 
 import React from "react";
 import { View } from "react-native";
-import { Text } from "../Text/Text";
-import { Button } from "../Button";
-import { useTheme } from "../../theme/useTheme";
+import { Text } from "../Text/Text.js";
+import { Button } from "../Button/index.js";
+import { useTheme } from "../../theme/useTheme.js";
 
 type Variant = "primary" | "info" | "success" | "warning" | "error";
 

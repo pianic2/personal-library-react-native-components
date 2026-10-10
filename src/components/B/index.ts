@@ -1,2 +1,2 @@
-export { B } from "./B";
-export type { BProps } from "./B";
+export { B } from "./B.js";
+export type { BProps } from "./B.js";

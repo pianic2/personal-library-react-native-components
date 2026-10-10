@@ -1,7 +1,7 @@
 // ui/components/typography/Text.tsx
 
 import { Text as RNText, type TextProps as RNTextProps } from "react-native";
-import { useTheme } from "../../theme/useTheme";
+import { useTheme } from "../../theme/useTheme.js";
 
 type Variant = "default" | "muted" | "danger" | "success";
 type Align = "left" | "center" | "right" | "justify";

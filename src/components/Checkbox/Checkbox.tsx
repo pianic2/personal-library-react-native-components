@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Pressable, View } from "react-native";
-import { useTheme } from "../../theme/useTheme";
-import { Text } from "../Text/Text";
+import { useTheme } from "../../theme/useTheme.js";
+import { Text } from "../Text/Text.js";
 
 export interface CheckboxProps {
   checked: boolean;

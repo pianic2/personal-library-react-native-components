@@ -1,6 +1,6 @@
 // ui/components/typography/B.tsx
 
-import { Text } from "../Text/Text";
+import { Text } from "../Text/Text.js";
 import type { ComponentProps } from "react";
 
 export type BProps = ComponentProps<typeof Text>;
