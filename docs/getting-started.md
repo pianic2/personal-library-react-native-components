@@ -1,5 +1,7 @@
 # Getting Started
 
+> **Language policy.** Public documentation (this site, the README and the policy pages) is written in English. Internal audit and planning material under `audit/` may be written in Italian.
+
 ## Stability labels
 
 - `beta`: public consumer API, usable but contract may still change.
@@ -8,37 +10,40 @@
 - `deprecated / legacy`: historical alias or API kept only for migration context.
 - `stable`: currently no component/API is classified as stable.
 
-## Installazione
+## Installation
 
-La libreria è ancora pre-stable. Per il candidato `0.1.0-rc.2`, installa sempre
-la prerelease in modo esplicito; non assumere che `latest` rappresenti il canale
-RC:
+The library is still pre-stable. For the `0.1.0-rc.2` candidate, always install the prerelease explicitly; do not assume that `latest` is the RC channel:
 
 ```sh
 npm install @personal-library/react-native-components@0.1.0-rc.2
 ```
 
-Baseline consumer validata per questo ciclo: Expo SDK 57, React 19.2.3 e React
-Native 0.86.x. I range canonici React/React Native e il requisito Node restano
-quelli dichiarati dal package metadata e devono essere verificati prima di
-installare il pacchetto.
+The validated consumer baseline for this cycle is Expo SDK 57, React 19.2.3 and React Native 0.86.x. The canonical React and React Native ranges and the Node requirement are the ones declared in the package metadata and must be checked before installing the package.
 
-La preview web del repository non sostituisce questa verifica consumer:
-eventuali shim o alias Vite della preview non provano installazione Expo/RN,
-Metro, iOS, Android, Hermes o runtime nativo. Vedi
-[Preview web shims and runtime limits](preview-runtime-limits.md).
+### Install matrix
 
-For install, peer dependency, Metro and TypeScript resolver troubleshooting, see
-[Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
+The matrix below is generated from `config/compatibility.json` by `node scripts/check-doc-snippets.mjs --write-matrix`; do not edit it by hand. A lane without a validated pass is `residual`: expected to work, but not part of the support claim. See [Compatibility](compatibility.md) for the tiers and the evidence.
 
-## Uso minimo
+<!-- BEGIN GENERATED: install-matrix -->
+| Runtime | Platform | Tier | Expo SDK | React Native | React | Last verified |
+| --- | --- | --- | --- | --- | --- | --- |
+| Expo Go | android | supported | 57.0.21 | 0.86.3 | 19.2.3 | 2026-09-09 |
+| Expo Go | ios | residual | 57.0.21 | 0.86.3 | 19.2.3 | not validated |
+| Expo dev client | android | residual | 57.0.21 | 0.86.3 | 19.2.3 | not validated |
+| Expo dev client | ios | residual | 57.0.21 | 0.86.3 | 19.2.3 | not validated |
+| Bare React Native | android | residual | n/a | 0.86.3 | 19.2.3 | not validated |
+| Bare React Native | ios | residual | n/a | 0.86.3 | 19.2.3 | not validated |
+<!-- END GENERATED: install-matrix -->
 
-Personal Library React Native Components espone un provider di tema che
-inizializza e fornisce `theme` tramite `useTheme()`.
+The web preview of the repository does not replace this consumer verification: any shims or Vite aliases of the preview do not prove an Expo or React Native install, Metro, iOS, Android, Hermes or the native runtime. See [Preview web shims and runtime limits](preview-runtime-limits.md).
 
-`ThemeProvider`, `Box` e `Text` sono API `beta`: usabili dalla superficie
-consumer pubblica, ma il contratto puo ancora cambiare prima della promozione
-stable.
+For install, peer dependency, Metro and TypeScript resolver troubleshooting, see [Expo / React Native / Metro troubleshooting](expo-rn-metro-troubleshooting.md).
+
+## Minimal usage
+
+Personal Library React Native Components exposes a theme provider that initializes and supplies `theme` through `useTheme()`.
+
+`ThemeProvider`, `Box` and `Text` are `beta` APIs: usable from the public consumer surface, but the contract may still change before promotion to stable.
 
 ```tsx
 import React from "react";
@@ -55,19 +60,20 @@ export function App() {
 }
 ```
 
-## Persistenza tema opzionale
+## Optional theme persistence
 
-La persistenza del tema è opt-in e storage-agnostic. L’app consumer possiede
-l’implementazione storage e la passa a `ThemeProvider`.
+Theme persistence is opt-in and storage-agnostic. The consumer app owns the storage implementation and passes it to `ThemeProvider`.
 
-`ThemeStorageAdapter` e la persistenza opt-in sono `beta`; non implicano una
-dipendenza storage posseduta dal package.
+`ThemeStorageAdapter` and opt-in persistence are `beta`; they do not imply a storage dependency owned by the package.
 
 ```tsx
+import React from "react";
 import {
   ThemeProvider,
   type ThemeStorageAdapter,
 } from "@personal-library/react-native-components";
+
+const appStorage = new Map<string, string>();
 
 const themeStorage: ThemeStorageAdapter = {
   getItem: async (key) => appStorage.get(key) ?? null,
@@ -79,19 +85,17 @@ const themeStorage: ThemeStorageAdapter = {
 export function App() {
   return (
     <ThemeProvider persistTheme storage={themeStorage} storageKey="app.theme">
-      {/* app */}
+      {null}
     </ThemeProvider>
   );
 }
 ```
 
-## Navigazione (routing gestito dall’app)
+## Navigation (routing owned by the app)
 
-I componenti di navigazione non includono un router: l’app passa `pathname` e `navigate(href)`.
+The navigation components do not include a router: the app passes `pathname` and `navigate(href)`.
 
-`NavBar` e `NavItem` sono `beta`. Le superfici navigation/app-shell orientate a
-layout come `TopBar`, `BottomBar` e `SideBar` restano `experimental` nelle
-pagine dedicate.
+`NavBar` and `NavItem` are `beta`. The layout-oriented navigation and app-shell surfaces `TopBar`, `BottomBar` and `SideBar` remain `experimental` in their dedicated pages.
 
 ```tsx
 import React from "react";
@@ -108,7 +112,7 @@ export function Shell({ pathname }: { pathname: string }) {
       items={items}
       pathname={pathname}
       navigate={(href) => {
-        // integra qui il tuo router
+        // plug your router in here
         window.location.assign(href);
       }}
       layout="top"
