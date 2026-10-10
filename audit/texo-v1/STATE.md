@@ -101,3 +101,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-124 (E17-03: release-guard channels rc, latest and shim, identity-based names, unit tests) | #57 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-139 (E16-06: getting-started and index docs in English, generated install matrix, snippet check) | #58 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-136 (E15-03: generated legacy shim build scripts/build-shim.mjs and template) | #59 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-254 (E17-12: local Verdaccio rehearsal of target and shim publish, install and deprecate) | #61 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
