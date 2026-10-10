@@ -34,7 +34,10 @@ export interface MockAdapterSet {
   /** Every api call so far, in order. */
   calls: MockCall[];
   callsOf(id: CapabilityId, method?: string): MockCall[];
-  /** Clears recorded calls and restores the default state (network, app state, keyboard, permissions, storage, clock). */
+  /**
+   * Clears recorded calls and restores defaults (network, app state, keyboard, permissions, storage, clipboard, clock)
+   * silently: no subscriber is notified and all emitter listeners are detached.
+   */
   reset(): void;
   clock: FakeClock;
   state: MockState;
@@ -45,45 +48,42 @@ export interface MockAdapterSet {
 }
 
 type Ctx = { state: MockState };
+const run = async <T,>(fn: () => T): Promise<Awaited<T>> => await fn();
 type Defaults = { [K in CapabilityId]: (ctx: Ctx) => CapabilityMap[K] };
 
-const denied = (ctx: Ctx, id: CapabilityId) => ctx.state.permissions[id] === "denied";
-async function guard<T>(ctx: Ctx, id: CapabilityId, run: () => T): Promise<Awaited<T>> {
-  if (denied(ctx, id)) throw new Error(`permission denied: ${id}`);
-  return await run();
-}
-
+// Permission rule: when a capability is `denied`, EVERY method of that capability (defaults and overrides, biometric
+// included) records the call and then rejects with `permission denied: <id>`; the implementation is not run.
 // Typed `{ [K in CapabilityId]: ... }`: a missing key is a compile error.
 const defaults: Defaults = {
   clipboard: (ctx) => ({
-    getString: () => guard(ctx, "clipboard", () => ctx.state.clipboard.value),
+    getString: () => run(() => ctx.state.clipboard.value),
     setString: (value) =>
-      guard(ctx, "clipboard", () => {
+       run(() => {
         ctx.state.clipboard.value = value;
       }),
   }),
   haptics: (ctx) => ({
-    impact: () => guard(ctx, "haptics", () => undefined),
-    notification: () => guard(ctx, "haptics", () => undefined),
-    selection: () => guard(ctx, "haptics", () => undefined),
+    impact: () =>  run(() => undefined),
+    notification: () =>  run(() => undefined),
+    selection: () =>  run(() => undefined),
   }),
-  share: (ctx) => ({ share: () => guard(ctx, "share", () => "shared" as const) }),
+  share: (ctx) => ({ share: () =>  run(() => "shared" as const) }),
   storage: (ctx) => ({
-    getItem: (key) => guard(ctx, "storage", () => ctx.state.storage.get(key) ?? null),
+    getItem: (key) =>  run(() => ctx.state.storage.get(key) ?? null),
     setItem: (key, value) =>
-      guard(ctx, "storage", () => {
+       run(() => {
         ctx.state.storage.set(key, value);
       }),
     removeItem: (key) =>
-      guard(ctx, "storage", () => {
+       run(() => {
         ctx.state.storage.delete(key);
       }),
   }),
   biometric: (ctx) => ({
-    isAvailable: () => guard(ctx, "biometric", () => true),
-    authenticate: async () => !denied(ctx, "biometric"),
+    isAvailable: () =>  run(() => true),
+    authenticate: () => run(() => true),
   }),
-  network: (ctx) => ({ getStatus: () => guard(ctx, "network", () => ({ ...ctx.state.network.get() })) }),
+  network: (ctx) => ({ getStatus: () =>  run(() => ({ ...ctx.state.network.get() })) }),
 };
 
 const ids = Object.keys(defaults) as CapabilityId[];
@@ -107,6 +107,8 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
 
   const adapters = {} as Record<string, unknown>;
   for (const id of ids) {
+    for (const [method, impl] of Object.entries((overrides[id] as object | undefined) ?? {}))
+      if (impl === undefined) throw new Error(`createMockAdapters: override ${id}.${method} is undefined; omit it to keep the default`);
     const api = { ...(defaults[id](ctx) as object), ...((overrides[id] as object | undefined) ?? {}) } as Record<string, unknown>;
     const recorded: Record<string, unknown> = {};
     for (const [method, impl] of Object.entries(api)) {
@@ -114,6 +116,7 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
         typeof impl === "function"
           ? (...args: unknown[]) => {
               calls.push({ id, method, args });
+              if (state.permissions[id] === "denied") return Promise.reject(new Error(`permission denied: ${id}`));
               return (impl as (...a: unknown[]) => unknown)(...args);
             }
           : impl;
@@ -128,13 +131,13 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
     reset() {
       calls.length = 0;
       const fresh = initialState();
-      state.network.set(fresh.network.get());
-      state.appState.set(fresh.appState.get());
-      state.keyboard.set(fresh.keyboard.get());
+      state.network.reset(fresh.network.get());
+      state.appState.reset(fresh.appState.get());
+      state.keyboard.reset(fresh.keyboard.get());
       state.permissions = fresh.permissions;
       state.storage.clear();
       state.clipboard.value = "";
-      clock.advance(0);
+      clock.reset();
     },
     clock,
     state,
@@ -149,6 +152,9 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
 }
 
 /** Narrow helper for tests that only need the adapters bag. */
+/** Runtime list of mocked ids, taken from the exhaustively typed defaults table. */
+export const mockedCapabilityIds: readonly CapabilityId[] = ids;
+
 export function toAdapters(set: MockAdapterSet): CapabilityAdapters {
   return set.adapters;
 }

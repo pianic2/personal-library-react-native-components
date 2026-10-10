@@ -1,4 +1,4 @@
-export { createMockAdapters, toAdapters } from "./mockAdapters.js";
+export { createMockAdapters, mockedCapabilityIds, toAdapters } from "./mockAdapters.js";
 export type { MockAdapterSet, MockCall, MockOverrides, MockState } from "./mockAdapters.js";
 export { renderWithCapabilities } from "./renderWithCapabilities.js";
 export { createEmitter, createFakeClock } from "./emitters.js";
