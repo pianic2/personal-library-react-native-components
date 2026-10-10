@@ -41,10 +41,6 @@ function parseArgs(argv) {
   }
   for (const [label, value] of [["target name", opts.target], ["legacy name", opts.legacy]]) if (!NAME.test(value)) throw new UsageError(`invalid ${label}: ${value}`);
   if (opts.target === opts.legacy) throw new UsageError("target and legacy names must differ");
-  if (/^@personal-library\//.test(opts.target) || /^@personal-library\//.test(opts.legacy)) {
-    // The rehearsal never touches npmjs, but real names must not be used by accident.
-    if (opts.legacy === opts.target) throw new UsageError("target and legacy names must differ");
-  }
   return opts;
 }
 
@@ -136,14 +132,16 @@ async function main() {
   const scopes = [opts.target, opts.legacy].filter((n) => n.startsWith("@")).map((n) => n.split("/")[0]);
   // The registry is also set for the scopes of both names so that a user-level `@scope:registry` cannot redirect them.
   writeFileSync(npmrc, [`registry=${registry}/`, ...[...new Set(scopes)].map((scope) => `${scope}:registry=${registry}/`), `//127.0.0.1:${port}/:_authToken=rehearsal-token`, ""].join("\n"));
-  const npmEnv = { npm_config_userconfig: npmrc, npm_config_registry: `${registry}/`, npm_config_cache: join(work, "npm-cache"), npm_config_update_notifier: "false", npm_config_audit: "false", npm_config_fund: "false" };
+  const globalrc = join(work, "global-npmrc");
+  writeFileSync(globalrc, "");
+  const npmEnv = { npm_config_userconfig: npmrc, npm_config_globalconfig: globalrc, npm_config_registry: `${registry}/`, npm_config_cache: join(work, "npm-cache"), npm_config_update_notifier: "false", npm_config_audit: "false", npm_config_fund: "false" };
   const npm = (args, cwd) => run("npm", args, { cwd, env: npmEnv });
   let server;
   try {
     log(`rehearsal: target=${opts.target} legacy=${opts.legacy} registry=${registry} work=${work}`);
 
     // 1. Verdaccio
-    const tools = join(tmpdir(), "plrnui-rehearsal-tools");
+    const tools = join(tmpdir(), `plrnui-rehearsal-tools-${process.getuid?.() ?? "u"}`);
     mkdirSync(tools, { recursive: true });
     if (!existsSync(join(tools, "node_modules", "verdaccio", "package.json"))) {
       run("npm", ["install", "--prefix", tools, VERDACCIO, "--no-audit", "--no-fund", "--ignore-scripts"], { env: { npm_config_registry: "https://registry.npmjs.org/" } });
