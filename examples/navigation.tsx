@@ -6,6 +6,7 @@ import {
   Text,
   ThemeAppShell,
   ThemeProvider,
+  TopBar,
   type NavItem,
 } from "@personal-library/react-native-components";
 
@@ -37,6 +38,7 @@ export function NavigationExample() {
               navigate={navigate}
               layout="top"
             />
+            <TopBar title="Docs" />
             <Link href="/support">Contact support</Link>
           </Column>
         </NavProvider>

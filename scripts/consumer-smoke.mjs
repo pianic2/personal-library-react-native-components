@@ -50,6 +50,13 @@ async function writeJson(path, value) {
 
 let packageVersion = "";
 
+const tsconfigMatrix = [
+  { name: "nodenext", compilerOptions: { module: "NodeNext", moduleResolution: "NodeNext" } },
+  { name: "node16", compilerOptions: { module: "Node16", moduleResolution: "Node16" } },
+  { name: "bundler", compilerOptions: { module: "ESNext", moduleResolution: "Bundler" } },
+  { name: "bundler-isolated", compilerOptions: { module: "ESNext", moduleResolution: "Bundler", isolatedModules: true } },
+];
+
 async function assertPackageSurface() {
   const packageJson = JSON.parse(
     await readFile(join(repoRoot, "package.json"), "utf8")
@@ -124,6 +131,7 @@ async function writeConsumerFixture(tarballPath) {
     type: "module",
     scripts: {
       typecheck: "tsc --noEmit",
+      "typecheck:matrix": tsconfigMatrix.map((v) => `tsc -p tsconfig.${v.name}.json`).join(" && "),
       "render:smoke":
         "node --import tsx --import ./test/setup.ts --experimental-loader ./test/react-native-loader.mjs --test test/consumer-render.test.tsx",
     },
@@ -156,6 +164,28 @@ async function writeConsumerFixture(tarballPath) {
     },
     include: ["app/**/*.tsx", "test/**/*.tsx"],
   });
+
+  // Strict matrix (PLRNUI-232): the packed declarations must compile with skipLibCheck false under every module
+  // resolution a consumer may use. `tsconfig.json` above stays the default NodeNext check; each variant below is a
+  // standalone config compiled by `typecheck:matrix`.
+  for (const variant of tsconfigMatrix) {
+    await writeJson(join(consumerDir, `tsconfig.${variant.name}.json`), {
+      compilerOptions: {
+        target: "ES2022",
+        jsx: "react-jsx",
+        strict: true,
+        esModuleInterop: true,
+        skipLibCheck: false,
+        noEmit: true,
+        // react-native's own globals.d.ts conflicts with lib.dom and @types/node under skipLibCheck false, which is not
+        // a defect of the packed declarations; the app needs neither, so the matrix compiles without them.
+        lib: ["ES2022"],
+        types: ["react"],
+        ...variant.compilerOptions,
+      },
+      include: ["app/**/*.tsx"],
+    });
+  }
 
   await writeFile(
     join(consumerDir, "app.json"),
@@ -380,6 +410,7 @@ async function validateConsumerInstall() {
     cwd: consumerDir,
   });
   run("npm", ["run", "typecheck"], { cwd: consumerDir });
+  run("npm", ["run", "typecheck:matrix"], { cwd: consumerDir });
   run("npm", ["run", "render:smoke"], { cwd: consumerDir });
 }
 

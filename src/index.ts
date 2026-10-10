@@ -39,7 +39,7 @@ export {
   useNav,
   useNavigate,
 } from "./components/NavContext/index.js";
-export type { NavItem } from "./components/NavContext/index.js";
+export type { NavContextValue, NavItem } from "./components/NavContext/index.js";
 export { P } from "./components/P/index.js";
 export type { PProps } from "./components/P/index.js";
 export { PasswordInput } from "./components/PasswordInput/index.js";
