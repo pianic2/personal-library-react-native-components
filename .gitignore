@@ -7,3 +7,4 @@ dist/
 .venv
 site
 typececk.txt
+dist-shim/
