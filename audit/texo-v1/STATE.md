@@ -100,4 +100,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-99 (E9-11: screen-reader reading-order helper getAccessibleTree and tests) | #56 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-124 (E17-03: release-guard channels rc, latest and shim, identity-based names, unit tests) | #57 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-139 (E16-06: getting-started and index docs in English, generated install matrix, snippet check) | #58 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-119 (E12-08: Expo consumer smoke exports web, iOS and Android Hermes bundles with render assertion) | #60 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-136 (E15-03: generated legacy shim build scripts/build-shim.mjs and template) | #59 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
