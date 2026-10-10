@@ -1,6 +1,6 @@
 # TopBar
 
-**Stability:** experimental — provisional API, not recommended for production dependency.
+**Stability:** beta — public consumer API, usable but contract may still change.
 
 Barra di navigazione in alto (web-only).
 
