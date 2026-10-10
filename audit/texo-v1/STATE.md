@@ -109,3 +109,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-228 (E4-02: useControllableState and useMergedRefs hooks) | #64 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-196 (E14-02: generate package.json exports, typesVersions, sideEffects from config/exports.json; scripts/generate-exports.mjs) | #63 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-166 (E1-01: ComponentMeta, colocated <Name>.meta.ts for 36 components, scripts/lib/meta.mjs lint/loader, ADR 0016) | #65 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-162 (E15-07: compat test suite through the legacy shim: loader, curated tests, gate harness) | #68 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
