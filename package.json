@@ -85,6 +85,7 @@
     "docs:compat:check": "node scripts/compatibility-docs.mjs --check",
     "api:snapshot": "node scripts/public-api-snapshot.mjs",
     "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
+    "ai:build:props": "node scripts/ai/build-props.mjs",
     "clean": "rm -rf dist *.tgz",
     "release:guard": "node scripts/release-guard.mjs",
     "release:security": "node scripts/audit-gate.mjs",
@@ -102,6 +103,7 @@
   "devDependencies": {
     "@types/react": "^19.2.17",
     "@types/react-test-renderer": "^19.1.0",
+    "ajv": "^8.20.0",
     "react-test-renderer": "^19.2.7",
     "tsx": "^4.22.4",
     "typescript": "^5.8.0"
