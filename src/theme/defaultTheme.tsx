@@ -7,6 +7,11 @@ import { shadows } from "../tokens/shadows.base.js";
 import { zIndex } from "../tokens/zIndex.base.js";
 import { size } from "../tokens/size.base.js";
 import { resolveColors } from "../tokens/colors.base.js";
+import { createSemantic } from "../tokens/semantic.base.js";
+import { textStyles } from "../tokens/textStyles.base.js";
+import { motion } from "../tokens/motion.base.js";
+import { density } from "../tokens/density.base.js";
+import { breakpoints } from "../tokens/breakpoints.base.js";
 import type { Theme, ThemeMode } from "./types.js";
 
 
@@ -24,6 +29,23 @@ export function createBaseTheme(mode: ThemeMode): Theme {
     shadows,
     zIndex,
     size,
+    semantic: createSemantic(colors),
+    textStyles,
+    elevation: shadows,
+    motion,
+    density,
+    breakpoints,
+    borderWidth: {
+      hairline: 1,
+      thin: 1,
+      thick: 2,
+    },
+    opacity: {
+      disabled: 0.5,
+      pressed: 1,
+      subtle: 0.75,
+    },
+    preset: "base",
     components: {
       button: {
         height: {
