@@ -23,14 +23,16 @@ export function createVisibilityAppState(doc: VisibilityDocument): AppStateApi {
   };
 }
 
-interface RNAppState {
+/** The slice of React Native's `AppState` the native mapping needs. */
+export interface RNAppState {
   currentState?: string;
   addEventListener(type: "change", listener: (state: string) => void): { remove(): void };
 }
 
 const toValue = (s: string | undefined): AppStateValue => (s === "background" || s === "inactive" ? s : "active");
 
-function createReactNativeAppState(host: RNAppState): AppStateApi {
+/** Native mapping: unknown strings (and a missing `currentState`) map to "active". */
+export function createReactNativeAppState(host: RNAppState): AppStateApi {
   return {
     getState: () => toValue(host.currentState),
     subscribe(listener) {

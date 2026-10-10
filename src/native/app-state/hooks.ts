@@ -3,10 +3,33 @@ import { useCapability } from "../core/CapabilityProvider.js";
 import type { AppStateApi, AppStateValue } from "../core/types.js";
 import { resolveFallbackAppState } from "./sources.js";
 
-// Resolves the api once per adapter: an injected (non-noop) adapter wins, otherwise the web/RN fallback.
+// Resolves the api once per adapter. ONLY an adapter whose status is exactly "noop" (nothing configured) falls back to
+// the web/React Native source; an injected adapter with status "available" or "unavailable" is used as given (an
+// "unavailable" one is the caller's explicit choice and keeps its own api).
+// A throwing api (for example a denied permission in the mocks) must not crash the tree: reads degrade to "active" and
+// subscribing to a no-op, so the app behaves as if it were always in the foreground.
+function guard(api: AppStateApi): AppStateApi {
+  return {
+    getState() {
+      try {
+        return api.getState();
+      } catch {
+        return "active";
+      }
+    },
+    subscribe(listener) {
+      try {
+        return api.subscribe(listener);
+      } catch {
+        return () => undefined;
+      }
+    },
+  };
+}
+
 function useAppStateApi(): AppStateApi {
   const adapter = useCapability("appState");
-  return useMemo(() => (adapter.status === "noop" ? resolveFallbackAppState() : adapter.api), [adapter]);
+  return useMemo(() => guard(adapter.status === "noop" ? resolveFallbackAppState() : adapter.api), [adapter]);
 }
 
 /** The current app state ("active", "background" or "inactive"); re-renders on change. SSR-safe: renders "active". */

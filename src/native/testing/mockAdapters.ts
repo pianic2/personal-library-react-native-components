@@ -53,6 +53,8 @@ type Defaults = { [K in CapabilityId]: (ctx: Ctx) => CapabilityMap[K] };
 
 // Permission rule: when a capability is `denied`, EVERY method of that capability (defaults and overrides, biometric
 // included) records the call and then rejects with `permission denied: <id>`; the implementation is not run.
+// Exception: a capability whose api is synchronous (`syncIds`, today `appState`) cannot reject, so each of its methods
+// records the call and then THROWS `permission denied: <id>` synchronously.
 // Typed `{ [K in CapabilityId]: ... }`: a missing key is a compile error.
 const defaults: Defaults = {
   clipboard: (ctx) => ({

@@ -149,18 +149,16 @@ describe("PLRNUI-146 native testing helpers", () => {
   });
 
   it("a denied permission rejects every method of that capability, biometric included", async () => {
-    const calls: Record<CapabilityId, () => (Promise<unknown> | unknown)[]> = {
+    const calls: Record<Exclude<CapabilityId, "appState">, () => Promise<unknown>[]> = {
       clipboard: () => { const a = mocks.adapters.clipboard.api; return [a.getString(), a.setString("x")]; },
       haptics: () => { const a = mocks.adapters.haptics.api; return [a.impact(), a.notification("success"), a.selection()]; },
       share: () => [mocks.adapters.share.api.share({ message: "m" })],
       storage: () => { const a = mocks.adapters.storage.api; return [a.getItem("k"), a.setItem("k", "v"), a.removeItem("k")]; },
       biometric: () => { const a = mocks.adapters.biometric.api; return [a.isAvailable(), a.authenticate("p")]; },
       network: () => [mocks.adapters.network.api.getStatus()],
-      // sync api: a denied permission throws, surfaced here as a rejection
-      appState: () => { const a = mocks.adapters.appState.api; return [(async () => a.getState())(), (async () => a.subscribe(() => undefined))()]; },
     };
     const mocks = createMockAdapters({ share: { share: async () => "dismissed" } });
-    for (const id of allIds) {
+    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState"> => x !== "appState")) {
       await Promise.all(calls[id]()); // granted: resolves
       mocks.setPermission(id, "denied");
       const results = await Promise.allSettled(calls[id]());
@@ -170,6 +168,16 @@ describe("PLRNUI-146 native testing helpers", () => {
       }
       mocks.setPermission(id, "granted");
     }
+  });
+
+  it("a denied permission makes the synchronous appState api throw synchronously and records the call", () => {
+    const mocks = createMockAdapters();
+    const api = mocks.adapters.appState.api;
+    assert.equal(api.getState(), "active");
+    mocks.setPermission("appState", "denied");
+    assert.throws(() => api.getState(), /permission denied: appState/);
+    assert.throws(() => api.subscribe(() => undefined), /permission denied: appState/);
+    assert.deepEqual(mocks.callsOf("appState").map((c) => c.method), ["getState", "getState", "subscribe"]);
   });
 
   it("rejects overrides that set a method to undefined", () => {
