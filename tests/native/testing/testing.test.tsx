@@ -149,7 +149,7 @@ describe("PLRNUI-146 native testing helpers", () => {
   });
 
   it("a denied permission rejects every method of that capability, biometric included", async () => {
-    const calls: Record<CapabilityId, () => Promise<unknown>[]> = {
+    const calls: Record<Exclude<CapabilityId, "appState">, () => Promise<unknown>[]> = {
       clipboard: () => { const a = mocks.adapters.clipboard.api; return [a.getString(), a.setString("x")]; },
       haptics: () => { const a = mocks.adapters.haptics.api; return [a.impact(), a.notification("success"), a.selection()]; },
       share: () => [mocks.adapters.share.api.share({ message: "m" })],
@@ -158,8 +158,8 @@ describe("PLRNUI-146 native testing helpers", () => {
       network: () => [mocks.adapters.network.api.getStatus()],
     };
     const mocks = createMockAdapters({ share: { share: async () => "dismissed" } });
-    for (const id of allIds) {
-      await Promise.all(calls[id]().map((p) => p)); // granted: resolves
+    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState"> => x !== "appState")) {
+      await Promise.all(calls[id]()); // granted: resolves
       mocks.setPermission(id, "denied");
       const results = await Promise.allSettled(calls[id]());
       for (const r of results) {
@@ -168,6 +168,16 @@ describe("PLRNUI-146 native testing helpers", () => {
       }
       mocks.setPermission(id, "granted");
     }
+  });
+
+  it("a denied permission makes the synchronous appState api throw synchronously and records the call", () => {
+    const mocks = createMockAdapters();
+    const api = mocks.adapters.appState.api;
+    assert.equal(api.getState(), "active");
+    mocks.setPermission("appState", "denied");
+    assert.throws(() => api.getState(), /permission denied: appState/);
+    assert.throws(() => api.subscribe(() => undefined), /permission denied: appState/);
+    assert.deepEqual(mocks.callsOf("appState").map((c) => c.method), ["getState", "getState", "subscribe"]);
   });
 
   it("rejects overrides that set a method to undefined", () => {
