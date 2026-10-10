@@ -1,4 +1,6 @@
 # Surfaces
 
+<!-- catalog:begin -->
 - [Badge](badge.md) — beta
-- [Card](card.md) — internal / non-stable
+- [Card](card.md) — experimental
+<!-- catalog:end -->

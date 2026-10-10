@@ -50,7 +50,7 @@ Stability labels:
 | --- | --- | --- | --- | --- |
 | `BottomBar` | Supported with notes | Supported with notes | Supported with notes | App-shell bottom layout remains experimental. |
 | `SideBar` | Minimal native fallback | Minimal native fallback | Richer web sidebar | Native behavior is not a drawer, overlay or gesture surface. |
-| `TopBar` | Fallback only | Fallback only | Supported with notes | Web-oriented top navigation remains experimental. |
+| `TopBar` | Fallback only | Fallback only | Supported with notes | Web-oriented top navigation is beta (native is a fallback only). |
 | `Modal` | Supported with notes | Supported with notes | Supported with notes | Focus, keyboard and accessibility behavior remain unverified. |
 | `BottomSheet` | Supported with notes | Supported with notes | Supported with notes | Gesture, keyboard, safe area and snap behavior remain incomplete. |
 | `Tooltip` | Fallback only | Fallback only | Supported with notes | Native renders children only; tooltip content is web-only. |

@@ -95,7 +95,7 @@ export function App() {
 
 The navigation components do not include a router: the app passes `pathname` and `navigate(href)`.
 
-`NavBar` and `NavItem` are `beta`. The layout-oriented navigation and app-shell surfaces `TopBar`, `BottomBar` and `SideBar` remain `experimental` in their dedicated pages.
+`NavBar`, `NavItem` and `TopBar` are `beta`. The layout-oriented app-shell surfaces `BottomBar` and `SideBar` remain `experimental` in their dedicated pages.
 
 ```tsx
 import React from "react";
