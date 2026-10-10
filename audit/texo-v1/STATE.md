@@ -118,6 +118,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (follow-up: ownership exception for PLRNUI-174: NavContextValue root export, export contract symbol, snapshot, TopBar example; PO-approved 2026-10-10) | #70 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-205 (E14-04: spike ESM-only vs dual ESM+CJS vs jest-expo/Metro resolution) | #74 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-195 (E1-06: meta-driven render matrix over every component, light and dark) | #73 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-133 (E11-09: template folder contract and scripts/check-templates.mjs) | #75 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-202 (E1-08: sync catalog labels and nav index pages from component meta via scripts/gen-catalog.mjs) | #76 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-208 (E14-05: bundle-size and tree-shaking measurement harness with esbuild budgets) | #79 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-122 (E15-01: final Texo identity decision, ADR 0017) | #78 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
