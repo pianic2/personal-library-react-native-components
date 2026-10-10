@@ -1,5 +1,5 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { lstatSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Template contract checker (PLRNUI-133). See templates/README.md for the contract.
@@ -8,8 +8,6 @@ import { fileURLToPath } from "node:url";
 // Dependency-free, deterministic (sorted traversal), fail-closed.
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SOURCE_EXT = /\.(?:[cm]?[jt]sx?)$/;
-const SKIP_DIRS = new Set(["node_modules", ".expo", "dist", "build"]);
 const NAME_RE = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 
 function usage(message) {
@@ -68,37 +66,121 @@ const PUBLIC = new Set([LIB, ...publicSubpaths]);
 const errors = [];
 const fail = (where, message) => errors.push(`${where}: ${message}`);
 
-function walk(dir, out = []) {
+const SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx)$/;
+const FORBIDDEN_DIRS = new Set(["node_modules", ".expo", "dist", "build"]);
+
+// Lists source files of a template; fails on symlinks and on build/dependency dirs (fail-closed, nothing is skipped silently).
+function walk(dir, label, tplDir, out = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1))) {
-    if (entry.isDirectory()) {
-      if (!SKIP_DIRS.has(entry.name)) walk(join(dir, entry.name), out);
-    } else if (entry.isFile() && SOURCE_EXT.test(entry.name)) out.push(join(dir, entry.name));
+    const full = join(dir, entry.name);
+    const where = `${label}/${relative(tplDir, full).split(sep).join("/")}`;
+    if (lstatSync(full).isSymbolicLink()) fail(where, "symlinks are not allowed inside a template");
+    else if (entry.isDirectory()) {
+      if (FORBIDDEN_DIRS.has(entry.name)) fail(where, `directory "${entry.name}" must not be present in a template`);
+      else walk(full, label, tplDir, out);
+    } else if (entry.isFile() && SOURCE_EXT.test(entry.name)) out.push(full);
   }
   return out;
 }
 
-const SPEC_RE = [
-  /\b(?:import|export)\s[^'"`;]*?\bfrom\s*(['"])([^'"]+)\1/g,
-  /\bimport\s*(['"])([^'"]+)\1/g,
-  /\b(?:import|require)\s*\(\s*(['"])([^'"]+)\1\s*\)/g,
-];
-
-function checkSpecifiers(file, tplDir, label) {
-  const text = readFileSync(file, "utf8");
-  const specs = new Set();
-  for (const re of SPEC_RE) for (const m of text.matchAll(re)) specs.add(m[2]);
-  for (const spec of [...specs].sort()) {
-    const where = `${label}/${relative(tplDir, file)}`;
-    if (spec === LIB || spec.startsWith(`${LIB}/`)) {
-      if (!PUBLIC.has(spec)) fail(where, `deep import "${spec}" is not a public entry point (allowed: ${[...PUBLIC].sort().join(", ")})`);
-    } else if (spec.startsWith(".")) {
-      const target = join(dirname(file), spec);
-      const rel = relative(tplDir, target);
-      if (rel.startsWith("..")) fail(where, `relative import "${spec}" escapes the template folder`);
-    } else if (/(^|\/)(src|dist)(\/|$)/.test(spec)) {
-      fail(where, `import "${spec}" reaches into library internals`);
+// Replaces comments with a space while respecting string and template literals.
+function stripComments(text) {
+  let out = "";
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i];
+    const n = text[i + 1];
+    if (c === "/" && n === "/") {
+      while (i < text.length && text[i] !== "\n") i += 1;
+      out += " ";
+    } else if (c === "/" && n === "*") {
+      const end = text.indexOf("*/", i + 2);
+      i = end === -1 ? text.length : end + 2;
+      out += " ";
+    } else if (c === "'" || c === '"' || c === "`") {
+      let j = i + 1;
+      while (j < text.length && text[j] !== c) j += text[j] === "\\" ? 2 : 1;
+      out += text.slice(i, j + 1);
+      i = j + 1;
+    } else {
+      out += c;
+      i += 1;
     }
   }
+  return out;
+}
+
+const STATIC_RE = [
+  /\b(?:import|export)\b[^'"`;]*?\bfrom\s*(['"`])([^'"`]*)\1/g,
+  /\bimport\s*(['"`])([^'"`]*)\1/g,
+];
+const CALL_RE =
+  /\b(?:import|require(?:\.resolve)?|jest\.(?:requireActual|requireMock|mock|doMock|unmock|dontMock|setMock|createMockFromModule)|vi\.(?:mock|doMock|importActual|importMock))\s*\(\s*(?:(['"`])([^'"`]*)\1\s*[,)]|([^\s]))/g;
+
+function checkSpecifier(spec, file, tplDir, where) {
+  const norm = spec.replace(/\\/g, "/");
+  if (norm.startsWith("/") || /^[A-Za-z]:\//.test(norm) || /^file:/i.test(norm)) {
+    fail(where, `absolute import "${spec}" is not allowed`);
+  } else if (norm.startsWith(".")) {
+    const rel = relative(tplDir, join(dirname(file), norm)).split(sep).join("/");
+    if (rel === ".." || rel.startsWith("../")) fail(where, `relative import "${spec}" escapes the template folder`);
+  } else if (norm === LIB || norm.startsWith(`${LIB}/`)) {
+    if (!PUBLIC.has(norm)) fail(where, `deep import "${spec}" is not a public entry point (allowed: ${[...PUBLIC].sort().join(", ")})`);
+  } else if (/(^|\/)(src|dist)(\/|$)/.test(norm)) {
+    fail(where, `import "${spec}" reaches into library internals`);
+  }
+}
+
+function checkSpecifiers(file, tplDir, label) {
+  const text = stripComments(readFileSync(file, "utf8"));
+  const where = `${label}/${relative(tplDir, file).split(sep).join("/")}`;
+  const specs = new Set();
+  for (const re of STATIC_RE) for (const m of text.matchAll(re)) specs.add(m[2]);
+  for (const m of text.matchAll(CALL_RE)) {
+    if (m[2] === undefined || m[2].includes("${")) fail(where, "dynamic import/require specifier cannot be verified");
+    else specs.add(m[2]);
+  }
+  for (const spec of [...specs].sort()) checkSpecifier(spec, file, tplDir, where);
+}
+
+const COMPARATOR = /^(?:[\^~]|>=?|<=?|=)?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+function isSemverRange(value) {
+  if (typeof value !== "string") return false;
+  const sets = value.split("||").map((s) => s.trim());
+  return sets.every((set) => set !== "" && set.split(/\s+/).every((c) => COMPARATOR.test(c)));
+}
+
+function checkLibraryVersions(label, p) {
+  const sections = ["dependencies", "peerDependencies", "devDependencies", "optionalDependencies"];
+  for (const section of sections) {
+    const deps = p[section];
+    if (deps === undefined) continue;
+    if (typeof deps !== "object" || deps === null || Array.isArray(deps)) {
+      fail(label, `package.json "${section}" must be an object`);
+      continue;
+    }
+    for (const [key, value] of Object.entries(deps)) {
+      if (key === LIB) {
+        if (!isSemverRange(value)) fail(label, `${section}["${LIB}"] must be a semver range, got ${JSON.stringify(value)}`);
+      } else if (typeof value === "string" && value.includes(LIB)) {
+        fail(label, `${section}["${key}"] aliases ${LIB}; only a semver range under the real name is allowed`);
+      }
+    }
+  }
+  const visit = (node, where) => {
+    if (typeof node !== "object" || node === null) return;
+    for (const [key, value] of Object.entries(node)) {
+      const isLib = key === LIB || key.endsWith(`>${LIB}`) || key.endsWith(`/${LIB}`);
+      if (isLib && typeof value === "string" && !isSemverRange(value)) fail(label, `${where}["${key}"] must be a semver range, got ${JSON.stringify(value)}`);
+      else if (typeof value === "string" && !isLib && value.includes(LIB)) fail(label, `${where}["${key}"] aliases ${LIB}`);
+      else if (typeof value === "object" && value !== null) {
+        if (isLib && typeof value["."] === "string" && !isSemverRange(value["."])) fail(label, `${where}["${key}"]["."] must be a semver range`);
+        visit(value, `${where}["${key}"]`);
+      }
+    }
+  };
+  for (const field of ["overrides", "resolutions"]) visit(p[field], field);
+  visit(p.pnpm, "pnpm");
 }
 
 const entries = readdirSync(root, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : 1));
@@ -106,6 +188,10 @@ let count = 0;
 for (const entry of entries) {
   if (entry.name.startsWith("_") || entry.name.startsWith(".")) continue; // _contract and dotfiles are not templates
   const label = `templates/${entry.name}`;
+  if (lstatSync(join(root, entry.name)).isSymbolicLink()) {
+    fail(label, "symlinks are not allowed in the templates folder");
+    continue;
+  }
   if (!entry.isDirectory()) {
     if (entry.name !== "README.md") fail(label, "unexpected file at templates root (only README.md, _*/ and template folders allowed)");
     continue;
@@ -114,11 +200,16 @@ for (const entry of entries) {
   const dir = join(root, entry.name);
   if (!NAME_RE.test(entry.name)) fail(label, "folder name must be kebab-case (^[a-z][a-z0-9]*(-[a-z0-9]+)*$)");
 
+  // Walk first so symlinks and forbidden dirs are always reported.
+  const sources = walk(dir, label, dir);
+
   if (!isFile(join(dir, "README.md"))) fail(label, "missing README.md");
   else if (readFileSync(join(dir, "README.md"), "utf8").trim() === "") fail(label, "README.md is empty");
 
   if (!isDir(join(dir, "app"))) fail(label, "missing app/ directory");
-  else if (walk(join(dir, "app")).length === 0) fail(label, "app/ contains no source files");
+  else if (!sources.some((f) => f.startsWith(join(dir, "app") + sep))) {
+    fail(label, "app/ contains no source files");
+  }
 
   if (!isFile(join(dir, "template.json"))) fail(label, "missing template.json");
   else {
@@ -141,13 +232,11 @@ for (const entry of entries) {
       if (typeof p.name !== "string" || p.name === "") fail(label, 'package.json needs a "name"');
       const deps = { ...p.dependencies, ...p.peerDependencies };
       if (typeof deps[LIB] !== "string") fail(label, `package.json must depend on ${LIB}`);
-      if (p.dependencies && typeof p.dependencies[LIB] === "string" && /^(file|link|portal|workspace):/.test(p.dependencies[LIB])) {
-        fail(label, `dependency on ${LIB} must be a published version range, not a local path`);
-      }
+      checkLibraryVersions(label, p);
     }
   }
 
-  if (isDir(dir)) for (const file of walk(dir)) checkSpecifiers(file, dir, label);
+  for (const file of sources) checkSpecifiers(file, dir, label);
 }
 
 if (errors.length) {
