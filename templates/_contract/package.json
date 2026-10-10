@@ -1,0 +1,8 @@
+{
+  "name": "example-starter",
+  "private": true,
+  "version": "0.1.0",
+  "dependencies": {
+    "@personal-library/react-native-components": "^0.1.0"
+  }
+}
