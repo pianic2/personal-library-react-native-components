@@ -2,6 +2,19 @@
   "name": "@personal-library/react-native-components",
   "version": "0.1.0-rc.2",
   "description": "Personal Library React Native Components.",
+  "keywords": [
+    "react-native",
+    "expo",
+    "ui",
+    "components",
+    "design-system",
+    "typescript",
+    "accessibility"
+  ],
+  "homepage": "https://github.com/pianic2/personal-library-react-native-components#readme",
+  "bugs": {
+    "url": "https://github.com/pianic2/personal-library-react-native-components/issues"
+  },
   "private": false,
   "type": "module",
   "license": "MIT",
@@ -12,10 +25,35 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "theme": [
+        "dist/theme/index.d.ts"
+      ],
+      "tokens": [
+        "dist/tokens/index.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "react-native": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "react-native": "./dist/theme/index.js",
+      "import": "./dist/theme/index.js",
+      "default": "./dist/theme/index.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "react-native": "./dist/tokens/index.js",
+      "import": "./dist/tokens/index.js",
+      "default": "./dist/tokens/index.js"
     },
     "./package.json": "./package.json"
   },
