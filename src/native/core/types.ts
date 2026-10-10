@@ -27,8 +27,22 @@ export interface BiometricApi {
   authenticate(promptMessage: string): Promise<boolean>;
 }
 
+export type NetworkType = "wifi" | "cellular" | "ethernet" | "bluetooth" | "vpn" | "other" | "none" | "unknown";
+
+/** `null` means unknown, never "offline": an adapter that cannot tell must report null. */
+export interface NetworkState {
+  isConnected: boolean | null;
+  isInternetReachable: boolean | null;
+  type: NetworkType;
+}
+
 export interface NetworkApi {
+  /** Kept from 1.0-rc: the coarse asynchronous answer. */
   getStatus(): Promise<{ connected: boolean | null }>;
+  /** The current state, synchronously (adapters cache it). */
+  getState(): NetworkState;
+  /** Calls `listener` on every change; returns the function that removes it. */
+  subscribe(listener: (state: NetworkState) => void): () => void;
 }
 
 export type AppStateValue = "active" | "background" | "inactive";
