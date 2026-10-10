@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -47,11 +47,13 @@ describe("PLRNUI-208 bundle-size", () => {
       const limits = JSON.parse(readFileSync(limitsFile, "utf8"));
       const lowered = structuredClone(limits);
       lowered.fixtures["button-only"].maxGzipBytes = 100;
+      lowered.subpaths["./tokens"].maxGzipBytes = 100;
       const loweredFile = join(dir, "lowered.json");
       writeFileSync(loweredFile, JSON.stringify(lowered));
       const over = run("bundle-size.mjs", "--check", "--limits", loweredFile);
       assert.equal(over.status, 1);
       assert.match(over.stderr, /button-only: \d+ B gzip exceeds budget 100 B/);
+      assert.match(over.stderr, /\.\/tokens: \d+ B gzip exceeds budget 100 B/);
 
       const missing = structuredClone(limits);
       delete missing.subpaths["./theme"];
@@ -63,6 +65,83 @@ describe("PLRNUI-208 bundle-size", () => {
 
       assert.equal(run("bundle-size.mjs", "--check", "--limits", join(dir, "nope.json")).status, 1);
       assert.equal(run("bundle-size.mjs", "--bogus").status, 2);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("fails when a pending entry has an existing source and passes when the source is missing", () => {
+    const dir = mkdtempSync(join(tmpdir(), "size-limits-"));
+    try {
+      const limits = JSON.parse(readFileSync(limitsFile, "utf8"));
+      limits.subpaths["./theme"] = { pending: true, note: "x" };
+      const file = join(dir, "pending-theme.json");
+      writeFileSync(file, JSON.stringify(limits));
+      const result = run("bundle-size.mjs", "--check", "--limits", file);
+      assert.equal(result.status, 1, result.stdout);
+      assert.match(result.stderr, /"\.\/theme" is pending but its source src\/theme\/index\.ts exists/);
+
+      const bogus = JSON.parse(readFileSync(limitsFile, "utf8"));
+      bogus.subpaths["./testing"] = { entry: "src/theme/index.ts", maxGzipBytes: 5000 };
+      const bogusFile = join(dir, "bogus.json");
+      writeFileSync(bogusFile, JSON.stringify(bogus));
+      const noSource = run("bundle-size.mjs", "--check", "--limits", bogusFile);
+      assert.equal(noSource.status, 1);
+      assert.match(noSource.stderr, /"\.\/testing" has an entry and budget but no source/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("fails as soon as a source appears for a pending subpath (temp root), and rejects fixtures that bundle nothing of src/", () => {
+    const dir = mkdtempSync(join(tmpdir(), "size-root-"));
+    try {
+      mkdirSync(join(dir, "config"));
+      mkdirSync(join(dir, "src"));
+      writeFileSync(join(dir, "src/index.ts"), "export const a = 1;\n");
+      const conditions = (name: string) => ({ conditions: { import: `./dist/${name}index.js` } });
+      writeFileSync(join(dir, "config/exports.json"), JSON.stringify({ subpaths: { ".": conditions(""), "./extra": conditions("extra/") } }));
+      const limits = {
+        schemaVersion: 1,
+        delta: { root: "a", direct: "a" },
+        fixtures: { a: { source: 'import { a } from "./src/index.ts"; console.log(a);', maxGzipBytes: 500 } },
+        subpaths: { ".": { entry: "src/index.ts", maxGzipBytes: 500 }, "./extra": { pending: true, note: "no source yet" } },
+      };
+      const limitsPath = join(dir, "config/size-limits.json");
+      writeFileSync(limitsPath, JSON.stringify(limits));
+      const before = run("bundle-size.mjs", "--check", "--root", dir);
+      assert.equal(before.status, 0, before.stdout + before.stderr);
+
+      mkdirSync(join(dir, "src/extra"));
+      writeFileSync(join(dir, "src/extra/index.ts"), "export const b = 2;\n");
+      const after = run("bundle-size.mjs", "--check", "--root", dir);
+      assert.equal(after.status, 1);
+      assert.match(after.stderr, /"\.\/extra" is pending but its source src\/extra\/index\.ts exists/);
+
+      rmSync(join(dir, "src/extra"), { recursive: true });
+      limits.fixtures.a.source = "// import { a } from './src/index.ts'\nconsole.log(1);";
+      writeFileSync(limitsPath, JSON.stringify(limits));
+      const empty = run("bundle-size.mjs", "--check", "--root", dir);
+      assert.equal(empty.status, 1);
+      assert.match(empty.stderr, /a: bundle is empty or contains no source file from src\//);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("requires the delta fixtures instead of silently dropping the delta line, and labels ./package.json as metadata", () => {
+    const limits = JSON.parse(readFileSync(limitsFile, "utf8"));
+    assert.deepEqual(limits.subpaths["./package.json"], { metadata: true });
+    const ok = run("bundle-size.mjs");
+    assert.match(ok.stdout, /\.\/package\.json\s+-\s+-\s+-\s+metadata file \(not bundled\)/);
+    const dir = mkdtempSync(join(tmpdir(), "size-limits-"));
+    try {
+      delete limits.fixtures["root-button"];
+      const file = join(dir, "no-delta.json");
+      writeFileSync(file, JSON.stringify(limits));
+      const result = run("bundle-size.mjs", "--limits", file);
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /delta must name two existing fixtures/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
