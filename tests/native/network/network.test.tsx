@@ -5,6 +5,7 @@ import { act, create } from "react-test-renderer";
 import { createMockAdapters, renderWithCapabilities } from "../../../src/native/testing/index.js";
 import {
   UNKNOWN_NETWORK,
+  createCachedNetwork,
   createExpoNetwork,
   createNetInfoNetwork,
   createWebNetwork,
@@ -77,8 +78,11 @@ describe("PLRNUI-178 network status", () => {
     const seen: NetworkState[] = [];
     function Id() { seen.push(useNetworkStatus()); return null; }
     renderWithCapabilities(<Id />, mocks);
-    act(() => mocks.setNetwork(true)); // same value
-    assert.ok(seen.every((s) => s === seen[0]));
+    const settled = seen.at(-1);
+    act(() => mocks.setNetwork(true)); // same value: no new object, no new render
+    assert.equal(seen.at(-1), settled);
+    act(() => mocks.setNetwork(false));
+    assert.notEqual(seen.at(-1), settled);
   });
 
   it("degrades to unknown when the api throws (denied permission), never to offline", () => {
@@ -172,6 +176,91 @@ describe("PLRNUI-178 network status", () => {
     assert.deepEqual(api.getState(), { isConnected: false, isInternetReachable: false, type: "none" });
     un();
     assert.equal(off, 1);
+  });
+
+
+  it("the first render is always the unknown state (hydration-safe), the effect then reads the real one", () => {
+    const mocks = createMockAdapters();
+    const log: string[] = [];
+    renderWithCapabilities(<Probe log={log} />, mocks);
+    assert.equal(log[0], "null:null:unknown:null");
+    assert.equal(log.at(-1), "true:true:unknown:true");
+  });
+
+  it("resets to unknown after the last unsubscribe so a stale state is never shown after a restart", async () => {
+    let reads = 0;
+    const api = createExpoNetwork({ getNetworkStateAsync: async () => (++reads === 1 ? { isConnected: false, type: "none" } : (() => { throw new Error("later read fails"); })()) });
+    const off = api.subscribe(() => undefined);
+    await flush();
+    assert.equal(api.getState().isConnected, false);
+    off();
+    assert.deepEqual(api.getState(), UNKNOWN_NETWORK, "reset on the last unsubscribe");
+    const off2 = api.subscribe(() => undefined);
+    await flush();
+    assert.deepEqual(api.getState(), UNKNOWN_NETWORK, "a failing second read stays unknown, not the old offline");
+    off2();
+  });
+
+  it("a start that throws leaves no subscriber behind and the next subscribe tries again", () => {
+    let starts = 0;
+    const api = createCachedNetwork(() => {
+      starts++;
+      if (starts === 1) throw new Error("native module missing");
+      return () => undefined;
+    });
+    assert.throws(() => api.subscribe(() => undefined), /native module missing/);
+    const off = api.subscribe(() => undefined);
+    assert.equal(starts, 2);
+    off();
+  });
+
+  it("calls every listener even if one throws, then rethrows the first error", () => {
+    let push!: (s: NetworkState) => void;
+    const api = createCachedNetwork((p) => { push = p; return () => undefined; });
+    const seen: string[] = [];
+    api.subscribe(() => { seen.push("a"); throw new Error("first"); });
+    api.subscribe(() => { seen.push("b"); throw new Error("second"); });
+    api.subscribe(() => seen.push("c"));
+    assert.throws(() => push({ isConnected: true, isInternetReachable: true, type: "wifi" }), /first/);
+    assert.deepEqual(seen, ["a", "b", "c"]);
+    assert.equal(api.getState().type, "wifi");
+  });
+
+  it("a listener unsubscribed during a push is not called, and the same function twice is two subscriptions", () => {
+    let push!: (s: NetworkState) => void;
+    const api = createCachedNetwork((p) => { push = p; return () => undefined; });
+    const seen: string[] = [];
+    let offB = () => undefined as void;
+    api.subscribe(() => { seen.push("a"); offB(); });
+    offB = api.subscribe(() => seen.push("b")) as () => void;
+    push({ isConnected: true, isInternetReachable: null, type: "unknown" });
+    assert.deepEqual(seen, ["a"]);
+    const same = () => seen.push("same");
+    const off1 = api.subscribe(same);
+    api.subscribe(same);
+    off1();
+    seen.length = 0;
+    push({ isConnected: false, isInternetReachable: false, type: "none" });
+    assert.deepEqual(seen, ["a", "same"], "one 'same' subscription survives the first unsubscribe");
+  });
+
+  it("the hook uses the web mapping when a noop adapter is injected and window exists, and re-renders on offline", () => {
+    const f = fakeHost(true);
+    const g = globalThis as { window?: unknown };
+    const before = g.window;
+    g.window = f.host;
+    try {
+      const mocks = createMockAdapters({}, "noop");
+      const log: string[] = [];
+      renderWithCapabilities(<Probe log={log} />, mocks);
+      assert.equal(log.at(-1), "true:null:unknown:true");
+      f.host.navigator.onLine = false;
+      act(() => f.emit("offline"));
+      assert.equal(log.at(-1), "false:false:none:false");
+      assert.equal(f.count(), 4, "two hooks x (online + offline), no resubscribe on rerender");
+    } finally {
+      g.window = before;
+    }
   });
 
   it("source files import no expo-* or netinfo package", async () => {
