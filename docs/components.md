@@ -16,60 +16,54 @@ ma la superficie consumer corrente è la root API di
 - source-tree inventory: historical or internal implementation inventory, not
   automatically consumer API.
 
-## Layout
+<!-- catalog:begin -->
+## Buttons
 
-- Overview: [Layout](components/layout/index.md)
-- [Box](components/layout/box.md) — beta
-- [Row](components/layout/row.md) — beta
-- [Column](components/layout/column.md) — beta; `Stack` root alias beta / non-stable
-- [Divider](components/layout/divider.md) — beta
-
-## Typography
-
-- Overview: [Typography](components/typography/index.md)
-- [Text](components/typography/text.md) — beta
-- [Heading](components/typography/heading.md) — beta
-- [P](components/typography/p.md) — beta
-- [B](components/typography/b.md) — beta
-- [Small](components/typography/small.md) — beta
-- [CodeInline](components/typography/code-inline.md) — beta / non-stable
-- [Quote](components/typography/quote.md) — beta
-- [TextGroup](components/typography/text-group.md) — beta
-
-## Form
-
-- Overview: [Form](components/form/index.md)
-- [Input](components/form/input.md) — beta
-- [PasswordInput](components/form/password-input.md) — beta / non-stable
-- [Textarea](components/form/textarea.md) — beta / non-stable
-- [Checkbox](components/form/checkbox.md) — beta
-- [Switch](components/form/switch.md) — beta
-- [RadioGroup](components/form/radio-group.md) — beta
-- [Select](components/form/select.md) — experimental
-- [FormField](components/form/form-field.md) — beta
-
-## Navigation
-
-- Overview: [Navigation](components/navigation/index.md)
-- [NavContext](components/navigation/nav-context.md) — `NavProvider` beta; `useNav` beta; `useNavigate` experimental
-- [NavBar](components/navigation/nav-bar.md) — beta
-- [TopBar](components/navigation/top-bar.md) — beta / non-stable
-- [BottomBar](components/navigation/bottom-bar.md) — experimental
-- [SideBar](components/navigation/side-bar.md) — experimental
-- [Link](components/navigation/link.md) — beta
+- Overview: [Buttons](components/buttons/index.md)
+- [Button](components/buttons/button.md) — beta
 
 ## Feedback
 
 - Overview: [Feedback](components/feedback/index.md)
 - [Alert](components/feedback/alert.md) — beta
-- [ProgressBar](components/feedback/progress-bar.md) — beta / non-stable
+- [ProgressBar](components/feedback/progress-bar.md) — experimental
 - [Spinner](components/feedback/spinner.md) — beta
+
+## Form
+
+- Overview: [Form](components/form/index.md)
+- [Checkbox](components/form/checkbox.md) — beta
+- [FormField](components/form/form-field.md) — experimental
+- [Input](components/form/input.md) — beta
+- [PasswordInput](components/form/password-input.md) — experimental
+- [RadioGroup](components/form/radio-group.md) — beta
+- [Select](components/form/select.md) — experimental
+- [Switch](components/form/switch.md) — beta
+- [Textarea](components/form/textarea.md) — experimental
+
+## Layout
+
+- Overview: [Layout](components/layout/index.md)
+- [Box](components/layout/box.md) — beta
+- [Column](components/layout/column.md) — beta
+- [Divider](components/layout/divider.md) — beta
+- [Row](components/layout/row.md) — beta
+
+## Navigation
+
+- Overview: [Navigation](components/navigation/index.md)
+- [BottomBar](components/navigation/bottom-bar.md) — experimental
+- [Link](components/navigation/link.md) — beta
+- [NavBar](components/navigation/nav-bar.md) — beta
+- [NavContext](components/navigation/nav-context.md) — beta
+- [SideBar](components/navigation/side-bar.md) — experimental
+- [TopBar](components/navigation/top-bar.md) — beta
 
 ## Overlay
 
 - Overview: [Overlay](components/overlay/index.md)
-- [Modal](components/overlay/modal.md) — experimental
 - [BottomSheet](components/overlay/bottom-sheet.md) — experimental
+- [Modal](components/overlay/modal.md) — experimental
 - [Popover](components/overlay/popover.md) — experimental
 - [Tooltip](components/overlay/tooltip.md) — experimental
 
@@ -77,12 +71,20 @@ ma la superficie consumer corrente è la root API di
 
 - Overview: [Surfaces](components/surfaces/index.md)
 - [Badge](components/surfaces/badge.md) — beta
-- [Card](components/surfaces/card.md) — beta / non-stable
+- [Card](components/surfaces/card.md) — experimental
 
-## Button
+## Typography
 
-- Overview: [Buttons](components/buttons/index.md)
-- [Button](components/buttons/button.md) — beta
+- Overview: [Typography](components/typography/index.md)
+- [B](components/typography/b.md) — experimental
+- [CodeInline](components/typography/code-inline.md) — experimental
+- [Heading](components/typography/heading.md) — beta
+- [P](components/typography/p.md) — experimental
+- [Quote](components/typography/quote.md) — experimental
+- [Small](components/typography/small.md) — experimental
+- [Text](components/typography/text.md) — beta
+- [TextGroup](components/typography/text-group.md) — experimental
+<!-- catalog:end -->
 
 > Nota: molti componenti sono basati su primitive `react-native` (Pressable/View/Text). In ambiente web tipicamente si usa React Native Web.
 

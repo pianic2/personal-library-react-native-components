@@ -2,8 +2,9 @@
 
 Componenti di layout basati su primitive `react-native` (`View`) e token del tema.
 
+<!-- catalog:begin -->
 - [Box](box.md) — beta
-- [Row](row.md) — beta
 - [Column](column.md) — beta
-- `Stack` alias — internal / non-stable
 - [Divider](divider.md) — beta
+- [Row](row.md) — beta
+<!-- catalog:end -->

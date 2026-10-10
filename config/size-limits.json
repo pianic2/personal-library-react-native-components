@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "description": "Gzip budgets in bytes, read only by scripts/bundle-size.mjs (npm run size). Sizes are esbuild minified, gzip level 9, react and react-native external. Raise a budget only with a reason in the PR; lowering one is always allowed. Budgets are the measured baseline plus about 10 percent headroom. A subpath whose source exists must have an entry and budget; one without source must be pending (\"metadata\" for ./package.json).",
+  "fixtures": {
+    "root-button": {
+      "source": "import { Button } from \"./src/index.ts\"; console.log(Button);",
+      "maxGzipBytes": 980
+    },
+    "root-all": {
+      "source": "import * as Library from \"./src/index.ts\"; console.log(Library);",
+      "maxGzipBytes": 11500
+    },
+    "button-only": {
+      "source": "import { Button } from \"./src/components/Button/index.ts\"; console.log(Button);",
+      "maxGzipBytes": 980
+    },
+    "theme-provider-only": {
+      "source": "import { ThemeProvider } from \"./src/theme/index.ts\"; console.log(ThemeProvider);",
+      "maxGzipBytes": 2050
+    },
+    "root-theme-provider": {
+      "source": "import { ThemeProvider } from \"./src/index.ts\"; console.log(ThemeProvider);",
+      "maxGzipBytes": 2050
+    },
+    "native-core": {
+      "source": "import * as NativeCore from \"./src/native/core/index.ts\"; console.log(NativeCore);",
+      "maxGzipBytes": 1100
+    }
+  },
+  "subpaths": {
+    ".": {
+      "entry": "src/index.ts",
+      "maxGzipBytes": 11400
+    },
+    "./theme": {
+      "entry": "src/theme/index.ts",
+      "maxGzipBytes": 2350
+    },
+    "./tokens": {
+      "entry": "src/tokens/index.ts",
+      "maxGzipBytes": 1330
+    },
+    "./native": {
+      "pending": true,
+      "note": "exports.json maps ./native to src/native/index.ts, which does not exist yet (code lives in src/native/core, budgeted by the native-core fixture); add entry and budget when it does"
+    },
+    "./native/expo": {
+      "pending": true,
+      "note": "no source yet; add entry and budget when src/native/expo exists"
+    },
+    "./adapters/*": {
+      "pending": true,
+      "note": "no source yet; add entry and budget when src/adapters exists"
+    },
+    "./testing": {
+      "pending": true,
+      "note": "no source yet; add entry and budget when src/testing exists"
+    },
+    "./meta": {
+      "pending": true,
+      "note": "no public entry yet (src/meta has types only); add entry and budget when src/meta/index.ts exists"
+    },
+    "./package.json": {
+      "metadata": true
+    }
+  },
+  "delta": {
+    "root": "root-button",
+    "direct": "button-only"
+  }
+}
