@@ -106,6 +106,7 @@ jobs:
             PLRNUI-452) exceptions="docs/policies/branching.md" ;;
             PLRNUI-201) exceptions="scripts/consumer-smoke.mjs" ;;
             PLRNUI-138) exceptions="package.json" ;;
+            PLRNUI-174) exceptions="src/index.ts audit/api/public-root-api.snapshot config/exports.json examples/navigation.tsx" ;;
           esac
           # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
           code=0
