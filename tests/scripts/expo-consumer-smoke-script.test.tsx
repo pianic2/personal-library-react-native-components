@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 // @ts-expect-error plain ESM script without type declarations
@@ -64,6 +64,18 @@ describe("PLRNUI-119 Expo consumer smoke: platforms, bundles and work dir", () =
     for (const args of [["--platform", "windows"], ["--bogus"]]) {
       const result = spawnSync(process.execPath, ["scripts/expo-consumer-smoke.mjs", ...args], { encoding: "utf8" });
       assert.equal(result.status, 2, result.stderr);
+    }
+  });
+
+  it("the CLI also runs, and fails on bad arguments, when invoked through a symlink", () => {
+    const dir = temp();
+    try {
+      const link = join(dir, "smoke-link.mjs");
+      symlinkSync(join(process.cwd(), "scripts/expo-consumer-smoke.mjs"), link);
+      const result = spawnSync(process.execPath, [link, "--platform", "windows"], { encoding: "utf8" });
+      assert.equal(result.status, 2, result.stderr);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
     }
   });
 

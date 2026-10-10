@@ -2,11 +2,11 @@
 // consumer and exports it for web, iOS and Android (Hermes bundles).
 //   node scripts/expo-consumer-smoke.mjs [--platform web|ios|android|all] [--work-dir <dir>]
 // Default platform: all. Default work dir: <os.tmpdir()>/plrnui-64-expo-consumer. Exit 0 ok, 1 a step failed, 2 usage.
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
-import { extname, join, resolve } from "node:path";
+import { extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
@@ -75,7 +75,8 @@ export async function assertWebRender(outputDir) {
   const server = createServer(async (request, response) => {
     try {
       const path = join(outputDir, decodeURIComponent((request.url ?? "/").split("?")[0]));
-      if (!path.startsWith(outputDir)) throw new Error("outside the export directory");
+      const inside = relative(outputDir, path);
+      if (inside.startsWith("..") || resolve(inside) === inside) throw new Error("outside the export directory");
       const body = await readFile(path.endsWith("/") ? join(path, "index.html") : path);
       response.writeHead(200).end(body);
     } catch {
@@ -355,7 +356,7 @@ async function main() {
   console.log(`PLRNUI-64 Expo 57 consumer smoke passed (${opts.platforms.join(", ")}) using ${tarballPath}`);
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && realpathSync(resolve(process.argv[1])) === realpathSync(fileURLToPath(import.meta.url))) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = error instanceof UsageError ? 2 : 1;
