@@ -1,17 +1,16 @@
 # Personal Library React Native Components
 
-Personal Library React Native Components è una libreria UI composta da
-componenti React pensati per essere usati in contesti React Native e React
-Native Web.
+Personal Library React Native Components is a UI library of React components designed for React Native and React Native Web.
 
-## Cosa include
+## What it includes
 
-- Componenti: layout, typography, form, navigation, feedback, overlay, surfaces
-- Theme e token (colori, spacing, radius, typography, shadows, zIndex)
-- Hook e utilità
+- Components: layout, typography, form, navigation, feedback, overlay, surfaces
+- Theme and tokens (colors, spacing, radius, typography, shadows, zIndex)
+- Hooks and utilities
 
-## Documentazione
+## Documentation
 
+- [Getting started](getting-started.md)
 - [Components](components.md)
 - [Theme (tree)](theme/index.md)
 - [Tokens](tokens/index.md)
@@ -27,7 +26,7 @@ Native Web.
 
 ## Entry point
 
-L’API pubblica consumer è esposta dal root package entrypoint:
+The public consumer API is exposed from the root package entry point:
 
 ```ts
 import { ThemeProvider, NavBar, Box, Text } from "@personal-library/react-native-components";
