@@ -6,6 +6,8 @@
 // then the rollback steps (reset the message, move and remove a dist-tag). Nothing leaves the machine except the npm
 // installs of Verdaccio itself (and the proxied dependencies of the clean app); nothing is published to npmjs.
 //   node scripts/rehearsal-verdaccio.mjs [--target-name <n>] [--legacy-name <n>] [--work-dir <dir>] [--keep]
+// A --work-dir must not exist or be empty and is never deleted by the script; the default temporary directory is removed
+// unless --keep is given.
 // Names: the identity config (config/package-identity.json) when it has a legacy name, else the placeholders
 // @rehearsal/texo and @rehearsal/legacy. Exit codes: 0 every step passed, 1 a step failed, 2 usage error.
 import { spawn, spawnSync } from "node:child_process";
@@ -124,12 +126,16 @@ function countInstalled(dir, name) {
 
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
-  const work = opts.workDir ? resolve(opts.workDir) : mkdtempSync(join(tmpdir(), "plrnui-rehearsal-"));
+  const created = opts.workDir === undefined;
+  const work = created ? mkdtempSync(join(tmpdir(), "plrnui-rehearsal-")) : resolve(opts.workDir);
+  if (!created && existsSync(work) && readdirSync(work).length > 0) throw new UsageError(`--work-dir must not exist or be empty: ${work}`);
   mkdirSync(work, { recursive: true });
   const port = await freePort();
   const registry = `http://127.0.0.1:${port}`;
   const npmrc = join(work, "npmrc");
-  writeFileSync(npmrc, `registry=${registry}/\n//127.0.0.1:${port}/:_authToken=rehearsal-token\n`);
+  const scopes = [opts.target, opts.legacy].filter((n) => n.startsWith("@")).map((n) => n.split("/")[0]);
+  // The registry is also set for the scopes of both names so that a user-level `@scope:registry` cannot redirect them.
+  writeFileSync(npmrc, [`registry=${registry}/`, ...[...new Set(scopes)].map((scope) => `${scope}:registry=${registry}/`), `//127.0.0.1:${port}/:_authToken=rehearsal-token`, ""].join("\n"));
   const npmEnv = { npm_config_userconfig: npmrc, npm_config_registry: `${registry}/`, npm_config_cache: join(work, "npm-cache"), npm_config_update_notifier: "false", npm_config_audit: "false", npm_config_fund: "false" };
   const npm = (args, cwd) => run("npm", args, { cwd, env: npmEnv });
   let server;
@@ -249,8 +255,8 @@ async function main() {
     return 0;
   } finally {
     if (server && server.exitCode === null) server.kill("SIGTERM");
-    if (!opts.keep && !opts.workDir) rmSync(work, { recursive: true, force: true });
-    else if (!opts.keep && opts.workDir) rmSync(work, { recursive: true, force: true });
+    // Only a directory created by this script is removed; a user-supplied --work-dir is never deleted.
+    if (!opts.keep && created) rmSync(work, { recursive: true, force: true });
   }
 }
 
