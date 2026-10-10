@@ -63,6 +63,9 @@ export function generate(config, root) {
     if (!conditions || CONDITIONS.some((name) => typeof conditions[name] !== "string")) {
       throw new UsageError(`${key}: conditions must define ${CONDITIONS.join(", ")}`);
     }
+    if (conditions["react-native"] !== conditions.import || conditions.default !== conditions.import || conditions.types !== conditions.import.replace(/\.js$/, ".d.ts")) {
+      throw new UsageError(`${key}: react-native, import and default must be the same .js file and types its .d.ts`);
+    }
     if (!hasSource(root, conditions.import)) {
       skipped.push(key);
       continue;
@@ -72,7 +75,7 @@ export function generate(config, root) {
   }
   const root_ = subpaths["."]?.conditions;
   if (!root_ || !exportsMap["."]) throw new UsageError("config must define an active '.' subpath");
-  const sideEffects = Object.values(subpaths).every((e) => e?.sideEffects === undefined || e.sideEffects === false) ? false : null;
+  const sideEffects = Object.entries(subpaths).every(([key, e]) => key === "./package.json" || e?.sideEffects === false) ? false : null;
   if (sideEffects !== false) throw new UsageError("every subpath must declare sideEffects:false; list files explicitly before changing this");
   return {
     skipped,
