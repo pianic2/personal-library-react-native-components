@@ -8,19 +8,28 @@ import { resolveFallbackAppState } from "./sources.js";
 // "unavailable" one is the caller's explicit choice and keeps its own api).
 // A throwing api (for example a denied permission in the mocks) must not crash the tree: reads degrade to "active" and
 // subscribing to a no-op, so the app behaves as if it were always in the foreground.
+// In development a swallowed error is reported once per call site so real bugs (not only a denied permission) stay visible.
+function warnSwallowed(where: string, error: unknown): void {
+  if ((globalThis as { __DEV__?: boolean }).__DEV__ === true && typeof console !== "undefined") {
+    console.warn(`[app-state] ${where} threw and was ignored (degrading to always-active):`, error);
+  }
+}
+
 function guard(api: AppStateApi): AppStateApi {
   return {
     getState() {
       try {
         return api.getState();
-      } catch {
+      } catch (error) {
+        warnSwallowed("getState", error);
         return "active";
       }
     },
     subscribe(listener) {
       try {
         return api.subscribe(listener);
-      } catch {
+      } catch (error) {
+        warnSwallowed("subscribe", error);
         return () => undefined;
       }
     },
