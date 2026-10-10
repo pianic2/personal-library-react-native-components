@@ -207,7 +207,7 @@ const cardProps: CardProps = {
   padding: "md",
 };
 
-const providerProps: ThemeProviderProps = {
+const providerProps: Omit<ThemeProviderProps, "children"> = {
   initialMode: "light",
 };
 
