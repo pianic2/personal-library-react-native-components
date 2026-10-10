@@ -7,8 +7,7 @@
 //   docsPage      docs/components/<category>/<kebab-name>.md exists
 //   nav           mkdocs.yml nav lists that page
 //   catalog       docs/components.md links that page
-//   example       an examples/*.tsx file uses one of the exported names, or one of a composition parent that renders the
-//                 component (TopBar is shown through NavBar layout="top")
+//   example       an examples/*.tsx file uses one of the component's own exported names (code only, comments ignored)
 //   test          a tests/**/*.test.tsx file mentions one of the exported names
 // Components with status demo, stable or production-ready must pass every check (exit 1 otherwise); `prototype` and
 // `deprecated` components are reported but do not fail. A component directory without a valid meta file, or any meta
@@ -23,18 +22,15 @@ import { MetaError, lintMetas, loadMetas } from './lib/meta.mjs';
 export const CHECKS = ['exported', 'propsType', 'docsPage', 'nav', 'catalog', 'example', 'test'];
 const MUST_PASS = new Set(['demo', 'stable', 'production-ready']);
 
-// Open gaps of components that already declare a promoted status (audit E1, 2026-10-09). Each entry names the checks that
-// are known to fail, with the reason; the list may only shrink: a waiver whose check passes is reported as stale (exit 1),
-// so remove the entry when the gap is closed. Adding an entry needs the PO's decision.
-export const WAIVERS = {
-  NavContext: { checks: ['propsType'], reason: 'NavProvider props and NavContextValue are not exported from src/index.ts yet (audit E1: surface gap)' },
-};
-
 class UsageError extends Error {}
 
 export const kebab = (name) => name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 const read = (file) => readFileSync(file, 'utf8');
+// Code only: block and line comments are dropped so a mention in a comment is not evidence.
+const stripComments = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+// Lines of a YAML/Markdown file that are not YAML comments.
+const yamlCode = (text) => text.split(/\r?\n/).filter((line) => !line.trim().startsWith('#')).join('\n');
 
 function files(dir, pattern) {
   if (!existsSync(dir)) return [];
@@ -64,14 +60,14 @@ export function rootExports(root) {
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const mentions = (text, names) => names.some((name) => new RegExp(`\\b${escape(name)}\\b`).test(text));
 
-export function checkComponents(root, waivers = WAIVERS) {
+export function checkComponents(root) {
   const entries = loadMetas(root);
   const problems = lintMetas(entries, { root });
   const exported = rootExports(root);
-  const mkdocs = existsSync(join(root, 'mkdocs.yml')) ? read(join(root, 'mkdocs.yml')) : '';
-  const catalog = existsSync(join(root, 'docs', 'components.md')) ? read(join(root, 'docs', 'components.md')) : '';
-  const exampleText = files(join(root, 'examples'), /\.tsx$/).map(read).join('\n');
-  const tests = files(join(root, 'tests'), /\.test\.tsx?$/).map(read);
+  const mkdocs = existsSync(join(root, 'mkdocs.yml')) ? yamlCode(read(join(root, 'mkdocs.yml'))) : '';
+  const catalog = existsSync(join(root, 'docs', 'components.md')) ? read(join(root, 'docs', 'components.md')).replace(/<!--[\s\S]*?-->/g, '') : '';
+  const exampleText = files(join(root, 'examples'), /\.tsx$/).map((f) => stripComments(read(f))).join('\n');
+  const tests = files(join(root, 'tests'), /\.test\.tsx?$/).map((f) => stripComments(read(f)));
   const rows = [];
   for (const { dir, meta } of entries) {
     if (!meta) continue;
@@ -80,24 +76,21 @@ export function checkComponents(root, waivers = WAIVERS) {
     const result = {
       exported: names.length > 0,
       propsType: (exported[dir]?.types ?? []).some((name) => /(Props|Value)$/.test(name)),
-      docsPage: existsSync(join(root, 'docs', page)),
+      docsPage: existsSync(join(root, 'docs', page)) && statSync(join(root, 'docs', page)).isFile(),
       nav: mkdocs.includes(page),
       catalog: catalog.includes(page),
-      example: mentions(exampleText, [...names, ...(meta.composition?.parents ?? []).flatMap((parent) => exported[parent]?.values ?? [])]),
+      example: mentions(exampleText, names),
       test: tests.some((text) => mentions(text, names)),
     };
-    const waived = waivers[dir]?.checks ?? [];
-    const stale = waived.filter((check) => result[check]);
-    for (const check of stale) problems.push(`${dir}: waiver for "${check}" is stale (the check passes); remove it from WAIVERS`);
-    const failed = CHECKS.filter((check) => !result[check] && !waived.includes(check));
-    rows.push({ name: dir, status: String(meta.status), enforced: MUST_PASS.has(meta.status), failed, waived: waived.filter((check) => !result[check]), ...result });
+    const failed = CHECKS.filter((check) => !result[check]);
+    rows.push({ name: dir, status: String(meta.status), enforced: MUST_PASS.has(meta.status), failed, ...result });
   }
   return { problems, rows };
 }
 
 function table(rows) {
   const header = ['component', 'status', ...CHECKS];
-  const lines = rows.map((r) => [r.name, r.status, ...CHECKS.map((c) => (r[c] ? 'ok' : r.waived.includes(c) ? 'waived' : 'FAIL'))]);
+  const lines = rows.map((r) => [r.name, r.status, ...CHECKS.map((c) => (r[c] ? 'ok' : 'FAIL'))]);
   const widths = header.map((h, i) => Math.max(h.length, ...lines.map((l) => l[i].length)));
   const fmt = (cells) => cells.map((c, i) => c.padEnd(widths[i])).join('  ').trimEnd();
   return [fmt(header), ...lines.map(fmt)].join('\n');
@@ -110,10 +103,10 @@ function main() {
   const argv = process.argv.slice(2);
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === '--json') json = true;
-    else if (argv[i] === '--root' && typeof argv[i + 1] === 'string') root = resolve(argv[(i += 1)]);
+    else if (argv[i] === '--root' && typeof argv[i + 1] === 'string' && !argv[i + 1].startsWith('--')) root = resolve(argv[(i += 1)]);
     else throw new UsageError(`unknown or incomplete argument: ${argv[i]}`);
   }
-  if (!statSync(root).isDirectory()) throw new UsageError(`not a directory: ${root}`);
+  if (!existsSync(root) || !statSync(root).isDirectory()) throw new UsageError(`not a directory: ${root}`);
   const { problems, rows } = checkComponents(root);
   const failing = rows.filter((r) => r.enforced && r.failed.length > 0);
   const code = problems.length > 0 || failing.length > 0 ? 1 : 0;

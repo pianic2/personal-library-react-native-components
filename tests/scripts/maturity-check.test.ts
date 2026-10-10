@@ -99,9 +99,25 @@ describe("PLRNUI-174 maturity check", () => {
     assert.match(result.stdout, /Foo\s+prototype\s+ok\s+ok\s+ok\s+ok\s+ok\s+FAIL/);
   });
 
-  it("accepts an example that shows the component through a composition parent", () => {
+  it("does not accept a composition parent's example as the component's own example", () => {
     const result = check({ Parent: { status: "demo" }, Child: { status: "demo", parents: ["Parent"] } }, (f) => f.write("examples/Child.tsx", "export const e = 1;\n"));
-    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /FAIL Child \(demo\): example/);
+  });
+
+  it("ignores mentions in comments (examples, tests, mkdocs nav) and a directory named like the page", () => {
+    assert.equal(check({ Foo: { status: "demo" } }, (f) => f.write("examples/Foo.tsx", "// <Foo />\n/* Foo */\nexport const e = 1;\n")).status, 1);
+    assert.equal(check({ Foo: { status: "demo" } }, (f) => f.write("tests/Foo.test.tsx", "// Foo\n")).status, 1);
+    assert.equal(check({ Foo: { status: "demo" } }, (f) => f.write("mkdocs.yml", "nav:\n  # - Foo: components/layout/foo.md\n")).status, 1);
+    assert.equal(check({ Foo: { status: "demo" } }, (f) => { rmSync(join(f.dir, "docs/components/layout/foo.md")); mkdirSync(join(f.dir, "docs/components/layout/foo.md")); }).status, 1);
+  });
+
+  it("keeps no waiver list: the NavContext type and the TopBar example are real exports and usages", () => {
+    const source = readFileSync(cli, "utf8");
+    assert.doesNotMatch(source, /WAIVERS/);
+    const index = readFileSync(join(root, "src", "index.ts"), "utf8");
+    assert.match(index, /NavContextValue/);
+    assert.match(readFileSync(join(root, "examples", "navigation.tsx"), "utf8"), /<TopBar\b/);
   });
 
   it("fails when a directory under src/components has no <Name>.meta.ts", () => {
@@ -119,6 +135,9 @@ describe("PLRNUI-174 maturity check", () => {
   it("exits 2 on usage errors and unreadable input", () => {
     assert.equal(run(["--nope"]).status, 2);
     assert.equal(run(["--root"]).status, 2);
+    const flagAsRoot = run(["--root", "--json"]);
+    assert.equal(flagAsRoot.status, 2);
+    assert.match(flagAsRoot.stderr, /unknown or incomplete argument/);
     assert.equal(run(["--root", join(tmpdir(), "plrnui-174-does-not-exist")]).status, 2);
   });
 
