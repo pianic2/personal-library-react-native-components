@@ -91,6 +91,10 @@ value:mergeStyles
 value:useBreakpoint
 value:useDebounce
 value:useNav
+value:useNavItems
+value:useNavLogo
+value:useNavPathname
 value:useNavigate
+value:useOptionalNav
 value:useTheme
 value:useToggle
