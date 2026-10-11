@@ -504,4 +504,33 @@ describe("PLRNUI-56 ThemeStorageAdapter", () => {
     await flushEffects();
     assert.deepEqual(calls.at(-1), { method: "setItem", key: "personal-library.theme", value: stored("system", "comfortable") });
   });
+  it("a read that answers after the storage key changed does not apply its value", async () => {
+    const resolvers: Record<string, (value: string | null) => void> = {};
+    const storage: ThemeStorageAdapter = {
+      getItem: (key) => new Promise<string | null>((resolve) => (resolvers[key] = resolve)),
+      setItem: async () => undefined,
+    };
+    let latest: ReturnType<typeof useTheme> | undefined;
+    function Probe() {
+      latest = useTheme();
+      return null;
+    }
+    const tree = (key: string) => (
+      <ThemeProvider initialMode="light" persistTheme storage={storage} storageKey={key}>
+        <Probe />
+      </ThemeProvider>
+    );
+    let renderer!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      renderer = TestRenderer.create(tree("first"));
+    });
+    act(() => renderer.update(tree("second")));
+    resolvers.first!(stored("dark"));
+    await flushEffects();
+    assert.equal(latest?.mode, "light");
+    assert.equal(latest?.ready, false);
+    resolvers.second!(null);
+    await flushEffects();
+    assert.equal(latest?.ready, true);
+  });
 });
