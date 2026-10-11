@@ -161,17 +161,20 @@ export function createReactNativeAccessibility(host: RNAccessibilityHost): Acces
   const start = (): void => {
     const mine = generation;
     const info = host.AccessibilityInfo;
+    const seenEvent = new Set<BooleanKey>(); // an event is newer than any initial read that resolves after it
     try {
       for (const [key, read, event] of NATIVE_PREFERENCES) {
         const sub = info?.addEventListener?.(event, (enabled) => {
-          if (mine === generation) update({ [key]: enabled === true });
+          if (mine !== generation) return;
+          seenEvent.add(key);
+          update({ [key]: enabled === true });
         });
         if (sub) subscriptions.push(sub);
         const promise = info?.[read]?.();
         if (promise && typeof promise.then === "function")
           promise.then(
             (enabled) => {
-              if (mine === generation) update({ [key]: enabled === true });
+              if (mine === generation && !seenEvent.has(key)) update({ [key]: enabled === true });
             },
             () => undefined
           );
@@ -221,8 +224,14 @@ let resolved: { key: unknown; api: AccessibilityApi } | undefined;
 export function resolveFallbackAccessibility(): AccessibilityApi {
   const matchMedia = (globalThis as { matchMedia?: unknown }).matchMedia;
   if (typeof matchMedia === "function") {
+    // `window.matchMedia` throws "Illegal invocation" when called with another `this`, so it is always called on globalThis.
     if (resolved?.key !== matchMedia)
-      resolved = { key: matchMedia, api: createMediaQueryAccessibility({ matchMedia: matchMedia as MediaQueryHost["matchMedia"] }) };
+      resolved = {
+        key: matchMedia,
+        api: createMediaQueryAccessibility({
+          matchMedia: (query) => (matchMedia as (q: string) => ReturnType<MediaQueryHost["matchMedia"]>).call(globalThis, query),
+        }),
+      };
     return resolved.api;
   }
   const rn = ReactNative as unknown as RNAccessibilityHost;

@@ -204,6 +204,30 @@ describe("PLRNUI-167 accessibility preference hooks (mock capability)", () => {
     }
   });
 
+  it("the web fallback calls matchMedia on globalThis (a browser throws Illegal invocation for any other this)", () => {
+    const g = globalThis as { matchMedia?: unknown };
+    const saved = g.matchMedia;
+    const calls: string[] = [];
+    g.matchMedia = function (this: unknown, query: string) {
+      if (this !== globalThis) throw new TypeError("Illegal invocation");
+      calls.push(query);
+      return { matches: query.includes("motion"), addEventListener: () => undefined, removeEventListener: () => undefined };
+    };
+    try {
+      let value: [boolean, boolean] | undefined;
+      function Probe() {
+        value = [useReducedMotion(), useReduceTransparency()];
+        return null;
+      }
+      renderWithCapabilities(<Probe />);
+      assert.deepEqual(value, [true, false]);
+      assert.ok(calls.length >= 2);
+    } finally {
+      if (saved === undefined) delete g.matchMedia;
+      else g.matchMedia = saved;
+    }
+  });
+
   it("without a provider the web fallback follows matchMedia", () => {
     const g = globalThis as { matchMedia?: unknown };
     const saved = g.matchMedia;
@@ -414,6 +438,17 @@ describe("PLRNUI-167 React Native source (mock emitter)", () => {
     await flush();
     assert.equal(api.getPreferences().reduceMotion, true);
     off2();
+  });
+
+  it("an event that arrives before the initial read resolves is not overwritten by the older read", async () => {
+    const fake = fakeNativeHost();
+    const api = createReactNativeAccessibility(fake.host);
+    const off = api.subscribe(() => undefined);
+    fake.emit("reduceMotionChanged", true);
+    fake.resolvers.isReduceMotionEnabled!(false); // the read started before the event and resolves after it
+    await flush();
+    assert.equal(api.getPreferences().reduceMotion, true);
+    off();
   });
 
   it("a rejected read, a throwing read and missing methods leave the preference false without throwing", async () => {
