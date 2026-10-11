@@ -19,6 +19,9 @@ type LinkSize = "sm" | "md" | "lg";
 const HEIGHT: Record<LinkSize, number> = { sm: 32, md: 40, lg: 48 };
 const ALPHA = { rest: 1, pressedButton: 0.85, pressedText: 0.7, disabled: 0.5 } as const;
 
+/** The parts of a web click event that Link reads (a press from a screen reader or on native has none). */
+type WebClick = { preventDefault?: () => void; ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean; button?: number };
+
 export type LinkRouterAdapter = {
   navigate: (href: string) => void;
 };
@@ -43,7 +46,7 @@ export interface LinkProps {
 
   /** Blocks `onPress` and navigation, dims the link and reports it as disabled to assistive technology. */
   disabled?: boolean;
-  /** Accessibility label; defaults to the text of the children for text links. */
+  /** Accessibility label. When omitted the platform reads the text of the children. */
   accessibilityLabel?: string;
 }
 
@@ -116,11 +119,18 @@ export const Link: React.FC<LinkProps> = ({
       accessibilityLabel={accessibilityLabel}
       accessibilityState={{ disabled }}
       disabled={disabled}
-      {...(Platform.OS === "web" ? { href, hrefAttrs: /^https?:\/\//i.test(href) ? { target: "_blank", rel: "noopener noreferrer" } : undefined } : {})}
-      onPress={(event?: { preventDefault?: () => void }) => {
+      {...(Platform.OS === "web" && !disabled ? { href, hrefAttrs: /^https?:\/\//i.test(href) ? { target: "_blank", rel: "noopener noreferrer" } : undefined } : {})}
+      onPress={(event?: WebClick) => {
         if (disabled) return;
-        // On web the anchor carries the href (open in new tab, copy address); navigation goes through our handler.
-        if (Platform.OS === "web") event?.preventDefault?.();
+        if (Platform.OS === "web" && event) {
+          // A modified click (new tab, new window, download) belongs to the browser: the anchor handles it.
+          if (event.ctrlKey || event.metaKey || event.shiftKey || (event.button !== undefined && event.button !== 0)) {
+            onPress?.();
+            return;
+          }
+          // A plain click: the Link navigates through its handler, so the anchor must not.
+          event.preventDefault?.();
+        }
         onPress?.();
         doNavigate();
       }}

@@ -55,5 +55,5 @@ export interface LinkProps {
 
 - The link has `accessibilityRole="link"`; `accessibilityLabel` passes through (otherwise the screen reader reads the children).
 - `disabled` blocks `onPress` and navigation, sets `accessibilityState.disabled` and dims the link.
-- On web the `href` is rendered on the anchor, so "open in new tab" and "copy link address" work; external `http(s)` links open with `target="_blank"` and `rel="noopener noreferrer"`. A plain click is handled by the Link (router adapter, navigation context, or the browser fallback).
+- On web the `href` is rendered on the anchor, so "open in new tab" and "copy link address" work; external `http(s)` links open with `target="_blank"` and `rel="noopener noreferrer"`. A plain click is handled by the Link (router adapter, navigation context, or the browser fallback); a click with Ctrl, Cmd or Shift, or a non-primary button, is left to the browser (the anchor opens it in a new tab or window) and only calls `onPress`. A disabled link renders no `href`.
 - The pressed and disabled opacities and the button heights are typed constants in `Link.tsx` (no inline numbers).

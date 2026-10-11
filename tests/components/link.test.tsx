@@ -88,6 +88,42 @@ describe("PLRNUI-216 Link web href", () => {
     assert.deepEqual(external.props.hrefAttrs, { target: "_blank", rel: "noopener noreferrer" });
   });
 
+  it("a disabled link renders no href on web, so the anchor cannot navigate", () => {
+    platform.OS = "web";
+    const disabled = pressableOf(render(<Link href="/docs" disabled>Docs</Link>));
+    assert.equal("href" in disabled.props, false);
+    assert.equal("hrefAttrs" in disabled.props, false);
+    assert.equal(disabled.props.disabled, true);
+    const external = pressableOf(render(<Link href="https://example.com" disabled>Out</Link>));
+    assert.equal("href" in external.props, false);
+  });
+
+  it("a modified web click (ctrl, cmd, shift, middle button) is left to the browser: no preventDefault, no navigation, onPress still called", () => {
+    platform.OS = "web";
+    const events: Array<Record<string, unknown>> = [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { button: 1 }];
+    for (const modifiers of events) {
+      let prevented = 0;
+      let pressed = 0;
+      const navigated: string[] = [];
+      const node = pressableOf(
+        render(
+          <Link href="/docs" onPress={() => void (pressed += 1)} routerAdapter={{ navigate: (href) => void navigated.push(href) }}>
+            Docs
+          </Link>,
+        ),
+      );
+      act(() => node.props.onPress({ ...modifiers, preventDefault: () => void (prevented += 1) }));
+      assert.equal(prevented, 0, JSON.stringify(modifiers));
+      assert.deepEqual(navigated, [], JSON.stringify(modifiers));
+      assert.equal(pressed, 1, JSON.stringify(modifiers));
+    }
+    // a plain primary-button click is still handled by the Link
+    const navigated: string[] = [];
+    const plain = pressableOf(render(<Link href="/docs" routerAdapter={{ navigate: (href) => void navigated.push(href) }}>Docs</Link>));
+    act(() => plain.props.onPress({ button: 0, ctrlKey: false, preventDefault: () => undefined }));
+    assert.deepEqual(navigated, ["/docs"]);
+  });
+
   it("does not render an href natively, and a web click prevents the anchor default before navigating", () => {
     const native = pressableOf(render(<Link href="/docs">Docs</Link>));
     assert.equal("href" in native.props, false);
