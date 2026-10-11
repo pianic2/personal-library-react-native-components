@@ -37,6 +37,7 @@ import {
   Tooltip,
   TopBar,
 } from "../../src";
+import { Container } from "../../src/components/Container/index.js";
 import { Slot } from "../../src/components/Slot/index.js";
 import { Label } from "../../src/components/Label/index.js";
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
@@ -76,6 +77,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
+  Container: () => (
+    <Container size="md">
+      <Text>Contained</Text>
+    </Container>
+  ),
   Column: () => (
     <Column gap="sm">
       <Text>Top</Text>
