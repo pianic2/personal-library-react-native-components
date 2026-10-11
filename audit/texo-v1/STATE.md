@@ -197,3 +197,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (ownership exception for PLRNUI-193; spent arms 177, 186, 230, 239 removed) | #150 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-165 (test typing fix for use-shimmer test, found by tsc -p tsconfig.tests.json) | #152 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-154; spent arm 193 removed) | #154 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-226 (E10-14: responsive barrel, docs, example, public-API test) | #153 | PR open (row committed pre-merge, see ADR 0020 Branching) |
