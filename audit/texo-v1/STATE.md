@@ -148,3 +148,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (follow-up: ownership exception src/responsive/context.ts for PLRNUI-145, size-class thresholds overridable through ResponsiveContext; removes the spent PLRNUI-137 arm) | #103 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-156 (E10-03: responsive value resolver and useResponsiveValue) | #102 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-171 (E3-08: layout transition helper over LayoutAnimation) | #101 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-183 (E10-08: useDeviceClass, useAspectPosture and FoldAdapter) | #106 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
