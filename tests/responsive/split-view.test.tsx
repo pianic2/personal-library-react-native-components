@@ -46,6 +46,20 @@ describe("PLRNUI-188 SplitView", () => {
     assert.ok(!has(b, "primary") && has(b, "secondary"));
   });
 
+  it("the medium width class (600 and up) is already side by side; just below it is compact", () => {
+    for (const width of [600, 700, 839, 840]) {
+      const r = render({}, width);
+      assert.ok(has(r, "primary") && has(r, "secondary"), `width ${width}`);
+    }
+    const r = render({}, 599);
+    assert.ok(has(r, "primary") && !has(r, "secondary"));
+  });
+
+  it("forwards testID to the root", () => {
+    assert.equal(render({ testID: "sv" }, 1024).root.findAll((n) => n.props?.testID === "sv").length > 0, true);
+    assert.equal(render({ testID: "sv" }, 400).root.findAll((n) => n.props?.testID === "sv").length > 0, true);
+  });
+
   it("showSecondary has no effect when both panes fit", () => {
     const r = render({ showSecondary: true }, 1024);
     assert.ok(has(r, "primary") && has(r, "secondary"));

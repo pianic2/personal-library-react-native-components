@@ -26,6 +26,7 @@ export interface SplitViewProps {
   /** Largest primary width in pixels; a value below `minPrimary` is raised to it. Default 420. */
   maxPrimary?: number;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 const positive = (n: unknown, fallback: number): number => (typeof n === "number" && Number.isFinite(n) && n > 0 ? n : fallback);
@@ -53,6 +54,7 @@ export function SplitView({
   minPrimary,
   maxPrimary,
   style,
+  testID,
 }: SplitViewProps) {
   const { theme } = useTheme();
   const { width } = useContainerSize();
@@ -63,7 +65,7 @@ export function SplitView({
 
   if (!sideBySide) {
     return (
-      <View style={[{ flex: 1 }, style]}>
+      <View testID={testID} style={[{ flex: 1 }, style]}>
         {showSecondary && onBack ? (
           <Pressable
             accessibilityRole="button"
@@ -82,7 +84,7 @@ export function SplitView({
   }
 
   return (
-    <View style={[{ flex: 1, flexDirection: "row" }, style]}>
+    <View testID={testID} style={[{ flex: 1, flexDirection: "row" }, style]}>
       <View role="region" style={{ width: resolvePrimaryWidth(width, ratio, minPrimary, maxPrimary) }}>
         {primary}
       </View>
