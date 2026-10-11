@@ -1,4 +1,5 @@
 import React, { createContext, useMemo } from "react";
+import type { MotionEngine } from "./engine.js";
 
 /** `system` follows the OS setting, `always` reduces motion regardless, `never` keeps motion regardless. */
 export type ReduceMotionMode = "system" | "always" | "never";
@@ -6,11 +7,14 @@ export type ReduceMotionMode = "system" | "always" | "never";
 export interface MotionProviderProps {
   /** App-level override of the reduced-motion preference. Defaults to `"system"`. */
   reduceMotion?: ReduceMotionMode;
+  /** Replaces the animation engine used by `animate()` / `useAnimate()` / `useAnimatedValue()` below this provider (default: the `Animated` engine). */
+  engine?: MotionEngine;
   children?: React.ReactNode;
 }
 
 export interface MotionContextValue {
   reduceMotion: ReduceMotionMode;
+  engine?: MotionEngine;
 }
 
 /** Without a provider the preference follows the system, which is also the SSR/test-safe default. */
@@ -20,9 +24,9 @@ function isMode(value: unknown): value is ReduceMotionMode {
   return value === "system" || value === "always" || value === "never";
 }
 
-export function MotionProvider({ reduceMotion = "system", children }: MotionProviderProps): React.ReactElement {
+export function MotionProvider({ reduceMotion = "system", engine, children }: MotionProviderProps): React.ReactElement {
   // An unknown value (for example from untyped JS) falls back to the system preference instead of disabling motion by accident.
   const mode: ReduceMotionMode = isMode(reduceMotion) ? reduceMotion : "system";
-  const value = useMemo<MotionContextValue>(() => ({ reduceMotion: mode }), [mode]);
+  const value = useMemo<MotionContextValue>(() => (engine ? { reduceMotion: mode, engine } : { reduceMotion: mode }), [mode, engine]);
   return <MotionContext.Provider value={value}>{children}</MotionContext.Provider>;
 }
