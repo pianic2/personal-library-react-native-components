@@ -62,7 +62,7 @@ function mount(options: PressFeedbackOptions, reduceMotion = false) {
   );
   const scale = () => (feedback.style.transform?.[0].scale as FakeValue | undefined)?.current;
   const opacity = () => (feedback.style.opacity as FakeValue).current;
-  return { get feedback() { return feedback; }, clock, timings, scale, opacity, mocks: rendered.mocks };
+  return { get feedback() { return feedback; }, clock, timings, scale, opacity, mocks: rendered.mocks, unmount: () => rendered.renderer.unmount() };
 }
 
 describe("PLRNUI-157 usePressFeedback", () => {
@@ -156,6 +156,98 @@ describe("PLRNUI-157 disabled", () => {
     feedback.handlers.onPressIn();
     clock.advance(motion.duration.fast);
     assert.equal(timings.length, 2, "scale and opacity animate once enabled");
+  });
+});
+
+describe("PLRNUI-157 lifecycle and robustness", () => {
+  it("unmounting mid-animation stops the running animations", () => {
+    const m = mount({});
+    m.feedback.handlers.onPressIn();
+    assert.equal(m.clock.pending(), 2);
+    act(() => m.unmount());
+    assert.equal(m.clock.pending(), 0, "both animations were cancelled");
+  });
+
+  it("a control that becomes disabled while pressed returns to rest and stops its animation", () => {
+    const { engine, clock } = createFakeEngine();
+    let feedback!: PressFeedback;
+    function Probe({ disabled }: { disabled: boolean }) {
+      feedback = usePressFeedback({ disabled });
+      return null;
+    }
+    const tree = (mocks: ReturnType<typeof renderWithMotion>["mocks"], disabled: boolean) => (
+      <CapabilityProvider adapters={mocks.adapters}>
+        <MotionProvider engine={engine}>
+          <Probe disabled={disabled} />
+        </MotionProvider>
+      </CapabilityProvider>
+    );
+    const { renderer, mocks } = renderWithMotion(<MotionProvider engine={engine}><Probe disabled={false} /></MotionProvider>, false);
+    feedback.handlers.onPressIn();
+    clock.advance(motion.duration.fast);
+    const scale = () => (feedback.style.transform?.[0].scale as FakeValue).current;
+    const opacity = () => (feedback.style.opacity as FakeValue).current;
+    assert.equal(scale(), 0.97);
+    assert.equal(opacity(), 0.85);
+    act(() => renderer.update(tree(mocks, true)));
+    assert.equal(scale(), 1);
+    assert.equal(opacity(), 1);
+    assert.equal(clock.pending(), 0);
+  });
+
+  it("an in-flight press-in is cancelled when the control becomes disabled", () => {
+    const { engine, clock } = createFakeEngine();
+    let feedback!: PressFeedback;
+    function Probe({ disabled }: { disabled: boolean }) {
+      feedback = usePressFeedback({ disabled });
+      return null;
+    }
+    const { renderer, mocks } = renderWithMotion(<MotionProvider engine={engine}><Probe disabled={false} /></MotionProvider>, false);
+    feedback.handlers.onPressIn();
+    clock.advance(50);
+    act(() =>
+      renderer.update(
+        <CapabilityProvider adapters={mocks.adapters}>
+          <MotionProvider engine={engine}>
+            <Probe disabled />
+          </MotionProvider>
+        </CapabilityProvider>
+      )
+    );
+    clock.advance(1000);
+    assert.equal((feedback.style.opacity as FakeValue).current, 1, "the cancelled animation never lands on the pressed value");
+  });
+
+  it("switching to reduced motion mid-press resets the scale so it is not stuck when motion returns", () => {
+    const m = mount({}, false);
+    m.feedback.handlers.onPressIn();
+    m.clock.advance(motion.duration.fast);
+    assert.equal(m.scale(), 0.97);
+    act(() => m.mocks.setAccessibility({ reduceMotion: true }));
+    act(() => m.mocks.setAccessibility({ reduceMotion: false }));
+    assert.equal(m.scale(), 1);
+  });
+
+  it("invalid scale and opacity options fall back to the defaults", () => {
+    for (const bad of [Number.NaN, 0, -1, 2, Number.POSITIVE_INFINITY]) {
+      const m = mount({ scale: bad, opacity: bad });
+      m.feedback.handlers.onPressIn();
+      m.clock.advance(motion.duration.fast);
+      assert.equal(m.scale(), 0.97, `scale ${bad}`);
+      assert.equal(m.opacity(), 0.85, `opacity ${bad}`);
+    }
+  });
+
+  it("the mid-press release restarts from the current value and ends at rest", () => {
+    const m = mount({});
+    m.feedback.handlers.onPressIn();
+    m.clock.advance(60);
+    assert.equal(m.scale(), 1, "the fake engine lands only at the end of a timing");
+    m.feedback.handlers.onPressOut();
+    assert.deepEqual(m.timings.slice(-2).map((t) => t.to).sort(), [1, 1]);
+    m.clock.advance(motion.duration.base);
+    assert.equal(m.scale(), 1);
+    assert.equal(m.opacity(), 1);
   });
 });
 

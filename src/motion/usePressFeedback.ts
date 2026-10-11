@@ -2,7 +2,7 @@
 //
 // Press feedback for the press primitive (Touchable, E4-03). There is deliberately no PressableScale component: the
 // hook returns an animated style and press handlers that Touchable (or any Pressable) spreads.
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { motion, type MotionTokens } from "../tokens/motion.base.js";
 import { useAnimate } from "./animate.js";
 import type { MotionHandle, MotionValue } from "./engine.js";
@@ -52,21 +52,40 @@ export function usePressFeedback(options: PressFeedbackOptions = {}): PressFeedb
   const opacityValue = useAnimatedValue(1);
   const running = useRef<MotionHandle[]>([]);
 
-  const pressedScale = scaleOption === false ? 1 : (scaleOption ?? (tokens ?? motion).scale.press);
-  const pressedOpacity = opacityOption ?? DEFAULT_PRESSED_OPACITY;
+  // Invalid numbers (NaN, infinite, outside 0..1) fall back to the defaults instead of reaching a native-driven value.
+  const validUnit = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n) && n > 0 && n <= 1;
+  const defaultScale = (tokens ?? motion).scale.press;
+  const pressedScale = scaleOption === false ? 1 : validUnit(scaleOption) ? scaleOption : defaultScale;
+  const pressedOpacity = validUnit(opacityOption) ? opacityOption : DEFAULT_PRESSED_OPACITY;
+
+  const stopRunning = useCallback(() => {
+    for (const handle of running.current) handle.stop();
+    running.current = [];
+  }, []);
 
   const go = useCallback(
     (toScale: number, toOpacity: number, duration: "fast" | "base") => {
-      for (const handle of running.current) handle.stop();
-      running.current = [];
+      stopRunning();
       const handles: MotionHandle[] = [];
       if (!reduceMotion && pressedScale !== 1) handles.push(run(scaleValue, toScale, { duration, property: "scale" }));
       handles.push(run(opacityValue, toOpacity, { duration, property: "opacity" }));
       running.current = handles;
       for (const handle of handles) handle.start();
     },
-    [reduceMotion, pressedScale, run, scaleValue, opacityValue]
+    [stopRunning, reduceMotion, pressedScale, run, scaleValue, opacityValue]
   );
+
+  // Never leave an animation running (possibly on the native side) after the component is gone.
+  useEffect(() => stopRunning, [stopRunning]);
+
+  // A control that becomes disabled while pressed, or switches to reduced motion while pressed, returns to rest at once:
+  // otherwise it keeps the pressed look (the release handler is inert when disabled and the scale is no longer animated).
+  useEffect(() => {
+    if (!disabled && !reduceMotion) return;
+    stopRunning();
+    scaleValue.setValue(1);
+    if (disabled) opacityValue.setValue(1);
+  }, [disabled, reduceMotion, stopRunning, scaleValue, opacityValue]);
 
   const onPressIn = useCallback(() => {
     if (!disabled) go(pressedScale, pressedOpacity, "fast");
