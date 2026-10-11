@@ -28,7 +28,7 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "The label is not programmatically linked to the control yet"
+    "The error is a polite live region and the control's accessibilityHint; the label is not programmatically linked to the control yet"
   ],
   "variants": {
     "status": [
