@@ -15,7 +15,7 @@ interface FakeValue extends MotionValue {
   current: number;
 }
 
-function createFakeEngine() {
+function createFakeEngine(reportStop = false) {
   const clock = createFakeClock();
   const timings: Array<{ to: number; config: TimingConfig }> = [];
   const springs: Array<{ to: number; config: SpringConfig }> = [];
@@ -27,15 +27,22 @@ function createFakeEngine() {
     timing(value, to, config) {
       timings.push({ to, config });
       let cancel: (() => void) | undefined;
+      let end: ((r: { finished: boolean }) => void) | undefined;
       return {
         start(onEnd) {
+          end = onEnd;
           cancel = clock.setTimeout(() => {
             value.setValue(to);
+            end = undefined;
             onEnd?.({ finished: true });
           }, config.duration);
         },
         stop() {
           cancel?.();
+          const cb = end;
+          end = undefined;
+          // like Animated: stopping a running animation reports finished: false
+          if (reportStop && cb) cb({ finished: false });
         },
       };
     },
@@ -71,18 +78,26 @@ function Child() {
   return React.createElement("Text", { testID: "child" }, "hello");
 }
 
-function setup(props: Partial<PresenceProps> & { visible: boolean }, reduceMotion: "system" | "always" | "never" = "never") {
+function setup(props: Partial<PresenceProps> & { visible: boolean }, reduceMotion: "system" | "always" | "never" = "never", options: { reportStop?: boolean; strict?: boolean } = {}) {
   mounts.count = 0;
   mounts.unmounts = 0;
-  const fake = createFakeEngine();
+  const fake = createFakeEngine(options.reportStop ?? false);
   const mocks = createMotionMocks(false);
   // The same wrapper on every update, otherwise the renderer would remount the whole tree.
   const ui = (p: Partial<PresenceProps> & { visible: boolean }) => (
     <CapabilityProvider adapters={mocks.adapters}>
       <MotionProvider engine={fake.engine} reduceMotion={reduceMotion}>
-        <Presence {...p}>
-          <Child />
-        </Presence>
+        {options.strict ? (
+          <React.StrictMode>
+            <Presence {...p}>
+              <Child />
+            </Presence>
+          </React.StrictMode>
+        ) : (
+          <Presence {...p}>
+            <Child />
+          </Presence>
+        )}
       </MotionProvider>
     </CapabilityProvider>
   );
@@ -309,6 +324,55 @@ describe("Presence (PLRNUI-149)", () => {
     assert.equal(t.clock.pending(), 0);
     act(() => t.clock.advance(1000));
     assert.equal(exited, 0);
+  });
+
+  it("an engine that reports finished:false on stop does not fire onExited for an interrupted exit", () => {
+    let exited = 0;
+    const onExited = () => (exited += 1);
+    const t = setup({ visible: true, onExited }, "never", { reportStop: true });
+    t.update({ visible: false, onExited });
+    act(() => t.clock.advance(60));
+    t.update({ visible: true, onExited });
+    act(() => t.clock.advance(5000));
+    assert.equal(t.hasChild(), true);
+    assert.equal(exited, 0);
+    assert.equal(mounts.unmounts, 0);
+  });
+
+  it("an engine that reports finished:false on stop does not fire onExited when unmounted mid-exit", () => {
+    let exited = 0;
+    const t = setup({ visible: true, onExited: () => (exited += 1) }, "never", { reportStop: true });
+    t.update({ visible: false, onExited: () => (exited += 1) });
+    act(() => t.renderer.unmount());
+    act(() => t.clock.advance(1000));
+    assert.equal(exited, 0);
+  });
+
+  it("under StrictMode a Presence that starts hidden never reports onExited", () => {
+    let exited = 0;
+    const t = setup({ visible: false, onExited: () => (exited += 1) }, "never", { strict: true });
+    assert.equal(exited, 0);
+    assert.equal(t.timings.length, 0);
+    assert.equal(t.hasChild(), false);
+  });
+
+  it("under StrictMode a Presence that starts visible does not animate, and `appear` still enters", () => {
+    const plain = setup({ visible: true }, "never", { strict: true });
+    assert.equal(plain.timings.length, 0);
+    const appearing = setup({ visible: true, appear: true }, "never", { strict: true });
+    assert.ok(appearing.timings.length > 0);
+    act(() => appearing.clock.advance(motion.duration.base));
+    assert.equal(appearing.hasChild(), true);
+  });
+
+  it("under StrictMode an exit still completes once", () => {
+    let exited = 0;
+    const onExited = () => (exited += 1);
+    const t = setup({ visible: true, onExited }, "never", { strict: true });
+    t.update({ visible: false, onExited });
+    act(() => t.clock.advance(1000));
+    assert.equal(t.hasChild(), false);
+    assert.equal(exited, 1);
   });
 
   it("applies the wrapper style", () => {

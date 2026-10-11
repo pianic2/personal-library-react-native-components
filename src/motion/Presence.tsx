@@ -23,6 +23,7 @@ export interface PresenceProps {
   spring?: MotionSpringName;
   /** Runs the enter animation on the first render too when `visible` starts as `true`. Default `false`. */
   appear?: boolean;
+  /** Preset, duration, spring and the reduced-motion preference are read when `visible` changes; a running transition is not restarted by them. */
   /** Called once when an exit finishes and the children have been unmounted. Not called when the exit is interrupted. */
   onExited?: () => void;
   /** Pass `theme.motion` to follow theme overrides. */
@@ -63,13 +64,13 @@ export function Presence({ visible, preset: presetProp = "fade", duration, sprin
   const runId = useRef(0);
   const onExitedRef = useRef(onExited);
   onExitedRef.current = onExited;
-  const first = useRef(true);
+  // The `visible` value the effect last acted on; `null` forces the next run (first render with `appear`, restart after StrictMode cleanup).
+  const lastRun = useRef<boolean | null>(appear && visible ? null : visible);
+  const inFlight = useRef(false);
 
   useEffect(() => {
-    const isFirst = first.current;
-    first.current = false;
-    if (isFirst && visible && !appear) return;
-    if (isFirst && !visible) return;
+    if (lastRun.current === visible) return;
+    lastRun.current = visible;
 
     const id = ++runId.current;
     for (const h of handles.current) h.stop();
@@ -86,13 +87,15 @@ export function Presence({ visible, preset: presetProp = "fade", duration, sprin
     const created = KEYS.map((key) => run(values[key], target[key], { ...options, tokens: resolvedTokens }));
     handles.current = created;
     let pending = created.length;
-    let finishedAll = true;
+    inFlight.current = true;
     for (const handle of created) {
       handle.start((end) => {
         if (id !== runId.current) return;
-        if (!end.finished) finishedAll = false;
+        void end;
         pending -= 1;
-        if (pending === 0 && finishedAll && !visible) {
+        if (pending === 0) inFlight.current = false;
+        // Whatever the engine reports for a run that is still current, an exit that ended must unmount (never stick mounted).
+        if (pending === 0 && !visible) {
           setMounted(false);
           onExitedRef.current?.();
         }
@@ -105,6 +108,9 @@ export function Presence({ visible, preset: presetProp = "fade", duration, sprin
     () => () => {
       runId.current += 1;
       for (const h of handles.current) h.stop();
+      // A StrictMode re-run of the effect must restart a transition that this cleanup just cut off.
+      if (inFlight.current) lastRun.current = null;
+      inFlight.current = false;
     },
     []
   );
