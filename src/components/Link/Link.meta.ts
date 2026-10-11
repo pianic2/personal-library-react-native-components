@@ -25,7 +25,9 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No accessibilityRole=link and no disabled state yet"
+    "accessibilityRole link; accessibilityLabel passes through",
+    "disabled blocks onPress and navigation, sets accessibilityState.disabled and dims the link",
+    "On web the href is rendered on the anchor (open in new tab, copy address) and a click navigates through the Link handler"
   ],
   "variants": {
     "variant": [
@@ -39,7 +41,9 @@ export const meta: ComponentMeta = {
     ]
   },
   "states": [
-    "default"
+    "default",
+    "active",
+    "disabled"
   ],
   "platformNotes": [],
   "examples": [

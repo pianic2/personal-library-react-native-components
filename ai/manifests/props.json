@@ -6410,6 +6410,13 @@
       "status": "demo",
       "props": [
         {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Accessibility label; defaults to the text of the children for text links."
+        },
+        {
           "name": "activeContainerStyle",
           "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
           "required": false,
@@ -6436,6 +6443,13 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Blocks `onPress` and navigation, dims the link and reports it as disabled to assistive technology."
         },
         {
           "name": "exact",

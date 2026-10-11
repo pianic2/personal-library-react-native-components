@@ -117,6 +117,8 @@ export type LinkKeys = Expect<
     | "exact"
     | "onPress"
     | "routerAdapter"
+    | "disabled"
+    | "accessibilityLabel"
   >
 >;
 export type NavBarKeys = Expect<
