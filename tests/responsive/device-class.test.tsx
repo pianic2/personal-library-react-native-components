@@ -216,13 +216,25 @@ describe("PLRNUI-183 FoldAdapter", () => {
     assert.equal(seen.at(-1), true);
   });
 
-  it("a throwing adapter degrades to unfolded", () => {
+  it("an error thrown by the adapter propagates (swallowing it would change the hook order); adapters must not throw", () => {
     const adapter: FoldAdapter = {
       useFoldState() {
         throw new Error("native failure");
       },
     };
-    assert.deepEqual(foldWith(adapter), { isFolded: false });
+    const quiet = console.error;
+    console.error = () => undefined;
+    try {
+      assert.throws(() => foldWith(adapter), /native failure/);
+    } finally {
+      console.error = quiet;
+    }
+  });
+
+  it("isPad is ignored on web and on desktop operating systems", () => {
+    assert.equal(resolveDeviceClass(500, 400, { OS: "web", isPad: true }, false), "phone");
+    assert.equal(resolveDeviceClass(500, 400, { OS: "macos", isPad: true }), "desktop");
+    assert.equal(resolveDeviceClass(500, 400, { OS: "android", isPad: true }), "tablet");
   });
 });
 

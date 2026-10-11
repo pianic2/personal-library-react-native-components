@@ -42,14 +42,11 @@ export function FoldAdapterProvider({ adapter, children }: FoldAdapterProviderPr
   return <FoldAdapterContext.Provider value={adapter}>{children}</FoldAdapterContext.Provider>;
 }
 
-/** The fold state from the provided adapter; `{ isFolded: false }` without one. A throwing adapter degrades to unfolded. */
+/**
+ * The fold state from the provided adapter; `{ isFolded: false }` without one. The adapter runs as part of this hook, so
+ * an error it throws (or a promise it throws to suspend) propagates to the nearest error boundary / Suspense boundary:
+ * swallowing it would change the number of hooks React sees between renders. Adapters must not throw.
+ */
 export function useFoldState(): FoldState {
-  const adapter = useContext(FoldAdapterContext);
-  try {
-    return adapter.useFoldState();
-  } catch (error) {
-    if ((globalThis as { __DEV__?: boolean }).__DEV__ === true && typeof console !== "undefined")
-      console.warn("[responsive] the fold adapter threw and was ignored (treated as unfolded):", error);
-    return UNFOLDED;
-  }
+  return useContext(FoldAdapterContext).useFoldState();
 }

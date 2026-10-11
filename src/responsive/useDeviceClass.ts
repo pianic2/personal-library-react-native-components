@@ -7,7 +7,11 @@
 // - The class comes from the WINDOW, not the hardware. Split-screen, freeform windows, iPad Slide Over / Stage Manager
 //   and resized desktop windows make a tablet report "phone" (shortest side < 600) and a phone report "tablet" when it
 //   is unfolded; that is intended for layout purposes.
-// - `Platform.isPad` forces "tablet" on iOS regardless of the window size. Android has no equivalent flag.
+// - `Platform.isPad` forces "tablet" on native platforms other than macOS and Windows regardless of the window size (it
+//   is set on iPad only; Android has no equivalent flag). On web and desktop OSes it is ignored.
+// - The pointer is read from `matchMedia` while rendering and is not subscribed to: a pointer change at runtime (docking a
+//   mouse) is only seen on the next render, and on the server (no `matchMedia`, fine pointer assumed) a touch device with a
+//   window of 1024 or more can hydrate with a different class than the server rendered.
 // - Web: "desktop" needs a fine pointer (`(pointer: fine)`) and a window at least 1024 wide; a touch-first wide window
 //   (an iPad in the browser) is a "tablet". Without `matchMedia` the pointer is assumed fine.
 // - `useAspectPosture` is a heuristic on the window aspect ratio. A foldable that is unfolded often looks "square-ish",
