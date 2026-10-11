@@ -7,7 +7,8 @@ Label for form and custom controls with a required marker, an optional hint, a d
 ## Import
 
 ```ts
-import { Label } from "@personal-library/react-native-components";
+// not exported from the package root yet (E14 wave-wiring); until then:
+import { Label } from "<package>/src/components/Label";
 ```
 
 ## Props
@@ -34,9 +35,9 @@ const name = useRef<TextInput>(null);
 <TextInput ref={name} accessibilityLabelledBy="name-label" />
 ```
 
-## Comportamento
+## Behavior
 
-- `required` shows a `*` in the error colour and speaks the label as "Name, required"; an explicit `accessibilityLabel` is used as the base text. `required` wins over `optional`.
+- `required` shows a `*` in the error colour and speaks the label as "Name, required"; an explicit `accessibilityLabel` is used as the base text, and when the children are not plain text and no `accessibilityLabel` is given the label is left to the screen reader. `required` wins over `optional`.
 - `optional` appends a muted "(optional)".
 - `disabled` mutes the text, sets `accessibilityState.disabled` and ignores presses.
 - Pressing the label focuses the control in `htmlFor` and then calls `onPress`. This is a pointer convenience; the control itself stays the accessible target.

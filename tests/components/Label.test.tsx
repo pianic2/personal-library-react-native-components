@@ -144,6 +144,16 @@ describe("PLRNUI-210 Label", () => {
     assert.equal(labelOf(render(<Label {...props} />)).props.accessibilityLabel, "Item 2, required");
   });
 
+  it("leaves the accessibility label to the screen reader when required but there is no plain text to speak", () => {
+    const r = render(
+      <Label required>
+        <React.Fragment>rich</React.Fragment>
+      </Label>,
+    );
+    assert.equal(labelOf(r).props.accessibilityLabel, undefined);
+    assert.equal(textsOf(r)[1]!.props.children, " *");
+  });
+
   it("renders in light and dark under ThemeProvider with no console.error or console.warn", () => {
     const calls: unknown[][] = [];
     // react-test-renderer logs its own deprecation notice once per process; that notice is not a component error.

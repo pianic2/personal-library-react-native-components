@@ -1,7 +1,6 @@
 import React from "react";
 import type { RefObject } from "react";
 import { Text, type TextProps } from "../Text/Text.js";
-import { useTheme } from "../../theme/useTheme.js";
 
 /** A control that can receive focus, for example the ref of a `TextInput`. */
 export type FocusTarget = { focus(): void };
@@ -51,10 +50,11 @@ export function Label({
   accessibilityState,
   ...rest
 }: LabelProps) {
-  const { theme } = useTheme();
   const interactive = !disabled && (onPress !== undefined || htmlFor !== undefined);
   const base = accessibilityLabel ?? textOf(children);
-  const spoken = required ? `${base}, required` : base;
+  // Without text to speak (for example rich children and no accessibilityLabel) the label is left to the screen reader
+  // rather than replaced by ", required".
+  const spoken = base === "" ? undefined : required ? `${base}, required` : base;
 
   return (
     <Text
@@ -81,7 +81,7 @@ export function Label({
           {" *"}
         </Text>
       ) : optional ? (
-        <Text size={size} variant="muted" style={{ marginLeft: theme.space.xs }}>
+        <Text size={size} variant="muted">
           {" (optional)"}
         </Text>
       ) : null}
