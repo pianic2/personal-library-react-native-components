@@ -158,3 +158,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-164 (E10-04: Show, Hide and Responsive components) | #112 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-225 (E4-01: Slot primitive for asChild prop merging) | #114 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions for the component tickets, tests/helpers/fixtures.tsx for PLRNUI-225 and count-agnostic meta-lint and check-component-docs tests; removes the spent PLRNUI-181 arm) | #113 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-241 (E12-14: test-coverage matrix report) | #115 | PR open (row committed pre-merge, see ADR 0020 Branching) |
