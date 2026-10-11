@@ -53,6 +53,25 @@ export interface AppStateApi {
   subscribe(listener: (state: AppStateValue) => void): () => void;
 }
 
+/** A snapshot of the user's accessibility settings. Values a platform does not expose are `false` (`fontScale` 1). */
+export interface AccessibilityPreferences {
+  reduceMotion: boolean;
+  reduceTransparency: boolean;
+  screenReader: boolean;
+  boldText: boolean;
+  grayscale: boolean;
+  invertColors: boolean;
+  /** Multiplier applied to text by the system font-size setting (1 = default). */
+  fontScale: number;
+}
+
+export interface AccessibilityApi {
+  /** The current preferences, synchronously (adapters cache them). The same object is returned until a value changes. */
+  getPreferences(): AccessibilityPreferences;
+  /** Calls `listener` on every change of any preference; returns the function that removes it. */
+  subscribe(listener: (preferences: AccessibilityPreferences) => void): () => void;
+}
+
 /**
  * Every capability the library knows, keyed by id. The map is closed in 1.0: it is an interface of this package and is
  * not meant to be extended by module augmentation (the ids are semver surface). A new capability is a minor release.
@@ -65,6 +84,7 @@ export interface CapabilityMap {
   biometric: BiometricApi;
   network: NetworkApi;
   appState: AppStateApi;
+  accessibility: AccessibilityApi;
 }
 
 export type CapabilityId = keyof CapabilityMap;

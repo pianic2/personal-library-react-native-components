@@ -14,6 +14,7 @@ export const expectedIds = {
   biometric: true,
   network: true,
   appState: true,
+  accessibility: true,
 } as const satisfies Record<CapabilityId, true>;
 
 export type IdsMatch = Expect<Equal<keyof typeof expectedIds, CapabilityId>>;

@@ -149,7 +149,7 @@ describe("PLRNUI-146 native testing helpers", () => {
   });
 
   it("a denied permission rejects every method of that capability, biometric included", async () => {
-    const calls: Record<Exclude<CapabilityId, "appState">, () => Promise<unknown>[]> = {
+    const calls: Record<Exclude<CapabilityId, "appState" | "accessibility">, () => Promise<unknown>[]> = {
       clipboard: () => { const a = mocks.adapters.clipboard.api; return [a.getString(), a.setString("x")]; },
       haptics: () => { const a = mocks.adapters.haptics.api; return [a.impact(), a.notification("success"), a.selection()]; },
       share: () => [mocks.adapters.share.api.share({ message: "m" })],
@@ -158,7 +158,7 @@ describe("PLRNUI-146 native testing helpers", () => {
       network: () => [mocks.adapters.network.api.getStatus()], // getState/subscribe are synchronous: see the sync-throw test
     };
     const mocks = createMockAdapters({ share: { share: async () => "dismissed" } });
-    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState"> => x !== "appState")) {
+    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState" | "accessibility"> => x !== "appState" && x !== "accessibility")) {
       await Promise.all(calls[id]()); // granted: resolves
       mocks.setPermission(id, "denied");
       const results = await Promise.allSettled(calls[id]());
@@ -178,6 +178,33 @@ describe("PLRNUI-146 native testing helpers", () => {
     assert.throws(() => api.getState(), /permission denied: appState/);
     assert.throws(() => api.subscribe(() => undefined), /permission denied: appState/);
     assert.deepEqual(mocks.callsOf("appState").map((c) => c.method), ["getState", "getState", "subscribe"]);
+  });
+
+  it("a denied permission makes the synchronous accessibility api throw synchronously and records the call", () => {
+    const mocks = createMockAdapters();
+    const api = mocks.adapters.accessibility.api;
+    assert.equal(api.getPreferences().fontScale, 1);
+    mocks.setPermission("accessibility", "denied");
+    assert.throws(() => api.getPreferences(), /permission denied: accessibility/);
+    assert.throws(() => api.subscribe(() => undefined), /permission denied: accessibility/);
+    assert.deepEqual(mocks.callsOf("accessibility").map((c) => c.method), ["getPreferences", "getPreferences", "subscribe"]);
+  });
+
+  it("setAccessibility merges into the preferences, replaces the snapshot object and reset restores the defaults", () => {
+    const mocks = createMockAdapters();
+    const before = mocks.state.accessibility.get();
+    const seen: number[] = [];
+    mocks.adapters.accessibility.api.subscribe((p) => seen.push(p.fontScale));
+    mocks.setAccessibility({ fontScale: 1.5 });
+    mocks.setAccessibility({ reduceMotion: true });
+    assert.deepEqual(seen, [1.5, 1.5]);
+    assert.notEqual(mocks.state.accessibility.get(), before);
+    assert.equal(mocks.state.accessibility.get().reduceMotion, true);
+    mocks.reset();
+    assert.equal(mocks.state.accessibility.get().fontScale, 1);
+    assert.equal(mocks.state.accessibility.get().reduceMotion, false);
+    mocks.setAccessibility({ fontScale: 2 });
+    assert.deepEqual(seen, [1.5, 1.5], "reset detached every listener");
   });
 
   it("a denied permission makes the synchronous network methods throw synchronously and keeps getStatus rejecting", async () => {

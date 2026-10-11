@@ -24,7 +24,7 @@
     },
     "native-core": {
       "source": "import * as NativeCore from \"./src/native/core/index.ts\"; console.log(NativeCore);",
-      "maxGzipBytes": 1100
+      "maxGzipBytes": 1200
     }
   },
   "subpaths": {

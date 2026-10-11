@@ -2,6 +2,16 @@ import type { AdapterFor, CapabilityAdapters, CapabilityId, CapabilityMap } from
 
 const none = async (): Promise<void> => undefined;
 
+const noopPreferences = Object.freeze({
+  reduceMotion: false,
+  reduceTransparency: false,
+  screenReader: false,
+  boldText: false,
+  grayscale: false,
+  invertColors: false,
+  fontScale: 1,
+});
+
 const noopApis: CapabilityMap = {
   clipboard: { getString: async () => "", setString: none },
   haptics: { impact: none, notification: none, selection: none },
@@ -14,6 +24,7 @@ const noopApis: CapabilityMap = {
     subscribe: () => () => undefined,
   },
   appState: { getState: () => "active", subscribe: () => () => undefined },
+  accessibility: { getPreferences: () => noopPreferences, subscribe: () => () => undefined },
 };
 
 /** The api of a capability that does nothing and never throws. */
