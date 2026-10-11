@@ -243,6 +243,7 @@ export type ThemeContracts = [
       | "preset"
       | "components"
       | "materials"
+      | "variants"
       | "globalStyles"
       | "screens"
     >

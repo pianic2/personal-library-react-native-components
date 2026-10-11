@@ -11,6 +11,7 @@ import { size } from "../tokens/size.base.js";
 import type { SemanticTokens } from "../tokens/semantic.base.js";
 import type { textStyles } from "../tokens/textStyles.base.js";
 import type { motion } from "../tokens/motion.base.js";
+import type { ThemeVariantOverrides } from "./variants.js";
 import type { density } from "../tokens/density.base.js";
 import type { breakpoints } from "../tokens/breakpoints.base.js";
 import type { ThemePreset } from "./contract.js";
@@ -115,6 +116,9 @@ export interface Theme {
   materials?: {
     glass?: GlassMaterialTokens;
   };
+
+  /** Consumer overrides of variants definitions, keyed by definition name (see `defineVariants`). */
+  variants?: ThemeVariantOverrides;
 
   globalStyles?: {
     app?: ViewStyle;
