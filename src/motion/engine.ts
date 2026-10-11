@@ -85,6 +85,12 @@ export function createJumpEngine(): MotionEngine {
   };
 }
 
+let sharedDefault: MotionEngine | undefined;
+/** The shared default engine (created on first use). */
+export function getDefaultEngine(): MotionEngine {
+  return (sharedDefault ??= createDefaultEngine());
+}
+
 /** The default engine over `Animated`; falls back to the jump engine when `Animated` (or its parts) is missing. */
 export function createDefaultEngine(host?: { Animated?: AnimatedLike }): MotionEngine {
   const animated = (host ?? (ReactNative as unknown as { Animated?: AnimatedLike })).Animated;
@@ -96,7 +102,12 @@ export function createDefaultEngine(host?: { Animated?: AnimatedLike }): MotionE
     timing: (value, to, config) => A.timing(value, { toValue: to, duration: config.duration, easing: config.easing, useNativeDriver: config.useNativeDriver }),
     spring: (value, to, config) =>
       A.spring(value, { toValue: to, stiffness: config.stiffness, damping: config.damping, mass: config.mass, useNativeDriver: config.useNativeDriver }),
-    loop: (handle, config) => (typeof A.loop === "function" ? A.loop(handle, { iterations: config?.iterations ?? -1 }) : handle),
+    // `Animated.loop` needs an `Animated` composite (it calls `reset()`); a handle from another engine, or the plain handle
+    // `animate()` returns under reduced motion, is returned unchanged instead of crashing.
+    loop: (handle, config) =>
+      typeof A.loop === "function" && typeof (handle as { reset?: unknown }).reset === "function"
+        ? A.loop(handle, { iterations: config?.iterations ?? -1 })
+        : handle,
     stop: (value) => (value as { stopAnimation?: () => void }).stopAnimation?.(),
   };
 }

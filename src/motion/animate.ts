@@ -2,7 +2,7 @@
 import { useCallback, useContext, useMemo } from "react";
 import * as ReactNative from "react-native";
 import { motion, toEasing, type CubicBezier, type MotionEasingName, type MotionTokens } from "../tokens/motion.base.js";
-import { createDefaultEngine, type MotionEngine, type MotionHandle, type MotionValue } from "./engine.js";
+import { getDefaultEngine, type MotionEngine, type MotionHandle, type MotionValue } from "./engine.js";
 import { MotionContext } from "./MotionProvider.js";
 import { useMotionPreference } from "./useMotionPreference.js";
 
@@ -55,12 +55,6 @@ export function resolveUseNativeDriver(options: Pick<AnimateOptions, "useNativeD
   return options.useNativeDriver ?? true;
 }
 
-let defaultEngine: MotionEngine | undefined;
-function getDefaultEngine(): MotionEngine {
-  defaultEngine ??= createDefaultEngine();
-  return defaultEngine;
-}
-
 function platformOS(): string | undefined {
   return (ReactNative as unknown as { Platform?: { OS?: string } }).Platform?.OS;
 }
@@ -91,17 +85,20 @@ export function animate(value: MotionValue, to: number, options: AnimateOptions 
 
   const useNativeDriver = resolveUseNativeDriver(options, platformOS());
   if (options.spring !== undefined) {
-    const spring = tokens.spring[options.spring];
-    if (!spring) throw new RangeError(`animate: unknown spring token "${String(options.spring)}"`);
+    const spring = Object.hasOwn(tokens.spring, options.spring) ? tokens.spring[options.spring] : undefined;
+    if (!spring || !Number.isFinite(spring.stiffness) || !Number.isFinite(spring.damping) || !Number.isFinite(spring.mass))
+      throw new RangeError(`animate: unknown spring token "${String(options.spring)}"`);
     return engine.spring(value, to, { stiffness: spring.stiffness, damping: spring.damping, mass: spring.mass, useNativeDriver });
   }
 
   const durationOption = options.duration ?? "base";
-  const duration = typeof durationOption === "number" ? durationOption : tokens.duration[durationOption];
-  if (typeof duration !== "number" || !(duration >= 0)) throw new RangeError(`animate: invalid duration "${String(durationOption)}"`);
+  const duration =
+    typeof durationOption === "number" ? durationOption : Object.hasOwn(tokens.duration, durationOption) ? tokens.duration[durationOption] : undefined;
+  if (typeof duration !== "number" || !Number.isFinite(duration) || duration < 0) throw new RangeError(`animate: invalid duration "${String(durationOption)}"`);
   const easingOption = options.easing ?? "standard";
-  const easingTuple = typeof easingOption === "string" ? tokens.easing[easingOption] : easingOption;
-  if (!easingTuple) throw new RangeError(`animate: unknown easing token "${String(easingOption)}"`);
+  const easingTuple = typeof easingOption === "string" ? (Object.hasOwn(tokens.easing, easingOption) ? tokens.easing[easingOption] : undefined) : easingOption;
+  if (!Array.isArray(easingTuple) || easingTuple.length !== 4 || !easingTuple.every((n) => typeof n === "number" && Number.isFinite(n)))
+    throw new RangeError(`animate: unknown or invalid easing "${String(easingOption)}"`);
   return engine.timing(value, to, { duration, easing: toEasing(easingTuple), useNativeDriver });
 }
 
@@ -114,7 +111,11 @@ export function useAnimate(tokens?: MotionTokens): (value: MotionValue, to: numb
   const reduceMotion = useMotionPreference();
   const resolved = useMemo(() => engine ?? getDefaultEngine(), [engine]);
   return useCallback(
-    (value, to, options = {}) => animate(value, to, { tokens, engine: resolved, reduceMotion, ...options }),
+    (value, to, options = {}) => {
+      // An explicit `undefined` in `options` must not erase the hook's preference, tokens or engine.
+      const defined = Object.fromEntries(Object.entries(options).filter(([, v]) => v !== undefined)) as AnimateOptions;
+      return animate(value, to, { tokens, engine: resolved, reduceMotion, ...defined });
+    },
     [tokens, resolved, reduceMotion]
   );
 }

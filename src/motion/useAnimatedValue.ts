@@ -1,9 +1,7 @@
 import { useContext, useRef } from "react";
-import { createDefaultEngine, type MotionEngine, type MotionValue } from "./engine.js";
+import { getDefaultEngine, type MotionValue } from "./engine.js";
 import { MotionContext } from "./MotionProvider.js";
 
-let defaultEngine: MotionEngine | undefined;
-const getDefaultEngine = (): MotionEngine => (defaultEngine ??= createDefaultEngine());
 
 /**
  * A stable animated value, created once per component instance by the engine of the nearest `MotionProvider` (default:

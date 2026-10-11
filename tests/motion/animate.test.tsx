@@ -137,6 +137,20 @@ describe("PLRNUI-143 animate resolves tokens", () => {
     assert.throws(() => animate(v, 1, { engine, easing: "bouncy" as never }), RangeError);
   });
 
+  it("inherited object keys are not tokens (toString, constructor, __proto__) and non-finite values are rejected", () => {
+    const { engine } = createFakeEngine();
+    const v = val(engine);
+    for (const name of ["toString", "constructor", "hasOwnProperty", "__proto__"]) {
+      assert.throws(() => animate(v, 1, { engine, duration: name as never }), RangeError, `duration ${name}`);
+      assert.throws(() => animate(v, 1, { engine, easing: name as never }), RangeError, `easing ${name}`);
+      assert.throws(() => animate(v, 1, { engine, spring: name as never }), RangeError, `spring ${name}`);
+    }
+    assert.throws(() => animate(v, 1, { engine, duration: Number.POSITIVE_INFINITY }), RangeError);
+    assert.throws(() => animate(v, 1, { engine, duration: Number.NaN }), RangeError);
+    assert.throws(() => animate(v, 1, { engine, easing: [0, 0, Number.NaN, 1] }), RangeError);
+    assert.throws(() => animate(v, 1, { engine, easing: [0, 0, 1] as never }), RangeError);
+  });
+
   it("stop cancels a running timing animation before it finishes", () => {
     const { engine, clock } = createFakeEngine();
     const value = val(engine);
@@ -192,6 +206,20 @@ describe("PLRNUI-143 reduced motion", () => {
     run(jumped, 5);
     assert.equal(jumped.current, 5, "jumps once the system asks to reduce motion");
     assert.equal(calls.length, 1);
+  });
+
+  it("an explicit undefined option does not erase the hook's reduced-motion preference", () => {
+    const { engine, calls } = createFakeEngine();
+    let run!: ReturnType<typeof useAnimate>;
+    function Probe() {
+      run = useAnimate();
+      return null;
+    }
+    renderWithMotion(<MotionProvider engine={engine}><Probe /></MotionProvider>, true);
+    const v = val(engine);
+    run(v, 4, { reduceMotion: undefined, tokens: undefined, engine: undefined });
+    assert.equal(v.current, 4, "still jumps under the system setting");
+    assert.equal(calls.length, 0);
   });
 
   it("MotionProvider reduceMotion='never' animates over a system true; 'always' jumps over a system false", () => {
@@ -320,8 +348,9 @@ describe("PLRNUI-143 engine is swappable", () => {
     const v = engine.createValue(2);
     engine.timing(v, 1, { duration: 50, easing: toEasing("standard"), useNativeDriver: false }).start();
     engine.spring(v, 1, { stiffness: 1, damping: 2, mass: 3, useNativeDriver: true });
-    engine.loop({ start() {}, stop() {} }, { iterations: 3 });
-    engine.loop({ start() {}, stop() {} });
+    const composite = { start() {}, stop() {}, reset() {} } as MotionHandle;
+    engine.loop(composite, { iterations: 3 });
+    engine.loop(composite);
     engine.stop(v);
     assert.equal((log[0]![1] as Record<string, unknown>).toValue, 1);
     assert.equal((log[0]![1] as Record<string, unknown>).duration, 50);
@@ -329,6 +358,23 @@ describe("PLRNUI-143 engine is swappable", () => {
     assert.deepEqual(log[2], ["loop", { iterations: 3 }]);
     assert.deepEqual(log[3], ["loop", { iterations: -1 }]);
     assert.deepEqual(log[4], ["stopAnimation", 2]);
+  });
+
+  it("the default engine returns a handle without Animated's reset() unchanged instead of crashing in loop", () => {
+    const engine = createDefaultEngine({
+      Animated: {
+        Value: class { setValue() {} } as never,
+        timing: () => ({ start() {}, stop() {} }),
+        spring: () => ({ start() {}, stop() {} }),
+        loop: () => {
+          throw new Error("Animated.loop must not receive a foreign handle");
+        },
+      },
+    });
+    const reduced = animate(engine.createValue(0), 1, { engine, reduceMotion: true });
+    assert.equal(engine.loop(reduced), reduced);
+    const composite = { start() {}, stop() {}, reset() {} } as MotionHandle;
+    assert.throws(() => engine.loop(composite), /must not receive/, "a real composite is passed to Animated.loop");
   });
 
   it("the jump engine never loops and stop is a no-op", () => {
