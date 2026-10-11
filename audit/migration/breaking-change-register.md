@@ -301,3 +301,21 @@ PLRNUI-53 closes the consumer-facing documentation policy: `auraTokens` and `get
 - Verification required: `npm test`, `npm run typecheck`, root API diff review and audit documentation review.
 - Release blocking: Yes. Stable release is blocked if internal helpers are root-exposed as stable/public or experimental APIs are undocumented.
 - Notes: PLRNUI-26 does not change package metadata, package subpaths, dependency declarations or stable classifications.
+
+### PLRNUI-137 - useBreakpoint: width-based on every platform, unified thresholds
+
+- ID: PLRNUI-137
+- Status: implemented
+- Category: behavior change / hooks (native behaviour)
+- Source issue: PLRNUI-137
+- Related ADR / Risk Assessment: D12 (breaking-change register entries for behavioural changes)
+- Decision: `useBreakpoint()` resolves the breakpoint from the window width on every platform. Before, it returned `"base"` for every native device (a tablet got the phone layout) and only used the width on web. The thresholds are the breakpoint tokens `xs 0, sm 480, md 768, lg 1024, xl 1280`; the web `sm` cut-off moves from 640 to 480. The diverging unexported copy `src/utils/useBreakpoint.ts` (thresholds 480, returned `{ bp, isMobile, ... }`) is deleted. `"base"` stays as the name of the range below `sm` (the token for it is `xs`). New `useBreakpointInfo()` returns `{ bp, width, height, isAtLeast, isBelow }`; `ResponsiveContext` carries the breakpoint scale.
+- Motivation: Tablets and large phones in landscape rendered the phone layout, and two copies of the hook disagreed on the thresholds.
+- Consumer impact: On iOS and Android, `useBreakpoint()` now returns `"sm"`, `"md"`, `"lg"` or `"xl"` where it returned `"base"`; layouts that branched on `"base"` for native now see the wider names on tablets. On web, widths from 480 to 639 change from `"base"` to `"sm"`. The `Theme.breakpoints` token gains `xs: 0` and `sm` changes from 360 to 480.
+- Migration path: Branch on the width-based name instead of the platform; use `useBreakpointInfo().isAtLeast("md")` for "tablet or wider". If a phone-only layout is required on native, check `Platform.OS` explicitly.
+- Legacy alias policy: `"base"` is kept as an alias of the range below `sm`. No alias for the deleted unexported utils copy.
+- Deprecation window: None; pre-stable package.
+- Removal target: `src/utils/useBreakpoint.ts` removed by PLRNUI-137.
+- Verification required: `npm test` (tests/responsive/breakpoint.test.tsx boundary table), `npm run typecheck`, `npm run api:snapshot:check`.
+- Release blocking: No (documented behaviour change, pre-stable).
+- Notes: The root export surface is unchanged (`useBreakpoint`, `Breakpoint`).

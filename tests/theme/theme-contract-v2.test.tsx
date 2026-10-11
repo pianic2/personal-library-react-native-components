@@ -77,7 +77,7 @@ describe("Theme contract v2", () => {
     );
     assert.deepEqual(shape, {
       borderWidth: { hairline: "number", thin: "number", thick: "number" },
-      breakpoints: { lg: "number", md: "number", sm: "number", xl: "number" },
+      breakpoints: { lg: "number", md: "number", sm: "number", xl: "number", xs: "number" },
       density: {
         default: "string",
         scale: { comfortable: "number", compact: "number", regular: "number" },
