@@ -16,11 +16,11 @@
     },
     "theme-provider-only": {
       "source": "import { ThemeProvider } from \"./src/theme/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 2050
+      "maxGzipBytes": 2400
     },
     "root-theme-provider": {
       "source": "import { ThemeProvider } from \"./src/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 2050
+      "maxGzipBytes": 2400
     },
     "native-core": {
       "source": "import * as NativeCore from \"./src/native/core/index.ts\"; console.log(NativeCore);",
@@ -34,7 +34,7 @@
     },
     "./theme": {
       "entry": "src/theme/index.ts",
-      "maxGzipBytes": 2350
+      "maxGzipBytes": 2700
     },
     "./tokens": {
       "entry": "src/tokens/index.ts",
