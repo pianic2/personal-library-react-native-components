@@ -190,3 +190,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-230 (E6-03: Alert appearance, icon and actions slots) | #144 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-239 (E4-05: built-in glyph set for Icon, IconGlyphs provider) | #146 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-177 (E10-06: Container with max width, gutters and container size context) | #145 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-223 (E10-12: useIsLargeText and StackOnLargeText) | #147 | PR open (row committed pre-merge, see ADR 0020 Branching) |
