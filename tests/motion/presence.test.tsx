@@ -19,6 +19,7 @@ function createFakeEngine(reportStop = false) {
   const clock = createFakeClock();
   const timings: Array<{ to: number; config: TimingConfig }> = [];
   const springs: Array<{ to: number; config: SpringConfig }> = [];
+  const completed = { timings: 0 };
   const engine: MotionEngine = {
     createValue(initial) {
       const v: FakeValue = { current: initial, setValue(next) { v.current = next; } };
@@ -34,6 +35,7 @@ function createFakeEngine(reportStop = false) {
           cancel = clock.setTimeout(() => {
             value.setValue(to);
             end = undefined;
+            completed.timings += 1;
             onEnd?.({ finished: true });
           }, config.duration);
         },
@@ -64,7 +66,7 @@ function createFakeEngine(reportStop = false) {
     loop: (handle) => handle,
     stop() {},
   };
-  return { engine, clock, timings, springs };
+  return { engine, clock, timings, springs, completed };
 }
 
 const mounts = { count: 0, unmounts: 0 };
@@ -84,26 +86,20 @@ function setup(props: Partial<PresenceProps> & { visible: boolean }, reduceMotio
   const fake = createFakeEngine(options.reportStop ?? false);
   const mocks = createMotionMocks(false);
   // The same wrapper on every update, otherwise the renderer would remount the whole tree.
-  const ui = (p: Partial<PresenceProps> & { visible: boolean }) => (
+  const tree = (p: Partial<PresenceProps> & { visible: boolean }) => (
     <CapabilityProvider adapters={mocks.adapters}>
       <MotionProvider engine={fake.engine} reduceMotion={reduceMotion}>
-        {options.strict ? (
-          <React.StrictMode>
-            <Presence {...p}>
-              <Child />
-            </Presence>
-          </React.StrictMode>
-        ) : (
-          <Presence {...p}>
-            <Child />
-          </Presence>
-        )}
+        <Presence {...p}>
+          <Child />
+        </Presence>
       </MotionProvider>
     </CapabilityProvider>
   );
+  // StrictMode goes outermost: effects are only double-invoked on a concurrent root.
+  const ui = (p: Partial<PresenceProps> & { visible: boolean }) => (options.strict ? <React.StrictMode>{tree(p)}</React.StrictMode> : tree(p));
   let renderer!: TestRenderer.ReactTestRenderer;
   act(() => {
-    renderer = TestRenderer.create(ui(props));
+    renderer = TestRenderer.create(ui(props), options.strict ? ({ unstable_isConcurrent: true } as never) : undefined);
   });
   const update = (next: Partial<PresenceProps> & { visible: boolean }) =>
     act(() => {
@@ -363,6 +359,8 @@ describe("Presence (PLRNUI-149)", () => {
     assert.ok(appearing.timings.length > 0);
     act(() => appearing.clock.advance(motion.duration.base));
     assert.equal(appearing.hasChild(), true);
+    // the batch cut off by the StrictMode cleanup never finishes: the restarted enter must run to its end
+    assert.equal(appearing.completed.timings, 4);
   });
 
   it("under StrictMode an exit still completes once", () => {

@@ -12,6 +12,10 @@ import { isPresencePreset, presenceHidden, PRESENCE_VISIBLE, type PresencePreset
 import { useAnimatedValue } from "./useAnimatedValue.js";
 import { useMotionPreference } from "./useMotionPreference.js";
 
+/**
+ * Preset, duration, spring and the reduced-motion preference are read when `visible` changes; a running transition is not
+ * restarted by them.
+ */
 export interface PresenceProps {
   /** Whether the children are shown. Going from `true` to `false` runs the exit and unmounts the children when it ends. */
   visible: boolean;
@@ -23,7 +27,6 @@ export interface PresenceProps {
   spring?: MotionSpringName;
   /** Runs the enter animation on the first render too when `visible` starts as `true`. Default `false`. */
   appear?: boolean;
-  /** Preset, duration, spring and the reduced-motion preference are read when `visible` changes; a running transition is not restarted by them. */
   /** Called once when an exit finishes and the children have been unmounted. Not called when the exit is interrupted. */
   onExited?: () => void;
   /** Pass `theme.motion` to follow theme overrides. */
@@ -89,9 +92,8 @@ export function Presence({ visible, preset: presetProp = "fade", duration, sprin
     let pending = created.length;
     inFlight.current = true;
     for (const handle of created) {
-      handle.start((end) => {
+      handle.start(() => {
         if (id !== runId.current) return;
-        void end;
         pending -= 1;
         if (pending === 0) inFlight.current = false;
         // Whatever the engine reports for a run that is still current, an exit that ended must unmount (never stick mounted).
