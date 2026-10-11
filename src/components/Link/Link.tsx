@@ -48,6 +48,10 @@ export interface LinkProps {
   disabled?: boolean;
   /** Accessibility label. When omitted the platform reads the text of the children. */
   accessibilityLabel?: string;
+  /** Accessibility role. Default `"link"`; navigation bars that act as tab lists pass `"tab"`. */
+  accessibilityRole?: "link" | "tab";
+  /** Reports the selected state to assistive technology (the current item of a tab list). Omitted from the state when `undefined`. */
+  selected?: boolean;
 }
 
 export const Link: React.FC<LinkProps> = ({
@@ -65,6 +69,8 @@ export const Link: React.FC<LinkProps> = ({
   routerAdapter,
   disabled = false,
   accessibilityLabel,
+  accessibilityRole = "link",
+  selected,
 }: LinkProps) => {
   const { theme, colors } = useTheme();
   const nav = useOptionalNav();
@@ -115,9 +121,9 @@ export const Link: React.FC<LinkProps> = ({
 
   return (
     <Pressable
-      accessibilityRole="link"
+      accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled }}
+      accessibilityState={selected === undefined ? { disabled } : { disabled, selected }}
       disabled={disabled}
       {...(Platform.OS === "web" && !disabled ? { href, hrefAttrs: /^https?:\/\//i.test(href) ? { target: "_blank", rel: "noopener noreferrer" } : undefined } : {})}
       onPress={(event?: WebClick) => {

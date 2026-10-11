@@ -36,6 +36,22 @@ const flatten = (style: unknown): Record<string, any> => Object.assign({}, ...[s
 const pressableOf = (r: TestRenderer.ReactTestRenderer) => r.root.findByType(host("Pressable"));
 const styleOf = (node: TestRenderer.ReactTestInstance, state = { pressed: false }) => flatten((node.props.style as (s: { pressed: boolean }) => unknown)(state));
 
+describe("PLRNUI-219 Link tab role and selected state", () => {
+  it("keeps role link and the disabled-only state by default", () => {
+    const p = pressableOf(render(<Link href="/a">A</Link>));
+    assert.equal(p.props.accessibilityRole, "link");
+    assert.deepEqual(p.props.accessibilityState, { disabled: false });
+  });
+
+  it("accessibilityRole tab and selected are passed through", () => {
+    const p = pressableOf(render(<Link href="/a" accessibilityRole="tab" selected>A</Link>));
+    assert.equal(p.props.accessibilityRole, "tab");
+    assert.deepEqual(p.props.accessibilityState, { disabled: false, selected: true });
+    const off = pressableOf(render(<Link href="/a" selected={false} disabled>A</Link>));
+    assert.deepEqual(off.props.accessibilityState, { disabled: true, selected: false });
+  });
+});
+
 describe("PLRNUI-216 Link accessibility", () => {
   it("has accessibilityRole link and passes accessibilityLabel through", () => {
     const plain = pressableOf(render(<Link href="/a">Docs</Link>));

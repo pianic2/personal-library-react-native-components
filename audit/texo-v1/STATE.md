@@ -173,3 +173,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (follow-up: ownership exception tests/components/typography/Text.test.tsx for PLRNUI-218, default Text alignment; removes the spent PLRNUI-209 and PLRNUI-216 arms) | #127 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-218 (E1-17: Text default alignment, fontFamily token and lines option) | #128 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception for PLRNUI-219, props manifest, type contracts and Link accessibilityRole/selected for the bar tab semantics; removes the spent PLRNUI-180 and PLRNUI-218 arms) | #130 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-219 (E1-27: TopBar and BottomBar tokens, safe-area insets, navigation and tab semantics) | #131 | PR open (row committed pre-merge, see ADR 0020 Branching) |

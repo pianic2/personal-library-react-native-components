@@ -1439,11 +1439,29 @@
       "status": "prototype",
       "props": [
         {
+          "name": "insets",
+          "type": "BarInsets",
+          "required": false,
+          "default": null,
+          "description": "Safe-area insets added to the bar's padding and height."
+        },
+        {
           "name": "maxItems",
           "type": "number",
           "required": false,
           "default": 5,
           "description": ""
+        },
+        {
+          "name": "position",
+          "type": "\"absolute\" | \"static\"",
+          "required": false,
+          "default": "absolute",
+          "description": "`\"absolute\"` (default) pins the bar to the bottom of its container; `\"static\"` lays it out in the normal flow.",
+          "values": [
+            "absolute",
+            "static"
+          ]
         }
       ]
     },
@@ -6438,6 +6456,17 @@
           "description": "Accessibility label. When omitted the platform reads the text of the children."
         },
         {
+          "name": "accessibilityRole",
+          "type": "\"link\" | \"tab\"",
+          "required": false,
+          "default": "link",
+          "description": "Accessibility role. Default `\"link\"`; navigation bars that act as tab lists pass `\"tab\"`.",
+          "values": [
+            "link",
+            "tab"
+          ]
+        },
+        {
           "name": "activeContainerStyle",
           "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
           "required": false,
@@ -6499,6 +6528,13 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Reports the selected state to assistive technology (the current item of a tab list). Omitted from the state when `undefined`."
         },
         {
           "name": "size",
@@ -14633,11 +14669,29 @@
           "description": ""
         },
         {
+          "name": "insets",
+          "type": "BarInsets",
+          "required": false,
+          "default": null,
+          "description": "Safe-area insets added to the bar's padding."
+        },
+        {
           "name": "leftSlot",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "position",
+          "type": "\"absolute\" | \"static\"",
+          "required": false,
+          "default": "absolute",
+          "description": "`\"absolute\"` (default) pins the bar to the top of its container; `\"static\"` lays it out in the normal flow.",
+          "values": [
+            "absolute",
+            "static"
+          ]
         },
         {
           "name": "rightSlot",

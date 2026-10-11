@@ -8,15 +8,28 @@ import { Text } from "../Text/index.js";
 import { Link } from "../Link/index.js";
 import { useOptionalNav } from "../NavContext/index.js";
 
+/** Safe-area insets in density-independent pixels; the app reads them from its safe-area provider and passes them in. */
+export interface BarInsets {
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+}
+
 export interface TopBarProps {
   title?: string;
+
+  /** `"absolute"` (default) pins the bar to the top of its container; `"static"` lays it out in the normal flow. */
+  position?: "absolute" | "static";
+  /** Safe-area insets added to the bar's padding. */
+  insets?: BarInsets;
 
   leftSlot?: React.ReactNode;
   centerSlot?: React.ReactNode;
   rightSlot?: React.ReactNode;
 }
 
-export function TopBar({ title, leftSlot, centerSlot, rightSlot }: TopBarProps) {
+export function TopBar({ title, position = "absolute", insets, leftSlot, centerSlot, rightSlot }: TopBarProps) {
   const { colors, theme } = useTheme();
   const nav = useOptionalNav();
   const logo = nav?.logo;
@@ -25,21 +38,23 @@ export function TopBar({ title, leftSlot, centerSlot, rightSlot }: TopBarProps) 
 
   return (
     <Box
+      role="navigation"
       bg="surface"
       style={{
-        position: "absolute",
-        top: 0,
+        ...(position === "absolute" ? { position: "absolute" as const, top: 0 } : null),
         borderBottomWidth: 1,
         width: "100%",
         borderBottomColor: colors.border,
-        paddingHorizontal: theme.space.lg,
-        paddingVertical: theme.space.lg,
+        paddingLeft: theme.space.lg + (insets?.left ?? 0),
+        paddingRight: theme.space.lg + (insets?.right ?? 0),
+        paddingTop: theme.space.lg + (insets?.top ?? 0),
+        paddingBottom: theme.space.lg + (insets?.bottom ?? 0),
       }}
     >
-      <Row justify="space-between" align="center" wrap={false} style={{ height: 40 }}>
+      <Row justify="space-between" align="center" wrap={false} style={{ height: theme.size.height.md }}>
         <Row gap="md" style={{ minWidth: 0, flex: 1 }}>
           {logo}
-          {title ? <Text weight="bold" size="sm">{title}</Text> : null}
+          {title ? <Text weight="bold" size="sm" accessibilityRole="header">{title}</Text> : null}
           {leftSlot}
         </Row>
 
@@ -54,8 +69,9 @@ export function TopBar({ title, leftSlot, centerSlot, rightSlot }: TopBarProps) 
                   key={it.href}
                   href={it.href}
                   underline={false}
+                  selected={active}
                   activeStyle={{ fontWeight: theme.typography.fontWeight.bold, color: colors.primary }}
-                  style={{ flex: 1, alignSelf: "center", color: active ? colors.primary : colors.textSecondary, width: 90, textAlign: "center", fontSize: theme.typography.fontSize.lg }}
+                  style={{ flex: 1, alignSelf: "center", color: active ? colors.primary : colors.textSecondary, minWidth: theme.size.height.lg * 2, textAlign: "center", fontSize: theme.typography.fontSize.lg }}
                 >
                   {it.label}
                 </Link>

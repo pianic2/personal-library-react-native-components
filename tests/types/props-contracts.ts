@@ -73,7 +73,7 @@ export type RequiredKeys<T> = {
 
 // Standalone prop interfaces: the full key set is pinned, so adding, removing or renaming a prop fails here.
 export type AlertKeys = Expect<Equal<keyof AlertProps, "title" | "variant" | "message" | "actionLabel" | "onAction" | "onDismiss" | "dismissLabel">>;
-export type BottomBarKeys = Expect<Equal<keyof BottomBarProps, "maxItems">>;
+export type BottomBarKeys = Expect<Equal<keyof BottomBarProps, "maxItems" | "position" | "insets">>;
 export type ButtonKeys = Expect<
   Equal<keyof ButtonProps, "icon" | "label" | "onPress" | "variant" | "size" | "disabled">
 >;
@@ -119,6 +119,8 @@ export type LinkKeys = Expect<
     | "routerAdapter"
     | "disabled"
     | "accessibilityLabel"
+    | "accessibilityRole"
+    | "selected"
   >
 >;
 export type NavBarKeys = Expect<
@@ -141,7 +143,7 @@ export type SideBarKeys = Expect<Equal<keyof SideBarProps, "width" | "variant">>
 export type SpinnerKeys = Expect<Equal<keyof SpinnerProps, "size">>;
 export type SwitchKeys = Expect<Equal<keyof SwitchProps, "value" | "onChange" | "label" | "disabled">>;
 export type TopBarKeys = Expect<
-  Equal<keyof TopBarProps, "title" | "leftSlot" | "centerSlot" | "rightSlot">
+  Equal<keyof TopBarProps, "title" | "position" | "insets" | "leftSlot" | "centerSlot" | "rightSlot">
 >;
 
 // Props that extend React Native props: the component-specific keys must remain present.
