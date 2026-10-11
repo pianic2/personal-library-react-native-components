@@ -232,13 +232,22 @@ export type ThemeContracts = [
       | "shadows"
       | "zIndex"
       | "size"
+      | "semantic"
+      | "textStyles"
+      | "elevation"
+      | "motion"
+      | "density"
+      | "breakpoints"
+      | "borderWidth"
+      | "opacity"
+      | "preset"
       | "components"
       | "materials"
       | "globalStyles"
       | "screens"
     >
   >,
-  Expect<Equal<RequiredKeys<Theme>, "colors" | "spacing" | "space" | "radius" | "typography" | "shadows" | "zIndex" | "size" | "components">>,
+  Expect<Equal<RequiredKeys<Theme>, "colors" | "spacing" | "space" | "radius" | "typography" | "shadows" | "zIndex" | "size" | "semantic" | "textStyles" | "elevation" | "motion" | "density" | "breakpoints" | "borderWidth" | "opacity" | "preset" | "components">>,
   Expect<Equal<RequiredKeys<Theme["components"]>, "button" | "input">>,
   Expect<
     Equal<

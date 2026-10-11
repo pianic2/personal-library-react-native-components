@@ -8,6 +8,12 @@ import type { shadows } from "../tokens/shadows.base.js";
 import type { Shadow } from "../tokens/shadows.base.js";
 import type { zIndex } from "../tokens/zIndex.base.js";
 import { size } from "../tokens/size.base.js";
+import type { SemanticTokens } from "../tokens/semantic.base.js";
+import type { textStyles } from "../tokens/textStyles.base.js";
+import type { motion } from "../tokens/motion.base.js";
+import type { density } from "../tokens/density.base.js";
+import type { breakpoints } from "../tokens/breakpoints.base.js";
+import type { ThemePreset } from "./contract.js";
 import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 type ThemeStyle = ViewStyle | TextStyle | ImageStyle;
@@ -79,6 +85,24 @@ export interface Theme {
   shadows: typeof shadows;
   zIndex: typeof zIndex;
   size: typeof size;
+
+  semantic: SemanticTokens;
+  textStyles: typeof textStyles;
+  elevation: typeof shadows;
+  motion: typeof motion;
+  density: typeof density;
+  breakpoints: typeof breakpoints;
+  borderWidth: {
+    hairline: number;
+    thin: number;
+    thick: number;
+  };
+  opacity: {
+    disabled: number;
+    pressed: number;
+    subtle: number;
+  };
+  preset: ThemePreset;
 
   components: {
     button: ButtonComponentTokens;
