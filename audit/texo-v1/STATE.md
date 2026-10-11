@@ -194,3 +194,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-188 (E10-10: SplitView master-detail layout) | #149 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-165 (E3-07: useShimmer animation hook) | #148 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-193; spent arms 177, 186, 230, 239 removed) | #150 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-165 (test typing fix for use-shimmer test, found by tsc -p tsconfig.tests.json) | #152 | PR open (row committed pre-merge, see ADR 0020 Branching) |
