@@ -88,6 +88,18 @@ describe("PLRNUI-181 memoization and theme changes", () => {
     assert.notEqual(resolveVariants(light, order, { tone: "loud" }, { pressed: false }), a);
   });
 
+  it("state names that contain the old separator do not collide (a state 'a,b' is not 'a' plus 'b')", () => {
+    const odd = defineVariants(() => ({
+      slots: ["root"],
+      states: { a: { root: { opacity: 0.1 } }, b: { root: { margin: 2 } }, "a,b": { root: { padding: 3 } } },
+    }));
+    const both = resolveVariants(light, odd, {}, { a: true, b: true });
+    const single = resolveVariants(light, odd, {}, { "a,b": true });
+    assert.notEqual(both, single);
+    assert.deepEqual(both.root, { opacity: 0.1, margin: 2 });
+    assert.deepEqual(single.root, { padding: 3 });
+  });
+
   it("the order of the state flags does not change the identity", () => {
     const a = resolveVariants(light, order, {}, { pressed: true, disabled: true });
     const b = resolveVariants(light, order, {}, { disabled: true, pressed: true });
@@ -184,6 +196,19 @@ describe("PLRNUI-181 theme.variants overrides", () => {
     const theme = themed(polluted);
     assert.equal(resolveVariants(theme, buttonVariants, { variant: "neon" } as never).root.backgroundColor, "lime");
     assert.equal(({} as { root?: unknown }).root, undefined, "Object.prototype is not polluted");
+  });
+
+  it("mergeDeep treats only plain objects as mergeable: class instances are replaced, not cloned into plain objects", () => {
+    class Color {
+      constructor(public semantic: string) {}
+    }
+    const base = { tint: new Color("label") };
+    const override = { tint: new Color("link") };
+    const merged = mergeDeep(base, override);
+    assert.equal(merged.tint, override.tint);
+    assert.ok(merged.tint instanceof Color);
+    const resource = mergeDeep({ tint: { semantic: "a" } }, { tint: { resource_paths: ["b"] } });
+    assert.deepEqual(resource, { tint: { semantic: "a", resource_paths: ["b"] } }, "plain objects still merge");
   });
 
   it("mergeDeep replaces arrays, skips undefined and does not mutate its inputs", () => {

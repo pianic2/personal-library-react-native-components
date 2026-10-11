@@ -93,7 +93,11 @@ export function defineVariants<S extends string, V extends VariantGroups<S>, ST 
 }
 
 type PlainObject = Record<string, unknown>;
-const isPlain = (value: unknown): value is PlainObject => value !== null && typeof value === "object" && !Array.isArray(value);
+const isPlain = (value: unknown): value is PlainObject => {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) return false;
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+};
 
 /** Deep merge of plain objects; arrays and other values from `source` replace; `undefined` in `source` is skipped. */
 export function mergeDeep<T>(target: T, source: unknown): T {
@@ -139,7 +143,9 @@ function entryFor(theme: Theme, definition: AnyVariantsDefinition): Entry {
  * Resolves the slot styles of a definition for the selected variants and active states. Order: `base`, then each variant
  * group in declaration order (the selected option, else `defaultVariants`), then matching `compoundVariants` in order,
  * then active `states` in declaration order; later layers win per style key. The result is memoized per
- * (theme, definition, selection, states): the same inputs return the same object, a new theme recomputes.
+ * (theme, definition, selection, states): the same inputs return the same object, a new theme recomputes. The
+ * definition and the `theme.variants` override are read once per theme object, so treat themes as immutable (change
+ * an override by creating a new theme with `createTheme`).
  */
 export function resolveVariants<D extends AnyVariantsDefinition>(
   theme: Theme,
@@ -161,7 +167,8 @@ export function resolveVariants<D extends AnyVariantsDefinition>(
   const stateNames = Object.keys(spec.states ?? {});
   const active = stateNames.filter((name) => (states as Record<string, unknown>)[name] === true);
 
-  const key = `${Object.keys(groups).map((g) => `${g}=${selected[g] ?? ""}`).join("|")}#${active.join(",")}`;
+  // NUL cannot appear in a sensible group, option or state name, so distinct selections never share a key.
+  const key = `${Object.keys(groups).map((g) => `${g}\u0000${selected[g] ?? ""}`).join("\u0001")}\u0002${active.join("\u0001")}`;
   const cached = entry.cache.get(key);
   if (cached) return cached as ResolvedSlots<VariantSlots<D>>;
 
