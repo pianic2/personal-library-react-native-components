@@ -24,15 +24,20 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "Items expose no role or selected state yet"
+    "The bar is a navigation landmark, its items form a tablist: each item has role tab and accessibilityState.selected for the current route"
   ],
-  "variants": {},
+  "variants": {
+    "position": [
+      "absolute",
+      "static"
+    ]
+  },
   "states": [
     "default",
     "selected item"
   ],
   "platformNotes": [
-    "Positioned absolutely: it overlaps content and ignores safe-area insets"
+    "Positioned absolutely by default (position=\"static\" lays it out in the flow); safe-area insets are passed in through the insets prop, the library reads none"
   ],
   "examples": [
     {

@@ -25,14 +25,19 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No navigation landmark role yet"
+    "The bar is a navigation landmark (role navigation); the title has accessibilityRole header; the current item has accessibilityState.selected"
   ],
-  "variants": {},
+  "variants": {
+    "position": [
+      "absolute",
+      "static"
+    ]
+  },
   "states": [
     "default"
   ],
   "platformNotes": [
-    "Positioned absolutely without safe-area handling"
+    "Positioned absolutely by default (position=\"static\" lays it out in the flow); safe-area insets are passed in through the insets prop, the library reads none"
   ],
   "examples": [
     {
