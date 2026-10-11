@@ -164,3 +164,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-189 (E2-07: defineTheme composition and strict createTheme merge) | #119 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions config/size-limits.json for PLRNUI-189 and tests/helpers/fixtures.tsx for PLRNUI-210, PLRNUI-224 and PLRNUI-233; removes the spent PLRNUI-225 arm) | #118 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-210 (E5-04: Label with required marker, disabled state and press-to-focus) | #120 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-233 (E4-04: Icon component with pluggable icon-set registry) | #121 | PR open (row committed pre-merge, see ADR 0020 Branching) |
