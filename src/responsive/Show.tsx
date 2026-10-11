@@ -37,7 +37,7 @@ export interface ShowProps extends ShowCondition {
 const asList = <T,>(value: T | readonly T[] | undefined): readonly T[] | undefined =>
   value === undefined ? undefined : Array.isArray(value) ? (value as readonly T[]) : [value as T];
 
-/** Pure rule: every given condition must hold (AND). No condition at all is true. */
+/** Pure rule: every given condition must hold (AND). `above="base"` is always true, `below="base"` never. No condition at all is true. */
 export function matchesCondition(bp: Breakpoint, sizeClass: SizeClass, condition: ShowCondition): boolean {
   if (condition.above !== undefined && !(rank(bp) >= rank(condition.above))) return false;
   if (condition.below !== undefined && !(rank(bp) < rank(condition.below))) return false;
@@ -57,9 +57,10 @@ function useMatches(condition: ShowCondition): boolean {
 }
 
 function Gate({ visible, keepMounted, children }: { visible: boolean; keepMounted?: boolean; children?: React.ReactNode }): React.ReactElement | null {
-  if (visible) return <>{children}</>;
-  if (keepMounted) return <View style={{ display: "none" }}>{children}</View>;
-  return null;
+  // keepMounted always renders the same wrapper View so the subtree keeps its identity (state, effects)
+  // across visible <-> hidden; only its style changes. The wrapper does take part in layout.
+  if (keepMounted) return <View style={visible ? undefined : { display: "none" }}>{children}</View>;
+  return visible ? <>{children}</> : null;
 }
 
 /** Renders `children` while the condition holds. */

@@ -80,6 +80,32 @@ describe("PLRNUI-164 Show", () => {
     assert.doesNotMatch(text(visible), /display/);
   });
 
+  it("keepMounted keeps the same child instance across visible <-> hidden; without it the child remounts", () => {
+    const counts = { mount: 0, unmount: 0 };
+    function Counter() {
+      React.useEffect(() => {
+        counts.mount += 1;
+        return () => {
+          counts.unmount += 1;
+        };
+      }, []);
+      return null;
+    }
+    const tree = (width: number, keepMounted: boolean) =>
+      withWindowSize(<Show above="md" keepMounted={keepMounted}><Counter /></Show>, { width, height: 800 });
+    const r = render(tree(500, true));
+    act(() => r.update(tree(900, true)));
+    act(() => r.update(tree(500, true)));
+    assert.deepEqual(counts, { mount: 1, unmount: 0 });
+    counts.mount = 0;
+    counts.unmount = 0;
+    const r2 = render(tree(500, false));
+    act(() => r2.update(tree(900, false)));
+    assert.deepEqual(counts, { mount: 1, unmount: 0 });
+    act(() => r2.update(tree(500, false)));
+    assert.deepEqual(counts, { mount: 1, unmount: 1 });
+  });
+
   it("follows a window change", () => {
     const tree = (width: number) => withWindowSize(<Show above="md"><Marker /></Show>, { width, height: 800 });
     const r = render(tree(500));
