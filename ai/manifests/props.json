@@ -1766,7 +1766,7 @@
         },
         {
           "name": "bg",
-          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\" | \"primaryHover\" | \"primaryActive\" | \"secondary\" | \"secondaryHover\" | \"secondaryActive\" | \"accent\" | \"background\" | \"surface\" | \"surfaceElevated\" | \"textPrimary\" | \"textSecondary\" | \"textMuted\" | \"textInverted\" | \"border\" | \"divider\" | \"outline\" | \"disabled\" | \"disabledBg\" | \"overlay\" | \"backdrop\" | \"codeBorder\" | \"codeBg\" | \"codeText\"",
+          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\" | \"secondary\" | \"primaryHover\" | \"primaryActive\" | \"secondaryHover\" | \"secondaryActive\" | \"accent\" | \"background\" | \"surface\" | \"surfaceElevated\" | \"textPrimary\" | \"textSecondary\" | \"textMuted\" | \"textInverted\" | \"border\" | \"divider\" | \"outline\" | \"disabled\" | \"disabledBg\" | \"overlay\" | \"backdrop\" | \"codeBorder\" | \"codeBg\" | \"codeText\"",
           "required": false,
           "default": null,
           "description": "",
@@ -4593,7 +4593,7 @@
         },
         {
           "name": "level",
-          "type": "4 | 6 | 1 | 2 | 3 | 5",
+          "type": "1 | 4 | 6 | 2 | 3 | 5",
           "required": false,
           "default": 1,
           "description": "",
