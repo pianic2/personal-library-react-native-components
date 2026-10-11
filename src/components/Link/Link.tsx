@@ -15,6 +15,13 @@ import { useOptionalNav } from "../NavContext/index.js";
 type LinkVariant = "text" | "button";
 type LinkSize = "sm" | "md" | "lg";
 
+// Typed constants instead of inline numbers: the control heights and the opacity of the pressed and disabled states.
+const HEIGHT: Record<LinkSize, number> = { sm: 32, md: 40, lg: 48 };
+const ALPHA = { rest: 1, pressedButton: 0.85, pressedText: 0.7, disabled: 0.5 } as const;
+
+/** The parts of a web click event that Link reads (a press from a screen reader or on native has none). */
+type WebClick = { preventDefault?: () => void; ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean; altKey?: boolean; button?: number };
+
 export type LinkRouterAdapter = {
   navigate: (href: string) => void;
 };
@@ -36,6 +43,11 @@ export interface LinkProps {
 
   onPress?: () => void;
   routerAdapter?: LinkRouterAdapter;
+
+  /** Blocks `onPress` and navigation, dims the link and reports it as disabled to assistive technology. */
+  disabled?: boolean;
+  /** Accessibility label. When omitted the platform reads the text of the children. */
+  accessibilityLabel?: string;
 }
 
 export const Link: React.FC<LinkProps> = ({
@@ -51,6 +63,8 @@ export const Link: React.FC<LinkProps> = ({
   exact = true,
   onPress,
   routerAdapter,
+  disabled = false,
+  accessibilityLabel,
 }: LinkProps) => {
   const { theme, colors } = useTheme();
   const nav = useOptionalNav();
@@ -67,7 +81,6 @@ export const Link: React.FC<LinkProps> = ({
       : pathname.startsWith(href)
     : false;
 
-  const heightMap = { sm: 32, md: 40, lg: 48 };
   const paddingXMap = {
     sm: theme.space.sm,
     md: theme.space.md,
@@ -102,21 +115,36 @@ export const Link: React.FC<LinkProps> = ({
 
   return (
     <Pressable
-      onPress={() => {
+      accessibilityRole="link"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      {...(Platform.OS === "web" && !disabled ? { href, hrefAttrs: /^https?:\/\//i.test(href) ? { target: "_blank", rel: "noopener noreferrer" } : undefined } : {})}
+      onPress={(event?: WebClick) => {
+        if (disabled) return;
+        if (Platform.OS === "web" && event) {
+          // A modified click (new tab, new window, download) belongs to the browser: the anchor handles it.
+          if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0)) {
+            onPress?.();
+            return;
+          }
+          // A plain click: the Link navigates through its handler, so the anchor must not.
+          event.preventDefault?.();
+        }
         onPress?.();
         doNavigate();
       }}
       style={({ pressed }) => [
         variant === "button" && {
-          minHeight: heightMap[size],
+          minHeight: HEIGHT[size],
           paddingHorizontal: paddingXMap[size],
           borderRadius: theme.radius.md,
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: colors.primary,
-          opacity: pressed ? 0.85 : 1,
+          opacity: disabled ? ALPHA.disabled : pressed ? ALPHA.pressedButton : ALPHA.rest,
         },
-        variant === "text" && pressed && { opacity: 0.7 },
+        variant === "text" && (disabled ? { opacity: ALPHA.disabled } : pressed && { opacity: ALPHA.pressedText }),
         containerStyle,
         isActive && activeContainerStyle,
       ]}
