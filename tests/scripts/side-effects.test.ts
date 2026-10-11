@@ -16,7 +16,6 @@ const root = resolve(import.meta.dirname, "../..");
 // Everything else recorded at import time fails the test. Keep in sync with the report.
 const ALLOWED = new Set([
   "src/components/Card/Card.tsx|StyleSheet.create",
-  "src/components/FormField/FormField.tsx|StyleSheet.create",
   "src/utils/platform.ts|Platform.OS (read)",
 ]);
 

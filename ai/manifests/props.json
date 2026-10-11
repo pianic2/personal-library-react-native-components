@@ -4147,10 +4147,15 @@
         },
         {
           "name": "colorScheme",
-          "type": "string",
+          "type": "\"primary\" | \"danger\" | \"secondary\"",
           "required": false,
           "default": null,
-          "description": ""
+          "description": "",
+          "values": [
+            "primary",
+            "secondary",
+            "danger"
+          ]
         },
         {
           "name": "errorText",
@@ -4209,10 +4214,15 @@
         },
         {
           "name": "variant",
-          "type": "string",
+          "type": "\"outline\" | \"filled\" | \"unstyled\"",
           "required": false,
           "default": null,
-          "description": ""
+          "description": "",
+          "values": [
+            "outline",
+            "filled",
+            "unstyled"
+          ]
         }
       ]
     },

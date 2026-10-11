@@ -1,12 +1,20 @@
 import React, { useId } from "react";
-import { View, StyleSheet, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
 import { useTheme } from "../../theme/useTheme.js";
 import { P } from "../P/P.js";
 import { Small } from "../Small/Small.js";
 import { B } from "../B/B.js";
-
+import { Input } from "../Input/Input.js";
+import { PasswordInput } from "../PasswordInput/PasswordInput.js";
+import { Select } from "../Select/Select.js";
+import { Textarea } from "../Textarea/Textarea.js";
 
 type FormStatus = "default" | "error" | "success" | "warning";
+
+/** Field styles a child control can opt into (forwarded only to a child that has the prop). */
+export type FormFieldVariant = "outline" | "filled" | "unstyled";
+/** Colour schemes a child control can opt into (forwarded only to a child that has the prop). */
+export type FormFieldColorScheme = "primary" | "secondary" | "danger";
 
 export interface FormFieldProps {
   label?: string;
@@ -15,8 +23,8 @@ export interface FormFieldProps {
   required?: boolean;
 
   // styling / semantica extra
-  variant?: string; // es: "outline", "filled", "unstyled"
-  colorScheme?: string; // es: "primary", "secondary", "danger"
+  variant?: FormFieldVariant;
+  colorScheme?: FormFieldColorScheme;
   status?: FormStatus;
 
   style?: ViewStyle | ViewStyle[];
@@ -25,6 +33,9 @@ export interface FormFieldProps {
   // campo di input (Input, Select, ecc.)
   children: React.ReactElement;
 }
+
+/** Controls of this library that take `error`: they get it from the FormField even when the caller did not pass the prop. */
+const ERROR_AWARE_CONTROLS: ReadonlySet<unknown> = new Set([Input, PasswordInput, Select, Textarea]);
 
 export function FormField({
   label,
@@ -38,106 +49,43 @@ export function FormField({
   id,
   children,
 }: FormFieldProps) {
-  const { colors } = useTheme();
+  const { theme, colors } = useTheme();
   const reactId = useId();
   const baseId = id || `field-${reactId}`;
 
   const hasError = Boolean(errorText) || status === "error";
   const finalStatus: FormStatus = hasError ? "error" : status;
 
-  const helperId = helperText ? `${baseId}-helper` : undefined;
-  const errorId = errorText ? `${baseId}-error` : undefined;
-  const describedById =
-    [helperId, errorId].filter(Boolean).join(" ") || undefined;
+  // Only the text that is rendered can be referenced: the error replaces the helper text.
+  const showError = hasError && Boolean(errorText);
+  const helperId = helperText && !showError ? `${baseId}-helper` : undefined;
+  const errorId = showError ? `${baseId}-error` : undefined;
+  const describedById = [helperId, errorId].filter(Boolean).join(" ") || undefined;
 
-  // Verifica se il child supporta alcune prop specifiche
-  const isValidElement = React.isValidElement(children);
-  const propsObj: Record<string, unknown> =
-    isValidElement && children.props && typeof children.props === "object"
-      ? (children.props as Record<string, unknown>)
-      : {};
+  const isElement = React.isValidElement(children);
+  const childProps: Record<string, unknown> = isElement && children.props && typeof children.props === "object" ? (children.props as Record<string, unknown>) : {};
+  const has = (...keys: string[]) => keys.some((key) => key in childProps);
 
-  const supportsErrorProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    "error" in propsObj;
+  // The child's own value always wins; the FormField only fills in what the child leaves out.
+  const extraChildProps: Record<string, unknown> = {};
+  if (has("error") || ERROR_AWARE_CONTROLS.has(isElement ? children.type : undefined)) extraChildProps.error = childProps.error ?? hasError;
+  if (has("status")) extraChildProps.status = childProps.status ?? finalStatus;
+  if (has("variant") && variant) extraChildProps.variant = childProps.variant ?? variant;
+  if (has("colorScheme") && colorScheme) extraChildProps.colorScheme = childProps.colorScheme ?? colorScheme;
+  if (has("aria-invalid", "ariaInvalid") && hasError) extraChildProps["aria-invalid"] = childProps["aria-invalid"] ?? childProps.ariaInvalid ?? true;
+  if (has("aria-describedby", "ariaDescribedBy") && describedById) extraChildProps["aria-describedby"] = childProps["aria-describedby"] ?? childProps.ariaDescribedBy ?? describedById;
+  // The error is read out with the control, not only as a separate text.
+  if (errorText && childProps.accessibilityHint === undefined) extraChildProps.accessibilityHint = errorText;
 
-  const supportsStatusProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    "status" in propsObj;
-
-  const supportsVariantProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    "variant" in propsObj;
-
-  const supportsColorSchemeProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    "colorScheme" in propsObj;
-
-  const supportsAriaInvalidProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    ("aria-invalid" in propsObj || "ariaInvalid" in propsObj);
-
-  const supportsAriaDescribedByProp =
-    isValidElement &&
-    typeof propsObj === "object" &&
-    propsObj !== null &&
-    ("aria-describedby" in propsObj || "ariaDescribedBy" in propsObj);
-
-  // Costruiamo il set di extra props da passare al campo
-  const extraChildProps: Record<string, any> = {};
-
-  if (supportsErrorProp) {
-    extraChildProps.error = propsObj.error ?? hasError;
-  }
-
-  if (supportsStatusProp) {
-    extraChildProps.status = propsObj.status ?? finalStatus;
-  }
-
-  if (supportsVariantProp && variant) {
-    extraChildProps.variant = propsObj.variant ?? variant;
-  }
-
-  if (supportsColorSchemeProp && colorScheme) {
-    extraChildProps.colorScheme = propsObj.colorScheme ?? colorScheme;
-  }
-
-  if (supportsAriaInvalidProp && hasError) {
-    // per web (react-native-web) / accessibilità
-    extraChildProps["aria-invalid"] =
-      propsObj["aria-invalid"] ?? propsObj["ariaInvalid"] ?? true;
-  }
-
-  if (supportsAriaDescribedByProp && describedById) {
-    extraChildProps["aria-describedby"] =
-      propsObj["aria-describedby"] ??
-      propsObj["ariaDescribedBy"] ??
-      describedById;
-  }
-
-  const childWithProps = isValidElement
-    ? React.cloneElement(children, extraChildProps)
-    : children;
+  const childWithProps = isElement ? React.cloneElement(children, extraChildProps) : children;
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[{ width: "100%", marginBottom: theme.spacing[16] }, style]}>
       {/* LABEL */}
       {label && (
-        <P style={[styles.label, { color: colors.textPrimary }]}>
+        <P style={{ marginBottom: theme.space.sm, color: colors.textPrimary }}>
           <B>{label}</B>
-          {required && (
-            <Small style={{ color: colors.error }}> *</Small>
-          )}
+          {required && <Small style={{ color: colors.error }}> *</Small>}
         </P>
       )}
 
@@ -145,38 +93,16 @@ export function FormField({
       {childWithProps}
 
       {/* HELPER / ERROR */}
-      {hasError && errorText ? (
-        <Small
-          // per linking con aria-describedby
-          nativeID={errorId}
-          style={[styles.error, { color: colors.error }]}
-        >
+      {showError ? (
+        // polite live region: the message is announced when it appears; nativeID links it with aria-describedby
+        <Small nativeID={errorId} accessibilityLiveRegion="polite" style={{ marginTop: theme.space.xs, color: colors.error }}>
           {errorText}
         </Small>
       ) : helperText ? (
-        <Small
-          nativeID={helperId}
-          style={[styles.helper, { color: colors.textPrimary + "99" }]}
-        >
+        <Small nativeID={helperId} style={{ marginTop: theme.space.xs, color: colors.textMuted }}>
           {helperText}
         </Small>
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    marginBottom: 16,
-  },
-  label: {
-    marginBottom: 6,
-  },
-  helper: {
-    marginTop: 4,
-  },
-  error: {
-    marginTop: 4,
-  },
-});
