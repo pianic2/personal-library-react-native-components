@@ -31,7 +31,9 @@ export const meta: ComponentMeta = {
     "on",
     "disabled"
   ],
-  "platformNotes": [],
+  "platformNotes": [
+    "The thumb slides with the motion tokens (duration fast) and jumps under reduced motion; without Animated it snaps"
+  ],
   "examples": [
     {
       "title": "Form controls",

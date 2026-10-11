@@ -26,16 +26,17 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "Exposes radio roles with the selected state",
-    "No group label yet"
+    "Exposes radio roles with the selected state; a disabled option reports accessibilityState.disabled",
+    "The group takes an accessibilityLabel"
   ],
   "variants": {},
   "states": [
     "unselected",
-    "selected"
+    "selected",
+    "disabled"
   ],
   "platformNotes": [
-    "String values only; no disabled or error state"
+    "String values only; disabled applies to the whole group or to one option"
   ],
   "examples": [
     {

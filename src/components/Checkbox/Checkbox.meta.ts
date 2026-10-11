@@ -28,16 +28,18 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "Exposes role checkbox with the checked and disabled state"
+    "Exposes role checkbox with the checked and disabled state; indeterminate reports checked: mixed"
   ],
   "variants": {},
   "states": [
     "unchecked",
     "checked",
+    "indeterminate",
+    "invalid",
     "disabled"
   ],
   "platformNotes": [
-    "No indeterminate or error state yet"
+    "invalid only recolours the box; React Native has no invalid accessibility state, so pair it with visible text"
   ],
   "examples": [
     {
