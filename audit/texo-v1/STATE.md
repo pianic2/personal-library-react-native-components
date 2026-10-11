@@ -156,3 +156,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-181 (E2-06: variant API defineVariants/useVariants with Theme.variants overrides) | #111 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions src/theme/types.ts, ai/manifests/props.json and tests/types/props-contracts.ts for PLRNUI-181, optional Theme.variants; removes the spent PLRNUI-143 arm) | #110 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-164 (E10-04: Show, Hide and Responsive components) | #112 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-225 (E4-01: Slot primitive for asChild prop merging) | #114 | PR open (row committed pre-merge, see ADR 0020 Branching) |
