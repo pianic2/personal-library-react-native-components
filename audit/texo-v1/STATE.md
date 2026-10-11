@@ -179,3 +179,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-222 (E1-30: NavContext hook tests, NavBar layout and selected-state docs) | #132 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-214 (E1-26: ProgressBar and Spinner semantics and honest indeterminate) | #134 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-160 (E2-03: text style roles, font family slots and resolveTextStyle) | #136 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-192 (E1-22: Checkbox, Switch and RadioGroup states, animated Switch) | #135 | PR open (row committed pre-merge, see ADR 0020 Branching) |
