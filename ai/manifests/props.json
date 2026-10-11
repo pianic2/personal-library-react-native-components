@@ -2549,6 +2549,20 @@
           "description": ""
         },
         {
+          "name": "indeterminate",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Neither fully checked nor unchecked (a parent of a partly selected group). Reported as `checked: \"mixed\"`; pressing still calls `onChange(!checked)`."
+        },
+        {
+          "name": "invalid",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Draws the box in the error colour. Pair it with visible text; assistive technology gets no extra state from it."
+        },
+        {
           "name": "label",
           "type": "string",
           "required": false,
@@ -9098,6 +9112,20 @@
     "RadioGroup": {
       "status": "demo",
       "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Names the group for assistive technology."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Disables every option."
+        },
         {
           "name": "onChange",
           "type": "(v: string) => void",

@@ -84,7 +84,7 @@ export type CardKeys = Expect<
   >
 >;
 export type CheckboxKeys = Expect<
-  Equal<keyof CheckboxProps, "checked" | "onChange" | "label" | "disabled" | "checkIcon">
+  Equal<keyof CheckboxProps, "checked" | "onChange" | "label" | "disabled" | "checkIcon" | "indeterminate" | "invalid">
 >;
 export type DividerKeys = Expect<Equal<keyof DividerProps, "thickness" | "spacing" | "style">>;
 export type FormFieldKeys = Expect<
@@ -138,7 +138,7 @@ export type NavBarKeys = Expect<
 >;
 export type ProgressBarKeys = Expect<Equal<keyof ProgressBarProps, "progress" | "tone" | "color" | "indeterminate" | "accessibilityLabel">>;
 export type QuoteKeys = Expect<Equal<keyof QuoteProps, "children">>;
-export type RadioGroupKeys = Expect<Equal<keyof RadioGroupProps, "value" | "onChange" | "options">>;
+export type RadioGroupKeys = Expect<Equal<keyof RadioGroupProps, "value" | "onChange" | "options" | "disabled" | "accessibilityLabel">>;
 export type SideBarKeys = Expect<Equal<keyof SideBarProps, "width" | "variant">>;
 export type SpinnerKeys = Expect<Equal<keyof SpinnerProps, "size" | "accessibilityLabel">>;
 export type SwitchKeys = Expect<Equal<keyof SwitchProps, "value" | "onChange" | "label" | "disabled">>;
@@ -284,7 +284,7 @@ export type TokenContracts = [
 
 // Remaining root type exports.
 export type RootTypeExports = [
-  Expect<Equal<keyof RadioGroupOption, "label" | "value">>,
+  Expect<Equal<keyof RadioGroupOption, "label" | "value" | "disabled">>,
   Expect<Equal<SideBarVariant, "fixed" | "embedded">>,
   Expect<Equal<keyof LinkRouterAdapter, "navigate">>,
   Expect<HasKeys<NavItem, "label" | "href">>,
