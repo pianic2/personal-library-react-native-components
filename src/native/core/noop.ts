@@ -25,6 +25,7 @@ const noopApis: CapabilityMap = {
   },
   appState: { getState: () => "active", subscribe: () => () => undefined },
   accessibility: { getPreferences: () => noopPreferences, subscribe: () => () => undefined },
+  appearance: { getColorScheme: () => null, subscribe: () => () => undefined },
 };
 
 /** The api of a capability that does nothing and never throws. */
