@@ -38,6 +38,7 @@ import {
   TopBar,
 } from "../../src";
 import { Slot } from "../../src/components/Slot/index.js";
+import { Label } from "../../src/components/Label/index.js";
 
 const noop = () => undefined;
 const items = [
@@ -86,6 +87,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Heading: () => <Heading level={2}>Title</Heading>,
   Input: () => <Input label="Name" value="Ada" onChangeText={noop} />,
+  Label: () => <Label required>Name</Label>,
   Link: () => <Link href="/docs">Docs</Link>,
   Modal: () => (
     <Modal visible onClose={noop}>
