@@ -1,5 +1,6 @@
 import { darkColors, lightColors, type ColorScheme } from "./colors.base.js";
 import { radius } from "./radius.base.js";
+import { createSemanticRoles } from "./semantic.base.js";
 import { shadows } from "./shadows.base.js";
 import { space } from "./spacing.base.js";
 import { typography } from "./typography.base.js";
@@ -54,6 +55,7 @@ export interface ThemeTokens {
 
 function buildThemeTokens(mode: ColorScheme): ThemeTokens {
   const colors = mode === "dark" ? darkColors : lightColors;
+  const roles = createSemanticRoles(mode);
 
   return {
     typography: {
@@ -72,32 +74,32 @@ function buildThemeTokens(mode: ColorScheme): ThemeTokens {
     },
     colors: {
       surface: {
-        background: colors.background,
-        surface: colors.surface,
+        background: roles.surface[0],
+        surface: roles.surface[1],
         surfaceElevated: colors.surfaceElevated,
-        overlay: colors.overlay,
+        overlay: roles.scrim,
         backdrop: colors.backdrop,
       },
       text: {
-        primary: colors.textPrimary,
-        secondary: colors.textSecondary,
+        primary: roles.onSurface,
+        secondary: roles.onSurfaceMuted,
         muted: colors.textMuted,
         inverted: colors.textInverted,
       },
       border: {
         border: colors.border,
         divider: colors.divider,
-        outline: colors.outline,
+        outline: roles.outline,
       },
       brand: {
-        primary: colors.primary,
-        secondary: colors.secondary,
+        primary: roles.primary.main,
+        secondary: roles.secondary.main,
         accent: colors.accent,
       },
       feedback: {
         success: colors.success,
         warning: colors.warning,
-        error: colors.error,
+        error: roles.error.main,
         info: colors.info,
       },
     },
