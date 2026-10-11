@@ -14,15 +14,22 @@ import { Input } from "@personal-library/react-native-components";
 
 ```ts
 interface InputProps extends TextInputProps {
-  label: string;
+  label?: string;
   size?: "xs" | "sm" | "md" | "lg";
   error?: boolean;
   helperText?: string;
   editable?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 ```
+
+## Comportamento
+
+- `label` è opzionale (per esempio dentro `FormField`, che mostra già l'etichetta). Senza `label` non viene reso il testo dell'etichetta e, in `__DEV__`, un avviso segnala che manca anche `accessibilityLabel`.
+- `label` non viene passato al `TextInput` sottostante; diventa l'`accessibilityLabel` (se non ne è dato uno esplicito).
+- `Input` rende un `View` radice: `containerStyle` si applica a quel wrapper, `style` al `TextInput`.
 
 ## Esempio
 
