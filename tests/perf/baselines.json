@@ -1,0 +1,6 @@
+{
+  "button-parent-update-same-props": { "count": 5, "tolerance": 0.2, "note": "Button renders caused by 5 parent updates with identical props (Button is not memoized: one render per parent update)" },
+  "theme-toggle-consumer-renders": { "count": 2, "tolerance": 0, "note": "renders of a useTheme consumer after 2 theme toggles" },
+  "theme-toggle-non-consumer-renders": { "count": 0, "tolerance": 0, "note": "renders of a component that does not read the theme after 2 toggles" },
+  "input-typing-commits": { "count": 5, "tolerance": 0.2, "note": "commits while typing 5 characters into a controlled Input (one per keystroke)" }
+}
