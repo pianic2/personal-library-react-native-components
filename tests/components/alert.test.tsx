@@ -264,7 +264,7 @@ describe("PLRNUI-230 Alert icon and actions", () => {
 
   it("a falsy icon or actions value such as 0 does not render a bare number", () => {
     const r = render(<Alert message="x" icon={0 as unknown as React.ReactNode} />);
-    assert.ok(r.root.findAllByType(host("View")).every((n) => !n.children.some((c) => c === 0 || c === "0")));
+    assert.ok(r.root.findAllByType(host("View")).every((n) => !n.children.some((c) => String(c) === "0")));
   });
 });
 
