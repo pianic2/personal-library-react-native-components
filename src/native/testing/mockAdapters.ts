@@ -1,6 +1,6 @@
 // Mock adapters for every capability id, with jest-free call recording. The `defaults` table is typed against
 // CapabilityMap, so adding a capability there fails typecheck here until it is mocked.
-import type { AdapterFor, CapabilityAdapters, CapabilityId, CapabilityMap, CapabilityStatus, NetworkState } from "../core/types.js";
+import type { AccessibilityPreferences, AdapterFor, CapabilityAdapters, CapabilityId, CapabilityMap, CapabilityStatus, NetworkState } from "../core/types.js";
 import {
   createEmitter,
   createFakeClock,
@@ -22,6 +22,7 @@ export type MockOverrides = { [K in CapabilityId]?: Partial<CapabilityMap[K]> };
 export interface MockState {
   network: Emitter<{ connected: boolean | null }>;
   appState: Emitter<FakeAppState>;
+  accessibility: Emitter<AccessibilityPreferences>;
   keyboard: Emitter<FakeKeyboard>;
   permissions: Record<CapabilityId, FakePermission>;
   storage: Map<string, string>;
@@ -43,6 +44,8 @@ export interface MockAdapterSet {
   state: MockState;
   setNetwork(connected: boolean | null): void;
   setAppState(next: FakeAppState): void;
+  /** Merges `patch` into the accessibility preferences and notifies subscribers (a new snapshot object). */
+  setAccessibility(patch: Partial<AccessibilityPreferences>): void;
   setKeyboard(next: FakeKeyboard | boolean): void;
   setPermission(id: CapabilityId, permission: FakePermission): void;
 }
@@ -60,7 +63,7 @@ const toNetworkState = (v: { connected: boolean | null }): NetworkState => ({
 
 // Permission rule: when a capability is `denied`, EVERY method of that capability (defaults and overrides, biometric
 // included) records the call and then rejects with `permission denied: <id>`; the implementation is not run.
-// Exception: a synchronous method (`syncMethods`: appState.getState/subscribe, network.getState/subscribe) cannot
+// Exception: a synchronous method (`syncMethods`: appState, accessibility and network getState/getPreferences/subscribe) cannot
 // reject, so it records the call and then THROWS `permission denied: <id>` synchronously.
 // Typed `{ [K in CapabilityId]: ... }`: a missing key is a compile error.
 const defaults: Defaults = {
@@ -97,6 +100,10 @@ const defaults: Defaults = {
     getState: () => ctx.state.appState.get(),
     subscribe: (listener) => ctx.state.appState.subscribe(listener),
   }),
+  accessibility: (ctx) => ({
+    getPreferences: () => ctx.state.accessibility.get(),
+    subscribe: (listener) => ctx.state.accessibility.subscribe(listener),
+  }),
   // getStatus is asynchronous; getState and subscribe are synchronous (see `syncMethods`).
   network: (ctx) => ({
     getStatus: () => run(() => ({ ...ctx.state.network.get() })),
@@ -108,15 +115,27 @@ const defaults: Defaults = {
 /** Methods that are synchronous: a denied permission makes them throw instead of rejecting. */
 const syncMethods: { readonly [K in CapabilityId]?: ReadonlySet<string> } = {
   appState: new Set(["getState", "subscribe"]),
+  accessibility: new Set(["getPreferences", "subscribe"]),
   network: new Set(["getState", "subscribe"]),
 };
 
 const ids = Object.keys(defaults) as CapabilityId[];
 
+const defaultPreferences = (): AccessibilityPreferences => ({
+  reduceMotion: false,
+  reduceTransparency: false,
+  screenReader: false,
+  boldText: false,
+  grayscale: false,
+  invertColors: false,
+  fontScale: 1,
+});
+
 function initialState(): MockState {
   return {
     network: createEmitter<{ connected: boolean | null }>({ connected: true }),
     appState: createEmitter<FakeAppState>("active"),
+    accessibility: createEmitter<AccessibilityPreferences>(defaultPreferences()),
     keyboard: createEmitter<FakeKeyboard>({ visible: false, height: 0 }),
     permissions: Object.fromEntries(ids.map((id) => [id, "granted"])) as Record<CapabilityId, FakePermission>,
     storage: new Map(),
@@ -159,6 +178,7 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
       const fresh = initialState();
       state.network.reset(fresh.network.get());
       state.appState.reset(fresh.appState.get());
+      state.accessibility.reset(fresh.accessibility.get());
       state.keyboard.reset(fresh.keyboard.get());
       state.permissions = fresh.permissions;
       state.storage.clear();
@@ -169,6 +189,7 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
     state,
     setNetwork: (connected) => state.network.set({ connected }),
     setAppState: (next) => state.appState.set(next),
+    setAccessibility: (patch) => state.accessibility.set({ ...state.accessibility.get(), ...patch }),
     setKeyboard: (next) =>
       state.keyboard.set(typeof next === "boolean" ? { visible: next, height: next ? 300 : 0 } : next),
     setPermission: (id, permission) => {

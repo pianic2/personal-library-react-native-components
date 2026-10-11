@@ -6,7 +6,7 @@ import { createCapabilityRegistry, defineExpoAdapter, useCapability, useCapabili
 type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 type Expect<T extends true> = T;
 
-export type ClosedIds = Expect<Equal<CapabilityId, "clipboard" | "haptics" | "share" | "storage" | "biometric" | "network" | "appState">>;
+export type ClosedIds = Expect<Equal<CapabilityId, "clipboard" | "haptics" | "share" | "storage" | "biometric" | "network" | "appState" | "accessibility">>;
 export type ApiOfClipboard = Expect<Equal<AdapterFor<"clipboard">["api"], CapabilityMap["clipboard"]>>;
 
 export function usage() {

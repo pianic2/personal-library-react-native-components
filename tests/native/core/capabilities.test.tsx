@@ -49,7 +49,7 @@ describe("PLRNUI-138 capability layer", () => {
 
   it("createNoopAdapters has one noop adapter per capability and never throws", async () => {
     const adapters = createNoopAdapters();
-    assert.deepEqual(Object.keys(adapters).sort(), ["appState", "biometric", "clipboard", "haptics", "network", "share", "storage"]);
+    assert.deepEqual(Object.keys(adapters).sort(), ["accessibility", "appState", "biometric", "clipboard", "haptics", "network", "share", "storage"]);
     for (const adapter of Object.values(adapters)) assert.equal(adapter.status, "noop");
     assert.equal(await adapters.storage.api.getItem("k"), null);
     assert.equal(await adapters.biometric.api.authenticate("x"), false);
