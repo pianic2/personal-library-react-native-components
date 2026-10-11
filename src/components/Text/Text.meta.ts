@@ -31,7 +31,8 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "The default alignment is justify, which is surprising"
+    "No text alignment by default (the platform default applies); set align to change it",
+    "accessibilityRole and the other React Native text props pass through to the underlying Text"
   ],
   "variants": {
     "variant": [
