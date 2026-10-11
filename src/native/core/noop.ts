@@ -8,7 +8,11 @@ const noopApis: CapabilityMap = {
   share: { share: async () => "dismissed" },
   storage: { getItem: async () => null, setItem: none, removeItem: none },
   biometric: { isAvailable: async () => false, authenticate: async () => false },
-  network: { getStatus: async () => ({ connected: null }) },
+  network: {
+    getStatus: async () => ({ connected: null }),
+    getState: () => ({ isConnected: null, isInternetReachable: null, type: "unknown" }),
+    subscribe: () => () => undefined,
+  },
   appState: { getState: () => "active", subscribe: () => () => undefined },
 };
 

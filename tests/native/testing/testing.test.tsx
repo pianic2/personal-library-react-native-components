@@ -155,7 +155,7 @@ describe("PLRNUI-146 native testing helpers", () => {
       share: () => [mocks.adapters.share.api.share({ message: "m" })],
       storage: () => { const a = mocks.adapters.storage.api; return [a.getItem("k"), a.setItem("k", "v"), a.removeItem("k")]; },
       biometric: () => { const a = mocks.adapters.biometric.api; return [a.isAvailable(), a.authenticate("p")]; },
-      network: () => [mocks.adapters.network.api.getStatus()],
+      network: () => [mocks.adapters.network.api.getStatus()], // getState/subscribe are synchronous: see the sync-throw test
     };
     const mocks = createMockAdapters({ share: { share: async () => "dismissed" } });
     for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState"> => x !== "appState")) {
@@ -178,6 +178,17 @@ describe("PLRNUI-146 native testing helpers", () => {
     assert.throws(() => api.getState(), /permission denied: appState/);
     assert.throws(() => api.subscribe(() => undefined), /permission denied: appState/);
     assert.deepEqual(mocks.callsOf("appState").map((c) => c.method), ["getState", "getState", "subscribe"]);
+  });
+
+  it("a denied permission makes the synchronous network methods throw synchronously and keeps getStatus rejecting", async () => {
+    const mocks = createMockAdapters();
+    const api = mocks.adapters.network.api;
+    assert.deepEqual(api.getState(), { isConnected: true, isInternetReachable: true, type: "unknown" });
+    mocks.setPermission("network", "denied");
+    assert.throws(() => api.getState(), /permission denied: network/);
+    assert.throws(() => api.subscribe(() => undefined), /permission denied: network/);
+    await assert.rejects(() => api.getStatus(), /permission denied: network/);
+    assert.deepEqual(mocks.callsOf("network").map((c) => c.method), ["getState", "getState", "subscribe", "getStatus"]);
   });
 
   it("rejects overrides that set a method to undefined", () => {

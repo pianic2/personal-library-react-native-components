@@ -1,6 +1,6 @@
 // Mock adapters for every capability id, with jest-free call recording. The `defaults` table is typed against
 // CapabilityMap, so adding a capability there fails typecheck here until it is mocked.
-import type { AdapterFor, CapabilityAdapters, CapabilityId, CapabilityMap, CapabilityStatus } from "../core/types.js";
+import type { AdapterFor, CapabilityAdapters, CapabilityId, CapabilityMap, CapabilityStatus, NetworkState } from "../core/types.js";
 import {
   createEmitter,
   createFakeClock,
@@ -51,10 +51,17 @@ type Ctx = { state: MockState };
 const run = async <T,>(fn: () => T): Promise<Awaited<T>> => await fn();
 type Defaults = { [K in CapabilityId]: (ctx: Ctx) => CapabilityMap[K] };
 
+// `connected` null is unknown; false is offline (type "none"); true is online with an unknown transport.
+const toNetworkState = (v: { connected: boolean | null }): NetworkState => ({
+  isConnected: v.connected,
+  isInternetReachable: v.connected,
+  type: v.connected === false ? "none" : "unknown",
+});
+
 // Permission rule: when a capability is `denied`, EVERY method of that capability (defaults and overrides, biometric
 // included) records the call and then rejects with `permission denied: <id>`; the implementation is not run.
-// Exception: a capability whose api is synchronous (`syncIds`, today `appState`) cannot reject, so each of its methods
-// records the call and then THROWS `permission denied: <id>` synchronously.
+// Exception: a synchronous method (`syncMethods`: appState.getState/subscribe, network.getState/subscribe) cannot
+// reject, so it records the call and then THROWS `permission denied: <id>` synchronously.
 // Typed `{ [K in CapabilityId]: ... }`: a missing key is a compile error.
 const defaults: Defaults = {
   clipboard: (ctx) => ({
@@ -90,11 +97,19 @@ const defaults: Defaults = {
     getState: () => ctx.state.appState.get(),
     subscribe: (listener) => ctx.state.appState.subscribe(listener),
   }),
-  network: (ctx) => ({ getStatus: () =>  run(() => ({ ...ctx.state.network.get() })) }),
+  // getStatus is asynchronous; getState and subscribe are synchronous (see `syncMethods`).
+  network: (ctx) => ({
+    getStatus: () => run(() => ({ ...ctx.state.network.get() })),
+    getState: () => toNetworkState(ctx.state.network.get()),
+    subscribe: (listener) => ctx.state.network.subscribe((v) => listener(toNetworkState(v))),
+  }),
 };
 
-/** Capabilities whose api is synchronous: a denied permission throws instead of rejecting. */
-const syncIds: ReadonlySet<CapabilityId> = new Set<CapabilityId>(["appState"]);
+/** Methods that are synchronous: a denied permission makes them throw instead of rejecting. */
+const syncMethods: { readonly [K in CapabilityId]?: ReadonlySet<string> } = {
+  appState: new Set(["getState", "subscribe"]),
+  network: new Set(["getState", "subscribe"]),
+};
 
 const ids = Object.keys(defaults) as CapabilityId[];
 
@@ -126,7 +141,7 @@ export function createMockAdapters(overrides: MockOverrides = {}, status: Capabi
         typeof impl === "function"
           ? (...args: unknown[]) => {
               calls.push({ id, method, args });
-              if (state.permissions[id] === "denied" && syncIds.has(id)) throw new Error(`permission denied: ${id}`);
+              if (state.permissions[id] === "denied" && syncMethods[id]?.has(method)) throw new Error(`permission denied: ${id}`);
               if (state.permissions[id] === "denied") return Promise.reject(new Error(`permission denied: ${id}`));
               return (impl as (...a: unknown[]) => unknown)(...args);
             }
