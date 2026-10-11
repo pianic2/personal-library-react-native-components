@@ -184,3 +184,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-169 (E2-04: spacing, radius, size, border and opacity scales) | #138 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-152 (E2-02: palette ramps, semantic colour roles and state layers) | #140 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions ai/manifests/props.json and config/size-limits.json for PLRNUI-152, the palette and semantic roles feed the theme colours; removes the spent PLRNUI-169 arm) | #139 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-184 (E1-35: root exports for the nav hooks, PACKAGE_NAME deprecation) | #141 | PR open (row committed pre-merge, see ADR 0020 Branching) |
