@@ -170,3 +170,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-209 (E1-25: Alert alert role, contrast and dismiss) | #125 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception config/size-limits.json for PLRNUI-209, Alert dismiss, live region and contrast check add about 370 B gzip to the root entry) | #124 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-216 (E1-28: Link role link, disabled and tokenised styling) | #126 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (follow-up: ownership exception tests/components/typography/Text.test.tsx for PLRNUI-218, default Text alignment; removes the spent PLRNUI-209 and PLRNUI-216 arms) | #127 | PR open (row committed pre-merge, see ADR 0020 Branching) |
