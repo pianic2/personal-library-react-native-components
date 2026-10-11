@@ -136,11 +136,11 @@ export type NavBarKeys = Expect<
     | "sidebarVariant"
   >
 >;
-export type ProgressBarKeys = Expect<Equal<keyof ProgressBarProps, "progress" | "color">>;
+export type ProgressBarKeys = Expect<Equal<keyof ProgressBarProps, "progress" | "tone" | "color" | "indeterminate" | "accessibilityLabel">>;
 export type QuoteKeys = Expect<Equal<keyof QuoteProps, "children">>;
 export type RadioGroupKeys = Expect<Equal<keyof RadioGroupProps, "value" | "onChange" | "options">>;
 export type SideBarKeys = Expect<Equal<keyof SideBarProps, "width" | "variant">>;
-export type SpinnerKeys = Expect<Equal<keyof SpinnerProps, "size">>;
+export type SpinnerKeys = Expect<Equal<keyof SpinnerProps, "size" | "accessibilityLabel">>;
 export type SwitchKeys = Expect<Equal<keyof SwitchProps, "value" | "onChange" | "label" | "disabled">>;
 export type TopBarKeys = Expect<
   Equal<keyof TopBarProps, "title" | "position" | "insets" | "leftSlot" | "centerSlot" | "rightSlot">

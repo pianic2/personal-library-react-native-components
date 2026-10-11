@@ -23,7 +23,7 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No accessibilityLabel or busy state yet"
+    "accessibilityRole progressbar, accessibilityState.busy and an accessibilityLabel (default Loading)"
   ],
   "variants": {
     "size": [
@@ -36,7 +36,7 @@ export const meta: ComponentMeta = {
     "default"
   ],
   "platformNotes": [
-    "Numeric sizes are ignored by ActivityIndicator on iOS"
+    "iOS maps sm and md to small and lg to large (it ignores numeric sizes); Android and web use 16, 24 and 32"
   ],
   "examples": [
     {

@@ -23,22 +23,26 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No progressbar role or accessibilityValue yet",
-    "An undefined progress renders at 30%"
+    "accessibilityRole progressbar with accessibilityValue {min:0,max:100,now} (clamped)",
+    "Indeterminate: progressbar with accessibilityState.busy and no value",
+    "An undefined progress renders an empty bar (0%)"
   ],
   "variants": {
-    "color": [
+    "tone": [
       "primary",
       "info",
       "success",
       "warning",
-      "error"
+      "danger"
     ]
   },
   "states": [
-    "default"
+    "default",
+    "indeterminate"
   ],
-  "platformNotes": [],
+  "platformNotes": [
+    "The indeterminate sweep honours reduced motion (a static segment); color is a deprecated alias of tone"
+  ],
   "examples": [
     {
       "title": "Progress at 50",
