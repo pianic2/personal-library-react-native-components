@@ -112,12 +112,27 @@ describe("PLRNUI-189 createTheme and mergeThemes", () => {
     assert.deepEqual(base.list, [1, 2, 3]);
   });
 
-  it("merges layers left to right and later layers win; undefined layers and values are skipped", () => {
+  it("merges layers left to right and later layers win; undefined layers and values are skipped silently", () => {
+    globals.__DEV__ = true; // in dev an undefined value treated as a mismatch would throw
+    const warnings = captureWarnings();
     const base = { a: 1, b: { c: 2, d: 3 } };
     const merged = mergeThemes(base, { b: { c: 20 } }, undefined, { b: { d: undefined, c: 30 }, a: 4 } as never);
     assert.deepEqual(merged, { a: 4, b: { c: 30, d: 3 } });
     assert.deepEqual(base, { a: 1, b: { c: 2, d: 3 } });
     assert.notEqual(merged, base);
+    globals.__DEV__ = false; // in production it would warn instead
+    mergeThemes(base, { b: { d: undefined } } as never);
+    assert.deepEqual(warnings, []);
+  });
+
+  it("ignores a __proto__ key in an override instead of replacing the prototype of the result", () => {
+    const override = JSON.parse('{"__proto__":{"polluted":1},"nested":{"__proto__":{"deep":1}}}') as Record<string, unknown>;
+    const merged = mergeThemes({ nested: { keep: 1 } } as { nested: { keep: number } }, override as never) as Record<string, any>;
+    assert.equal(merged.polluted, undefined);
+    assert.equal(merged.nested.deep, undefined);
+    assert.equal(merged.nested.keep, 1);
+    assert.equal(({} as Record<string, unknown>).polluted, undefined);
+    assert.equal(Object.getPrototypeOf(merged), Object.prototype);
   });
 
   it("adds a token the base does not define yet, and still type-checks it in a later layer", () => {

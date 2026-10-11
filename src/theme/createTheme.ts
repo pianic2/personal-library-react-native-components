@@ -78,6 +78,8 @@ function mergeLayer<T extends PlainObject>(target: T, source: PlainObject | unde
   const output: PlainObject = { ...target };
 
   Object.keys(source).forEach((key) => {
+    // `output["__proto__"] = ...` would replace the prototype of the result instead of adding a token
+    if (key === "__proto__") return;
     output[key] = mergeValue(target[key], source[key], path === "" ? key : `${path}.${key}`);
   });
 
@@ -91,7 +93,11 @@ function mergeLayer<T extends PlainObject>(target: T, source: PlainObject | unde
  * - an `undefined` value never erases the value below it;
  * - a value of another kind than the one below it (an array where an object is expected, a string for a number, `null`)
  *   is a mismatch: it throws a `TypeError` in `__DEV__` and is ignored with a `console.warn` in production;
- * - a token that no lower layer defines is added as it is.
+ * - a token that no lower layer defines is added as it is;
+ * - a `__proto__` key in a layer is ignored.
+ *
+ * The result shares the untouched subtrees (and the arrays of the layers) with its inputs instead of copying them, so a
+ * theme must be treated as immutable; nothing here freezes it.
  */
 export function mergeThemes<T extends object>(base: T, ...layers: Array<DeepPartial<NoInfer<T>> | undefined>): T {
   return layers.reduce<PlainObject>(
