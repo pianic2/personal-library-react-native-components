@@ -47,11 +47,23 @@ const INTERNAL = new Set(["breakpointScaleProblem", "sizeClassProblem", "Contain
 
 const dir = join(import.meta.dirname, "../../src/responsive");
 
-function exportedValueNames(source: string): string[] {
-  const names: string[] = [];
-  for (const match of source.matchAll(/^export\s+(?:async\s+)?(?:const|function|class)\s+([A-Za-z0-9_]+)/gm)) names.push(match[1]!);
-  return names;
+/** Names a module exports, split in values and types: declarations and `export { a, b as c } [from]` lists. */
+function exportedNames(source: string): { values: string[]; types: string[] } {
+  const values: string[] = [];
+  const types: string[] = [];
+  for (const match of source.matchAll(/^export\s+(?:async\s+)?(?:const|let|var|function|class|enum)\s+([A-Za-z0-9_]+)/gm)) values.push(match[1]!);
+  for (const match of source.matchAll(/^export\s+(?:interface|type)\s+([A-Za-z0-9_]+)/gm)) types.push(match[1]!);
+  for (const match of source.matchAll(/^export\s+(type\s+)?\{([^}]*)\}/gm)) {
+    for (const part of match[2]!.split(",")) {
+      const name = part.trim().replace(/^type\s+/, "").split(/\s+as\s+/).pop()!.trim();
+      if (name) (match[1] || /^\s*type\s/.test(part) ? types : values).push(name);
+    }
+  }
+  return { values, types };
 }
+
+const barrel = exportedNames(readFileSync(join(dir, "index.ts"), "utf8"));
+const INTERNAL_TYPES = new Set<string>();
 
 describe("PLRNUI-226 responsive barrel", () => {
   it("exports exactly the documented value names", () => {
@@ -62,15 +74,26 @@ describe("PLRNUI-226 responsive barrel", () => {
     for (const name of EXPECTED_VALUES) assert.notEqual((api as Record<string, unknown>)[name], undefined, name);
   });
 
-  it("exports every public value of the modules of src/responsive (the internal helpers excepted)", () => {
+  it("exports every public value and type of the modules of src/responsive (the internal helpers excepted)", () => {
     const missing: string[] = [];
     for (const file of readdirSync(dir)) {
       if (!/\.(ts|tsx)$/.test(file) || file === "index.ts") continue;
-      for (const name of exportedValueNames(readFileSync(join(dir, file), "utf8"))) {
-        if (!INTERNAL.has(name) && !(name in api)) missing.push(`${file}: ${name}`);
-      }
+      const names = exportedNames(readFileSync(join(dir, file), "utf8"));
+      for (const name of names.values) if (!INTERNAL.has(name) && !(name in api) && !barrel.values.includes(name)) missing.push(`${file}: value ${name}`);
+      for (const name of names.types) if (!INTERNAL_TYPES.has(name) && !barrel.types.includes(name)) missing.push(`${file}: type ${name}`);
     }
     assert.deepEqual(missing, []);
+  });
+
+  it("the barrel also carries the types of the hooks and Container modules it re-exports", () => {
+    for (const name of ["Breakpoint", "BreakpointInfo", "ContainerProps", "ContainerSizeName", "SplitViewProps", "FoldAdapterProviderProps", "HingeBounds", "ShowCondition"]) {
+      assert.ok(barrel.types.includes(name), name);
+    }
+  });
+
+  it("the type-name scanner finds declarations and export lists (guards the test itself)", () => {
+    const sample = `export const A = 1;\nexport interface B {}\nexport type C = 1;\nexport { d, e as f } from "./x.js";\nexport type { G, H } from "./y.js";\nexport { type I, j } from "./z.js";`;
+    assert.deepEqual(exportedNames(sample), { values: ["A", "d", "f", "j"], types: ["B", "C", "G", "H", "I"] });
   });
 
   it("keeps the internal helpers out of the barrel", () => {

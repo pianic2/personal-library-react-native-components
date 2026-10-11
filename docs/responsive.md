@@ -23,7 +23,7 @@ const wide = isAtLeast("md");
 
 ## Overrides
 
-`ResponsiveProvider` overrides the breakpoint scale (`breakpoints`), the size-class thresholds (`sizeClasses`), the orientation (`orientationLock`) or the window size (`window`, for server rendering, previews and tests). An invalid scale is rejected in development.
+`ResponsiveProvider` overrides the breakpoint scale (`breakpoints`), the size-class thresholds (`sizeClasses`) or the window size (`window`, for server rendering, previews and tests). An invalid scale is rejected in development. The provider also accepts `orientationLock` and stores it in the responsive context, but no hook reads it yet: `useOrientation` follows the window.
 
 ```tsx
 <ResponsiveProvider breakpoints={{ md: 800 }} window={{ width: 1024, height: 768 }}>
@@ -63,7 +63,7 @@ const wide = isAtLeast("md");
 
 ## Devices and foldables
 
-`useDeviceClass()` returns `"phone"`, `"tablet"` or `"desktop"` and `useAspectPosture()` returns `"normal"`, `"wide"` or `"square-ish"`. The library has no native fold dependency: an app that wants real fold data wraps a native module in a `FoldAdapter` and provides it with `FoldAdapterProvider`; `useFoldState()` then returns `{ isFolded, hingeBounds? }`. Without an adapter the device is never folded.
+`useDeviceClass()` returns `"phone"`, `"tablet"` or `"desktop"` for the current **window and platform**, not the hardware: on native a shortest window side of 600 or more is a tablet (an iPad always is), macOS and Windows are desktop, and on web a desktop needs a fine pointer and a width of at least 1024. `useAspectPosture()` returns `"normal"`, `"wide"` (width/height of 1.6 or more) or `"square-ish"` (0.8 to 1.25); it is a heuristic on the window shape, not a posture sensor. The library has no native fold dependency: an app that wants real fold data wraps a native module in a `FoldAdapter` and provides it with `FoldAdapterProvider`; `useFoldState()` then returns `{ isFolded, hingeBounds? }`. Without an adapter the device is never folded.
 
 ```tsx
 const adapter: FoldAdapter = { useFoldState: () => useMyWindowManagerFold() };
@@ -75,7 +75,7 @@ const adapter: FoldAdapter = { useFoldState: () => useMyWindowManagerFold() };
 
 ## Tablet master-detail
 
-`SplitView` shows `primary` and `secondary` side by side from the `medium` width class, with a divider (`theme.colors.border`) and a primary width of `ratio` of the available width clamped to `minPrimary`..`maxPrimary` (default 0.35, 320 to 420). Below that width it shows one pane: the primary, or the secondary when `showSecondary` is set, with a back button when `onBack` is given.
+`SplitView` shows `primary` and `secondary` side by side from the `medium` width class, with a divider (`theme.colors.border`) and a primary width of `ratio` of the available width clamped to `minPrimary`..`maxPrimary` (default 0.35, 320 to 420). Below that width it shows one pane: the primary, or the secondary when `showSecondary` is set; a back button appears above the secondary pane only when `onBack` is also given.
 
 ```tsx
 <SplitView
