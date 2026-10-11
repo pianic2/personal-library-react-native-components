@@ -98,9 +98,9 @@ describe("PLRNUI-216 Link web href", () => {
     assert.equal("href" in external.props, false);
   });
 
-  it("a modified web click (ctrl, cmd, shift, middle button) is left to the browser: no preventDefault, no navigation, onPress still called", () => {
+  it("a modified web click (ctrl, cmd, shift, alt, middle button) is left to the browser: no preventDefault, no navigation, onPress still called", () => {
     platform.OS = "web";
-    const events: Array<Record<string, unknown>> = [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { button: 1 }];
+    const events: Array<Record<string, unknown>> = [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }];
     for (const modifiers of events) {
       let prevented = 0;
       let pressed = 0;

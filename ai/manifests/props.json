@@ -6414,7 +6414,7 @@
           "type": "string",
           "required": false,
           "default": null,
-          "description": "Accessibility label; defaults to the text of the children for text links."
+          "description": "Accessibility label. When omitted the platform reads the text of the children."
         },
         {
           "name": "activeContainerStyle",

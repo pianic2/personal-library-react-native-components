@@ -20,7 +20,7 @@ const HEIGHT: Record<LinkSize, number> = { sm: 32, md: 40, lg: 48 };
 const ALPHA = { rest: 1, pressedButton: 0.85, pressedText: 0.7, disabled: 0.5 } as const;
 
 /** The parts of a web click event that Link reads (a press from a screen reader or on native has none). */
-type WebClick = { preventDefault?: () => void; ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean; button?: number };
+type WebClick = { preventDefault?: () => void; ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean; altKey?: boolean; button?: number };
 
 export type LinkRouterAdapter = {
   navigate: (href: string) => void;
@@ -124,7 +124,7 @@ export const Link: React.FC<LinkProps> = ({
         if (disabled) return;
         if (Platform.OS === "web" && event) {
           // A modified click (new tab, new window, download) belongs to the browser: the anchor handles it.
-          if (event.ctrlKey || event.metaKey || event.shiftKey || (event.button !== undefined && event.button !== 0)) {
+          if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0)) {
             onPress?.();
             return;
           }
