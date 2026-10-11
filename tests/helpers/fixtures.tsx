@@ -39,6 +39,8 @@ import {
 } from "../../src";
 import { Slot } from "../../src/components/Slot/index.js";
 import { Label } from "../../src/components/Label/index.js";
+import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
+import { View } from "react-native";
 
 const noop = () => undefined;
 const items = [
@@ -86,6 +88,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </FormField>
   ),
   Heading: () => <Heading level={2}>Title</Heading>,
+  Icon: () => (
+    <IconProvider sets={{ default: createIconSet({ check: ({ size, color }) => <View style={{ width: size, height: size, backgroundColor: color }} /> }) }}>
+      <Icon name="check" label="Done" />
+    </IconProvider>
+  ),
   Input: () => <Input label="Name" value="Ada" onChangeText={noop} />,
   Label: () => <Label required>Name</Label>,
   Link: () => <Link href="/docs">Docs</Link>,
