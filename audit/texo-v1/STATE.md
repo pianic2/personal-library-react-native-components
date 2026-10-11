@@ -143,3 +143,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-135 (E3-03: MotionProvider and useMotionPreference consuming useReducedMotion) | #98 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: remove spent ownership exception arms for PLRNUI-121 and PLRNUI-167 after their merge) | #97 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions ai/manifests/props.json and tests/theme/theme-contract-v2.test.tsx for PLRNUI-137, breakpoint tokens redefine theme.breakpoints) | #99 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-171 (E3-08: layout transition helper over LayoutAnimation) | #101 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
