@@ -37,7 +37,7 @@ export interface NetworkState {
 }
 
 export interface NetworkApi {
-  /** Kept from 1.0-rc: the coarse asynchronous answer. */
+  /** Kept from 1.0-rc: the coarse asynchronous answer. Web and mock adapters read live; cached native adapters reflect their cache (null without a subscriber). */
   getStatus(): Promise<{ connected: boolean | null }>;
   /** The current state, synchronously (adapters cache it). */
   getState(): NetworkState;

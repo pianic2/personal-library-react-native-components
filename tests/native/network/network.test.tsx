@@ -214,6 +214,23 @@ describe("PLRNUI-178 network status", () => {
     off();
   });
 
+  it("a native listener registration that throws deactivates the in-flight read (no stale write after the reset)", async () => {
+    const expo = createExpoNetwork({
+      getNetworkStateAsync: async () => ({ isConnected: false, type: "none" }),
+      addNetworkStateListener: () => { throw new Error("no listener support"); },
+    });
+    assert.throws(() => expo.subscribe(() => undefined), /no listener support/);
+    await flush();
+    assert.deepEqual(expo.getState(), UNKNOWN_NETWORK);
+    const info = createNetInfoNetwork({
+      fetch: async () => ({ isConnected: false, isInternetReachable: false, type: "none" }),
+      addEventListener: () => { throw new Error("no listener support"); },
+    });
+    assert.throws(() => info.subscribe(() => undefined), /no listener support/);
+    await flush();
+    assert.deepEqual(info.getState(), UNKNOWN_NETWORK);
+  });
+
   it("calls every listener even if one throws, then rethrows the first error", () => {
     let push!: (s: NetworkState) => void;
     const api = createCachedNetwork((p) => { push = p; return () => undefined; });

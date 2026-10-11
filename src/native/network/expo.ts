@@ -30,9 +30,15 @@ export function createExpoNetwork(module: ExpoNetworkModuleLike): NetworkApi {
       },
       () => undefined
     );
-    const sub = module.addNetworkStateListener?.((s) => {
-      if (active) push(fromExpo(s));
-    });
+    let sub: { remove(): void } | undefined;
+    try {
+      sub = module.addNetworkStateListener?.((s) => {
+        if (active) push(fromExpo(s));
+      });
+    } catch (error) {
+      active = false; // the in-flight read must not write into a cache that start() is about to reset
+      throw error;
+    }
     return () => {
       active = false;
       sub?.remove();

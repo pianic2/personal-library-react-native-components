@@ -27,9 +27,15 @@ export function createNetInfoNetwork(module: NetInfoModuleLike): NetworkApi {
       },
       () => undefined
     );
-    const off = module.addEventListener((s) => {
-      if (active) push(fromNetInfo(s));
-    });
+    let off: () => void;
+    try {
+      off = module.addEventListener((s) => {
+        if (active) push(fromNetInfo(s));
+      });
+    } catch (error) {
+      active = false; // the in-flight read must not write into a cache that start() is about to reset
+      throw error;
+    }
     return () => {
       active = false;
       off();
