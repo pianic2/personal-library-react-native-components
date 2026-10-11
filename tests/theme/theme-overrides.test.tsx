@@ -174,3 +174,52 @@ describe("theme override merge contract", () => {
     );
   });
 });
+
+describe("theme override merge contract: strict mismatches (PLRNUI-189)", () => {
+  const globals = globalThis as { __DEV__?: boolean };
+  const originalDev = globals.__DEV__;
+  const originalWarn = console.warn;
+  const restore = () => {
+    globals.__DEV__ = originalDev;
+    console.warn = originalWarn;
+  };
+
+  it("warns once per rejected branch in production and leaves the base theme untouched", () => {
+    const warnings: string[] = [];
+    console.warn = (...args: unknown[]) => void warnings.push(String(args[0]));
+    globals.__DEV__ = false;
+    try {
+      const snapshot = JSON.stringify(defaultTheme);
+      createTheme({
+        colors: null,
+        radius: "invalid",
+        size: { height: [] },
+        components: { button: [], input: null, card: "invalid" },
+      } as unknown as Partial<Theme>);
+      assert.equal(warnings.length, 6);
+      assert.ok(warnings.every((message) => message.startsWith("[ui/createTheme] override ")));
+      assert.equal(JSON.stringify(defaultTheme), snapshot);
+    } finally {
+      restore();
+    }
+  });
+
+  it("throws a TypeError in dev for the same forced-invalid override", () => {
+    globals.__DEV__ = true;
+    try {
+      assert.throws(() => createTheme({ radius: "invalid" } as unknown as Partial<Theme>), TypeError);
+    } finally {
+      restore();
+    }
+  });
+
+  it("an array override replaces an array token instead of being ignored", () => {
+    const base = { ...defaultTheme, tags: ["a", "b"] } as unknown as Theme;
+    const theme = createTheme({ tags: ["z"] } as unknown as Partial<Theme>, base) as unknown as { tags: string[] };
+    assert.deepEqual(theme.tags, ["z"]);
+  });
+
+  it("createTheme(undefined) equals the default theme by value", () => {
+    assert.deepEqual(createTheme(undefined), defaultTheme);
+  });
+});
