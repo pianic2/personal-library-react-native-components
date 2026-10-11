@@ -297,3 +297,14 @@ PLRNUI-38 decides that theme persistence must not make AsyncStorage a mandatory 
 The UI library owns the stable adapter contract and safe default behavior. The consumer application owns AsyncStorage, MMKV, SecureStore, custom storage, or the decision to use no persistence.
 
 This preserves package consumability, keeps native runtime dependencies under governance, and supports theme persistence as an additive opt-in capability.
+
+## 18. Implementation update (PLRNUI-193)
+
+The decision above is unchanged: persistence is adapter-based and the library imports no storage package (`grep -r async-storage src` finds nothing; a test guards it). This section records what the implementation does, where it differs from the proposed contract in section 5.
+
+- **Two types instead of one.** `ThemeMode` stays `'light' | 'dark'` (the resolved mode a theme is built for). The user-facing choice is `ThemePreference = ThemeMode | 'system'`. The section 5 sketch (`ThemeMode` including `'system'`) is superseded.
+- **Props.** `ThemeProvider` takes `preference` (initial choice, wins over `initialMode`, which is kept), `preset` (a `defineTheme` preset), `density`, and keeps `themeOverrides`, `storage`, `storageKey` and `persistTheme`. `colorScheme` replaces the OS scheme for previews and tests.
+- **System mode.** `preference: 'system'` resolves through React Native's `useColorScheme` and follows live changes. An unknown scheme resolves to `light`.
+- **Stored value.** A JSON object `{ "preference", "presetId", "density" }`. The legacy plain `light` / `dark` strings are still read. Anything else (including a plain `system`, malformed JSON, an unknown preference) is ignored; an unknown density is ignored on its own. `presetId` is the id carried by the theme (`theme.preset`); it is written for tools and for a later registry of presets, and is not used to choose a preset on read, because the app supplies the preset object.
+- **Hydration and `ready`.** `useTheme().ready` is `false` from the first render until the adapter has answered (a value, `null`, an invalid value or an error), then `true`; without persistence it is always `true`. A choice made before the read finishes is not overwritten by it. An adapter error leaves the defaults in place.
+- **ThemeScope.** Overrides `preference`, `preset`, `density` and `themeOverrides` for a sub-tree; the rest is inherited. Controls used inside a scope (`setMode`, `toggleTheme`, `setPreference`) act on the enclosing provider.

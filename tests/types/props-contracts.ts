@@ -257,7 +257,7 @@ export type ThemeContracts = [
   Expect<
     Equal<
       keyof ThemeProviderProps,
-      "initialMode" | "children" | "themeOverrides" | "storage" | "storageKey" | "persistTheme"
+      "initialMode" | "preference" | "preset" | "density" | "children" | "themeOverrides" | "storage" | "storageKey" | "persistTheme" | "systemScheme"
     >
   >,
   Expect<Equal<RequiredKeys<ThemeProviderProps>, "children">>,
