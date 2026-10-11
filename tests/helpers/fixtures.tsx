@@ -37,6 +37,7 @@ import {
   Tooltip,
   TopBar,
 } from "../../src";
+import { Slot } from "../../src/components/Slot/index.js";
 
 const noop = () => undefined;
 const items = [
@@ -129,6 +130,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     />
   ),
   SideBar: () => <SideBar />,
+  Slot: () => (
+    <Slot accessibilityRole="text">
+      <Text>Slot child</Text>
+    </Slot>
+  ),
   Small: () => <Small>Caption</Small>,
   Spinner: () => <Spinner />,
   Switch: () => <Switch label="Enabled" value onChange={noop} />,
