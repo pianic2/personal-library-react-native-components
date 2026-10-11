@@ -92,5 +92,5 @@ export const dividerWrongThickness: DividerProps = { thickness: "thin" };
 export const progressWrongValue: ProgressBarProps = { progress: "half" };
 // @ts-expect-error Spinner size is a closed union.
 export const spinnerWrongSize: SpinnerProps = { size: "huge" };
-// @ts-expect-error Input requires label.
-export const inputMissingLabel: InputProps = { value: "x" };
+// @ts-expect-error Input size is a closed union (label is optional since PLRNUI-180).
+export const inputWrongSize: InputProps = { size: "huge" };

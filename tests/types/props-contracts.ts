@@ -150,7 +150,7 @@ export type BoxHas = Expect<
 export type ColumnHas = Expect<HasKeys<ColumnProps, "gap" | "flex" | "align" | "justify" | "children">>;
 export type HeadingHas = Expect<HasKeys<HeadingProps, "level" | "children">>;
 export type InputHas = Expect<
-  HasKeys<InputProps, "label" | "size" | "error" | "helperText" | "editable" | "leftIcon" | "rightIcon">
+  HasKeys<InputProps, "label" | "size" | "error" | "helperText" | "editable" | "leftIcon" | "rightIcon" | "containerStyle">
 >;
 export type PasswordInputHas = Expect<
   HasKeys<
@@ -182,7 +182,7 @@ export type RequiredContracts = [
   Expect<Equal<RequiredKeys<ColumnProps>, "children">>,
   Expect<Equal<RequiredKeys<RowProps>, "children">>,
   Expect<Equal<RequiredKeys<BadgeProps>, "children">>,
-  Expect<Equal<RequiredKeys<InputProps>, "label">>,
+  Expect<Equal<RequiredKeys<InputProps>, never>>,
   Expect<Equal<RequiredKeys<AlertProps>, never>>,
   Expect<Equal<RequiredKeys<BottomBarProps>, never>>,
   Expect<Equal<RequiredKeys<CardProps>, never>>,
@@ -191,11 +191,11 @@ export type RequiredContracts = [
   Expect<Equal<RequiredKeys<SideBarProps>, never>>,
   Expect<Equal<RequiredKeys<SpinnerProps>, never>>,
   Expect<Equal<RequiredKeys<TextGroupProps>, "children">>,
-  Expect<Equal<RequiredKeys<TextareaProps>, "label">>,
+  Expect<Equal<RequiredKeys<TextareaProps>, never>>,
   Expect<Equal<RequiredKeys<TopBarProps>, never>>,
   Expect<Equal<RequiredKeys<TextProps>, never>>,
   Expect<Equal<RequiredKeys<BoxProps>, never>>,
-  Expect<Equal<RequiredKeys<PasswordInputProps>, "label">>,
+  Expect<Equal<RequiredKeys<PasswordInputProps>, never>>,
 ];
 
 // Components whose props interface is not exported are pinned through their component signature.

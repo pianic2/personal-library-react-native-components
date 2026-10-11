@@ -30,7 +30,8 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "The label and helper text are announced as the accessible name and hint"
+    "The label (or an explicit accessibilityLabel) and the helper text are announced as the accessible name and hint",
+    "label is optional; without label and accessibilityLabel a dev warning is logged"
   ],
   "variants": {
     "size": [
@@ -47,7 +48,8 @@ export const meta: ComponentMeta = {
     "disabled"
   ],
   "platformNotes": [
-    "Unknown props leak to the underlying TextInput"
+    "Unknown props leak to the underlying TextInput, except label, which is consumed",
+    "containerStyle styles the wrapper View"
   ],
   "examples": [
     {

@@ -5291,6 +5291,13 @@
           "description": "Setting to false prevents direct children of the view from being removed\nfrom the native view hierarchy, similar to the effect of setting\n`collapsable={false}` on each child."
         },
         {
+          "name": "containerStyle",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the wrapper View around the label, the field and the helper text."
+        },
+        {
           "name": "contextMenuHidden",
           "type": "boolean",
           "required": false,
@@ -5520,9 +5527,9 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": null,
-          "description": ""
+          "description": "Visible label. Optional (for example inside FormField, which renders the label itself); without it give an `accessibilityLabel`."
         },
         {
           "name": "leftIcon",
@@ -7760,6 +7767,13 @@
           "description": "Setting to false prevents direct children of the view from being removed\nfrom the native view hierarchy, similar to the effect of setting\n`collapsable={false}` on each child."
         },
         {
+          "name": "containerStyle",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the wrapper View around the label, the field and the helper text."
+        },
+        {
           "name": "contextMenuHidden",
           "type": "boolean",
           "required": false,
@@ -8003,9 +8017,9 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": null,
-          "description": ""
+          "description": "Visible label. Optional (for example inside FormField, which renders the label itself); without it give an `accessibilityLabel`."
         },
         {
           "name": "leftIcon",
@@ -13328,6 +13342,13 @@
           "description": "Setting to false prevents direct children of the view from being removed\nfrom the native view hierarchy, similar to the effect of setting\n`collapsable={false}` on each child."
         },
         {
+          "name": "containerStyle",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the wrapper View around the label, the field and the helper text."
+        },
+        {
           "name": "contextMenuHidden",
           "type": "boolean",
           "required": false,
@@ -13557,9 +13578,9 @@
         {
           "name": "label",
           "type": "string",
-          "required": true,
+          "required": false,
           "default": null,
-          "description": ""
+          "description": "Visible label. Optional (for example inside FormField, which renders the label itself); without it give an `accessibilityLabel`."
         },
         {
           "name": "leftIcon",
