@@ -72,6 +72,16 @@ export interface AccessibilityApi {
   subscribe(listener: (preferences: AccessibilityPreferences) => void): () => void;
 }
 
+/** The OS colour scheme. `null` means unknown (no platform answer yet, SSR, or a host without `Appearance`). */
+export type ColorSchemeValue = "light" | "dark" | null;
+
+export interface AppearanceApi {
+  /** The current colour scheme, synchronously (adapters cache it). */
+  getColorScheme(): ColorSchemeValue;
+  /** Calls `listener` on every change of the colour scheme; returns the function that removes it. */
+  subscribe(listener: (scheme: ColorSchemeValue) => void): () => void;
+}
+
 /**
  * Every capability the library knows, keyed by id. The map is closed in 1.0: it is an interface of this package and is
  * not meant to be extended by module augmentation (the ids are semver surface). A new capability is a minor release.
@@ -85,6 +95,7 @@ export interface CapabilityMap {
   network: NetworkApi;
   appState: AppStateApi;
   accessibility: AccessibilityApi;
+  appearance: AppearanceApi;
 }
 
 export type CapabilityId = keyof CapabilityMap;

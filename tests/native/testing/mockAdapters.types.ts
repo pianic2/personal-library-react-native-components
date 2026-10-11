@@ -15,6 +15,7 @@ export const expectedIds = {
   network: true,
   appState: true,
   accessibility: true,
+  appearance: true,
 } as const satisfies Record<CapabilityId, true>;
 
 export type IdsMatch = Expect<Equal<keyof typeof expectedIds, CapabilityId>>;

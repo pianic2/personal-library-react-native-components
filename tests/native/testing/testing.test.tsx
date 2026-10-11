@@ -149,7 +149,7 @@ describe("PLRNUI-146 native testing helpers", () => {
   });
 
   it("a denied permission rejects every method of that capability, biometric included", async () => {
-    const calls: Record<Exclude<CapabilityId, "appState" | "accessibility">, () => Promise<unknown>[]> = {
+    const calls: Record<Exclude<CapabilityId, "appState" | "accessibility" | "appearance">, () => Promise<unknown>[]> = {
       clipboard: () => { const a = mocks.adapters.clipboard.api; return [a.getString(), a.setString("x")]; },
       haptics: () => { const a = mocks.adapters.haptics.api; return [a.impact(), a.notification("success"), a.selection()]; },
       share: () => [mocks.adapters.share.api.share({ message: "m" })],
@@ -158,7 +158,7 @@ describe("PLRNUI-146 native testing helpers", () => {
       network: () => [mocks.adapters.network.api.getStatus()], // getState/subscribe are synchronous: see the sync-throw test
     };
     const mocks = createMockAdapters({ share: { share: async () => "dismissed" } });
-    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState" | "accessibility"> => x !== "appState" && x !== "accessibility")) {
+    for (const id of allIds.filter((x): x is Exclude<CapabilityId, "appState" | "accessibility" | "appearance"> => x !== "appState" && x !== "accessibility" && x !== "appearance")) {
       await Promise.all(calls[id]()); // granted: resolves
       mocks.setPermission(id, "denied");
       const results = await Promise.allSettled(calls[id]());
