@@ -72,7 +72,7 @@ export type RequiredKeys<T> = {
 }[keyof T];
 
 // Standalone prop interfaces: the full key set is pinned, so adding, removing or renaming a prop fails here.
-export type AlertKeys = Expect<Equal<keyof AlertProps, "title" | "variant" | "message" | "actionLabel" | "onAction">>;
+export type AlertKeys = Expect<Equal<keyof AlertProps, "title" | "variant" | "message" | "actionLabel" | "onAction" | "onDismiss" | "dismissLabel">>;
 export type BottomBarKeys = Expect<Equal<keyof BottomBarProps, "maxItems">>;
 export type ButtonKeys = Expect<
   Equal<keyof ButtonProps, "icon" | "label" | "onPress" | "variant" | "size" | "disabled">

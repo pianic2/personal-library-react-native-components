@@ -19,7 +19,9 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No role=alert or live region yet: screen readers do not announce it when it appears"
+    "accessibilityRole alert; accessibilityLiveRegion assertive for the error variant and polite for the others, so screen readers announce it when it appears",
+    "Text and close button use the text token (textInverted or textPrimary) with the higher WCAG contrast on the variant background",
+    "onDismiss adds a close button (44pt target, accessibilityLabel from dismissLabel, default Dismiss)"
   ],
   "variants": {
     "variant": [
@@ -31,7 +33,8 @@ export const meta: ComponentMeta = {
     ]
   },
   "states": [
-    "default"
+    "default",
+    "dismissible"
   ],
   "platformNotes": [],
   "examples": [

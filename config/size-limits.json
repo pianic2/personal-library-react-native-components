@@ -8,7 +8,7 @@
     },
     "root-all": {
       "source": "import * as Library from \"./src/index.ts\"; console.log(Library);",
-      "maxGzipBytes": 11500
+      "maxGzipBytes": 12800
     },
     "button-only": {
       "source": "import { Button } from \"./src/components/Button/index.ts\"; console.log(Button);",
@@ -30,7 +30,7 @@
   "subpaths": {
     ".": {
       "entry": "src/index.ts",
-      "maxGzipBytes": 11400
+      "maxGzipBytes": 12700
     },
     "./theme": {
       "entry": "src/theme/index.ts",

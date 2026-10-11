@@ -14,6 +14,13 @@
           "description": ""
         },
         {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": false,
+          "default": "Dismiss",
+          "description": "Accessibility label of the close button. Defaults to \"Dismiss\"."
+        },
+        {
           "name": "message",
           "type": "string",
           "required": false,
@@ -26,6 +33,13 @@
           "required": false,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "onDismiss",
+          "type": "() => void",
+          "required": false,
+          "default": null,
+          "description": "Shows a close button that calls this; the Alert does not hide itself, the caller decides."
         },
         {
           "name": "title",
