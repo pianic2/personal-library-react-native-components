@@ -9033,6 +9033,13 @@
       "status": "prototype",
       "props": [
         {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Announced by assistive technology."
+        },
+        {
           "name": "color",
           "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\"",
           "required": false,
@@ -9047,11 +9054,32 @@
           ]
         },
         {
+          "name": "indeterminate",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Unknown duration: a segment sweeps along the track (a static segment under reduced motion). `progress` is ignored."
+        },
+        {
           "name": "progress",
           "type": "number",
           "required": false,
           "default": null,
-          "description": ""
+          "description": "0–100; clamped. `undefined` (or not finite) renders an empty bar, unless `indeterminate`."
+        },
+        {
+          "name": "tone",
+          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"danger\"",
+          "required": false,
+          "default": null,
+          "description": "Colour of the fill. Default `\"primary\"`.",
+          "values": [
+            "primary",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
         }
       ]
     },
@@ -10682,6 +10710,14 @@
     "Spinner": {
       "status": "demo",
       "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Announced by assistive technology while the spinner is shown. Default `\"Loading\"`.",
+          "defaultExpression": "DEFAULT_LABEL"
+        },
         {
           "name": "size",
           "type": "\"sm\" | \"md\" | \"lg\"",
