@@ -21,7 +21,8 @@ export const meta: ComponentMeta = {
   "a11y": [
     "accessibilityRole alert; accessibilityLiveRegion assertive for the error variant and polite for the others, so screen readers announce it when it appears",
     "Text and close button use the text token (textInverted or textPrimary) with the higher WCAG contrast on the variant background",
-    "onDismiss adds a close button (44pt target, accessibilityLabel from dismissLabel, default Dismiss)"
+    "onDismiss adds a close button (44pt target, accessibilityLabel from dismissLabel, default Dismiss)",
+    "soft and outline use textPrimary on the tinted surface / the page; the icon slot is decorative (hidden from assistive technology); the outline warning border is only about 2:1 on white, so severity never relies on colour alone"
   ],
   "variants": {
     "variant": [
@@ -30,6 +31,11 @@ export const meta: ComponentMeta = {
       "success",
       "warning",
       "error"
+    ],
+    "appearance": [
+      "solid",
+      "soft",
+      "outline"
     ]
   },
   "states": [

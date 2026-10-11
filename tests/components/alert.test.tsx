@@ -135,3 +135,123 @@ describe("PLRNUI-209 Alert rendering", () => {
     assert.deepEqual(calls, []);
   });
 });
+
+// --- PLRNUI-230: appearance, icon and actions ---------------------------------------------------------------------------
+
+const hexToRgb = (hex: string): [number, number, number] => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)) as [number, number, number];
+const blend = (base: string, over: string, alpha: number): string =>
+  "#" +
+  hexToRgb(base)
+    .map((channel, i) => Math.round(channel * (1 - alpha) + hexToRgb(over)[i]! * alpha).toString(16).padStart(2, "0"))
+    .join("");
+const variantColors = (mode: Mode) => {
+  const { colors } = themeOf(mode);
+  return { primary: colors.primary, info: colors.info, success: colors.success, warning: colors.warning, error: colors.error } as const;
+};
+
+describe("PLRNUI-230 Alert appearance", () => {
+  it("solid is the default and fills with the variant colour", () => {
+    const solid = flatten(rootOf(render(<Alert variant="success" message="x" appearance="solid" />)).props.style);
+    const implicit = flatten(rootOf(render(<Alert variant="success" message="x" />)).props.style);
+    assert.equal(solid.backgroundColor, variantColors("light").success);
+    assert.deepEqual(implicit, solid);
+  });
+
+  it("soft sits on the surface with a variant tint layer that does not take touches", () => {
+    const { colors } = themeOf("light");
+    const r = render(<Alert variant="error" message="x" appearance="soft" />);
+    const root = flatten(rootOf(r).props.style);
+    assert.equal(root.backgroundColor, colors.surface);
+    assert.equal(root.overflow, "hidden");
+    const tint = r.root.findAllByType(host("View")).find((n) => n.props.pointerEvents === "none")!;
+    assert.equal(flatten(tint.props.style).backgroundColor, colors.error);
+    assert.equal(flatten(tint.props.style).opacity, 0.12);
+    assert.equal(flatten(tint.props.style).position, "absolute");
+  });
+
+  it("outline has no fill and a border in the variant colour", () => {
+    const r = render(<Alert variant="warning" message="x" appearance="outline" />);
+    const root = flatten(rootOf(r).props.style);
+    assert.equal(root.backgroundColor, undefined);
+    assert.equal(root.borderWidth, 1);
+    assert.equal(root.borderColor, variantColors("light").warning);
+  });
+
+  it("text on each appearance and variant reaches WCAG AA in light and dark (the soft tint is blended)", () => {
+    for (const mode of ["light", "dark"] as const) {
+      const { colors } = themeOf(mode);
+      const variants5 = variantColors(mode);
+      for (const variant of variants) {
+        const effective = {
+          solid: variants5[variant],
+          soft: blend(colors.surface, variants5[variant], 0.12),
+          outline: colors.background,
+        } as const;
+        for (const appearance of ["solid", "soft", "outline"] as const) {
+          const r = render(<Alert variant={variant} appearance={appearance} title="Title" message="Message" onDismiss={() => undefined} />, mode);
+          for (const node of r.root.findAllByType(host("Text"))) {
+            const color = flatten(node.props.style).color;
+            const ratio = contrastRatio(effective[appearance], color);
+            assert.ok(ratio >= 4.5, `${mode} ${variant} ${appearance}: ${color} on ${effective[appearance]} is ${ratio.toFixed(2)}:1`);
+          }
+        }
+      }
+    }
+  });
+
+  it("keeps the role and the live region for every appearance", () => {
+    for (const appearance of ["solid", "soft", "outline"] as const) {
+      const root = rootOf(render(<Alert variant="error" message="x" appearance={appearance} />)).props;
+      assert.equal(root.accessibilityRole, "alert");
+      assert.equal(root.accessibilityLiveRegion, "assertive");
+    }
+  });
+});
+
+describe("PLRNUI-230 Alert icon and actions", () => {
+  it("renders the icon before the text and hides it from assistive technology", () => {
+    const r = render(<Alert message="Saved" icon={React.createElement("Text", { testID: "icon" }, "i")} />);
+    const wrapper = r.root.findAll((n) => n.type === host("View") && n.props.accessibilityElementsHidden === true)[0]!;
+    assert.equal(wrapper.props.importantForAccessibility, "no-hide-descendants");
+    assert.ok(wrapper.findAll((n) => n.props.testID === "icon").length > 0);
+    const order = JSON.stringify(r.toJSON());
+    assert.ok(order.indexOf("icon") < order.indexOf("Saved"));
+    assert.equal(r.root.findAll((n) => n.type === host("View") && n.props.accessibilityElementsHidden === true).length, 1);
+  });
+
+  it("renders the actions slot after the actionLabel button, both working", () => {
+    let acted = 0;
+    let extra = 0;
+    const r = render(
+      <Alert
+        message="x"
+        actionLabel="Undo"
+        onAction={() => void (acted += 1)}
+        actions={React.createElement("Pressable", { accessibilityRole: "button", accessibilityLabel: "Details", onPress: () => void (extra += 1) })}
+      />,
+    );
+    const labels = r.root.findAllByType(host("Pressable")).map((n) => n.props.accessibilityLabel);
+    assert.deepEqual(labels, ["Undo", "Details"]);
+    act(() => r.root.findAllByType(host("Pressable"))[0]!.props.onPress());
+    act(() => r.root.findAllByType(host("Pressable"))[1]!.props.onPress());
+    assert.deepEqual([acted, extra], [1, 1]);
+  });
+
+  it("the actions slot works without actionLabel, and nothing extra renders without actions", () => {
+    const withActions = render(<Alert message="x" actions={React.createElement("Pressable", { accessibilityLabel: "Only" })} />);
+    assert.deepEqual(withActions.root.findAllByType(host("Pressable")).map((n) => n.props.accessibilityLabel), ["Only"]);
+    const plain = render(<Alert message="x" />);
+    assert.equal(plain.root.findAllByType(host("Pressable")).length, 0);
+    assert.equal(plain.root.findAllByType(host("View")).length, render(<Alert message="x" />).root.findAllByType(host("View")).length);
+  });
+});
+
+describe("PLRNUI-230 Alert props are backwards compatible", () => {
+  it("every previous prop still type-checks and the new ones are optional", () => {
+    const previous: import("../../src").AlertProps = { title: "t", variant: "info", message: "m", actionLabel: "a", onAction: () => undefined, onDismiss: () => undefined, dismissLabel: "d" };
+    const minimal: import("../../src").AlertProps = {};
+    // @ts-expect-error appearance is a closed union
+    const bad: import("../../src").AlertProps = { appearance: "filled" };
+    void [previous, minimal, bad];
+  });
+});

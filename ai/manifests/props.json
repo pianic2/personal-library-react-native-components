@@ -14,11 +14,37 @@
           "description": ""
         },
         {
+          "name": "actions",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Extra actions, rendered after the `actionLabel` button; the caller supplies the controls."
+        },
+        {
+          "name": "appearance",
+          "type": "\"solid\" | \"soft\" | \"outline\"",
+          "required": false,
+          "default": "solid",
+          "description": "`solid` (default) fills with the variant colour; `soft` tints the surface; `outline` draws a border on the page.",
+          "values": [
+            "solid",
+            "soft",
+            "outline"
+          ]
+        },
+        {
           "name": "dismissLabel",
           "type": "string",
           "required": false,
           "default": "Dismiss",
           "description": "Accessibility label of the close button. Defaults to \"Dismiss\"."
+        },
+        {
+          "name": "icon",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "A leading icon. Decorative: it is hidden from assistive technology, the role and the text carry the meaning."
         },
         {
           "name": "message",
@@ -1766,7 +1792,7 @@
         },
         {
           "name": "bg",
-          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\" | \"secondary\" | \"primaryHover\" | \"primaryActive\" | \"secondaryHover\" | \"secondaryActive\" | \"accent\" | \"background\" | \"surface\" | \"surfaceElevated\" | \"textPrimary\" | \"textSecondary\" | \"textMuted\" | \"textInverted\" | \"border\" | \"divider\" | \"outline\" | \"disabled\" | \"disabledBg\" | \"overlay\" | \"backdrop\" | \"codeBorder\" | \"codeBg\" | \"codeText\"",
+          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\" | \"outline\" | \"secondary\" | \"primaryHover\" | \"primaryActive\" | \"secondaryHover\" | \"secondaryActive\" | \"accent\" | \"background\" | \"surface\" | \"surfaceElevated\" | \"textPrimary\" | \"textSecondary\" | \"textMuted\" | \"textInverted\" | \"border\" | \"divider\" | \"disabled\" | \"disabledBg\" | \"overlay\" | \"backdrop\" | \"codeBorder\" | \"codeBg\" | \"codeText\"",
           "required": false,
           "default": null,
           "description": "",
@@ -2513,7 +2539,7 @@
         },
         {
           "name": "variant",
-          "type": "\"default\" | \"outline\" | \"elevated\"",
+          "type": "\"outline\" | \"default\" | \"elevated\"",
           "required": false,
           "default": "default",
           "description": "",
