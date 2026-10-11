@@ -167,3 +167,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-233 (E4-04: Icon component with pluggable icon-set registry) | #121 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions ai/manifests/props.json for PLRNUI-180, PLRNUI-209, PLRNUI-216 and PLRNUI-218, prop changes of Input, Alert, Link and Text; removes the spent PLRNUI-189, PLRNUI-210 and PLRNUI-233 arms) | #122 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-180 (E1-12: Input label leak, root wrapper and optional label) | #123 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (follow-up: ownership exception config/size-limits.json for PLRNUI-209, Alert dismiss, live region and contrast check add about 370 B gzip to the root entry) | #125 | PR open (row committed pre-merge, see ADR 0020 Branching) |
