@@ -49,13 +49,14 @@ const TextWithRef = Text as React.ComponentType<TextProps & { ref?: React.Ref<un
 const textOf = (r: TestRenderer.ReactTestRenderer) => r.root.findByType(host("Text"));
 
 describe("PLRNUI-104 Text", () => {
-  it("defaults to medium, regular weight, the primary colour and justified alignment", () => {
+  it("defaults to medium, regular weight, the primary colour and the platform text alignment", () => {
     const { theme, colors } = themeOf();
     const style = flatten(textOf(render(<Text>hello</Text>)).props.style);
     assert.equal(style.fontSize, theme.typography.fontSize.md);
     assert.equal(style.fontWeight, theme.typography.fontWeight.regular);
     assert.equal(style.color, colors.textPrimary);
-    assert.equal(style.textAlign, "justify");
+    assert.equal("textAlign" in style, false, "no textAlign by default (it used to be justify)");
+    assert.equal(style.fontFamily, theme.typography.fontFamily.regular);
     assert.equal(style.lineHeight, theme.typography.fontSize.md * theme.typography.lineHeight.normal);
   });
 
