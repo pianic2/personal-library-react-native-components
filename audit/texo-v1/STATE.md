@@ -136,3 +136,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (follow-up: ownership exception ai/manifests/props.json for PLRNUI-144, generated manifest must be regenerated when Theme changes; flagged to the PO) | #90 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: remove spent ownership exception arms for PLRNUI-134, 144, 172, 178, 202 after their merge) | #91 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-103 (E12-01: fix test runner glob and add coverage reporting) | #92 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-121 (E3-01: define motion tokens: duration, easing, spring, stagger, distance) | #94 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |

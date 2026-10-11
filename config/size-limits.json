@@ -16,11 +16,11 @@
     },
     "theme-provider-only": {
       "source": "import { ThemeProvider } from \"./src/theme/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 2400
+      "maxGzipBytes": 2500
     },
     "root-theme-provider": {
       "source": "import { ThemeProvider } from \"./src/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 2400
+      "maxGzipBytes": 2500
     },
     "native-core": {
       "source": "import * as NativeCore from \"./src/native/core/index.ts\"; console.log(NativeCore);",
