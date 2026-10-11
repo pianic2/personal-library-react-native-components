@@ -175,3 +175,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-149 (E3-05: Presence and enter/exit transition presets) | #129 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception for PLRNUI-219, props manifest, type contracts and Link accessibilityRole/selected for the bar tab semantics; removes the spent PLRNUI-180 and PLRNUI-218 arms) | #130 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-219 (E1-27: TopBar and BottomBar tokens, safe-area insets, navigation and tab semantics) | #131 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (follow-up: ownership exceptions for PLRNUI-192 and PLRNUI-214, props manifest and type contracts for the toggle and progress props, root bundle budget for the toggles; removes the spent PLRNUI-219 arm) | #133 | PR open (row committed pre-merge, see ADR 0020 Branching) |
