@@ -152,3 +152,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-173 (E10-05: ResponsiveProvider for breakpoint and size class overrides) | #105 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-143 (E3-04: animation primitives: useAnimatedValue and animate() honoring tokens) | #108 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exception src/motion/MotionProvider.tsx for PLRNUI-143, swappable motion engine through a MotionProvider prop; removes the spent PLRNUI-145 arm) | #107 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-157 (E3-06: usePressFeedback hook) | #109 | merged into texo/v1 after green CI and review PASS (row committed pre-merge, see ADR 0020 Branching) |
