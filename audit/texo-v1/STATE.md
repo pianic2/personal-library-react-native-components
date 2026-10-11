@@ -161,3 +161,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-241 (E12-14: test-coverage matrix report) | #115 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-126 (E12-10: render-count performance baseline tests) | #116 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-104 (E12-02: per-component behavior tests for layout, typography and surfaces) | #117 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-189 (E2-07: defineTheme composition and strict createTheme merge) | #119 | PR open (row committed pre-merge, see ADR 0020 Branching) |
