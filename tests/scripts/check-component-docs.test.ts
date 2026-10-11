@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
@@ -107,7 +107,8 @@ describe("PLRNUI-199 component docs lint", () => {
   it("runs on the repository in report-only mode and lists a page per problem", () => {
     const result = spawnSync(process.execPath, [cli], { cwd: root, encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /36 component pages; \d+ with problems \(report-only/);
+    const components = readdirSync(join(root, "src", "components"), { withFileTypes: true }).filter((e) => e.isDirectory()).length;
+    assert.match(result.stdout, new RegExp(`${components} component pages; \\d+ with problems \\(report-only`));
   });
 
   it("exits 2 on usage errors, unreadable roots and a flag used as the root", () => {

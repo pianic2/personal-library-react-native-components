@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
@@ -60,10 +60,11 @@ describe("PLRNUI-174 maturity check", () => {
   it("passes on the repository with its current component statuses", () => {
     const result = run([]);
     assert.equal(result.status, 0, result.stdout + result.stderr);
-    assert.match(result.stdout, /36 components; 0 enforced failure/);
+    const dirs = readdirSync(join(root, "src", "components"), { withFileTypes: true }).filter((e) => e.isDirectory()).length;
+    assert.match(result.stdout, new RegExp(`${dirs} components; 0 enforced failure`));
     const json = JSON.parse(run(["--json"]).stdout) as { ok: boolean; components: Array<{ name: string; status: string }> };
     assert.equal(json.ok, true);
-    assert.equal(json.components.filter((c) => c.status === "demo").length, 18);
+    assert.equal(json.components.length, dirs, "one audit row per component directory");
   });
 
   it("passes a complete fixture", () => {

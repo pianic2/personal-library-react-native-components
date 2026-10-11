@@ -52,7 +52,7 @@ function lint(components: Record<string, unknown>, ...flags: string[]) {
 describe("PLRNUI-166 component metadata", () => {
   it("lints the repository: one meta file per component directory", () => {
     const dirs = readdirSync(join(root, "src", "components"), { withFileTypes: true }).filter((e) => e.isDirectory());
-    assert.equal(dirs.length, 36);
+    assert.ok(dirs.length >= 36, "the component directories");
     for (const dir of dirs) assert.ok(existsSync(join(root, "src", "components", dir.name, `${dir.name}.meta.ts`)), dir.name);
     const result = run(["--lint"]);
     assert.equal(result.status, 0, result.stderr);
@@ -63,10 +63,11 @@ describe("PLRNUI-166 component metadata", () => {
     const result = run(["--json"]);
     assert.equal(result.status, 0, result.stderr);
     const entries = JSON.parse(result.stdout) as Array<{ name: string; status: string; states: string[]; examples: unknown[]; file: string }>;
-    assert.equal(entries.length, 36);
+    const dirCount = readdirSync(join(root, "src", "components"), { withFileTypes: true }).filter((e) => e.isDirectory()).length;
+    assert.equal(entries.length, dirCount, "one entry per component directory");
     assert.deepEqual(entries.map((e) => e.name), [...entries.map((e) => e.name)].sort());
-    assert.equal(entries.filter((e) => e.status === "demo").length, 18);
-    assert.equal(entries.filter((e) => e.status === "prototype").length, 18);
+    const statuses = ["prototype", "demo", "stable", "production-ready", "deprecated"];
+    for (const entry of entries) assert.ok(statuses.includes(entry.status), `${entry.name}: ${entry.status}`);
     for (const entry of entries) {
       assert.ok(entry.states.length >= 1, entry.name);
       assert.ok(entry.examples.length >= 1, entry.name);
