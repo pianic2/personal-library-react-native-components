@@ -42,7 +42,26 @@ Props:
 - `pathname: string`
 - `navigate: (href: string) => void`
 
+## Usage
+
+```tsx
+<NavProvider items={items} pathname={pathname} navigate={navigate} logo={<Logo />}>
+  <TopBar />
+</NavProvider>
+
+function CurrentTitle() {
+  const pathname = useNavPathname();
+  return <Text>{pathname}</Text>;
+}
+```
+
 ## Hook
 
-- `useNav()` — **beta**; throws if used outside `NavProvider`.
-- `useNavigate()` — **experimental**; root-visible but provisional and not recommended as a stable production dependency.
+- `useNav()` — **beta**; returns `{ items, logo, pathname, navigate }` and throws `useNav must be used inside <NavProvider>` outside the provider.
+- `useNavItems()` — the `NavItem[]`; throws outside the provider.
+- `useNavLogo()` — the `logo` node (`undefined` when none was given); throws outside the provider.
+- `useNavPathname()` — the current `pathname`; throws outside the provider.
+- `useNavigate()` — **experimental**; root-visible but provisional and not recommended as a stable production dependency. Throws outside the provider.
+- `useOptionalNav()` — the context value, or `null` outside the provider (used by `Link` and the bars, which also work without a provider).
+
+`useNavItems`, `useNavLogo`, `useNavPathname` and `useOptionalNav` are exported from the component folder but not yet from the package root.

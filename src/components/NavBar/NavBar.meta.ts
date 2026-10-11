@@ -26,7 +26,9 @@ export const meta: ComponentMeta = {
       "Link"
     ]
   },
-  "a11y": [],
+  "a11y": [
+    "The current item has accessibilityState.selected=true (top and bottom layouts); the bottom bar items are tabs in a tablist and both bars are navigation landmarks"
+  ],
   "variants": {
     "layout": [
       "auto",
