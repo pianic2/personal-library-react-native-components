@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import TestRenderer, { act } from "react-test-renderer";
-import { FormField, Input, ThemeProvider, type FormFieldProps } from "../../src";
+import { FormField, Input, PasswordInput, Select, Textarea, ThemeProvider, type FormFieldProps } from "../../src";
 
 const host = (name: string) => name as unknown as React.ElementType;
 const root = resolve(import.meta.dirname, "../..");
@@ -59,6 +59,20 @@ describe("PLRNUI-186 FormField", () => {
     );
     assert.equal(inputElement(r).props.error, true);
     assert.equal(texts(r).length, 0, "no helper or error text is rendered");
+  });
+
+  it("forwards error to every input control of the library, not only Input", () => {
+    const controls = {
+      Textarea: <Textarea value="" onChangeText={noop} accessibilityLabel="Notes" />,
+      PasswordInput: <PasswordInput value="" onChangeText={noop} accessibilityLabel="Password" />,
+      Select: <Select options={[{ label: "A", value: "a" }]} onChange={noop} />,
+    };
+    for (const [name, control] of Object.entries(controls)) {
+      const r = render(<FormField errorText="Bad">{control}</FormField>);
+      assert.equal(r.root.findByType(control.type as React.ElementType).props.error, true, `${name} gets error`);
+      const calm = render(<FormField>{control}</FormField>);
+      assert.equal(calm.root.findByType(control.type as React.ElementType).props.error, false, `${name} without an error`);
+    }
   });
 
   it("does not set error when there is none, and the child's own error value wins", () => {
@@ -165,6 +179,8 @@ describe("PLRNUI-186 FormField", () => {
     assert.equal(container.width, "100%");
     const helperStyle = flatten(texts(r).find((t) => textOf(t) === "H")!.props.style);
     assert.equal(helperStyle.marginTop, 4);
+    const labelNode = texts(r).find((t) => textOf(t) === "L")!;
+    assert.equal(flatten(labelNode.parent!.props.style).marginBottom, 8, "label gap is space.sm");
   });
 
   it("forwards variant and colorScheme only to a child that has those props", () => {

@@ -48,11 +48,11 @@ interface FormFieldProps {
 
 ## Accessibility
 
-- The error is exposed twice: as text in a polite live region (announced when it appears) and as the child's `accessibilityHint` (read with the control; a hint the child already has is kept).
+- The error is exposed twice: as text in a polite live region (announced when it appears) and as the child's `accessibilityHint` (read with the control; a hint the child already has is kept). `Select` does not take an `accessibilityHint`, so for a `Select` the live region is the only channel.
 - `Input`, `PasswordInput`, `Textarea` and `Select` receive `error` from the FormField even when you did not pass the prop; any other child receives `error`, `status`, `variant`, `colorScheme`, `aria-invalid` and `aria-describedby` only if it declares that prop. The child's own value always wins.
 - `aria-describedby` references the helper text or the error text, whichever is rendered (the error replaces the helper).
 - The label is still not programmatically linked to the control: give the control an `accessibilityLabel`.
 
 ## Spacing and colour
 
-- Spacing comes from the theme (`spacing[16]` below the field, `space.sm` under the label, `space.xs` above the helper and error). The helper text uses `colors.textMuted` and the error `colors.error`.
+- Spacing comes from the theme (`spacing[16]` below the field, `space.sm` (8, was a literal 6) under the label, `space.xs` above the helper and error). The helper text uses `colors.textMuted` and the error `colors.error`.
