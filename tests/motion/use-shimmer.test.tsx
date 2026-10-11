@@ -83,7 +83,7 @@ describe("PLRNUI-165 useShimmer", () => {
   it("accepts a duration token, milliseconds and theme tokens; layout properties turn the native driver off", () => {
     assert.equal(mount({ duration: "slow" }).calls.timing[0]!.config.duration, motion.duration.slow);
     assert.equal(mount({ duration: 900 }).calls.timing[0]!.config.duration, 900);
-    const tokens = { ...motion, duration: { ...motion.duration, slower: 777 } };
+    const tokens = { ...motion, duration: { ...motion.duration, slower: 777 } } as unknown as typeof motion;
     assert.equal(mount({ tokens }).calls.timing[0]!.config.duration, 777);
     assert.equal(mount({ property: "width" }).calls.timing[0]!.config.useNativeDriver, false);
   });
