@@ -86,6 +86,11 @@ describe("PLRNUI-177 Container", () => {
     assert.equal(rootStyle(render(<Container gutter={map} />, 1500)).paddingHorizontal, 30);
   });
 
+  it("an empty or unusable gutter value falls back to the default gutters instead of an undefined padding", () => {
+    assert.equal(rootStyle(render(<Container gutter={{}} />, 1500)).paddingHorizontal, 32);
+    assert.equal(rootStyle(render(<Container gutter={{ lg: "xl" }} />, 400)).paddingHorizontal, 16, "a map without a base key below its first key uses the defaults");
+  });
+
   it("measure caps the content inside the gutters", () => {
     const r = render(
       <Container size="full" measure={600}>

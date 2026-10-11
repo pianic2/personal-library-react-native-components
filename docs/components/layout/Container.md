@@ -8,8 +8,11 @@ This is the single container owner (ADR R4): it replaces the planned `PageContai
 
 ## Import
 
+Not exported from the package root yet (the wiring tickets own that); import from the component folder:
+
 ```ts
-import { Container, CONTAINER_WIDTHS } from "@personal-library/react-native-components";
+import { Container, CONTAINER_WIDTHS } from "./components/Container/index.js";
+import { useContainerSize, useContainerBreakpoint } from "./responsive/useContainerSize.js";
 ```
 
 ## Props
@@ -53,7 +56,8 @@ function Gallery() {
 
 - The outer box is `width: 100%` with horizontal padding (the gutter) and a `maxWidth` of the content size plus both gutters, so the **content** is never wider than `size`. Below the maximum the content is the full width minus the gutters; above it the box is centred with equal margins.
 - Default gutters come from the spacing scale by window breakpoint: 16 below `md`, 24 from `md`, 32 from `lg`. `gutter` takes a `theme.space` key or a map from breakpoint to key (mobile-first).
-- `useContainerSize()` returns `{ width, height, source }` of the nearest Container, or of the window (`source: "window"`) outside one. `useContainerBreakpoint(map?)` returns the breakpoint of that width (default scale from the `ResponsiveContext`, `map` replaces the minimum widths).
+- `width` and `height` are those of the outer box, **including the gutters**: subtract twice the gutter for the content width.
+- `useContainerSize()` returns `{ width, height, source }` of the nearest Container, or of the window (`source: "window"`) outside one. `useContainerBreakpoint(map?)` returns the breakpoint of that width (default scale from the `ResponsiveContext`; `map` overrides only the breakpoints it names).
 - Layout changes smaller than 1 px are ignored, so a layout cannot loop; a change of 1 px or more re-renders the consumers. Nested Containers: the nearest one wins.
 - **First-layout caveat**: before `onLayout` fires, the context holds the window width capped by the maximum, so the first paint can differ from the measured width by a frame; the measured size replaces it as soon as it is known.
 

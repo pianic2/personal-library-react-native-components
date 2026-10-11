@@ -38,7 +38,7 @@ export function Container({ size = "lg", gutter, center = true, measure, style, 
   // Gutter in pixels: the given theme.space key, or the default 16 / 24 / 32 steps by breakpoint.
   const defaults: Partial<Record<Breakpoint, number>> = { base: theme.spacing[16], md: theme.spacing[24], lg: theme.spacing[32] };
   const resolvedKey = gutter === undefined ? undefined : resolveResponsive<SpaceKey>(gutter as SpaceKey, bp);
-  const gutterPx = resolvedKey !== undefined ? theme.space[resolvedKey] : (resolveResponsive(defaults, bp) ?? theme.spacing[16]);
+  const gutterPx = (resolvedKey !== undefined ? theme.space[resolvedKey] : undefined) ?? resolveResponsive(defaults, bp) ?? theme.spacing[16];
 
   const contentMax = size === "full" ? undefined : typeof size === "number" ? size : CONTAINER_WIDTHS[size];
   const outerMax = contentMax === undefined ? undefined : contentMax + 2 * gutterPx;
