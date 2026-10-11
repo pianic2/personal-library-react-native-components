@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import TestRenderer, { act } from "react-test-renderer";
 import { ThemeProvider } from "../../src";
-import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
+import { Icon, IconProvider, createIconSet, useIconSets } from "../../src/components/Icon/index.js";
 import { GLYPH_NAMES, IconGlyphs, createGlyphIconSet, glyphs, type GlyphName } from "../../src/components/IconGlyphs/index.js";
 
 const host = (name: string) => name as unknown as React.ElementType;
@@ -66,8 +66,8 @@ describe("PLRNUI-239 glyph data", () => {
   });
 
   it("has no duplicate paths", () => {
-    const paths = GLYPH_NAMES.map((name) => glyphs[name]);
-    assert.equal(new Set(paths).size, paths.length);
+    const paths = GLYPH_NAMES.map((name) => glyphs[name].replace(/\s+/g, " ").trim());
+    assert.equal(new Set(paths).size, paths.length, "no two glyphs share a path, even with different spacing");
   });
 
   it("holds no colours and no third-party markers in the source", () => {
@@ -146,10 +146,16 @@ describe("PLRNUI-239 IconGlyphs provider", () => {
     const { renderer } = render(
       <IconGlyphs svg={svg} setName="glyphs">
         <Icon name="check" set="glyphs" />
+      </IconGlyphs>,
+    );
+    assert.equal(renderer.root.findAllByType(host("Path")).length, 1, "the named set draws the glyph");
+    const { renderer: other, messages } = render(
+      <IconGlyphs svg={svg} setName="glyphs">
         <Icon name="check" />
       </IconGlyphs>,
     );
-    assert.equal(renderer.root.findAllByType(host("Path")).length, 1, "only the named set has glyphs");
+    assert.equal(other.root.findAllByType(host("Path")).length, 0, "the default set is not registered");
+    assert.equal(messages.length, 0, "Icon only warns in __DEV__, which the test environment leaves off");
   });
 
   it("a nested IconProvider replaces the default set and an unknown glyph renders nothing", () => {
@@ -166,28 +172,40 @@ describe("PLRNUI-239 IconGlyphs provider", () => {
     assert.equal(renderer.root.findAllByType(host("Path")).length, 0);
   });
 
-  it("keeps the adapter identity between renders (no needless re-render of every Icon)", () => {
-    let renders = 0;
-    function Counter() {
-      renders += 1;
-      return <Icon name="check" />;
+  it("keeps the adapter identity between renders of an unchanged svg module", () => {
+    const seen: unknown[] = [];
+    function Probe() {
+      seen.push(useIconSets().default);
+      return null;
     }
-    const tree = (flag: number) => (
+    const tree = () => (
       <ThemeProvider persistTheme={false}>
         <IconGlyphs svg={svg}>
-          <React.Fragment key={flag}>
-            <Counter />
-          </React.Fragment>
+          <Probe />
         </IconGlyphs>
       </ThemeProvider>
     );
     let renderer!: TestRenderer.ReactTestRenderer;
     act(() => {
-      renderer = TestRenderer.create(tree(1));
+      renderer = TestRenderer.create(tree());
     });
-    const before = renders;
-    act(() => renderer.update(tree(1)));
-    assert.ok(renders - before <= 1, "an unchanged parent re-render does not rebuild the set");
+    act(() => renderer.update(tree()));
+    assert.ok(seen.length >= 2, "the probe rendered again");
+    assert.ok(seen.every((set) => set === seen[0]), "the same adapter object every time");
+  });
+
+  it("a nested IconGlyphs with the default set name replaces an outer custom default set", () => {
+    const Custom = ({ size }: { size: number; color: string }) => React.createElement("Custom", { size });
+    const { renderer } = render(
+      <IconProvider sets={{ default: createIconSet({ chevron: Custom }) }}>
+        <IconGlyphs svg={svg}>
+          <Icon name="chevron" />
+          <Icon name="check" />
+        </IconGlyphs>
+      </IconProvider>,
+    );
+    assert.equal(renderer.root.findAllByType(host("Custom")).length, 0, "the custom default set is hidden below IconGlyphs");
+    assert.equal(renderer.root.findAllByType(host("Path")).length, 1);
   });
 
   it("glyph names are typed", () => {

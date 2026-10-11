@@ -48,6 +48,8 @@ const set = createGlyphIconSet(Svg);
 ## Behaviour
 
 - `IconGlyphs` registers the glyphs as the `default` icon set (or `setName`) for everything below it. An `IconProvider` below with the same set name replaces them; other sets are untouched.
+- `IconGlyphs` with the default set name **replaces** a `default` set of an outer `IconProvider` for its subtree (the inner key wins; there is no per-name fallback). To keep your own default set, register the glyphs under another name (`setName="glyphs"` and `<Icon set="glyphs" />`) or put `IconGlyphs` outside your provider.
+- Pass a stable `svg` (the `import * as Svg` namespace): a fresh inline `{ Svg, Path }` object each render rebuilds the set and re-renders every `Icon` below.
 - `glyphs` maps each name to its path data, `GLYPH_NAMES` lists the names in a stable order, `createGlyphIconSet(svg)` returns the icon set adapter. An unknown name renders nothing (and `Icon` warns once in development).
 - **Differences from the ticket text**: the ticket sketches `glyphIconSet = createSvgIconSet(glyphs)`, but `createSvgIconSet` takes the injected SVG module as its first argument and the library may not import `react-native-svg`, so the set is created with `createGlyphIconSet(svg)`. `Icon` itself is not changed to fall back to the glyphs without a provider (it belongs to another ticket): wrap the app in `IconGlyphs` instead.
 
