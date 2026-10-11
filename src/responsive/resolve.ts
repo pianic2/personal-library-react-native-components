@@ -20,7 +20,8 @@ function isResponsiveMap<T>(value: ResponsiveValue<T>): value is Partial<Record<
  * `undefined`. The result is the stored value itself, so it keeps its identity while the inputs are unchanged.
  *
  * A plain object value (for example a style object) is returned as is unless every one of its keys is a breakpoint name;
- * a value of that exact shape is read as a map.
+ * a value of that exact shape is read as a map. An empty object `{}` is a plain value (returned as is, not `undefined`), and
+ * an object from another realm (iframe, vm context) has a different `Object.prototype` and is also returned as is.
  */
 export function resolveResponsive<T>(value: ResponsiveValue<T>, bp: Breakpoint): T | undefined {
   if (!isResponsiveMap(value)) return value as T;
