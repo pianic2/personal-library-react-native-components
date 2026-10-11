@@ -5,6 +5,18 @@ export const fontFamily = {
   mono: "monospace",
 } as const;
 
+/**
+ * Font family slots, each a fallback stack. They are the names a consumer overrides after loading its fonts
+ * (`resolveTextStyle` accepts overrides); the stacks work without any loaded font.
+ */
+export const fontFamilySlots = {
+  display: "System",
+  body: "System",
+  mono: "monospace",
+} as const;
+
+export type FontFamilySlot = keyof typeof fontFamilySlots;
+
 export const fontSize = {
   xs: 11,
   sm: 12,
