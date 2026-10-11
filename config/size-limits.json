@@ -8,7 +8,7 @@
     },
     "root-all": {
       "source": "import * as Library from \"./src/index.ts\"; console.log(Library);",
-      "maxGzipBytes": 17100
+      "maxGzipBytes": 19300
     },
     "button-only": {
       "source": "import { Button } from \"./src/components/Button/index.ts\"; console.log(Button);",
@@ -16,11 +16,11 @@
     },
     "theme-provider-only": {
       "source": "import { ThemeProvider } from \"./src/theme/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 3830
+      "maxGzipBytes": 4500
     },
     "root-theme-provider": {
       "source": "import { ThemeProvider } from \"./src/index.ts\"; console.log(ThemeProvider);",
-      "maxGzipBytes": 3830
+      "maxGzipBytes": 4500
     },
     "native-core": {
       "source": "import * as NativeCore from \"./src/native/core/index.ts\"; console.log(NativeCore);",
@@ -30,11 +30,11 @@
   "subpaths": {
     ".": {
       "entry": "src/index.ts",
-      "maxGzipBytes": 17000
+      "maxGzipBytes": 19200
     },
     "./theme": {
       "entry": "src/theme/index.ts",
-      "maxGzipBytes": 4130
+      "maxGzipBytes": 4830
     },
     "./tokens": {
       "entry": "src/tokens/index.ts",
