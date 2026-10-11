@@ -97,6 +97,6 @@ describe("PLRNUI-104 Row", () => {
   it("forwards the ref to the View", () => {
     const ref = React.createRef<unknown>();
     render(<RowWithRef ref={ref}><Text>a</Text></RowWithRef>);
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

@@ -87,6 +87,6 @@ describe("PLRNUI-104 Heading", () => {
     assert.equal(node.props.children, "Title");
     assert.equal(node.props.testID, "h");
     assert.equal(node.props.accessibilityRole, "header");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

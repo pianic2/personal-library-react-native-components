@@ -78,6 +78,6 @@ describe("PLRNUI-104 Small", () => {
     const node = textOf(render(<SmallWithRef ref={ref} testID="s" truncate>x</SmallWithRef>));
     assert.equal(node.props.testID, "s");
     assert.equal(node.props.numberOfLines, 1);
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

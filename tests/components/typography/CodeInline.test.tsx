@@ -80,7 +80,7 @@ describe("PLRNUI-104 CodeInline", () => {
     const node = textOf(render(<CodeInlineWithRef ref={ref} testID="code">const a = 1;</CodeInlineWithRef>));
     assert.equal(node.props.testID, "code");
     assert.equal(node.props.children, "const a = 1;");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 
   // Known gap: `{...props}` is spread after the merged style array, so a `style` prop replaces the chip styles instead of

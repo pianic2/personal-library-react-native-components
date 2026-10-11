@@ -57,19 +57,33 @@ describe("PLRNUI-104 Card", () => {
     assert.equal(style.padding, theme.components.card?.padding ?? theme.space.md);
     assert.equal(style.margin, theme.space.none);
     assert.equal(style.borderWidth, undefined);
-    assert.deepEqual(style.shadowOffset, theme.shadows[theme.components.card?.shadow ?? "sm"].shadowOffset);
+    assert.deepEqual(style.shadowOffset, theme.shadows[theme.components.card!.shadow!].shadowOffset);
   });
 
-  it("outline variant: transparent background, border and no shadow; elevated variant: medium shadow", () => {
-    const { theme, colors } = themeOf();
+  it("outline variant: transparent background and a border; elevated keeps the surface background", () => {
+    const { colors } = themeOf();
     const outline = flatten(rootView(render(<Card variant="outline"><Text>x</Text></Card>)).props.style);
     assert.equal(outline.backgroundColor, "transparent");
     assert.equal(outline.borderWidth, 1);
     assert.equal(outline.borderColor, colors.border);
-    if (theme.components.card?.shadow === undefined) assert.equal(outline.shadowOpacity, theme.shadows.none.shadowOpacity);
     const elevated = flatten(rootView(render(<Card variant="elevated"><Text>x</Text></Card>)).props.style);
-    if (theme.components.card?.shadow === undefined) assert.deepEqual(elevated.shadowOffset, theme.shadows.md.shadowOffset);
     assert.equal(elevated.backgroundColor, colors.surface);
+    assert.equal(elevated.borderWidth, undefined);
+  });
+
+  it("the card shadow token of the theme wins over the variant default; an explicit shadow prop wins over both", () => {
+    // The default theme sets components.card.shadow, and theme overrides cannot unset it, so the variant-based
+    // fallback (outline none, elevated md, default sm) is not reachable through ThemeProvider.
+    const { theme } = themeOf();
+    const token = theme.shadows[theme.components.card!.shadow!];
+    for (const variant of ["default", "outline", "elevated"] as const) {
+      const style = flatten(rootView(render(<Card variant={variant} />)).props.style);
+      assert.deepEqual(style.shadowOffset, token.shadowOffset, variant);
+      assert.equal(style.shadowOpacity, token.shadowOpacity, variant);
+    }
+    const explicit = flatten(rootView(render(<Card variant="outline" shadow="lg" />)).props.style);
+    assert.deepEqual(explicit.shadowOffset, theme.shadows.lg.shadowOffset);
+    assert.equal(explicit.shadowRadius, theme.shadows.lg.shadowRadius);
   });
 
   it("takes the surface colour from the current mode", () => {
@@ -95,7 +109,11 @@ describe("PLRNUI-104 Card", () => {
     platform.OS = "android";
     assert.equal(flatten(rootView(render(<Card shadow="lg" />)).props.style).elevation, theme.shadows.lg.elevation);
     platform.OS = "web";
-    assert.match(flatten(rootView(render(<Card shadow="lg" />)).props.style).boxShadow, /^\d+px \d+px \d+px rgba\(0, 0, 0, [\d.]+\)$/);
+    const lg = theme.shadows.lg;
+    assert.equal(
+      flatten(rootView(render(<Card shadow="lg" />)).props.style).boxShadow,
+      `${lg.shadowOffset.width}px ${lg.shadowOffset.height}px ${lg.shadowRadius}px rgba(0, 0, 0, ${lg.shadowOpacity})`,
+    );
     assert.equal(flatten(rootView(render(<Card shadow="none" />)).props.style).boxShadow, "none");
   });
 

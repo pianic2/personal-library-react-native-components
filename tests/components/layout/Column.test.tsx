@@ -69,6 +69,17 @@ describe("PLRNUI-104 Column", () => {
     for (const wrapper of wrappers) assert.equal(wrapper.alignSelf, "stretch");
   });
 
+  it("spaces children by the extra-large token when no gap is given", () => {
+    const { theme } = themeOf();
+    const r = render(
+      <Column>
+        <Text>a</Text>
+        <Text>b</Text>
+      </Column>,
+    );
+    assert.deepEqual(views(r).slice(1).map((v) => flatten(v.props.style).marginBottom), [theme.space.xl, 0]);
+  });
+
   it("ignores falsy children", () => {
     const { theme } = themeOf();
     const r = render(
@@ -100,6 +111,6 @@ describe("PLRNUI-104 Column", () => {
     const ref = React.createRef<unknown>();
     const r = render(<ColumnWithRef ref={ref} testID="col"><Text>a</Text></ColumnWithRef>);
     assert.equal(views(r)[0]!.props.testID, "col");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

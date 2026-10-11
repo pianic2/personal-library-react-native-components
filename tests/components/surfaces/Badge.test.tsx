@@ -57,6 +57,7 @@ describe("PLRNUI-104 Badge", () => {
     const views = r.root.findAllByType(host("View"));
     assert.equal(views.length, 2);
     assert.equal(flatten(views[0]!.props.style).alignSelf, "center");
+    assert.deepEqual(flatten(views[0]!.props.style).transform, [{ translateY: 1 }]);
     const chip = chipOf(r);
     assert.equal(chip.backgroundColor, colors.primary);
     assert.equal(chip.borderRadius, theme.radius.full);
@@ -101,6 +102,6 @@ describe("PLRNUI-104 Badge", () => {
     assert.equal(flatten(node.props.style).color, "red");
     assert.equal(node.props.testID, "badge");
     assert.equal(node.props.accessibilityLabel, "new");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

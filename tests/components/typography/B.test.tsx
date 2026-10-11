@@ -76,6 +76,6 @@ describe("PLRNUI-104 B", () => {
     const node = textOf(render(<BWithRef ref={ref} testID="b">strong</BWithRef>));
     assert.equal(node.props.children, "strong");
     assert.equal(node.props.testID, "b");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

@@ -68,6 +68,7 @@ describe("PLRNUI-104 Box", () => {
       const { colors } = themeOf(mode);
       const style = flatten(rootView(render(<Box bg="surface" border />, mode)).props.style);
       assert.equal(style.backgroundColor, colors.surface, mode);
+      assert.equal(flatten(rootView(render(<Box bg="primary" />, mode)).props.style).backgroundColor, colors.primary, mode);
       assert.equal(style.borderWidth, 1, mode);
       assert.equal(style.borderColor, colors.border, mode);
     }
@@ -78,7 +79,8 @@ describe("PLRNUI-104 Box", () => {
     assert.deepEqual(flatten(rootView(render(<Box shadow="md" />)).props.style).shadowOffset, theme.shadows.md.shadowOffset);
     platform.OS = "web";
     const web = flatten(rootView(render(<Box shadow="md" />)).props.style);
-    assert.match(web.boxShadow, /^\d+px \d+px \d+px rgba\(0, 0, 0, [\d.]+\)$/);
+    const md = theme.shadows.md;
+    assert.equal(web.boxShadow, `${md.shadowOffset.width}px ${md.shadowOffset.height}px ${md.shadowRadius}px rgba(0, 0, 0, ${md.shadowOpacity})`);
     assert.equal(flatten(rootView(render(<Box shadow="none" />)).props.style).boxShadow, "none");
   });
 
@@ -99,6 +101,6 @@ describe("PLRNUI-104 Box", () => {
     assert.equal(outer.props.testID, "box");
     assert.equal(outer.props.accessibilityLabel, "panel");
     assert.equal(r.root.findAllByType(host("View")).length, 2);
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

@@ -102,6 +102,6 @@ describe("PLRNUI-104 Text", () => {
     assert.equal(node.props.accessibilityRole, "header");
     assert.equal(node.props.testID, "t");
     assert.deepEqual(node.props.children, "hello");
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });

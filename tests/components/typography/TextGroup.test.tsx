@@ -101,6 +101,6 @@ describe("PLRNUI-104 TextGroup", () => {
   it("forwards the ref to the container View", () => {
     const ref = React.createRef<unknown>();
     render(<TextGroupWithRef ref={ref}><Text>a</Text></TextGroupWithRef>);
-    assert.notEqual(ref.current, null);
+    assert.deepEqual(ref.current, { mock: true });
   });
 });
