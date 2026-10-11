@@ -54,6 +54,16 @@ describe("PLRNUI-27 base theme dark mode", () => {
     assert.equal(theme.colors.background, darkColors.background);
   });
 
+  it("keeps the dark background, surface and elevated surface apart", () => {
+    const theme = createBaseTheme("dark");
+
+    assert.notEqual(theme.colors.background, theme.colors.surface);
+    assert.notEqual(theme.colors.surface, theme.colors.surfaceElevated);
+    assert.notEqual(theme.colors.background, theme.colors.surfaceElevated);
+    assert.equal(theme.colors.surface, darkColors.surface);
+    assert.equal(theme.colors.surfaceElevated, darkColors.surfaceElevated);
+  });
+
   it("derives app background from the selected dark semantic background", () => {
     const theme = createBaseTheme("dark");
 
