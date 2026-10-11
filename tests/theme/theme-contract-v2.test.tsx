@@ -39,6 +39,9 @@ const shadowShape = {
   shadowRadius: "number",
 };
 
+const bezierShape = { 0: "number", 1: "number", 2: "number", 3: "number" };
+const springShape = { damping: "number", mass: "number", stiffness: "number" };
+
 describe("Theme contract v2", () => {
   for (const mode of ["light", "dark"] as const) {
     it(`createBaseTheme(${mode}) defines every v2 slot`, () => {
@@ -86,8 +89,12 @@ describe("Theme contract v2", () => {
         sm: shadowShape,
       },
       motion: {
-        duration: { fast: "number", instant: "number", normal: "number", slow: "number" },
-        easing: { enter: "string", exit: "string", standard: "string" },
+        distance: { lg: "number", md: "number", sm: "number" },
+        duration: { base: "number", fast: "number", instant: "number", slow: "number", slower: "number" },
+        easing: { accelerate: bezierShape, decelerate: bezierShape, emphasized: bezierShape, standard: bezierShape },
+        scale: { press: "number" },
+        spring: { bouncy: springShape, gentle: springShape, snappy: springShape },
+        stagger: { base: "number", fast: "number" },
       },
       opacity: { disabled: "number", pressed: "number", subtle: "number" },
       preset: "string",
