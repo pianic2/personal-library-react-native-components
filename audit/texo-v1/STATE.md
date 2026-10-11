@@ -187,3 +187,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-186 (E1-16: FormField tokenised spacing, muted colour, typed props, error exposure) | #143 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (follow-up: ownership exceptions for PLRNUI-177, PLRNUI-186, PLRNUI-230 and PLRNUI-239, render fixtures, props manifest and type contracts; removes the spent PLRNUI-152 arm) | #142 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-184 (E1-35: root exports for the nav hooks, PACKAGE_NAME deprecation) | #141 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-230 (E6-03: Alert appearance, icon and actions slots) | #144 | PR open (row committed pre-merge, see ADR 0020 Branching) |

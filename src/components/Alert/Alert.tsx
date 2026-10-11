@@ -8,6 +8,13 @@ import { useTheme } from "../../theme/useTheme.js";
 import { readableOn } from "./contrast.js";
 
 type Variant = "primary" | "info" | "success" | "warning" | "error";
+type Appearance = "solid" | "soft" | "outline";
+
+// Typed constants instead of inline numbers: the share of the variant colour in a soft tint, the outline width and the close button.
+const SOFT_TINT_OPACITY = 0.12;
+const OUTLINE_WIDTH = 1;
+const TOUCH_TARGET = 44;
+const HIT_SLOP = 8;
 
 export interface AlertProps {
   title?: string;
@@ -19,6 +26,12 @@ export interface AlertProps {
   onDismiss?: () => void;
   /** Accessibility label of the close button. Defaults to "Dismiss". */
   dismissLabel?: string;
+  /** `solid` (default) fills with the variant colour; `soft` tints the surface; `outline` draws a border on the page. */
+  appearance?: Appearance;
+  /** A leading icon. Decorative: it is hidden from assistive technology, the role and the text carry the meaning. */
+  icon?: React.ReactNode;
+  /** Extra actions, rendered after the `actionLabel` button; the caller supplies the controls. */
+  actions?: React.ReactNode;
 }
 
 export function Alert({
@@ -29,6 +42,9 @@ export function Alert({
   onAction,
   onDismiss,
   dismissLabel = "Dismiss",
+  appearance = "solid",
+  icon,
+  actions,
 }: AlertProps) {
   const { theme, colors } = useTheme();
 
@@ -40,22 +56,37 @@ export function Alert({
     error: colors.error,
   };
 
-  const background = bgMap[variant];
-  // Text and close button use whichever text token reads better on this variant's background (WCAG contrast).
-  const textColor = readableOn(background, [colors.textInverted, colors.textPrimary]);
+  const variantColor = bgMap[variant];
+  // Solid: text and close button use whichever text token reads better on the variant colour (WCAG contrast).
+  // Soft and outline sit on the surface / the page, where the primary text colour is the readable one.
+  const textColor = appearance === "solid" ? readableOn(variantColor, [colors.textInverted, colors.textPrimary]) : colors.textPrimary;
+  const containerStyle =
+    appearance === "solid"
+      ? { backgroundColor: variantColor }
+      : appearance === "soft"
+        ? { backgroundColor: colors.surface }
+        : { borderWidth: OUTLINE_WIDTH, borderColor: variantColor };
 
   return (
     <View
       accessibilityRole="alert"
       accessibilityLiveRegion={variant === "error" ? "assertive" : "polite"}
       style={{
-        backgroundColor: background,
+        ...containerStyle,
         borderRadius: theme.radius.md,
         padding: theme.space.md,
         gap: theme.space.xs,
       }}
     >
+      {appearance === "soft" && (
+        <View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, borderRadius: theme.radius.md, backgroundColor: variantColor, opacity: SOFT_TINT_OPACITY }} />
+      )}
       <View style={{ flexDirection: "row", alignItems: "flex-start", gap: theme.space.sm }}>
+        {icon ? (
+          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            {icon}
+          </View>
+        ) : null}
         <View style={{ flex: 1, gap: theme.space.xs }}>
           {title && (
             <Text weight="bold" style={{ color: textColor }} align="left">
@@ -75,8 +106,8 @@ export function Alert({
             accessibilityRole="button"
             accessibilityLabel={dismissLabel}
             onPress={onDismiss}
-            hitSlop={8}
-            style={{ minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: -theme.space.sm, marginRight: -theme.space.sm }}
+            hitSlop={HIT_SLOP}
+            style={{ minWidth: TOUCH_TARGET, minHeight: TOUCH_TARGET, alignItems: "center", justifyContent: "center", marginTop: -theme.space.sm, marginRight: -theme.space.sm }}
           >
             <Text style={{ color: textColor }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
               ✕
@@ -85,13 +116,14 @@ export function Alert({
         )}
       </View>
 
-      {actionLabel && onAction && (
-        <Button
-          size="sm"
-          variant="ghost"
-          onPress={onAction}
-          label={actionLabel}
-        />
+      {!actions ? (
+        // Without extra actions the button stays a direct child of the column, exactly as before.
+        actionLabel && onAction ? <Button size="sm" variant="ghost" onPress={onAction} label={actionLabel} /> : null
+      ) : (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: theme.space.sm }}>
+          {actionLabel && onAction && <Button size="sm" variant="ghost" onPress={onAction} label={actionLabel} />}
+          {actions}
+        </View>
       )}
     </View>
   );
