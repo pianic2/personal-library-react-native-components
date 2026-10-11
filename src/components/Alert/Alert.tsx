@@ -64,7 +64,7 @@ export function Alert({
     appearance === "solid"
       ? { backgroundColor: variantColor }
       : appearance === "soft"
-        ? { backgroundColor: colors.surface, overflow: "hidden" as const }
+        ? { backgroundColor: colors.surface }
         : { borderWidth: OUTLINE_WIDTH, borderColor: variantColor };
 
   return (
@@ -79,14 +79,14 @@ export function Alert({
       }}
     >
       {appearance === "soft" && (
-        <View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, backgroundColor: variantColor, opacity: SOFT_TINT_OPACITY }} />
+        <View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, borderRadius: theme.radius.md, backgroundColor: variantColor, opacity: SOFT_TINT_OPACITY }} />
       )}
       <View style={{ flexDirection: "row", alignItems: "flex-start", gap: theme.space.sm }}>
-        {icon && (
+        {icon ? (
           <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
             {icon}
           </View>
-        )}
+        ) : null}
         <View style={{ flex: 1, gap: theme.space.xs }}>
           {title && (
             <Text weight="bold" style={{ color: textColor }} align="left">
@@ -116,7 +116,10 @@ export function Alert({
         )}
       </View>
 
-      {((actionLabel && onAction) || actions) && (
+      {!actions ? (
+        // Without extra actions the button stays a direct child of the column, exactly as before.
+        actionLabel && onAction ? <Button size="sm" variant="ghost" onPress={onAction} label={actionLabel} /> : null
+      ) : (
         <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: theme.space.sm }}>
           {actionLabel && onAction && <Button size="sm" variant="ghost" onPress={onAction} label={actionLabel} />}
           {actions}

@@ -162,11 +162,12 @@ describe("PLRNUI-230 Alert appearance", () => {
     const r = render(<Alert variant="error" message="x" appearance="soft" />);
     const root = flatten(rootOf(r).props.style);
     assert.equal(root.backgroundColor, colors.surface);
-    assert.equal(root.overflow, "hidden");
+    assert.equal(root.overflow, undefined, "no clipping: the dismiss hit slop stays reachable");
     const tint = r.root.findAllByType(host("View")).find((n) => n.props.pointerEvents === "none")!;
     assert.equal(flatten(tint.props.style).backgroundColor, colors.error);
     assert.equal(flatten(tint.props.style).opacity, 0.12);
     assert.equal(flatten(tint.props.style).position, "absolute");
+    assert.equal(flatten(tint.props.style).borderRadius, flatten(rootOf(r).props.style).borderRadius, "the tint follows the rounded corners");
   });
 
   it("outline has no fill and a border in the variant colour", () => {
@@ -242,7 +243,28 @@ describe("PLRNUI-230 Alert icon and actions", () => {
     assert.deepEqual(withActions.root.findAllByType(host("Pressable")).map((n) => n.props.accessibilityLabel), ["Only"]);
     const plain = render(<Alert message="x" />);
     assert.equal(plain.root.findAllByType(host("Pressable")).length, 0);
-    assert.equal(plain.root.findAllByType(host("View")).length, render(<Alert message="x" />).root.findAllByType(host("View")).length);
+    // Without actions there is no wrapper: the root is the plain column with the content row only.
+    assert.equal(rootOf(plain).children.filter((c) => typeof c !== "string").length, 1);
+  });
+
+  it("the actionLabel button stays a direct child of the root when there are no extra actions (the layout is unchanged)", () => {
+    const r = render(<Alert message="x" actionLabel="Undo" onAction={() => undefined} />);
+    const root = rootOf(r);
+    const button = r.root.findAllByType(host("Pressable")).find((n) => n.props.accessibilityLabel === "Undo")!;
+    let ancestor = button.parent;
+    while (ancestor && ancestor.type !== host("View")) ancestor = ancestor.parent;
+    assert.equal(ancestor, root, "no row wrapper between the root column and the button");
+    const withActions = render(<Alert message="x" actionLabel="Undo" onAction={() => undefined} actions={React.createElement("Pressable", { accessibilityLabel: "More" })} />);
+    const wrapped = withActions.root.findAllByType(host("Pressable")).find((n) => n.props.accessibilityLabel === "Undo")!;
+    let up = wrapped.parent;
+    while (up && up.type !== host("View")) up = up.parent;
+    assert.notEqual(up, rootOf(withActions), "with actions the buttons share a wrapping row");
+    assert.equal(flatten(up!.props.style).flexDirection, "row");
+  });
+
+  it("a falsy icon or actions value such as 0 does not render a bare number", () => {
+    const r = render(<Alert message="x" icon={0 as unknown as React.ReactNode} />);
+    assert.ok(r.root.findAllByType(host("View")).every((n) => !n.children.some((c) => c === 0 || c === "0")));
   });
 });
 
