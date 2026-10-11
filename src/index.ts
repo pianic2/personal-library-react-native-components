@@ -1,3 +1,7 @@
+/**
+ * @deprecated The package is renamed at the Texo cutover (ADR 0017); do not depend on this constant. It is kept until then so
+ * existing imports keep compiling.
+ */
 export const PACKAGE_NAME = "@personal-library/react-native-components";
 
 export { Alert } from "./components/Alert/index.js";
@@ -37,7 +41,11 @@ export type { NavBarProps } from "./components/NavBar/index.js";
 export {
   NavProvider,
   useNav,
+  useNavItems,
+  useNavLogo,
+  useNavPathname,
   useNavigate,
+  useOptionalNav,
 } from "./components/NavContext/index.js";
 export type { NavContextValue, NavItem } from "./components/NavContext/index.js";
 export { P } from "./components/P/index.js";
