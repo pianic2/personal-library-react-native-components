@@ -10,8 +10,10 @@ export interface StoredStateSerializer<T> {
 export interface UseStoredStateOptions<T> {
   /** Backend. Default: the `storage` capability of the nearest CapabilityProvider (a noop when none is mounted). */
   storage?: Pick<StorageAdapter, "getItem" | "setItem" | "removeItem">;
-  /** Default: JSON. */
+  /** Default: JSON. A value the serializer cannot turn into a string (for example `undefined` with JSON) removes the stored entry. */
   serialize?: StoredStateSerializer<T>;
+  /** Called when a read, parse or write fails (the hook itself never throws). */
+  onError?: (error: unknown, operation: "read" | "write" | "remove") => void;
 }
 
 export interface StoredState<T> {
@@ -29,7 +31,10 @@ const JSON_SERIALIZER: StoredStateSerializer<unknown> = { stringify: (value) => 
 /**
  * State persisted under `key`. Starts with `defaultValue` and `hydrated: false`, reads the stored value, then sets
  * `hydrated: true`. A value written before the read resolves wins over it. A stored value that cannot be parsed is
- * ignored (the default stays). Write and read errors never throw; writes are applied in order.
+ * ignored (the default stays). Write and read errors never throw (see `onError`); writes are applied in order.
+ *
+ * The stored value is read on mount and whenever `key` changes, not when the `storage` object changes, so an inline
+ * `storage` does not loop; to switch backends, change the `key` or remount.
  */
 export function useStoredState<T>(key: string, defaultValue: T, options: UseStoredStateOptions<T> = {}): StoredState<T> {
   const capability = useCapability("storage");
@@ -39,8 +44,8 @@ export function useStoredState<T>(key: string, defaultValue: T, options: UseStor
   // State belongs to a key: after the key changes the first render shows the default and hydrating.
   const view = state.key === key ? state : { key, value: defaultValue, hydrated: false };
 
-  const latest = useRef({ key, value: view.value, defaultValue, serializer, storage });
-  latest.current = { key, value: view.value, defaultValue, serializer, storage };
+  const latest = useRef({ key, value: view.value, defaultValue, serializer, storage, onError: options.onError });
+  latest.current = { key, value: view.value, defaultValue, serializer, storage, onError: options.onError };
   const written = useRef(false);
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const mounted = useRef(true);
@@ -58,10 +63,10 @@ export function useStoredState<T>(key: string, defaultValue: T, options: UseStor
     (async () => {
       let next = latest.current.defaultValue;
       try {
-        const raw = await storage.getItem(key);
-        if (raw !== null) next = serializer.parse(raw);
-      } catch {
-        // unreadable or unparsable: keep the default
+        const raw = await latest.current.storage.getItem(key);
+        if (raw !== null) next = latest.current.serializer.parse(raw);
+      } catch (error) {
+        latest.current.onError?.(error, "read"); // unreadable or unparsable: keep the default
       }
       if (cancelled || !mounted.current) return;
       setState((prev) => (prev.key === key && written.current ? { ...prev, hydrated: true } : { key, value: next, hydrated: true }));
@@ -69,10 +74,10 @@ export function useStoredState<T>(key: string, defaultValue: T, options: UseStor
     return () => {
       cancelled = true;
     };
-  }, [key, storage]);
+  }, [key]);
 
-  const enqueue = useCallback((task: () => Promise<void>) => {
-    queue.current = queue.current.then(task).catch(() => undefined);
+  const enqueue = useCallback((task: () => Promise<void>, operation: "write" | "remove") => {
+    queue.current = queue.current.then(task).catch((error: unknown) => latest.current.onError?.(error, operation));
   }, []);
 
   const setValue = useCallback(
@@ -82,7 +87,11 @@ export function useStoredState<T>(key: string, defaultValue: T, options: UseStor
       written.current = true;
       latest.current.value = resolved;
       setState((prev) => ({ key: k, value: resolved, hydrated: prev.key === k ? prev.hydrated : false }));
-      enqueue(async () => st.setItem(k, s.stringify(resolved)));
+      enqueue(async () => {
+        const raw = s.stringify(resolved) as unknown;
+        if (typeof raw === "string") await st.setItem(k, raw);
+        else await st.removeItem(k);
+      }, "write");
     },
     [enqueue]
   );
@@ -92,7 +101,7 @@ export function useStoredState<T>(key: string, defaultValue: T, options: UseStor
     written.current = true;
     latest.current.value = d;
     setState((prev) => ({ key: k, value: d, hydrated: prev.key === k ? prev.hydrated : false }));
-    enqueue(async () => st.removeItem(k));
+    enqueue(async () => st.removeItem(k), "remove");
   }, [enqueue]);
 
   return useMemo(() => ({ value: view.value, setValue, remove, hydrated: view.hydrated }), [view.value, view.hydrated, setValue, remove]);

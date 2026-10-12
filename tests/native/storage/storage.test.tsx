@@ -131,6 +131,14 @@ describe("adapters", () => {
     assert.equal(mod.map.size, 0);
   });
 
+  it("allowInsecureWeb without any localStorage is unavailable and rejects writes (nothing pretends to persist)", async () => {
+    const s = createSecureStorage(null, { platform: "web", allowInsecureWeb: true });
+    assert.deepEqual([s.kind, s.status, s.insecure], ["secure", "unavailable", undefined]);
+    await assert.rejects(s.setItem("token", "secret"));
+    await assert.rejects(s.removeItem("token"));
+    assert.equal(await s.getItem("token"), null);
+  });
+
   it("secure storage on web with allowInsecureWeb is explicit: kind secure, insecure true, uses browser storage", async () => {
     const web = domStorage();
     const s = createSecureStorage(null, { platform: "web", allowInsecureWeb: true, webStorage: web });
@@ -290,6 +298,45 @@ describe("useStoredState", () => {
     const t = mount("k", "d", undefined, (el) => <CapabilityProvider adapters={adapters}>{el}</CapabilityProvider>);
     await t.render();
     assert.equal(t.out.s!.value, "from capability");
+  });
+
+  it("an inline (unstable) storage object does not loop, and a write is not overwritten by a re-read", async () => {
+    const backing = createMemoryStorage({ k: JSON.stringify("stored") });
+    const out: { s?: StoredState<string> } = {};
+    let renders = 0;
+    function Probe() {
+      renders += 1;
+      out.s = useStoredState<string>("k", "d", { storage: { getItem: backing.getItem, setItem: backing.setItem, removeItem: backing.removeItem } });
+      return null;
+    }
+    await act(async () => {
+      TestRenderer.create(<Probe />);
+    });
+    assert.equal(out.s!.value, "stored");
+    assert.ok(renders < 6, `rendered ${renders} times`);
+    await act(async () => out.s!.setValue("typed"));
+    assert.equal(out.s!.value, "typed");
+    assert.ok(renders < 10, `rendered ${renders} times`);
+  });
+
+  it("setValue(undefined) with the JSON serializer removes the entry instead of storing garbage", async () => {
+    const storage = createMemoryStorage({ k: JSON.stringify("x") });
+    const t = mount<string | undefined>("k", "d", { storage });
+    await t.render();
+    await act(async () => t.out.s!.setValue(undefined));
+    assert.equal(await storage.getItem("k"), null);
+  });
+
+  it("reports read, write and remove failures through onError", async () => {
+    const errors: Array<[string, string]> = [];
+    const boom = (op: string) => () => Promise.reject(new Error(op));
+    const storage = { getItem: boom("read"), setItem: boom("write"), removeItem: boom("remove") };
+    const t = mount("k", 0, { storage, onError: (e, op) => errors.push([(e as Error).message, op]) });
+    await t.render();
+    await act(async () => t.out.s!.setValue(1));
+    await act(async () => t.out.s!.remove());
+    await new Promise((r) => setTimeout(r, 5));
+    assert.deepEqual(errors, [["read", "read"], ["write", "write"], ["remove", "remove"]]);
   });
 
   it("does not set state after unmount", async () => {

@@ -44,7 +44,8 @@ export function createSecureStorage(module: SecureStoreModuleLike | null | undef
   if (platform === "web") {
     if (!options.allowInsecureWeb) return rejecting();
     const web = createWebStorage(options.webStorage);
-    return { ...web, kind: "secure", insecure: true };
+    if (web.status === "unavailable") return rejecting(); // no localStorage either: nothing may pretend to persist a secret
+    return { kind: "secure", status: "available", insecure: true, getItem: web.getItem, setItem: web.setItem, removeItem: web.removeItem };
   }
   if (!module) return rejecting();
   return {
