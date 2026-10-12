@@ -1,6 +1,6 @@
 import React from "react";
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { describe, it } from "node:test";
 import { Button, Checkbox, Input, RadioGroup, Switch } from "../../src";
 import { assertAccessibilityContract } from "../helpers/accessibility";
 import { fireEvent, renderWithTheme } from "../helpers/render";
@@ -68,7 +68,38 @@ test("RadioGroup exposes group and selected option semantics", () => {
   assert.throws(() => getByRole("radio", { name: "A" }), /Unable to find an element with role/, "the shim Pressable is not an accessible element for RNTL (see ADR 0018)");
 });
 
-test("the dark ThemeProvider renders the same accessible tree", () => {
-  const { getByLabelText } = renderWithTheme(<Checkbox label="Accept" checked onChange={() => undefined} />, { mode: "dark" });
-  assertAccessibilityContract(getByLabelText("Accept").props, { accessibilityRole: "checkbox", accessibilityLabel: "Accept", accessibilityState: { checked: true, disabled: false } });
+describe("light and dark ThemeProvider", () => {
+  const trees: Record<string, string> = {};
+  const checkbox = () => <Checkbox label="Accept" checked onChange={() => undefined} />;
+
+  it("renders the accessible tree in light mode", () => {
+    const { getByLabelText, toJSON } = renderWithTheme(checkbox(), { mode: "light" });
+    assertAccessibilityContract(getByLabelText("Accept").props, { accessibilityRole: "checkbox", accessibilityLabel: "Accept", accessibilityState: { checked: true, disabled: false } });
+    trees.light = JSON.stringify(toJSON());
+  });
+
+  it("renders the same accessible tree in dark mode, with different styles (the mode reaches the theme)", () => {
+    const { getByLabelText, toJSON } = renderWithTheme(checkbox(), { mode: "dark" });
+    assertAccessibilityContract(getByLabelText("Accept").props, { accessibilityRole: "checkbox", accessibilityLabel: "Accept", accessibilityState: { checked: true, disabled: false } });
+    assert.ok(trees.light, "the light test ran first");
+    assert.notEqual(JSON.stringify(toJSON()), trees.light);
+  });
+});
+
+// The helper registers afterEach(cleanup): the tree rendered by the first test must be unmounted before the second runs.
+describe("automatic cleanup between tests", () => {
+  const log: string[] = [];
+  function Tracked() {
+    React.useEffect(() => () => void log.push("unmounted"), []);
+    return null;
+  }
+
+  it("renders a tree", () => {
+    renderWithTheme(<Tracked />);
+    assert.deepEqual(log, []);
+  });
+
+  it("finds the previous tree unmounted", () => {
+    assert.deepEqual(log, ["unmounted"]);
+  });
 });
