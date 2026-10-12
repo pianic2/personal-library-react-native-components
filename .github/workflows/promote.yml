@@ -1,0 +1,159 @@
+name: Promote dist-tag
+
+# PLRNUI-132: moves an npm dist-tag (rc -> next -> latest) to a version that is already published, or restores the previous
+# version on a tag (rollback). It publishes nothing. A real run needs the approval of a reviewer of the `npm-promote`
+# environment and only runs from main; a dry run prints the planned `npm dist-tag` commands and changes nothing.
+# `npm dist-tag` is not covered by npm trusted publishing (OIDC covers `npm publish`), so the real run reads a granular npm
+# token from the environment secret NPM_DIST_TAG_TOKEN. The environment, the token and the rollback are described here and in
+# scripts/promote-dist-tag.mjs (no policy page covers promotion yet).
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package name, for example the target or the legacy shim
+        type: string
+        required: true
+      version:
+        description: Exact version to point the tag at (it must already be published)
+        type: string
+        required: true
+      tag:
+        description: Dist-tag to move
+        type: choice
+        options: [rc, next, latest]
+        required: true
+      integrity:
+        description: sha512 integrity CI recorded for that version's tarball (what npm view shows as dist.integrity)
+        type: string
+        required: true
+      shim-of:
+        description: Only for the legacy shim, the target package it follows (the shim reaches latest only after the target is latest)
+        type: string
+        required: false
+        default: ""
+      rollback:
+        description: Restore this version on the tag (previous version); the consumer smokes are not required
+        type: boolean
+        default: false
+      dry-run:
+        description: Print the planned npm dist-tag commands and change nothing
+        type: boolean
+        default: true
+
+concurrency:
+  group: promote
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # Always a dry run: it checks the tag rules and that the registry holds the recorded artifact, and prints the commands.
+      - name: Verify and plan
+        env:
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+          TAG: ${{ inputs.tag }}
+          INTEGRITY: ${{ inputs.integrity }}
+          SHIM_OF: ${{ inputs.shim-of }}
+          ROLLBACK: ${{ inputs.rollback }}
+        run: |
+          args=("$PACKAGE" "$VERSION" "$TAG" --integrity "$INTEGRITY")
+          if [ -n "$SHIM_OF" ]; then args+=(--shim-of "$SHIM_OF"); fi
+          if [ "$ROLLBACK" = "true" ]; then args+=(--rollback); fi
+          node scripts/promote-dist-tag.mjs "${args[@]}" --dry-run
+
+  gates:
+    name: gates
+    needs: verify
+    if: ${{ !inputs.rollback }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+
+    steps:
+      # The commit the release workflow tagged v<version>. The smokes pack and test that source: they do not test the registry
+      # tarball, which `verify` checks separately through its integrity. A rollback skips this job (the script then requires
+      # a version lower than the one the tag has now).
+      - name: Checkout the released commit
+        uses: actions/checkout@v6
+        with:
+          ref: v${{ inputs.version }}
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Consumer smoke
+        run: npm run consumer:smoke
+
+      - name: Expo consumer smoke
+        run: npm run consumer:expo
+
+      - name: Public API snapshot is clean
+        run: npm run api:snapshot:check
+
+  promote:
+    name: promote
+    needs: [verify, gates]
+    if: ${{ !cancelled() && needs.verify.result == 'success' && (needs.gates.result == 'success' || needs.gates.result == 'skipped') && !inputs.dry-run && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Human gate: required reviewers (no self-approval) and the deployment branch `main` are configured on this environment,
+    # which also holds NPM_DIST_TAG_TOKEN.
+    environment: npm-promote
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Move the tag
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_DIST_TAG_TOKEN }}
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+          TAG: ${{ inputs.tag }}
+          INTEGRITY: ${{ inputs.integrity }}
+          SHIM_OF: ${{ inputs.shim-of }}
+          ROLLBACK: ${{ inputs.rollback }}
+        run: |
+          args=("$PACKAGE" "$VERSION" "$TAG" --integrity "$INTEGRITY")
+          if [ -n "$SHIM_OF" ]; then args+=(--shim-of "$SHIM_OF"); fi
+          if [ "$ROLLBACK" = "true" ]; then args+=(--rollback); fi
+          node scripts/promote-dist-tag.mjs "${args[@]}"
