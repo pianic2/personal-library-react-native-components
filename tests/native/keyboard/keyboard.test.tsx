@@ -189,6 +189,9 @@ describe("KeyboardAvoidingContainer", () => {
 });
 
 describe("DismissKeyboardView", () => {
+  // react-test-renderer has no responder system, so presses are simulated by invoking the onPress props directly:
+  // "not on child press" holds because the child handles its own press (RN Pressable semantics), and the wrapper's
+  // handler is only reachable through the wrapper's own onPress.
   it("calls Keyboard.dismiss on an outside press but not on a child press", () => {
     const m = mockHost();
     let childPressed = 0;
