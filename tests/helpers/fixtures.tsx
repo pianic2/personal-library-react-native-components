@@ -38,6 +38,7 @@ import {
   TopBar,
 } from "../../src";
 import { Container } from "../../src/components/Container/index.js";
+import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
 import { Slot } from "../../src/components/Slot/index.js";
 import { Label } from "../../src/components/Label/index.js";
@@ -141,6 +142,14 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   P: () => <P>Paragraph</P>,
   PasswordInput: () => <PasswordInput label="Password" value="secret" onChangeText={noop} />,
   Popover: () => <Popover renderTrigger={() => <Text>Trigger</Text>}>{<Text>Popover content</Text>}</Popover>,
+  Portal: () => (
+    <OverlayHost>
+      <Text>Screen</Text>
+      <Portal>
+        <Text>Overlay</Text>
+      </Portal>
+    </OverlayHost>
+  ),
   ProgressBar: () => <ProgressBar progress={50} />,
   Quote: () => <Quote>Quoted</Quote>,
   RadioGroup: () => (
