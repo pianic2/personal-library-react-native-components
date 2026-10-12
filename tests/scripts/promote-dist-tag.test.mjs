@@ -161,6 +161,10 @@ describe("PLRNUI-132 promote-dist-tag: rollback direction and inputs", () => {
       assert.ok(compareVersions(ordered[i], ordered[i + 1]) < 0, `${ordered[i]} < ${ordered[i + 1]}`);
       assert.ok(compareVersions(ordered[i + 1], ordered[i]) > 0);
     }
+    // hyphens inside prerelease identifiers belong to the identifier (semver): rc-2 and rc-10 are alphanumeric, rc-10 < rc-2
+    assert.ok(compareVersions("1.0.0-rc-10", "1.0.0-rc-2") < 0);
+    assert.ok(compareVersions("1.0.0-a-b", "1.0.0-a-c") < 0);
+    assert.ok(compareVersions("1.0.0-rc.1", "1.0.0-rc-2") < 0);
     assert.equal(compareVersions("1.2.3", "1.2.3"), 0);
     assert.equal(compareVersions("1.2.3-rc.4", "1.2.3-rc.4"), 0);
   });
@@ -174,6 +178,14 @@ describe("PLRNUI-132 promote-dist-tag: rollback direction and inputs", () => {
     }
     assert.equal(run([PKG, "1.0.0", "latest", "--integrity", ` ${GOOD}`, "--dry-run"]).status, 2);
     assert.equal(run([PKG, "1.0.0", "latest", "--integrity", GOOD.toUpperCase(), "--dry-run"]).status, 2);
+  });
+
+  it("refuses a tag that points at something that is not a version", () => {
+    setState(base({ [`${PKG} dist-tags`]: { latest: 5 } }));
+    const result = run([PKG, "1.0.0", "latest", "--integrity", GOOD]);
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /unexpected value/);
+    assert.ok(!calls().some((c) => c.startsWith("dist-tag")));
   });
 
   it("refuses dist-tags that are not an object (null, array)", () => {

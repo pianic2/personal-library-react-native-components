@@ -68,7 +68,9 @@ export function checkTagRules(version, tag) {
 }
 
 function parseVersion(version) {
-  const [core, pre] = version.split("-");
+  const dash = version.indexOf("-");
+  const core = dash === -1 ? version : version.slice(0, dash);
+  const pre = dash === -1 ? undefined : version.slice(dash + 1);
   const [major, minor, patch] = core.split(".").map(Number);
   return { major, minor, patch, pre: pre === undefined ? [] : pre.split(".") };
 }
@@ -140,6 +142,7 @@ export function promote(opts, log = console.log) {
 
   const tags = view(opts, opts.pkg, "dist-tags");
   const previous = tags[opts.tag];
+  if (previous !== undefined && (typeof previous !== "string" || !VERSION.test(previous))) throw new Refusal(`${opts.tag} points at an unexpected value: ${JSON.stringify(previous)}`);
   log(`${opts.tag} points at ${previous ?? "nothing"} now`);
   if (opts.rollback) {
     if (previous === undefined) throw new Refusal(`there is nothing to roll back: ${opts.tag} is not set`);
