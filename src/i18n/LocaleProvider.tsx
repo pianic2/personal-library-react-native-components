@@ -22,18 +22,24 @@ export interface I18nManagerLike {
 export interface LocaleProviderProps {
   /** BCP 47 tag used by the formatters (`"it-IT"`). Default: the runtime's default locale. */
   locale?: string;
-  /** Text direction. Default: `I18nManager.isRTL` (from `i18nManager` when given, else React Native's). */
+  /** Text direction. Default: the `i18nManager` prop, else the outer provider's direction, else React Native's `I18nManager.isRTL`. */
   direction?: Direction;
-  /** Replaces the `I18nManager` read for the direction (tests, previews, web). */
+  /**
+   * Replaces the `I18nManager` read (tests, previews, web). Only `isRTL` is read, once per render of the provider; an
+   * `isRTL` of `undefined` is ignored. The nearest provider that sets a direction (through `direction` or this prop) wins.
+   */
   i18nManager?: I18nManagerLike;
   /** Translations; unspecified keys keep the value of the outer provider or the English default. Hoist or memoize it. */
   messages?: MessageOverrides;
   children?: React.ReactNode;
 }
 
-function readDirection(manager?: I18nManagerLike): Direction | undefined {
-  const source = manager ?? (ReactNative as unknown as { I18nManager?: I18nManagerLike }).I18nManager;
-  return source ? (source.isRTL ? "rtl" : "ltr") : undefined;
+function directionOf(isRTL: boolean | undefined): Direction | undefined {
+  return isRTL === undefined ? undefined : isRTL ? "rtl" : "ltr";
+}
+
+function readDirection(): Direction | undefined {
+  return directionOf((ReactNative as unknown as { I18nManager?: I18nManagerLike }).I18nManager?.isRTL);
 }
 
 /**
@@ -42,15 +48,16 @@ function readDirection(manager?: I18nManagerLike): Direction | undefined {
  */
 export function LocaleProvider({ locale, direction, i18nManager, messages, children }: LocaleProviderProps) {
   const parent = useContext(Context);
+  const managerIsRTL = i18nManager?.isRTL; // a primitive dependency: an inline `{ isRTL: true }` must not rebuild the context
   const value = useMemo<LocaleState>(() => {
     const merged: Messages = { ...parent.messages };
     for (const [key, text] of Object.entries(messages ?? {})) if (typeof text === "string") merged[key as MessageKey] = text;
     return {
       locale: locale ?? parent.locale,
-      direction: direction ?? (i18nManager ? readDirection(i18nManager) : undefined) ?? parent.direction,
+      direction: direction ?? directionOf(managerIsRTL) ?? parent.direction,
       messages: merged,
     };
-  }, [parent, locale, direction, i18nManager, messages]);
+  }, [parent, locale, direction, managerIsRTL, messages]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

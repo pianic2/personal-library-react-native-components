@@ -31,7 +31,7 @@ function read<T>(hook: () => T, wrap?: (el: React.ReactElement) => React.ReactEl
   return value;
 }
 
-async function withoutIntl<T>(run: () => T): Promise<T> {
+function withoutIntl<T>(run: () => T): T {
   const original = Object.getOwnPropertyDescriptor(globalThis, "Intl")!;
   Object.defineProperty(globalThis, "Intl", { value: undefined, configurable: true, writable: true });
   try {
@@ -81,6 +81,12 @@ describe("PLRNUI-360 i18n messages", () => {
     }
   });
 
+  it("the shared defaults are frozen and prototype keys are not placeholders", () => {
+    assert.ok(Object.isFrozen(defaultMessages));
+    assert.equal(formatMessage("a {constructor} b {toString}", {}), "a {constructor} b {toString}");
+    assert.equal(formatMessage("price {x}", { x: "$& {y}" }), "price $& {y}");
+  });
+
   it("useTranslate fills placeholders from the active messages; unknown placeholders stay", () => {
     const t = read(
       () => useTranslate(),
@@ -112,6 +118,31 @@ describe("PLRNUI-360 direction and locale", () => {
     assert.equal(direction, "rtl");
   });
 
+  it("nearest provider wins: a child that sets only i18nManager overrides, isRTL undefined inherits, an inline object does not rebuild the context", () => {
+    const nested = (inner: React.ReactElement) => (el: React.ReactElement) => (
+      <LocaleProvider direction="rtl">{React.cloneElement(inner, undefined, el)}</LocaleProvider>
+    );
+    assert.equal(read(() => useDirection(), nested(<LocaleProvider i18nManager={{ isRTL: false }} />)), "ltr");
+    assert.equal(read(() => useDirection(), nested(<LocaleProvider i18nManager={{}} />)), "rtl");
+
+    const seen: unknown[] = [];
+    const Capture = React.memo(function Capture() {
+      seen.push(useMessages());
+      return null;
+    });
+    const tree = () => (
+      <LocaleProvider i18nManager={{ isRTL: true }}>
+        <Capture />
+      </LocaleProvider>
+    );
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(tree());
+    });
+    act(() => r.update(tree()));
+    assert.equal(seen.length, 1, "an inline i18nManager did not rebuild the context value, so the consumer did not re-render");
+  });
+
   it("without a provider the direction is 'ltr' (the test shim has no I18nManager)", () => {
     assert.equal(read(() => useDirection()), "ltr");
   });
@@ -130,20 +161,22 @@ describe("PLRNUI-360 formatters", () => {
     assert.equal(formatDate(new Date(Date.UTC(2026, 0, 2)), "en-US", { timeZone: "UTC" }), "1/2/2026");
   });
 
-  it("return a string when global Intl is undefined", async () => {
-    await withoutIntl(() => {
+  it("return a string when global Intl is undefined", () => {
+    withoutIntl(() => {
       assert.equal(formatNumber(1234.5, "en-US"), "1234.5");
       assert.equal(formatDate(new Date(Date.UTC(2026, 0, 2)), "en-US"), "2026-01-02");
       assert.equal(formatDate(Date.UTC(2026, 0, 2)), "2026-01-02");
       assert.equal(formatDate(new Date(NaN)), "");
-      assert.equal(defaultLocale(), "en");
+      assert.equal(typeof defaultLocale(), "string", "the cached runtime locale (or en) is returned without Intl");
     });
   });
 
   it("fall back instead of throwing on an invalid locale or options", () => {
-    assert.equal(typeof formatNumber(5, "not a locale!!"), "string");
+    assert.throws(() => new Intl.NumberFormat("not a locale!!"), RangeError, "the locale really is rejected");
+    assert.equal(formatNumber(5, "not a locale!!"), "5");
     assert.equal(formatNumber(5, "en-US", { style: "currency" }), "5");
-    assert.equal(typeof formatDate(new Date(0), "xx-invalid-locale-zzzzzzzzzz"), "string");
+    assert.throws(() => new Intl.DateTimeFormat("xx-invalid-locale-zzzzzzzzzz"), RangeError);
+    assert.equal(formatDate(new Date(0), "xx-invalid-locale-zzzzzzzzzz"), "1970-01-01");
   });
 
   it("useFormat binds the locale of the provider", () => {

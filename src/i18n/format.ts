@@ -30,11 +30,14 @@ export function formatDate(value: Date | number, locale?: string, options?: Reco
   return Number.isNaN(date.getTime()) ? "" : date.toISOString().slice(0, 10);
 }
 
-/** The runtime's default locale (BCP 47), or `"en"` when it cannot be read. */
+let cachedLocale: string | undefined;
+
+/** The runtime's default locale (BCP 47), or `"en"` when it cannot be read. Resolved once: building an Intl object is slow on Hermes. */
 export function defaultLocale(): string {
+  if (cachedLocale) return cachedLocale;
   try {
     const Format = intl()?.DateTimeFormat;
-    if (Format) return new Format().resolvedOptions().locale || "en";
+    if (Format) return (cachedLocale = new Format().resolvedOptions().locale || "en");
   } catch {
     // fall back below
   }
