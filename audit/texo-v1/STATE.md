@@ -232,3 +232,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-298 (E8-15: clipboard adapter and useCopyToClipboard with expo and web mappings) | #186 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-322 (E13-21: skill pack scaffolding, validator and skills.sh installability) | #187 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-285) | #188 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-285 (E1-09: Button info variant and pressed-state contrast fix) | #189 | PR open (row committed pre-merge, see ADR 0020 Branching) |

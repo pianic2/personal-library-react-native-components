@@ -36,8 +36,9 @@ export const meta: ComponentMeta = {
   },
   "a11y": [
     "Exposes role button, the label as accessible name and the disabled state",
-    "The info variant renders transparent with inverted text and is unreadable (audit E1)",
-    "Pressed state contrast is low (audit E1)"
+    "Every filled variant (primary, secondary, danger, info) keeps its background when pressed and its label reaches 4.5:1 in light and dark; the label falls back to the primary text colour when the inverted one would not",
+    "The pressed state is shown with the pressed opacity token, not a background swap",
+    "Hit area is at least 44x44"
   ],
   "variants": {
     "variant": [

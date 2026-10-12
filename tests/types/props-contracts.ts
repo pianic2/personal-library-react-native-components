@@ -75,7 +75,7 @@ export type RequiredKeys<T> = {
 export type AlertKeys = Expect<Equal<keyof AlertProps, "title" | "variant" | "message" | "actionLabel" | "onAction" | "onDismiss" | "dismissLabel" | "appearance" | "icon" | "actions">>;
 export type BottomBarKeys = Expect<Equal<keyof BottomBarProps, "maxItems" | "position" | "insets">>;
 export type ButtonKeys = Expect<
-  Equal<keyof ButtonProps, "icon" | "label" | "onPress" | "variant" | "size" | "disabled">
+  Equal<keyof ButtonProps, "icon" | "label" | "onPress" | "variant" | "size" | "disabled" | "style" | "testID">
 >;
 export type CardKeys = Expect<
   Equal<
