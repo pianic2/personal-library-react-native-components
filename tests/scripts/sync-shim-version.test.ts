@@ -115,7 +115,7 @@ describe("PLRNUI-113 Changesets configuration", () => {
 
   it("wires the scripts, the devDependency and the lockstep check into release:check", () => {
     assert.equal(pkg.scripts.changeset, "changeset");
-    assert.match(pkg.scripts["changeset:version"], /^changeset version && node scripts\/sync-shim-version\.mjs$/);
+    assert.match(pkg.scripts["changeset:version"], /^changeset version && npm install --package-lock-only --ignore-scripts && node scripts\/sync-shim-version\.mjs$/);
     assert.equal(pkg.scripts["shim:version:check"], "node scripts/sync-shim-version.mjs --check");
     assert.match(pkg.scripts["release:publish"], /^npm run release:check && changeset publish$/);
     assert.ok(pkg.devDependencies["@changesets/cli"]);

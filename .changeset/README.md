@@ -18,7 +18,7 @@ npx changeset status     # exit 0 when the branch has a changeset, exit 1 when i
 npm run changeset:version   # changeset version, then scripts/sync-shim-version.mjs
 ```
 
-`changeset:version` bumps `package.json`, writes `CHANGELOG.md`, and copies the new version into `.changeset/shim-version.json`. That file records the version the legacy shim is generated with (`scripts/build-shim.mjs --target-version <version>`), so the shim and the package keep the same number (ADR 0013, lockstep). `npm run shim:version:check` (also part of `release:check`) fails when the record and `package.json` differ.
+`changeset:version` bumps `package.json`, writes `CHANGELOG.md`, refreshes `package-lock.json` (`npm install --package-lock-only`: `release:guard` fails when the lockfile versions differ from `package.json`), and copies the new version into `.changeset/shim-version.json`. That file records the version the legacy shim is generated with (`scripts/build-shim.mjs --target-version <version>`), so the shim and the package keep the same number (ADR 0013, lockstep). `npm run shim:version:check` (also part of `release:check`) fails when the record and `package.json` differ.
 
 The script is called `changeset:version` and not `version` on purpose: npm runs a script named `version` on every `npm version`, which would start a release bump by accident.
 
@@ -26,11 +26,15 @@ The legacy shim is generated into `dist-shim/`, it is not a workspace package, s
 
 ## Pre-release mode (`rc`)
 
-The repository is in pre-release mode with tag `rc` (`pre.json`): `changeset version` produces `X.Y.Z-rc.N` versions and the changelog entries of a release candidate. A dry run, without touching the tree:
+The repository is in pre-release mode with tag `rc` (`pre.json`): `changeset version` produces `X.Y.Z-rc.N` versions and the changelog entries of a release candidate. A dry run, without touching the tree: copy the repository including `.git` and `node_modules` to a temporary directory, add a changeset there and run the release flow:
 
 ```sh
-cp -r . /tmp/dry-run && cd /tmp/dry-run && npx changeset version && git diff
+cp -r . /tmp/dry-run && cd /tmp/dry-run
+npx changeset add --empty    # or write a patch changeset by hand
+npm run changeset:version && git status && git diff
 ```
+
+In pre mode the consumed changesets are moved to `.changeset/pre/` (Changesets behaviour; a later `changeset version` after `pre exit` folds them into the stable changelog entry).
 
 Snapshot releases (`changeset version --snapshot <tag>`) are refused in pre mode by Changesets itself; take a snapshot in a copy after `npx changeset pre exit`.
 
