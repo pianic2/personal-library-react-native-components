@@ -31,6 +31,10 @@ const swallow = (): void => undefined;
  * adapter, registry, then RN-core `Vibration`); with nothing configured on web it falls back to `navigator.vibrate` and
  * otherwise does nothing. Calls are suppressed when the global flag or `enabled` is false, never throw, and always
  * resolve. Not tied to reduced motion: that is a separate setting.
+ *
+ * An adapter given to a provider always wins, even `unavailable` (for example `createExpoHapticsAdapter(undefined)`):
+ * then neither `Vibration` nor `navigator.vibrate` is used. `status` is the resolved source's status and does not
+ * reflect `enabled` or the global flag.
  */
 export function useHaptics(options: UseHapticsOptions = {}): Haptics {
   const { enabled = true } = options;

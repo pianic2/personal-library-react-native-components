@@ -120,6 +120,12 @@ describe("web mapping", () => {
     await api.notification("error");
     await api.selection();
     assert.deepEqual(seen, [10, 40, [30, 40, 30, 40, 30], 5]);
+    seen.length = 0;
+    await api.impact();
+    await api.impact("medium");
+    await api.notification("success");
+    await api.notification("warning");
+    assert.deepEqual(seen, [20, 20, [10, 40, 10], [20, 40, 20]]);
     await assert.doesNotReject(createWebHaptics({}).notification("success"));
   });
 
@@ -211,6 +217,17 @@ describe("useHaptics", () => {
     const out = renderHaptics(undefined, { haptics: { id: "haptics", status: "available", api } });
     await assert.doesNotReject(out.h!.impact("light"));
     await assert.doesNotReject(out.h!.notification("error"));
+  });
+
+  it("an unavailable provider adapter wins over the web fallback and stays silent", async () => {
+    const restore = setNavigator({ vibrate: () => assert.fail("must not vibrate") });
+    try {
+      const out = renderHaptics(undefined, { haptics: createExpoHapticsAdapter(undefined) });
+      assert.equal(out.h!.status, "unavailable");
+      await assert.doesNotReject(out.h!.impact("heavy"));
+    } finally {
+      restore();
+    }
   });
 
   it("keeps a stable result object while inputs are unchanged", () => {
