@@ -20,6 +20,8 @@ npm run changeset:version   # changeset version, then scripts/sync-shim-version.
 
 `changeset:version` bumps `package.json`, writes `CHANGELOG.md`, refreshes `package-lock.json` (`npm install --package-lock-only`: `release:guard` fails when the lockfile versions differ from `package.json`), and copies the new version into `.changeset/shim-version.json`. That file records the version the legacy shim is generated with (`scripts/build-shim.mjs --target-version <version>`), so the shim and the package keep the same number (ADR 0013, lockstep). `npm run shim:version:check` (also part of `release:check`) fails when the record and `package.json` differ.
 
+`CHANGELOG.md` entries are written by `@changesets/changelog-github` (links to the pull request and the author), which reads the GitHub API: export `GITHUB_TOKEN` (scopes `read:user`, `repo:status`) before `npm run changeset:version`; without it Changesets stops with an error for committed changesets. See `docs/policies/release-notes-template.md` for the release notes that go with each release.
+
 The script is called `changeset:version` and not `version` on purpose: npm runs a script named `version` on every `npm version`, which would start a release bump by accident.
 
 The legacy shim is generated into `dist-shim/`, it is not a workspace package, so Changesets cannot hold it in a `fixed` group. `fixed` stays empty and the lockstep is enforced by `sync-shim-version.mjs` instead.
