@@ -1,5 +1,5 @@
 import { existsSync, lstatSync, readFileSync, readdirSync } from "node:fs";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Skill pack validator (PLRNUI-322 / E13-21). Usage: node scripts/ai/validate-skills.mjs [skills-dir]
@@ -16,35 +16,46 @@ export const METADATA_EXEMPT = new Set(["texo-execute", "texo-review"]);
 
 const NAME_RULE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** Minimal frontmatter reader: `key: value` scalars plus one nested block such as `metadata:` with indented scalars. */
+/**
+ * Minimal frontmatter reader. Supports `key: value` scalars, folded/literal blocks (`>`, `|`), plain indented
+ * continuation lines (joined with spaces), and one nested block such as `metadata:` of indented scalars. An empty
+ * scalar is stored as "" (missing); a key with no value followed by plain continuation text is that text.
+ */
 export function parseFrontmatter(text) {
-  const match = /^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
+  const match = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/.exec(text);
   if (!match) return null;
   const data = {};
-  let block = null;
-  for (const line of match[1].split(/\r?\n/)) {
-    if (!line.trim() || line.trim().startsWith("#")) continue;
-    const nested = /^\s+([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
-    if (nested && block) {
-      data[block][nested[1]] = unquote(nested[2]);
-      continue;
-    }
-    const top = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line);
+  const lines = match[1].split(/\r?\n/);
+  for (let i = 0; i < lines.length; i += 1) {
+    const top = /^([A-Za-z0-9_-]+):[ \t]*(.*)$/.exec(lines[i]);
     if (!top) continue;
-    if (top[2] === "") {
-      block = top[1];
-      data[block] = {};
+    const [, key, rest] = top;
+    const body = [];
+    while (i + 1 < lines.length && (/^[ \t]+\S/.test(lines[i + 1]) || lines[i + 1].trim() === "")) {
+      body.push(lines[i + 1]);
+      i += 1;
+    }
+    while (body.length && body[body.length - 1].trim() === "") body.pop();
+    const indented = body.filter((line) => line.trim());
+    const block = /^[>|][+-]?$/.test(rest.trim());
+    if (rest.trim() === "" && indented.length && indented.every((line) => /^\s+[A-Za-z0-9_-]+:/.test(line))) {
+      data[key] = {};
+      for (const line of indented) {
+        const nested = /^\s+([A-Za-z0-9_-]+):[ \t]*(.*)$/.exec(line);
+        if (nested) data[key][nested[1]] = unquote(nested[2]);
+      }
+    } else if (block || rest.trim() === "") {
+      data[key] = indented.map((line) => line.trim()).join(" ").trim();
     } else {
-      block = null;
-      data[top[1]] = unquote(top[2]);
+      data[key] = unquote([rest, ...indented].map((part) => part.trim()).join(" "));
     }
   }
   return data;
 }
 
 function unquote(value) {
-  const v = value.trim();
-  return (v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")) ? v.slice(1, -1) : v;
+  const v = value.replace(/\s+#.*$/, "").trim();
+  return (v.startsWith('"') && v.endsWith('"') && v.length > 1) || (v.startsWith("'") && v.endsWith("'") && v.length > 1) ? v.slice(1, -1) : v;
 }
 
 function listFiles(dir) {
@@ -54,15 +65,38 @@ function listFiles(dir) {
   });
 }
 
+function stripCode(text) {
+  return text
+    .replace(/^(```|~~~)[^\n]*\n[\s\S]*?(?:\n\1[^\n]*(?=\n|$)|$)/gm, "")
+    .replace(/`+[^`\n]*`+/g, "");
+}
+
+function linkTargets(text) {
+  const targets = [];
+  const clean = stripCode(text);
+  // Inline links: [x](target "title"), [x](<target with spaces> 'title'), one level of parentheses inside the target.
+  for (const match of clean.matchAll(/\]\(\s*(?:<([^>\n]*)>|((?:[^()\s]|\([^()\s]*\))+))(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)/g))
+    targets.push(match[1] ?? match[2]);
+  // Reference definitions: [label]: target
+  for (const match of clean.matchAll(/^ {0,3}\[[^\]\n]+\]:\s*(?:<([^>\n]*)>|(\S+))/gm)) targets.push(match[1] ?? match[2]);
+  return targets;
+}
+
 function checkLinks(file, skillDir, problems, label) {
-  const text = readFileSync(file, "utf8").replace(/```[\s\S]*?```/g, "");
-  for (const match of text.matchAll(/\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
-    const target = match[1];
-    if (/^(?:[a-z][a-z0-9+.-]*:|#)/i.test(target)) continue;
-    const path = resolve(dirname(file), target.split("#")[0]);
-    if (relative(skillDir, path).startsWith("..")) problems.push(`${label}: link "${target}" leaves the skill folder`);
+  for (const target of linkTargets(readFileSync(file, "utf8"))) {
+    if (/^(?:[a-z][a-z0-9+.-]*:|#|\/\/)/i.test(target)) continue;
+    let local = target.split("#")[0].split("?")[0];
+    try {
+      local = decodeURIComponent(local);
+    } catch {
+      // keep the raw target
+    }
+    if (local === "") continue;
+    const path = resolve(dirname(file), local);
+    const rel = relative(skillDir, path);
+    if (rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel)) problems.push(`${label}: link "${target}" leaves the skill folder`);
     else if (!existsSync(path)) problems.push(`${label}: broken link "${target}"`);
-    else if (relative(skillDir, path).split(sep).filter((part) => part !== "").length > 2 && relative(skillDir, path).startsWith(`references${sep}`))
+    else if (rel.startsWith(`references${sep}`) && rel.split(sep).length > 2)
       problems.push(`${label}: link "${target}" is deeper than one level under references/`);
   }
 }
@@ -72,7 +106,12 @@ export function validateSkills(root) {
   const problems = [];
   if (!existsSync(root)) return [`${root}: skills directory not found`];
   for (const entry of readdirSync(root, { withFileTypes: true })) {
-    if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+    if (entry.name.startsWith(".")) continue;
+    if (entry.isSymbolicLink()) {
+      problems.push(`${entry.name}: symlinks are not allowed (copy the folder)`);
+      continue;
+    }
+    if (!entry.isDirectory()) continue;
     const folder = entry.name;
     const skillDir = join(root, folder);
     const label = `${folder}/SKILL.md`;
@@ -98,7 +137,7 @@ export function validateSkills(root) {
         if (!fm.metadata || !fm.metadata.version) problems.push(`${label}: metadata.version is required`);
       }
     }
-    const lines = text.split(/\r?\n/).length;
+    const lines = text.replace(/\r?\n$/, "").split(/\r?\n/).length;
     if (lines > MAX_LINES) problems.push(`${label}: ${lines} lines (max ${MAX_LINES})`);
 
     for (const path of listFiles(skillDir)) {
@@ -130,5 +169,5 @@ if (isCli) {
     console.error(`validate-skills: ${problems.length} problem(s)`);
     process.exit(1);
   }
-  console.log(`validate-skills: ok (${readdirSync(root, { withFileTypes: true }).filter((e) => e.isDirectory()).length} skills)`);
+  console.log(`validate-skills: ok (${readdirSync(root, { withFileTypes: true }).filter((e) => e.isDirectory() && !e.name.startsWith(".")).length} skills)`);
 }

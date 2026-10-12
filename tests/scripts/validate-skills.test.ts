@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 // @ts-expect-error plain ESM script without type declarations
@@ -70,16 +70,46 @@ describe("PLRNUI-322 validate-skills", () => {
     }
   });
 
-  it("rejects a SKILL.md over 500 lines but accepts exactly 500", () => {
-    const head = skill("big").split("\n").length - 1;
-    const exact = pack({ "big/SKILL.md": skill("big", "", "x\n".repeat(500 - head)) });
-    const over = pack({ "big/SKILL.md": skill("big", "", "x\n".repeat(501 - head)) });
+  it("counts lines like wc -l: exactly 500 passes, 501 fails", () => {
+    const fixture = (total: number) => {
+      const header = skill("big", "", "").split("\n"); // ends with "" after the final newline
+      header.pop();
+      const filler = Array.from({ length: total - header.length }, () => "x");
+      return [...header, ...filler].join("\n") + "\n";
+    };
+    const exact = pack({ "big/SKILL.md": fixture(500) });
+    const over = pack({ "big/SKILL.md": fixture(501) });
     try {
+      assert.equal(readFileSync(join(exact.root, "big/SKILL.md"), "utf8").split("\n").length - 1, 500);
       assert.equal(validateSkills(exact.root).filter((l: string) => /lines/.test(l)).length, 0);
       assert.match(validateSkills(over.root).join("\n"), /big\/SKILL.md: 501 lines \(max 500\)/);
     } finally {
       exact.cleanup();
       over.cleanup();
+    }
+  });
+
+  it("enforces description and license on folded, literal, continuation and empty values", () => {
+    const long = "d".repeat(1100);
+    const p = pack({
+      "folded/SKILL.md": `---\r\nname: folded\r\ndescription: >\r\n  ${long}\r\nlicense: MIT\r\nmetadata:\r\n  version: 1\r\n---\r\n`,
+      "literal/SKILL.md": `---\nname: literal\ndescription: |\n  ${long}\nlicense: MIT\nmetadata:\n  version: 1\n---\n`,
+      "plain/SKILL.md": `---\nname: plain\ndescription:\n  ${long}\nlicense: MIT\nmetadata:\n  version: 1\n---\n`,
+      "empty/SKILL.md": `---\nname: empty\ndescription: fine\nlicense:\nmetadata:\n  version: 1\n---\n`,
+      "ok-folded/SKILL.md": `---\nname: ok-folded\ndescription: >\n  one\n  two\nlicense: MIT # comment\nmetadata:\n  version: 1\n---\n`,
+      "bom/SKILL.md": `\uFEFF${skill("bom")}`,
+    });
+    try {
+      const text = validateSkills(p.root).join("\n");
+      assert.match(text, /folded\/SKILL.md: description is 1100 characters/);
+      assert.match(text, /literal\/SKILL.md: description is 1100 characters/);
+      assert.match(text, /plain\/SKILL.md: description is 1100 characters/);
+      assert.match(text, /empty\/SKILL.md: license is required/);
+      assert.doesNotMatch(text, /ok-folded|bom\//);
+      assert.equal(parseFrontmatter("---\nname: x\ndescription: >\n  one\n  two\n---\n").description, "one two");
+      assert.equal(parseFrontmatter("---\nlicense: MIT # c\n---\n").license, "MIT");
+    } finally {
+      p.cleanup();
     }
   });
 
@@ -103,8 +133,32 @@ describe("PLRNUI-322 validate-skills", () => {
     }
   });
 
-  it("ignores links inside fenced code blocks", () => {
-    const p = pack({ "code/SKILL.md": skill("code", "", "```md\n[x](nowhere.md)\n```\n") });
+  it("checks reference-style, angle-bracket, single-quoted-title and percent-encoded links", () => {
+    const body = "[a][r]\n\n[r]: gone-ref.md\n\n[b](<gone angle.md>) [c](gone-title.md 'Title') [d](with%20space.md) [e](paren(1).md)\n";
+    const p = pack({ "refs/SKILL.md": skill("refs", "", body), "refs/with space.md": "x\n", "refs/paren(1).md": "x\n" });
+    try {
+      const text = validateSkills(p.root).join("\n");
+      assert.match(text, /broken link "gone-ref.md"/);
+      assert.match(text, /broken link "gone angle.md"/);
+      assert.match(text, /broken link "gone-title.md"/);
+      assert.doesNotMatch(text, /with%20space|paren/);
+    } finally {
+      p.cleanup();
+    }
+  });
+
+  it("flags a symlinked skill folder", () => {
+    const p = pack({ "real/SKILL.md": skill("real") });
+    symlinkSync(join(p.root, "real"), join(p.root, "alias"));
+    try {
+      assert.match(validateSkills(p.root).join("\n"), /alias: symlinks are not allowed/);
+    } finally {
+      p.cleanup();
+    }
+  });
+
+  it("ignores links inside fenced (``` and ~~~) blocks and inline code", () => {
+    const p = pack({ "code/SKILL.md": skill("code", "", "```md\n[x](nowhere.md)\n```\n\n~~~\n[y](nowhere2.md)\n~~~\n\nUse `[q](zz.md)` inline.\n") });
     try {
       assert.deepEqual(validateSkills(p.root), []);
     } finally {

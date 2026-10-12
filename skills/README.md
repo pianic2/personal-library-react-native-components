@@ -12,7 +12,7 @@ npx skills add pianic2/personal-library-react-native-components --list
 
 # install everything, or choose skills (-s) and agents (-a)
 npx skills add pianic2/personal-library-react-native-components
-npx skills add pianic2/personal-library-react-native-components -s texo-component-selection -a claude-code -a codex
+npx skills add pianic2/personal-library-react-native-components -s texo-execute -a claude-code -a codex
 
 # real copies instead of symlinks (recommended in CI and containers)
 npx skills add pianic2/personal-library-react-native-components --copy
