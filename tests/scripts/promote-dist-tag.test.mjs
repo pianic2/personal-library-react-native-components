@@ -6,7 +6,7 @@ import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { checkTagRules, integrityOf, parseArgs, promote } from "../../scripts/promote-dist-tag.mjs";
+import { checkTagRules, compareVersions, integrityOf, parseArgs, promote } from "../../scripts/promote-dist-tag.mjs";
 
 const root = resolve(import.meta.dirname, "../..");
 const cli = join(root, "scripts", "promote-dist-tag.mjs");
@@ -136,6 +136,54 @@ describe("PLRNUI-132 promote-dist-tag: rollback", () => {
     assert.match(result.stdout, /\(rollback\)/);
     const refused = run([PKG, "0.9.0", "latest", "--rollback", "--integrity", GOOD]);
     assert.equal(refused.status, 1);
+  });
+});
+
+describe("PLRNUI-132 promote-dist-tag: rollback direction and inputs", () => {
+  it("refuses a rollback to a version that is not lower than the current tag, or when the tag is not set", () => {
+    const newer = sri("newer tarball");
+    setState(base({ [`${PKG}@2.0.0 dist.integrity`]: newer, [`${PKG} dist-tags`]: { latest: "1.0.0" } }));
+    const up = run([PKG, "2.0.0", "latest", "--rollback", "--integrity", newer]);
+    assert.equal(up.status, 1);
+    assert.match(up.stderr, /a rollback must go to a lower version/);
+    const same = run([PKG, "1.0.0", "latest", "--rollback", "--integrity", GOOD]);
+    assert.equal(same.status, 1);
+    setState(base({ [`${PKG} dist-tags`]: {} }));
+    const unset = run([PKG, "1.0.0", "latest", "--rollback", "--integrity", GOOD]);
+    assert.equal(unset.status, 1);
+    assert.match(unset.stderr, /nothing to roll back/);
+    assert.ok(!calls().some((c) => c.startsWith("dist-tag")));
+  });
+
+  it("orders versions by semver precedence", () => {
+    const ordered = ["1.0.0-alpha", "1.0.0-alpha.1", "1.0.0-alpha.beta", "1.0.0-beta", "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0", "1.0.1", "1.1.0", "2.0.0", "10.0.0"];
+    for (let i = 0; i < ordered.length - 1; i += 1) {
+      assert.ok(compareVersions(ordered[i], ordered[i + 1]) < 0, `${ordered[i]} < ${ordered[i + 1]}`);
+      assert.ok(compareVersions(ordered[i + 1], ordered[i]) > 0);
+    }
+    assert.equal(compareVersions("1.2.3", "1.2.3"), 0);
+    assert.equal(compareVersions("1.2.3-rc.4", "1.2.3-rc.4"), 0);
+  });
+
+  it("refuses near-miss integrities", () => {
+    setState(base());
+    const lastChar = GOOD.slice(0, -3) + (GOOD.slice(-3, -2) === "A" ? "B" : "A") + "==";
+    for (const wrong of [lastChar, GOOD.replace("sha512-", "sha512-X").slice(0, GOOD.length)]) {
+      if (wrong === GOOD || !/^sha512-[A-Za-z0-9+/]{86}==$/.test(wrong)) continue;
+      assert.equal(run([PKG, "1.0.0", "latest", "--integrity", wrong, "--dry-run"]).status, 1);
+    }
+    assert.equal(run([PKG, "1.0.0", "latest", "--integrity", ` ${GOOD}`, "--dry-run"]).status, 2);
+    assert.equal(run([PKG, "1.0.0", "latest", "--integrity", GOOD.toUpperCase(), "--dry-run"]).status, 2);
+  });
+
+  it("refuses dist-tags that are not an object (null, array)", () => {
+    for (const answer of [null, ["latest"]]) {
+      setState(base({ [`${PKG} dist-tags`]: answer }));
+      const result = run([PKG, "1.0.0", "latest", "--integrity", GOOD]);
+      assert.equal(result.status, 1, JSON.stringify(answer));
+      assert.match(result.stderr, /did not return an object/);
+      assert.ok(!calls().some((c) => c.startsWith("dist-tag")));
+    }
   });
 });
 

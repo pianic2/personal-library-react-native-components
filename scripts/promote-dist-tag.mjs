@@ -8,10 +8,13 @@
 //   --tarball <file>    alternative: compute that integrity from the packed tarball of the release (exactly one of the two).
 // Options
 //   --dry-run           verify everything and print the planned `npm dist-tag` commands, change nothing.
-//   --rollback          <version> is the previous version to restore on <tag>; the same integrity check applies.
+//   --rollback          <version> is the previous version to restore on <tag>; the same integrity check applies, and the
+//                       version must be lower (semver precedence) than the version the tag points at now.
 //   --shim-of <pkg>     <package> is the legacy shim of <pkg>: promoting it to `latest` is allowed only after <pkg> is
 //                       already `latest` at the same version.
 //   --npm <executable>  npm to run (default `npm`; tests pass a fake).
+// Limits: the integrity is a value the caller supplies (or a tarball they hold), so it proves the registry holds the artifact
+// that was recorded, not that CI built it; `--shim-of` is opt-in and is enforced only when the shim is promoted to `latest`.
 // Tag rules: `latest` takes only a stable X.Y.Z; `rc` only X.Y.Z-rc.N; `next` any valid version.
 // Exit codes: 0 done (or dry run ok), 1 a check refused the promotion or npm failed, 2 usage or unreadable input.
 import { createHash } from "node:crypto";
@@ -64,6 +67,33 @@ export function checkTagRules(version, tag) {
   if (tag === "rc" && !RC.test(version)) throw new Refusal(`rc takes only a release candidate X.Y.Z-rc.N, got ${version}`);
 }
 
+function parseVersion(version) {
+  const [core, pre] = version.split("-");
+  const [major, minor, patch] = core.split(".").map(Number);
+  return { major, minor, patch, pre: pre === undefined ? [] : pre.split(".") };
+}
+
+/** Semver precedence: negative when a < b, 0 when equal, positive when a > b (build metadata is not accepted by VERSION). */
+export function compareVersions(a, b) {
+  const x = parseVersion(a);
+  const y = parseVersion(b);
+  for (const key of ["major", "minor", "patch"]) if (x[key] !== y[key]) return x[key] < y[key] ? -1 : 1;
+  if (x.pre.length === 0 || y.pre.length === 0) return x.pre.length === y.pre.length ? 0 : x.pre.length === 0 ? 1 : -1;
+  for (let i = 0; i < Math.max(x.pre.length, y.pre.length); i += 1) {
+    const p = x.pre[i];
+    const q = y.pre[i];
+    if (p === undefined) return -1;
+    if (q === undefined) return 1;
+    const pn = /^\d+$/.test(p);
+    const qn = /^\d+$/.test(q);
+    if (pn && qn) {
+      if (Number(p) !== Number(q)) return Number(p) < Number(q) ? -1 : 1;
+    } else if (pn !== qn) return pn ? -1 : 1;
+    else if (p !== q) return p < q ? -1 : 1;
+  }
+  return 0;
+}
+
 /** sha512 SRI of a tarball file, the same format as `npm view <pkg>@<version> dist.integrity`. */
 export function integrityOf(file) {
   let bytes;
@@ -84,11 +114,14 @@ function npm(opts, args) {
 function view(opts, spec, field) {
   const result = npm(opts, ["view", spec, field, "--json"]);
   if (result.status !== 0) throw new Refusal(`npm view ${spec} ${field} failed (exit ${result.status}): ${(result.stderr || "").trim().split("\n")[0]}`);
+  let value;
   try {
-    return JSON.parse(result.stdout);
+    value = JSON.parse(result.stdout);
   } catch {
     throw new Refusal(`npm view ${spec} ${field} did not return JSON`);
   }
+  if (field === "dist-tags" && (value === null || typeof value !== "object" || Array.isArray(value))) throw new Refusal(`npm view ${spec} dist-tags did not return an object`);
+  return value;
 }
 
 /** Runs the promotion. `log` receives the lines to print. Returns the list of planned or executed commands. */
@@ -108,6 +141,10 @@ export function promote(opts, log = console.log) {
   const tags = view(opts, opts.pkg, "dist-tags");
   const previous = tags[opts.tag];
   log(`${opts.tag} points at ${previous ?? "nothing"} now`);
+  if (opts.rollback) {
+    if (previous === undefined) throw new Refusal(`there is nothing to roll back: ${opts.tag} is not set`);
+    if (compareVersions(opts.version, previous) >= 0) throw new Refusal(`a rollback must go to a lower version than the current ${opts.tag} (${previous}), got ${opts.version}`);
+  }
   if (previous === opts.version) {
     log(`${opts.tag} already points at ${opts.version}: nothing to do`);
     return [];

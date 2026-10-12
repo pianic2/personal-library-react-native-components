@@ -92,7 +92,9 @@ jobs:
       contents: read
 
     steps:
-      # The commit the release workflow tagged v<version>.
+      # The commit the release workflow tagged v<version>. The smokes pack and test that source: they do not test the registry
+      # tarball, which `verify` checks separately through its integrity. A rollback skips this job (the script then requires
+      # a version lower than the one the tag has now).
       - name: Checkout the released commit
         uses: actions/checkout@v6
         with:
@@ -123,7 +125,8 @@ jobs:
     if: ${{ !cancelled() && needs.verify.result == 'success' && (needs.gates.result == 'success' || needs.gates.result == 'skipped') && !inputs.dry-run && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Human gate: required reviewers are configured on this environment, which also holds NPM_DIST_TAG_TOKEN.
+    # Human gate: required reviewers (no self-approval) and the deployment branch `main` are configured on this environment,
+    # which also holds NPM_DIST_TAG_TOKEN.
     environment: npm-promote
     permissions:
       contents: read
