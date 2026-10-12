@@ -97,8 +97,9 @@ test("Modal exposes its content", () => {
   assert.ok(accessibleTexts(r).some((text) => text.includes("Dialog body")));
 });
 
-test("Modal content is its own element, not grouped inside the backdrop Pressable", { todo: "the dialog content sits inside the backdrop Pressable, which is accessible by default, so it is announced as part of the backdrop; owned by the Modal accessibility ticket" }, () => {
+test("Modal content is its own element, not grouped inside the backdrop Pressable", () => {
   const r = render(<Modal visible onClose={() => undefined}><P>Dialog body</P></Modal>);
   const tree = getAccessibleTree(r);
   assert.ok(tree.some((n) => n.type === "Text" && n.text === "Dialog body"));
+  assert.ok(!tree.some((n) => n.type !== "Text" && n.text.includes("Dialog body")), "no pressable swallows the body text");
 });
