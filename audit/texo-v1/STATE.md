@@ -229,3 +229,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-279 (E8-10: keyboard hooks and keyboard-avoiding/dismiss-on-tap primitives) | #183 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-282 (E8-11: safe-area adapter with RN-core fallback and useInsets hook) | #184 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-293 (E8-13: haptics adapter, useHaptics with expo-haptics injection and web/RN fallbacks) | #185 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-298 (E8-15: clipboard adapter and useCopyToClipboard with expo and web mappings) | #186 | PR open (row committed pre-merge, see ADR 0020 Branching) |
