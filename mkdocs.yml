@@ -29,6 +29,7 @@ nav:
   - Getting Started: getting-started.md
   - Platform Support: platform-support.md
   - Compatibility: compatibility.md
+  - Component Maturity: maturity.md
   - Accessibility Testing: accessibility-testing.md
   - Preview Runtime Limits: preview-runtime-limits.md
   - Expo/RN/Metro Troubleshooting: expo-rn-metro-troubleshooting.md

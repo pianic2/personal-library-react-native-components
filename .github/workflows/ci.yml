@@ -30,3 +30,17 @@ jobs:
 
       - name: Release check
         run: npm run release:check
+
+      # PLRNUI-191 asks for the gates as named steps. They are also part of release:check, and they need node_modules, which
+      # release:check installs, so they run after it.
+      - name: Maturity gate
+        run: npm run maturity:check
+
+      - name: Token usage gate
+        run: npm run tokens:check
+
+      - name: Typecheck tests
+        run: npm run typecheck:tests
+
+      - name: Maturity page is current
+        run: npm run maturity:docs:check
