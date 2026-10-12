@@ -57,9 +57,9 @@ All props added after the first release are optional: the original five (`visibl
 
 ## Behavior
 
-- **Dismissal.** `onClose` is called once for a backdrop press (only when `dismissOnBackdrop` is true), once for `onRequestClose` (Android back button) and once for the Escape key on web, which React Native Web delivers through `onRequestClose`. Pressing the dialog content never closes it.
+- **Dismissal.** While the exit animation runs, further dismissals are ignored, so `onClose` is called once per open dialog. `onClose` is called once for a backdrop press (only when `dismissOnBackdrop` is true), once for `onRequestClose` (Android back button) and once for the Escape key on web, which React Native Web delivers through `onRequestClose`. Pressing the dialog content never closes it.
 - **Accessibility.** The dialog has `role="dialog"`, `aria-modal` and `accessibilityViewIsModal`, so screen readers stay inside it. With `title`, the heading is linked through `aria-labelledby`. The backdrop dismiss action is a separate element with `accessibilityRole="button"` and `dismissLabel`; the dialog content is not nested in it, so it is read on its own. When the dialog opens, its label is announced.
-- **Focus.** `initialFocusRef` receives the screen-reader focus on open and `restoreFocusRef` on close (`AccessibilityInfo.setAccessibilityFocus`). There is no Tab focus trap on native; on web React Native Web traps focus in the modal.
+- **Focus.** `initialFocusRef` receives the screen-reader focus on open and `restoreFocusRef` once the dialog has closed, that is after the exit animation, when the native modal is gone (`AccessibilityInfo.setAccessibilityFocus`). The focus is not restored when the `Modal` element itself unmounts while open. There is no Tab focus trap on native; on web React Native Web traps focus in the modal.
 - **Animation.** `fade` and `slide` (the dialog slides up) run through the motion engine and the motion tokens; the native modal stays open until the exit finishes. Under reduced motion (system setting or `MotionProvider reduceMotion="always"`) no animation is created and the change is instant. `none` follows `visible` directly.
 - **Keyboard and safe area.** `avoidKeyboard` wraps the dialog in `KeyboardAvoidingView` (padding on iOS, height elsewhere). `insets` adds to the overlay padding; the component does not read a safe-area context.
 - **Theme.** The backdrop is `colors.backdrop`; the dialog uses the `surface` color and `lg` radius and padding.
@@ -83,4 +83,5 @@ All props added after the first release are optional: the original five (`visibl
 
 - `Select`, `Popover`, `Tooltip` and `BottomSheet` open their own native modal. Opening one from inside a `Modal` relies on the overlay host (see `Portal`); that integration is a separate ticket.
 - `aria-describedby` has no effect on iOS and Android.
+- On web, React Native Web already gives its modal wrapper `role="dialog"` and `aria-modal`; the component adds the same attributes on the dialog box (it needs them on native), so the page has two nested dialog landmarks. Not verified with a screen reader.
 - No scroll lock, stacking order or return-focus-to-trigger fallback beyond the refs above.

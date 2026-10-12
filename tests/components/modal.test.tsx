@@ -36,7 +36,7 @@ const flatten = (style: unknown): Record<string, any> => Object.assign({}, ...[s
 const isType = (n: ReactTestInstance, type: string): boolean => (n.type as unknown) === type;
 const hostsOf = (r: ReactTestRenderer, type: string): ReactTestInstance[] => r.root.findAll((n) => isType(n, type));
 const nativeModal = (r: ReactTestRenderer) => hostsOf(r, "Modal")[0]!;
-const dialog = (r: ReactTestRenderer) => r.root.findAll((n) => typeof isType(n, "string") && n.props.role === "dialog")[0]!;
+const dialog = (r: ReactTestRenderer) => r.root.findAll((n) => typeof n.type === "string" && n.props.role === "dialog")[0]!;
 const backdropButton = (r: ReactTestRenderer) =>
   r.root.findAll((n) => isType(n, "Pressable") && n.props.accessibilityRole === "button")[0];
 
@@ -302,6 +302,94 @@ function reducedAdapters() {
   mocks.setAccessibility({ reduceMotion: true });
   return mocks.adapters;
 }
+
+describe("Modal closing and animated layout", () => {
+  const adapters = () => createMockAdapters().adapters;
+  const wrap = (engine: MotionEngine, modal: React.ReactElement) => (
+    <CapabilityProvider adapters={adapters()}>
+      <MotionProvider engine={engine}>
+        <ThemeProvider>{modal}</ThemeProvider>
+      </MotionProvider>
+    </CapabilityProvider>
+  );
+
+  it("restores the screen-reader focus only after the animated exit has finished", () => {
+    const calls: Array<[string, unknown]> = [];
+    const restoreHost = setModalAccessibilityHost({ announce: () => undefined, focus: (node) => void calls.push(["focus", node]) });
+    try {
+      const { engine, flush } = controlledEngine();
+      const trigger = { current: { id: "trigger" } };
+      const el = (visible: boolean) => wrap(engine, <Modal visible={visible} onClose={noop} restoreFocusRef={trigger}><Text>Body</Text></Modal>);
+      let r!: ReactTestRenderer;
+      act(() => {
+        r = TestRenderer.create(el(true));
+      });
+      flush();
+      const opened = calls.length;
+      act(() => r.update(el(false)));
+      assert.equal(calls.length, opened, "not restored while the exit runs and the native modal is open");
+      flush();
+      assert.deepEqual(calls.slice(opened), [["focus", trigger.current]]);
+    } finally {
+      restoreHost();
+    }
+  });
+
+  it("ignores a second dismissal (Escape or back press) while the exit animation runs", () => {
+    const { engine, flush } = controlledEngine();
+    let closes = 0;
+    const el = (visible: boolean) => wrap(engine, <Modal visible={visible} onClose={() => (closes += 1)}><Text>Body</Text></Modal>);
+    let r!: ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(el(true));
+    });
+    flush();
+    act(() => nativeModal(r).props.onRequestClose());
+    assert.equal(closes, 1);
+    act(() => r.update(el(false)));
+    assert.equal(nativeModal(r).props.visible, true, "still presented during the exit");
+    act(() => nativeModal(r).props.onRequestClose());
+    assert.equal(closes, 1, "the second request is ignored");
+    flush();
+  });
+
+  it("does not leave an invisible native modal open after switching animationType from none to fade", () => {
+    const { engine } = controlledEngine();
+    const el = (visible: boolean, animationType: "none" | "fade") => wrap(engine, <Modal visible={visible} animationType={animationType} onClose={noop}><Text>Body</Text></Modal>);
+    let r!: ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(el(true, "none"));
+    });
+    act(() => r.update(el(false, "none")));
+    assert.equal(nativeModal(r).props.visible, false);
+    act(() => r.update(el(false, "fade")));
+    assert.equal(nativeModal(r).props.visible, false, "stale state must not reopen the modal");
+  });
+
+  it("slide starts from a different place than fade", () => {
+    const initials = (animationType: "fade" | "slide") => {
+      const seen: number[] = [];
+      const { engine } = controlledEngine();
+      const recording: MotionEngine = { ...engine, createValue: (initial) => (seen.push(initial), engine.createValue(initial)) };
+      mount(<Modal visible onClose={noop} animationType={animationType}><Text>Body</Text></Modal>, { engine: recording });
+      return seen.join(",");
+    };
+    assert.notEqual(initials("slide"), initials("fade"));
+  });
+
+  it("keeps the overlay touch-through, the dialog wrapper dialog-sized and the backdrop full-screen when animated", () => {
+    const { engine } = controlledEngine();
+    for (const [size, width] of [["sm", 360], ["lg", 640]] as const) {
+      const r = mount(<Modal visible onClose={noop} size={size}><Text>Body</Text></Modal>, { engine });
+      const frame = hostsOf(r, "View").find((n) => flatten(n.props.style).justifyContent === "center")!;
+      assert.equal(frame.props.pointerEvents, "box-none");
+      const wrapper = frame.findAll((n) => isType(n, "View") && flatten(n.props.style).maxWidth === width);
+      assert.ok(wrapper.length > 0, `the animated wrapper is limited to ${width}`);
+      const fill = backdropButton(r)!.parent!;
+      assert.ok(fill.findAll((n) => isType(n, "View") && flatten(n.props.style).position === "absolute").length > 0 || flatten(fill.props.style).position === "absolute", "the backdrop wrapper is absolute-fill");
+    }
+  });
+});
 
 describe("Modal layout and theme", () => {
   it("uses the theme backdrop color, in both modes, and no literal rgba", () => {

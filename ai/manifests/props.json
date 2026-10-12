@@ -6702,14 +6702,14 @@
           "type": "() => void",
           "required": true,
           "default": null,
-          "description": "Called once per dismissal: backdrop press, Android back button, or the Escape key on web (through `onRequestClose`)."
+          "description": "Called once per dismissal: backdrop press, Android back button, or the Escape key on web (through `onRequestClose`). Ignored while the dialog is closing."
         },
         {
           "name": "restoreFocusRef",
           "type": "RefObject<unknown>",
           "required": false,
           "default": null,
-          "description": "Ref of the element that takes the screen-reader focus again when the dialog closes (typically the trigger)."
+          "description": "Ref of the element that takes the screen-reader focus again once the dialog has closed (typically the trigger). Not restored when the Modal itself unmounts while open."
         },
         {
           "name": "size",

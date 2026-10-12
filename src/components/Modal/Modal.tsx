@@ -18,7 +18,7 @@ export interface ModalInsets {
 
 export interface ModalProps {
   visible: boolean;
-  /** Called once per dismissal: backdrop press, Android back button, or the Escape key on web (through `onRequestClose`). */
+  /** Called once per dismissal: backdrop press, Android back button, or the Escape key on web (through `onRequestClose`). Ignored while the dialog is closing. */
   onClose: () => void;
 
   children: React.ReactNode;
@@ -44,7 +44,7 @@ export interface ModalProps {
 
   /** Ref of the element that takes the screen-reader focus when the dialog opens (where React Native allows it). */
   initialFocusRef?: React.RefObject<unknown>;
-  /** Ref of the element that takes the screen-reader focus again when the dialog closes (typically the trigger). */
+  /** Ref of the element that takes the screen-reader focus again once the dialog has closed (typically the trigger). Not restored when the Modal itself unmounts while open. */
   restoreFocusRef?: React.RefObject<unknown>;
 }
 
@@ -79,9 +79,16 @@ export function Modal({
   const label = accessibilityLabel ?? title;
   const animated = animationType !== "none";
 
-  // The native modal stays open while the exit animation runs; `Presence` reports the end.
+  // The native modal stays open while the exit animation runs; `Presence` reports the end. Without animation `visible` rules,
+  // and a stale `shown` is cleared so that switching `animationType` later cannot reopen an invisible modal.
   const [shown, setShown] = useState(visible);
   if (visible && !shown) setShown(true);
+  if (!visible && !animated && shown) setShown(false);
+
+  // One dismissal per open dialog: a second Escape or back press during the exit animation is ignored.
+  const close = () => {
+    if (visible) onClose();
+  };
 
   // Screen reader: announce and focus when the dialog opens, restore the focus when it closes.
   const wasVisible = useRef(false);
@@ -90,7 +97,8 @@ export function Modal({
     if (visible && !wasVisible.current) {
       if (label) host.announce(label);
       host.focus(initialFocusRef?.current);
-    } else if (!visible && wasVisible.current) {
+    } else if (!visible && wasVisible.current && !animated) {
+      // Animated exits restore the focus once the native modal is gone (`onExited`).
       host.focus(restoreFocusRef?.current);
     }
     wasVisible.current = visible;
@@ -145,7 +153,10 @@ export function Modal({
           preset={animationType === "slide" ? "slide-up" : "fade"}
           appear
           style={{ width: "100%", maxWidth: WIDTH[size] }}
-          onExited={() => setShown(false)}
+          onExited={() => {
+            setShown(false);
+            getModalAccessibilityHost().focus(restoreFocusRef?.current);
+          }}
         >
           {box}
         </Presence>
@@ -157,7 +168,7 @@ export function Modal({
 
   const backdrop = dismissOnBackdrop ? (
     <Pressable
-      onPress={onClose}
+      onPress={close}
       accessibilityRole="button"
       accessibilityLabel={dismissLabel}
       style={[FILL, { backgroundColor: colors.backdrop }]}
@@ -167,7 +178,7 @@ export function Modal({
   );
 
   return (
-    <RNModal visible={animated ? shown : visible} transparent animationType="none" onRequestClose={onClose}>
+    <RNModal visible={animated ? shown : visible} transparent animationType="none" onRequestClose={close}>
       <View style={{ flex: 1 }}>
         {animated ? (
           <Presence visible={visible} preset="fade" appear style={FILL}>
