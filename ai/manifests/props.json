@@ -2446,6 +2446,20 @@
           ]
         },
         {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Extra style for the pressable, applied after the variant styles."
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
           "name": "variant",
           "type": "\"primary\" | \"info\" | \"danger\" | \"secondary\" | \"ghost\"",
           "required": false,

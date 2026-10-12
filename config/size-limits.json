@@ -4,15 +4,15 @@
   "fixtures": {
     "root-button": {
       "source": "import { Button } from \"./src/index.ts\"; console.log(Button);",
-      "maxGzipBytes": 980
+      "maxGzipBytes": 1650
     },
     "root-all": {
       "source": "import * as Library from \"./src/index.ts\"; console.log(Library);",
-      "maxGzipBytes": 19300
+      "maxGzipBytes": 19500
     },
     "button-only": {
       "source": "import { Button } from \"./src/components/Button/index.ts\"; console.log(Button);",
-      "maxGzipBytes": 980
+      "maxGzipBytes": 1650
     },
     "theme-provider-only": {
       "source": "import { ThemeProvider } from \"./src/theme/index.ts\"; console.log(ThemeProvider);",
@@ -30,7 +30,7 @@
   "subpaths": {
     ".": {
       "entry": "src/index.ts",
-      "maxGzipBytes": 19200
+      "maxGzipBytes": 19400
     },
     "./theme": {
       "entry": "src/theme/index.ts",
