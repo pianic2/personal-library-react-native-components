@@ -104,6 +104,7 @@ jobs:
           case "$ticket" in
             PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
             PLRNUI-452) exceptions="docs/policies/branching.md tests/meta/meta-lint.test.tsx tests/scripts/check-component-docs.test.ts tests/scripts/maturity-check.test.ts" ;;
+            PLRNUI-240) exceptions=".changeset/README.md .changeset/config.json SECURITY.md package-lock.json package.json tests/scripts/release-notes.test.ts" ;;
             PLRNUI-140) exceptions="tests/examples/render.test.tsx" ;;
             PLRNUI-113) exceptions="package-lock.json tests/scripts/sync-shim-version.test.ts" ;;
           esac
