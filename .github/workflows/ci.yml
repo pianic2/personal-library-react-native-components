@@ -1,16 +1,254 @@
 name: CI
 
+# PLRNUI-140: the single `package-baseline` job is split into parallel jobs. `package-baseline` stays (it runs
+# release:check, the release gate); the jobs around it name the failing area and run the Node 22.13 floor.
+# Push runs only on main; every other branch is covered by its pull request, so a PR no longer runs twice.
 on:
   push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  package-baseline:
+  lint-typecheck:
+    name: lint-typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Typecheck contracts
+        run: npm run typecheck:contracts
+
+      # PLRNUI-191 asks for these gates as named steps.
+      - name: Typecheck tests
+        run: npm run typecheck:tests
+
+      - name: Maturity gate
+        run: npm run maturity:check
+
+      - name: Token usage gate
+        run: npm run tokens:check
+
+      - name: Maturity page is current
+        run: npm run maturity:docs:check
+
+      - name: Public API snapshot
+        run: npm run api:snapshot:check
+
+      - name: Compatibility docs
+        run: npm run docs:compat:check
+
+  unit-tests:
+    name: unit-tests (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.13.0 is the floor declared in package.json engines; 24 is the current lane.
+        node: ["22.13.0", "24"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Environment
+        run: |
+          node -v
+          npm -v
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+  build-pack:
+    name: build-pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # `npm pack` runs prepack: clean, typecheck, build, AI manifests and the release guard.
+      - name: Pack
+        run: npm pack --pack-destination "$RUNNER_TEMP/pack"
+
+      - name: Check there is exactly one tarball
+        run: test "$(ls "$RUNNER_TEMP/pack"/*.tgz | wc -l)" -eq 1
+
+      # The tarball is the artifact a later promote workflow downloads, so a release publishes what CI tested.
+      - name: Upload tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-tarball
+          path: ${{ runner.temp }}/pack/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+
+  consumer-smoke:
+    name: consumer-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Consumer smoke
+        run: npm run consumer:smoke
+
+  # The Expo lanes are data: every `supported` entry of config/compatibility.json becomes one matrix entry, so a lane
+  # is added or retired by editing that file, not this workflow.
+  compat-matrix:
+    name: compat-matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Read supported entries
+        id: matrix
+        run: |
+          node --input-type=module -e '
+            import { readFileSync, appendFileSync } from "node:fs";
+            const config = JSON.parse(readFileSync("config/compatibility.json", "utf8"));
+            const lanes = new Map();
+            for (const entry of config.entries) {
+              if (entry.tier !== "supported") continue;
+              if (!["web", "ios", "android"].includes(entry.platform)) throw new Error(`unknown platform: ${entry.platform}`);
+              lanes.set(`${entry.expo}/${entry.rn}/${entry.react}/${entry.platform}`, { expo: entry.expo, rn: entry.rn, react: entry.react, platform: entry.platform });
+            }
+            if (lanes.size === 0) throw new Error("config/compatibility.json has no supported entry");
+            const matrix = JSON.stringify({ include: [...lanes.values()] });
+            console.log(matrix);
+            appendFileSync(process.env.GITHUB_OUTPUT, `matrix=${matrix}\n`);
+          '
+
+  expo-consumer:
+    name: expo-consumer (expo ${{ matrix.expo }}, rn ${{ matrix.rn }}, ${{ matrix.platform }})
+    needs: compat-matrix
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.compat-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Expo consumer (${{ matrix.platform }})
+        run: npm run consumer:expo -- --platform ${{ matrix.platform }}
+
+  size:
+    name: size
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Bundle size budgets
+        run: npm run size
+
+  # The release gate: the full local gate (`npm run release:check`), unchanged in content. Its name is kept because the
+  # merge rules and the branch protection refer to `package-baseline`.
+  package-baseline:
+    name: package-baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -30,17 +268,3 @@ jobs:
 
       - name: Release check
         run: npm run release:check
-
-      # PLRNUI-191 asks for the gates as named steps. They are also part of release:check, and they need node_modules, which
-      # release:check installs, so they run after it.
-      - name: Maturity gate
-        run: npm run maturity:check
-
-      - name: Token usage gate
-        run: npm run tokens:check
-
-      - name: Typecheck tests
-        run: npm run typecheck:tests
-
-      - name: Maturity page is current
-        run: npm run maturity:docs:check
