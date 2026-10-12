@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Tabs starter",
+    "slug": "tabs-starter",
+    "platforms": ["android", "ios", "web"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

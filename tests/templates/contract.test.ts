@@ -1,7 +1,7 @@
 import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -250,5 +250,149 @@ describe("check-templates", () => {
   it("fails on workspaces and bundledDependencies", () => {
     expectFail(pkg({ workspaces: ["packages/*"] }), /workspaces/);
     expectFail(pkg({ bundledDependencies: [LIB] }), /bundledDependencies/);
+  });
+});
+
+// `--build <name>` runs npm for real (pack, install, expo export). These tests put a fake `npm` first on the PATH that
+// records its calls and produces what the real one would, so the orchestration is checked without a network.
+describe("check-templates --build", () => {
+  function fakeNpm() {
+    const bin = mkdtempSync(join(tmpdir(), "fake-npm-"));
+    dirs.push(bin);
+    const log = join(bin, "calls.log");
+    writeFileSync(
+      join(bin, "npm"),
+      `#!/bin/sh
+echo "$PWD :: $*" >> "${log}"
+case "$1" in
+  install) [ "$FAKE_NPM_FAIL" = install ] && exit 3 ;;
+  run) [ "$FAKE_NPM_FAIL" = "$2" ] && exit 4 ;;
+  pack)
+    dest=""
+    while [ $# -gt 0 ]; do [ "$1" = "--pack-destination" ] && dest="$2"; shift; done
+    [ "$FAKE_NPM_FAIL" = pack ] && exit 5
+    [ "$FAKE_NPM_PACK" = none ] && exit 0
+    : > "$dest/fake-lib-0.0.0.tgz"
+    [ "$FAKE_NPM_PACK" = two ] && : > "$dest/second-0.0.0.tgz"
+    exit 0 ;;
+  exec)
+    [ "$FAKE_NPM_FAIL" = export ] && exit 6
+    [ "$FAKE_NPM_EXPORT" = empty ] && exit 0
+    mkdir -p dist-web/_expo/static/js/web
+    if [ "$FAKE_NPM_EXPORT" = noroot ]; then echo '<!doctype html><script src="/_expo/static/js/web/index.js"></script>' > dist-web/index.html
+    else echo '<!doctype html><div id="root"></div><script src="/_expo/static/js/web/index.js"></script>' > dist-web/index.html; fi
+    if [ "$FAKE_NPM_EXPORT" = emptybundle ]; then : > dist-web/_expo/static/js/web/index.js; else echo 'console.log(1)' > dist-web/_expo/static/js/web/index.js; fi ;;
+esac
+exit 0
+`,
+    );
+    chmodSync(join(bin, "npm"), 0o755);
+    return { bin, calls: () => (existsSync(log) ? readFileSync(log, "utf8").trim().split("\n") : []) };
+  }
+
+  function build(dir: string, name: string, fake: ReturnType<typeof fakeNpm>, env: Record<string, string> = {}, extra: string[] = []) {
+    const work = mkdtempSync(join(tmpdir(), "tpl-work-"));
+    dirs.push(work);
+    const result = spawnSync(process.execPath, [script, "--root", dir, "--build", name, "--work-dir", join(work, "w"), ...extra], {
+      encoding: "utf8",
+      env: { ...process.env, PATH: `${fake.bin}:${process.env.PATH}`, ...env },
+    });
+    return { ...result, work: join(work, "w") };
+  }
+
+  const withScripts = (scripts: Record<string, string> | undefined) =>
+    valid("tabs", { "package.json": JSON.stringify({ name: "tabs-starter", ...(scripts ? { scripts } : {}), dependencies: { [LIB]: "^0.1.0", expo: "57.0.21" } }) });
+
+  it("packs the library, installs the copy with the library pointing at the tarball, typechecks, exports and checks the export", () => {
+    const fake = fakeNpm();
+    const r = build(fixture(withScripts({ typecheck: "tsc --noEmit" })), "tabs", fake);
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+    assert.match(r.stdout, /build ok \(tabs\)/);
+    const commands = fake.calls().map((line) => line.split(" :: ")[1]);
+    assert.deepEqual(commands, [
+      "run build",
+      `pack --pack-destination ${join(r.work, "artifacts")}`,
+      "install --no-audit --no-fund --ignore-scripts --prefer-offline",
+      "run typecheck",
+      "exec -- expo export --platform web --output-dir dist-web",
+    ]);
+    const copied = JSON.parse(readFileSync(join(r.work, "app/package.json"), "utf8"));
+    assert.equal(copied.dependencies[LIB], `file:${join(r.work, "artifacts/fake-lib-0.0.0.tgz")}`);
+    assert.equal(copied.dependencies.expo, "57.0.21", "other dependencies are kept");
+    assert.ok(existsSync(join(r.work, "app/app/index.tsx")), "the template sources are copied");
+  });
+
+  it("the template folder itself is not changed (the dependency stays a semver range)", () => {
+    const fake = fakeNpm();
+    const dir = fixture(withScripts(undefined));
+    const before = readFileSync(join(dir, "tabs/package.json"), "utf8");
+    assert.equal(build(dir, "tabs", fake).status, 0);
+    assert.equal(readFileSync(join(dir, "tabs/package.json"), "utf8"), before);
+  });
+
+  it("skips the typecheck when the template has no typecheck script", () => {
+    const fake = fakeNpm();
+    const r = build(fixture(withScripts(undefined)), "tabs", fake);
+    assert.equal(r.status, 0, r.stdout + r.stderr);
+    assert.ok(!fake.calls().some((line) => line.endsWith("run typecheck")));
+  });
+
+  it("does not build when the contract check fails", () => {
+    const fake = fakeNpm();
+    const r = build(fixture(valid("tabs", { "README.md": null })), "tabs", fake);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /missing README\.md/);
+    assert.deepEqual(fake.calls(), []);
+  });
+
+  it("exits 2 for a template that does not exist, and for _contract", () => {
+    const fake = fakeNpm();
+    const dir = fixture({ ...valid(), "_contract/README.md": "x\n" });
+    assert.equal(build(dir, "nope", fake).status, 2);
+    assert.equal(build(dir, "_contract", fake).status, 2);
+    assert.deepEqual(fake.calls(), []);
+  });
+
+  it("exits 2 for bad arguments", () => {
+    const dir = fixture(valid());
+    for (const args of [["--build"], ["--build", "Bad_Name"], ["--work-dir", "/tmp/x"], ["--build", "tabs", "--work-dir"]]) {
+      const r = spawnSync(process.execPath, [script, "--root", dir, ...args], { encoding: "utf8" });
+      assert.equal(r.status, 2, args.join(" "));
+    }
+  });
+
+  for (const step of ["build", "pack", "install", "typecheck", "export"]) {
+    it(`fails closed when ${step} fails`, () => {
+      const fake = fakeNpm();
+      const r = build(fixture(withScripts({ typecheck: "tsc" })), "tabs", fake, { FAKE_NPM_FAIL: step });
+      assert.equal(r.status, 1, r.stdout + r.stderr);
+      assert.match(r.stderr, /FAIL build tabs: npm .* exited with \d/);
+    });
+  }
+
+  it("fails when the export produces nothing, no root element, or an empty bundle", () => {
+    const cases: Array<[string, RegExp]> = [
+      ["empty", /no index\.html/],
+      ["noroot", /id="root"/],
+      ["emptybundle", /no non-empty \.js bundle/],
+    ];
+    for (const [mode, pattern] of cases) {
+      const r = build(fixture(withScripts(undefined)), "tabs", fakeNpm(), { FAKE_NPM_EXPORT: mode });
+      assert.equal(r.status, 1, `${mode}: ${r.stdout}${r.stderr}`);
+      assert.match(r.stderr, pattern, mode);
+    }
+  });
+
+  it("fails when npm pack leaves no tarball, or more than one", () => {
+    for (const mode of ["none", "two"]) {
+      const r = build(fixture(withScripts(undefined)), "tabs", fakeNpm(), { FAKE_NPM_PACK: mode });
+      assert.equal(r.status, 1, mode);
+      assert.match(r.stderr, /expected exactly one packed tarball/, mode);
+    }
+  });
+
+  it("builds the real tabs template contract (the starter in this repository passes the contract check)", () => {
+    const r = spawnSync(process.execPath, [script], { encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
   });
 });
