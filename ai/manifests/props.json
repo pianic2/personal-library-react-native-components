@@ -6630,11 +6630,51 @@
       "status": "prototype",
       "props": [
         {
+          "name": "accessibilityDescribedBy",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "`nativeID` of an element inside `children` that describes the dialog (`aria-describedby`; web only, native ignores it)."
+        },
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Accessible name of the dialog. Defaults to `title`. Announced when the dialog opens."
+        },
+        {
+          "name": "animationType",
+          "type": "\"none\" | \"fade\" | \"slide\"",
+          "required": false,
+          "default": "fade",
+          "description": "`\"fade\"` (default), `\"slide\"` (the dialog slides up) or `\"none\"`. Reduced motion replaces any of them by an instant change.",
+          "values": [
+            "fade",
+            "slide",
+            "none"
+          ]
+        },
+        {
+          "name": "avoidKeyboard",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Moves the dialog up so a focused input stays visible. Default `false`."
+        },
+        {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
           "default": null,
           "description": ""
+        },
+        {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": false,
+          "default": "Close dialog",
+          "description": "Accessible name of the backdrop dismiss button. Default `\"Close dialog\"`. Only used when `dismissOnBackdrop` is true."
         },
         {
           "name": "dismissOnBackdrop",
@@ -6644,11 +6684,32 @@
           "description": ""
         },
         {
+          "name": "initialFocusRef",
+          "type": "RefObject<unknown>",
+          "required": false,
+          "default": null,
+          "description": "Ref of the element that takes the screen-reader focus when the dialog opens (where React Native allows it)."
+        },
+        {
+          "name": "insets",
+          "type": "ModalInsets",
+          "required": false,
+          "default": null,
+          "description": "Safe-area insets added to the overlay padding (for example from `react-native-safe-area-context`). Default all zero."
+        },
+        {
           "name": "onClose",
           "type": "() => void",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "Called once per dismissal: backdrop press, Android back button, or the Escape key on web (through `onRequestClose`). Ignored while the dialog is closing."
+        },
+        {
+          "name": "restoreFocusRef",
+          "type": "RefObject<unknown>",
+          "required": false,
+          "default": null,
+          "description": "Ref of the element that takes the screen-reader focus again once the dialog has closed (typically the trigger). Not restored when the Modal itself unmounts while open."
         },
         {
           "name": "size",
@@ -6661,6 +6722,13 @@
             "md",
             "lg"
           ]
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Optional visible title; it also labels the dialog (`aria-labelledby`) and is announced when the dialog opens."
         },
         {
           "name": "visible",

@@ -207,7 +207,23 @@ export type UnnamedPropsContracts = [
   Expect<Equal<keyof ComponentProps<typeof Select>, "options" | "value" | "onChange" | "placeholder" | "error">>,
   Expect<Equal<RequiredKeys<ComponentProps<typeof Select>>, "options" | "onChange">>,
   Expect<
-    Equal<keyof ComponentProps<typeof Modal>, "visible" | "onClose" | "children" | "size" | "dismissOnBackdrop">
+    Equal<
+      keyof ComponentProps<typeof Modal>,
+      | "visible"
+      | "onClose"
+      | "children"
+      | "size"
+      | "dismissOnBackdrop"
+      | "title"
+      | "accessibilityLabel"
+      | "accessibilityDescribedBy"
+      | "dismissLabel"
+      | "animationType"
+      | "avoidKeyboard"
+      | "insets"
+      | "initialFocusRef"
+      | "restoreFocusRef"
+    >
   >,
   Expect<Equal<RequiredKeys<ComponentProps<typeof Modal>>, "visible" | "onClose" | "children">>,
   Expect<

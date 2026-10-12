@@ -26,7 +26,10 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No accessibilityViewIsModal, focus trap or title yet"
+    "The dialog has role dialog, aria-modal and accessibilityViewIsModal, and is named by title or accessibilityLabel",
+    "The backdrop dismiss action is a labelled button (dismissLabel) and is a separate element from the dialog content",
+    "The label is announced on open; initialFocusRef and restoreFocusRef move the screen-reader focus where React Native allows it",
+    "Android back and the Escape key on web call onClose through onRequestClose; there is no Tab focus trap on native"
   ],
   "variants": {
     "size": [
@@ -40,8 +43,10 @@ export const meta: ComponentMeta = {
     "visible"
   ],
   "platformNotes": [
-    "The backdrop color is hardcoded instead of using the backdrop token",
-    "ModalProps is not exported from the root yet"
+    "Backdrop uses the colors.backdrop token; animation presets (fade, slide, none) go through the motion engine and are replaced by an instant change under reduced motion",
+    "Web: React Native Web provides the Escape key and the focus trap; iOS and Android: initial and restored focus use AccessibilityInfo.setAccessibilityFocus",
+    "avoidKeyboard needs KeyboardAvoidingView (not in the test shim); safe-area insets are a prop, not read from a context",
+    "ModalProps is exported from the component index but not from the package root yet"
   ],
   "examples": [
     {
