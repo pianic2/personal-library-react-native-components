@@ -31,6 +31,17 @@ export function selectionReducer(state: Selection, action: SelectionAction, mode
   }
 }
 
+/**
+ * The selection a mode allows: nothing in `none` mode, at most the last id in `single` mode, the ids without duplicates in
+ * `multi` mode. The same array when it is already valid.
+ */
+export function normalizeSelection(state: Selection, mode: SelectionMode): Selection {
+  if (mode === "none") return state.length === 0 ? state : [];
+  if (mode === "single") return state.length <= 1 ? state : [state[state.length - 1]!];
+  const unique = [...new Set(state)];
+  return unique.length === state.length ? state : unique;
+}
+
 /** Keeps only the ids that are in `valid`, in their order; the same array when all are valid. */
 export function pruneSelection(state: Selection, valid: ReadonlySet<string>): Selection {
   const next = state.filter((id) => valid.has(id));

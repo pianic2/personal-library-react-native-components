@@ -9,6 +9,7 @@ import { ThemeProvider, useTheme } from "../../src";
 import {
   applySortOrder,
   collectRowIds,
+  normalizeSelection,
   compareValues,
   defaultGetRowId,
   nextSort,
@@ -241,6 +242,18 @@ describe("PLRNUI-211 selection reducer", () => {
     assert.ok(selectionReducer(one, { type: "selectAll", ids: ["a", "b"] }, "single") === one);
   });
 
+  it("normalizeSelection applies the mode: nothing, the last id, or the ids without duplicates", () => {
+    assert.deepEqual(normalizeSelection(sel("a", "b"), "none"), []);
+    const empty = sel();
+    assert.ok(normalizeSelection(empty, "none") === empty);
+    assert.deepEqual(normalizeSelection(sel("a", "b", "c"), "single"), ["c"]);
+    const one = sel("a");
+    assert.ok(normalizeSelection(one, "single") === one && normalizeSelection(empty, "single") === empty);
+    assert.deepEqual(normalizeSelection(sel("a", "b", "a"), "multi"), ["a", "b"]);
+    const unique = sel("a", "b");
+    assert.ok(normalizeSelection(unique, "multi") === unique);
+  });
+
   it("pruneSelection drops ids that are gone and keeps the array when none is", () => {
     const state = sel("a", "b", "c");
     assert.deepEqual(pruneSelection(state, new Set(["a", "c"])), ["a", "c"]);
@@ -434,6 +447,59 @@ describe("PLRNUI-211 useDataTable", () => {
     assert.deepEqual(bare.model.rowIds, ["0", "1"]);
   });
 
+  it("several calls in one tick build on each other (uncontrolled selection and sort)", () => {
+    const m = mount({ rows: people, columns, getRowId, selectionMode: "multi" });
+    act(() => {
+      m.model.toggleRow("a");
+      m.model.toggleRow("b");
+      m.model.selectRow("c");
+    });
+    assert.deepEqual(m.model.selection, ["a", "b", "c"]);
+    act(() => {
+      ["a", "b"].forEach((id) => m.model.deselectRow(id));
+    });
+    assert.deepEqual(m.model.selection, ["c"]);
+    act(() => {
+      m.model.toggleSort("age");
+      m.model.toggleSort("age");
+    });
+    assert.deepEqual(m.model.sort, { key: "age", direction: "desc" });
+    act(() => {
+      m.model.toggleSort("age");
+      m.model.toggleSort("age");
+    });
+    assert.deepEqual(m.model.sort, { key: "age", direction: "asc" }, "desc -> none -> asc");
+  });
+
+  it("with a controlled value every call in one tick is relative to the value the parent last passed", () => {
+    const changes: Selection[] = [];
+    const m = mount({ rows: people, columns, getRowId, selectionMode: "multi", selection: [], onSelectionChange: (s) => changes.push(s) });
+    act(() => {
+      m.model.toggleRow("a");
+      m.model.toggleRow("b");
+    });
+    assert.deepEqual(changes, [["a"], ["b"]]);
+  });
+
+  it("toggleAll on 50,000 selected rows is linear (well under a second)", () => {
+    const rows = Array.from({ length: 50_000 }, (_, i) => ({ id: String(i), name: `n${i}`, age: i }));
+    const bigColumns: DataTableColumn<Person>[] = [{ key: "name", header: "n" }];
+    const m = mount({ rows: rows as unknown as Person[], columns: bigColumns, selectionMode: "multi" });
+    act(() => m.model.selectAll());
+    assert.equal(m.model.allSelected, true);
+    const start = performance.now();
+    act(() => m.model.toggleAll());
+    const elapsed = performance.now() - start;
+    assert.deepEqual(m.model.selection, []);
+    assert.ok(elapsed < (process.env.NODE_V8_COVERAGE ? 2000 : 500), `toggleAll took ${elapsed.toFixed(0)} ms`);
+  });
+
+  it("an uncontrolled defaultSelection is normalized for the mode", () => {
+    assert.deepEqual(mount({ rows: people, columns, getRowId, selectionMode: "single", defaultSelection: ["a", "b"] }).model.selection, ["b"]);
+    assert.deepEqual(mount({ rows: people, columns, getRowId, selectionMode: "none", defaultSelection: ["a"] }).model.selection, []);
+    assert.deepEqual(mount({ rows: people, columns, getRowId, selectionMode: "multi", defaultSelection: ["a", "a"] }).model.selection, ["a"]);
+  });
+
   it("event handlers keep their identity across renders", () => {
     const options = { rows: people, columns, getRowId, selectionMode: "multi" as const };
     const m = mount(options);
@@ -486,7 +552,9 @@ describe("PLRNUI-211 benchmark", () => {
         }
         const best = Math.min(...times);
         report.push(`${key} ${direction}: best ${best.toFixed(1)} ms of 5`);
-        assert.ok(best < 150, `${key} ${direction} took ${best.toFixed(1)} ms`);
+        // Coverage instrumentation (node --experimental-test-coverage sets NODE_V8_COVERAGE) slows the run several times over.
+        const limit = process.env.NODE_V8_COVERAGE ? 600 : 150;
+        assert.ok(best < limit, `${key} ${direction} took ${best.toFixed(1)} ms (limit ${limit})`);
       }
     }
     console.log(`# DataTable sort benchmark, 50,000 rows:\n# ${report.join("\n# ")}`);

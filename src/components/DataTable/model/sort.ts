@@ -51,13 +51,6 @@ export function sortOrder<Row>(rows: readonly Row[], columns: readonly DataTable
 
 const compareKeys = (a: unknown, b: unknown): number => ((a as string) < (b as string) ? -1 : (a as string) > (b as string) ? 1 : 0);
 
-/**
- * Fast path of the default string order: when every non-empty value of a column is an ASCII string, each one is turned
- * once into a key that compares with `<` in the same order as the default collator (case-insensitive, digit runs by
- * number): lower case, and each digit run as `0`, a length character and the digits without leading zeros. This makes a
- * 50,000 row sort about 5 times faster than comparing with the collator. Returns `null` (use `compareValues`) when a value
- * is not a string or has a non-ASCII character, where only the locale-aware collator orders accents correctly.
- */
 /** The natural key of an ASCII string (see `asciiNaturalKeys`), or `null` when it has a non-ASCII character. */
 function naturalKey(value: string): string | null {
   let out = "";
@@ -85,6 +78,14 @@ function naturalKey(value: string): string | null {
   return out;
 }
 
+/**
+ * Fast path of the default string order: when every non-empty value of a column is an ASCII string, each one is turned
+ * once into a key that compares with `<` in the same order as the default collator (case-insensitive, digit runs by
+ * number): lower case, and each digit run as `0`, a length character and the digits without leading zeros. This makes a
+ * 50,000 row sort about twice as fast as comparing with the collator. Returns `null` (use `compareValues`) when a value
+ * is not a string or has a non-ASCII character, where only the locale-aware collator orders accents correctly. The order
+ * matches the collator for letters, digits and spaces; ASCII punctuation, symbols and control characters can order differently.
+ */
 export function asciiNaturalKeys(values: readonly unknown[]): (string | null | undefined)[] | null {
   const keys: (string | null | undefined)[] = new Array(values.length);
   let strings = 0;

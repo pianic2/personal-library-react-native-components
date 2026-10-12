@@ -1,6 +1,6 @@
 // The headless model of a data table: sorted row ids, sort state and selection. React is the only import.
-import { useCallback, useMemo, useRef, useState } from "react";
-import { pruneSelection, selectionReducer } from "./selection.js";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { normalizeSelection, pruneSelection, selectionReducer } from "./selection.js";
 import { applySortOrder, nextSort, sortOrder } from "./sort.js";
 import type { DataTableColumn, Selection, SelectionAction, SelectionMode, SortState } from "./types.js";
 
@@ -81,35 +81,50 @@ export function useDataTable<Row>(options: UseDataTableOptions<Row>): DataTableM
   const sortedIds = useMemo(() => applySortOrder(ids, order), [ids, order]);
   const idSet = useMemo(() => new Set(ids), [ids]);
 
-  // An uncontrolled selection never keeps the id of a row that is gone; a controlled one is the caller's to keep.
-  const prunedState = useMemo(() => pruneSelection(selectionState, idSet), [selectionState, idSet]);
-  const selection = selectionControlled ? (options.selection as Selection) : prunedState;
+  // The selection a mode allows. An uncontrolled one never keeps the id of a row that is gone; a controlled one is the
+  // caller's to keep.
+  const normalized = useMemo(() => normalizeSelection(selectionControlled ? (options.selection as Selection) : selectionState, selectionMode), [selectionControlled, options.selection, selectionState, selectionMode]);
+  const selection = useMemo(() => (selectionControlled ? normalized : pruneSelection(normalized, idSet)), [selectionControlled, normalized, idSet]);
   const selected = useMemo(() => new Set(selection), [selection]);
 
-  // Event handlers read the latest values through a ref, so their identity stays stable.
-  const latest = useRef({ options, sort, selection, columns, sortedIds, selectionMode, sortControlled, selectionControlled });
-  latest.current = { options, sort, selection, columns, sortedIds, selectionMode, sortControlled, selectionControlled };
+  // Handlers read the current values through refs, so their identity is stable. The refs are refreshed after every commit,
+  // and an uncontrolled change is written to its ref at once, so several calls in one tick build on each other
+  // (`ids.forEach(selectRow)`, two `toggleSort` calls). A controlled value only changes when the parent passes a new one,
+  // so calls in one tick are each relative to the value the parent last passed.
+  const latest = useRef({ options, columns, sortedIds, selectionMode, sortControlled, selectionControlled });
+  const sortRef = useRef<SortState | null>(sort);
+  const selectionRef = useRef<Selection>(selection);
+  useLayoutEffect(() => {
+    latest.current = { options, columns, sortedIds, selectionMode, sortControlled, selectionControlled };
+    sortRef.current = sort;
+    selectionRef.current = selection;
+  });
 
   const setSort = useCallback((next: SortState | null) => {
     const l = latest.current;
-    if (!l.sortControlled) setSortState(next);
+    if (!l.sortControlled) {
+      sortRef.current = next;
+      setSortState(next);
+    }
     l.options.onSortChange?.(next);
   }, []);
 
   const toggleSort = useCallback(
     (key: string) => {
-      const l = latest.current;
-      const next = nextSort(l.sort, key, l.columns as readonly DataTableColumn<unknown>[]);
-      if (next !== l.sort) setSort(next);
+      const next = nextSort(sortRef.current, key, latest.current.columns as readonly DataTableColumn<unknown>[]);
+      if (next !== sortRef.current) setSort(next);
     },
     [setSort],
   );
 
   const dispatch = useCallback((action: SelectionAction) => {
     const l = latest.current;
-    const next = selectionReducer(l.selection, action, l.selectionMode);
-    if (next === l.selection) return;
-    if (!l.selectionControlled) setSelectionState(next);
+    const next = selectionReducer(selectionRef.current, action, l.selectionMode);
+    if (next === selectionRef.current) return;
+    if (!l.selectionControlled) {
+      selectionRef.current = next;
+      setSelectionState(next);
+    }
     l.options.onSelectionChange?.(next);
   }, []);
 
@@ -127,9 +142,10 @@ export function useDataTable<Row>(options: UseDataTableOptions<Row>): DataTableM
   const someSelected = count > 0 && count < total;
 
   const toggleAll = useCallback(() => {
-    const l = latest.current;
-    const everySelected = l.sortedIds.length > 0 && l.sortedIds.every((id) => l.selection.includes(id));
-    dispatch(everySelected ? { type: "clear" } : { type: "selectAll", ids: l.sortedIds });
+    const rowIds = latest.current.sortedIds;
+    const current = new Set(selectionRef.current);
+    const everySelected = rowIds.length > 0 && rowIds.every((id) => current.has(id));
+    dispatch(everySelected ? { type: "clear" } : { type: "selectAll", ids: rowIds });
   }, [dispatch]);
 
   return {

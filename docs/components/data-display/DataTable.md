@@ -48,7 +48,7 @@ interface SortState {
 
 It returns `rows` and `rowIds` in display order, `sort`, `toggleSort(key)`, `setSort(sort)`, `selection`, `isSelected(id)`, `toggleRow(id)`, `selectRow(id)`, `deselectRow(id)`, `selectAll()`, `toggleAll()`, `clearSelection()`, `allSelected` and `someSelected` (the indeterminate header state).
 
-The pure functions are exported too: `sortOrder`, `sortRowIds`, `nextSort`, `compareValues`, `selectionReducer`, `pruneSelection`, `collectRowIds`.
+It also returns `selectionMode`. The pure functions are exported too: `sortOrder`, `applySortOrder`, `sortRowIds`, `nextSort`, `readCell`, `compareValues`, `isEmpty`, `selectionReducer`, `normalizeSelection`, `pruneSelection`, `collectRowIds` and `defaultGetRowId`.
 
 ## Usage
 
@@ -81,10 +81,10 @@ function PeopleTable({ people }: { people: Person[] }) {
 
 - **Sort cycle:** activating a sortable header goes ascending, descending, none; another column starts at ascending. An unknown or non-sortable column changes nothing.
 - **Stable:** rows that compare equal keep their input order, in both directions. Empty cells (`null`, `undefined`) go last in both directions and never reach a comparator.
-- **Default order:** numbers and bigints numerically (`NaN` last), booleans `false` before `true`, dates by time, strings case-insensitively with digit runs by number (`item 2` before `item 10`). Values of different kinds are ordered by kind. ASCII-only string columns use a precomputed key (about five times faster); strings with accents use the locale collator, so `è` sorts next to `e`. Pass a `comparator` for any other rule.
-- **Memoized:** `rows` and `rowIds` keep their identity while `rows`, `columns`, the sort and `getRowId` are the same, also when only the selection changes. Keep `columns` and `getRowId` stable (module level or `useMemo`).
+- **Default order:** numbers and bigints numerically (`NaN` last), booleans `false` before `true`, dates by time, strings case-insensitively with digit runs by number (`item 2` before `item 10`). Values of different kinds are ordered by kind. ASCII-only string columns use a precomputed key (about twice as fast as the collator) that orders like the collator for letters, digits and spaces; ASCII punctuation, symbols and control characters can order differently. Strings with accents use the locale collator, so `è` sorts next to `e`. Pass a `comparator` for any other rule.
+- **Memoized:** `rows` and `rowIds` keep their identity while `rows`, `columns`, the sort and `getRowId` are the same, also when only the selection changes. Keep `columns` and `getRowId` stable (module level or `useMemo`): a new function or array on every render makes `rowIds` and `rows` new arrays on every render.
 - **Performance:** sorting 50,000 rows takes about 25 ms for numbers and about 70 ms for ASCII strings on a development machine (the test asserts under 150 ms).
-- **Selection:** `none` selects nothing; `single` keeps the last row selected and ignores `selectAll`; `multi` keeps ids in selection order. An uncontrolled selection drops the ids of rows that are gone. `selectAll` follows the display order.
+- **Selection:** `none` selects nothing; `single` keeps the last row selected and ignores `selectAll`; `multi` keeps ids in selection order. A `defaultSelection` is normalized for the mode. An uncontrolled selection drops the ids of rows that are gone. `selectAll` follows the display order. Several calls in one tick (`ids.forEach(selectRow)`, two `toggleSort` calls) build on each other when the value is uncontrolled; with a controlled value each call is relative to the value the parent last passed.
 - **Row ids:** a duplicate id throws a `RangeError`.
 - **Controlled:** `sort` and `selection` follow the props; the model reports changes through `onSortChange` and `onSelectionChange` and does not change them itself.
 
