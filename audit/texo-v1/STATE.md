@@ -214,6 +214,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-191 (E1-05: maturity, tokens and tests typecheck gates in npm scripts and CI, docs/maturity.md) | #170 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (remove the spent PLRNUI-227 ownership arm) | #168 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-191) | #169 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-140 (E17-05: CI split into parallel jobs, Node 22.13 and 24 unit matrix, compat-driven Expo lanes, concurrency) | #172 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (remove the spent PLRNUI-191 ownership arm) | #171 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-113 (E17-01: Changesets with rc pre mode, shim version sync) | #175 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-113) | #173 | PR open (row committed pre-merge, see ADR 0020 Branching) |

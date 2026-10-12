@@ -16,7 +16,7 @@ register(
   `data:text/javascript,${encodeURIComponent(`
     export function resolve(specifier, context, nextResolve) {
       if (specifier === "@personal-library/react-native-components") {
-        return { shortCircuit: true, url: ${JSON.stringify(srcEntry)} };
+        return { shortCircuit: true, format: "module", url: ${JSON.stringify(srcEntry)} };
       }
       return nextResolve(specifier, context);
     }
