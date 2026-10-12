@@ -11,6 +11,8 @@ Texo is pre-1.0. Until 1.0.0 is released, only the latest published version rece
 
 After 1.0.0 the supported lines follow the semver and deprecation policy (ADR 0011, owned by the E17 release tickets); this table is updated by those tickets.
 
+What each release changes, breaks and deprecates is written in its release notes, following the [release notes template](docs/policies/release-notes-template.md); the supported Expo, React Native and Node versions are in [Consumer Compatibility](docs/compatibility.md).
+
 ## Reporting a vulnerability
 
 Please do not open a public issue for a security problem.
