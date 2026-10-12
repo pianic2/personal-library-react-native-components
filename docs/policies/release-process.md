@@ -50,7 +50,7 @@ Publishing a version is final, so a failed job after `publish-target` cannot be 
 
 - the provenance check timed out: look at `npm view <name>@<version> --json`; if `dist.attestations` is there, nothing is missing;
 - the shim publish failed: fix the cause, bump the version with a new changeset, and release the next version (target and shim stay in lockstep);
-- only the GitHub release failed: create it by hand from the tag `v<version>` (`gh release create v<version> --generate-notes`).
+- only the GitHub release failed: create it by hand, pinning the commit that was published: `gh release create v<version> --target <sha of the release run> --generate-notes` (add `--prerelease` for a release candidate). The tag does not exist until this step runs.
 
 ## Checks and limits
 

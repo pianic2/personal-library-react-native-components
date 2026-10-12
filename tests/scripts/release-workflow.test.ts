@@ -108,7 +108,8 @@ describe("PLRNUI-117 release workflow", () => {
     }
     assert.match(all["plan"]!, /REF: \$\{\{ github\.ref \}\}/);
     assert.match(all["plan"]!, /refs\/heads\/main/);
-    assert.match(all["plan"]!, /identity\.current/);
+    assert.match(all["plan"]!, /pkg\.name !== identity\.current/);
+    assert.match(all["plan"]!, /\^@\[a-z0-9~-\]/);
   });
 
   it("repeats the dry-run guard in the shim job and checks npm in both publish jobs", () => {
