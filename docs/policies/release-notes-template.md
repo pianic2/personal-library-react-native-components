@@ -54,4 +54,4 @@ A pull request that changes behaviour for consumers carries a changeset (see `.c
 
 ## Changelog generator
 
-`CHANGELOG.md` is written by `changeset version` with `@changesets/changelog-github`, which adds the pull request and author links to each entry. That generator reads the GitHub API, so `GITHUB_TOKEN` must be set when `npm run changeset:version` runs (in CI it is provided; locally export a token with read access to the repository). The `repo` option in `.changeset/config.json` names the repository and changes with the repository name at the cutover.
+`CHANGELOG.md` is written by `changeset version` with `@changesets/changelog-github`, which adds the pull request and author links to each entry. That generator reads the GitHub API, so `GITHUB_TOKEN` must be set when `npm run changeset:version` runs (export a token with read access to the repository; a release workflow must pass the built-in `GITHUB_TOKEN`). The `repo` option in `.changeset/config.json` names the repository and changes with the repository name at the cutover.
