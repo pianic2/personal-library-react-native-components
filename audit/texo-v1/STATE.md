@@ -219,4 +219,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-113 (E17-01: Changesets with rc pre mode, shim version sync) | #175 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-113) | #173 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-140) | #174 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (remove the spent PLRNUI-113 and PLRNUI-140 ownership arms) | #176 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-240) | #177 | PR open (row committed pre-merge, see ADR 0020 Branching) |
