@@ -227,3 +227,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (remove the spent PLRNUI-240 and PLRNUI-117 ownership arms) | #181 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-132 (E17-04: dist-tag promotion script and workflow with integrity check, gates and rollback) | #182 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-279 (E8-10: keyboard hooks and keyboard-avoiding/dismiss-on-tap primitives) | #183 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-282 (E8-11: safe-area adapter with RN-core fallback and useInsets hook) | #184 | PR open (row committed pre-merge, see ADR 0020 Branching) |
