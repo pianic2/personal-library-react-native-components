@@ -116,7 +116,9 @@ jobs:
 
       # `npm pack` runs prepack: clean, typecheck, build, AI manifests and the release guard.
       - name: Pack
-        run: npm pack --pack-destination "$RUNNER_TEMP/pack"
+        run: |
+          mkdir -p "$RUNNER_TEMP/pack"
+          npm pack --pack-destination "$RUNNER_TEMP/pack"
 
       - name: Check there is exactly one tarball
         run: test "$(ls "$RUNNER_TEMP/pack"/*.tgz | wc -l)" -eq 1
