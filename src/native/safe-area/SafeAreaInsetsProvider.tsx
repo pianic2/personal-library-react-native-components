@@ -28,7 +28,8 @@ function FromAdapter({ adapter, children }: { adapter: SafeAreaAdapter; children
 /**
  * Supplies insets to {@link useInsets}, {@link useSafeAreaState} and SafeAreaBox. Mount it once: do not nest it inside a
  * host `SafeAreaProvider` that the adapter's own `Provider` already mounts (no double provider). Without it, hooks fall
- * back to React Native core / web values with status `noop`. Does not touch ThemeProvider (PLRNUI-28 contract).
+ * back to React Native core / web values with status `noop`. Switching a mounted provider between `insets` and `adapter`
+ * remounts its subtree. Does not touch ThemeProvider (PLRNUI-28 contract).
  */
 export function SafeAreaInsetsProvider({ children, insets, adapter }: SafeAreaInsetsProviderProps) {
   const fixed = React.useMemo<SafeAreaState | null>(
@@ -54,11 +55,12 @@ export function useSafeAreaContext(): SafeAreaState | null {
 /** Insets plus their source: `{ insets, status }`. Status is `noop` when only the fallback is in use. */
 export function useSafeAreaState(): SafeAreaState {
   const ctx = React.useContext(SafeAreaContext);
-  const fallback = React.useRef<Insets | null>(null);
+  const cache = React.useRef<SafeAreaState | null>(null);
   if (ctx) return ctx;
   const next = readFallbackInsets();
-  if (!fallback.current || !same(fallback.current, next)) fallback.current = next;
-  return { insets: fallback.current, status: "noop" };
+  // Stable identity while the fallback values are unchanged, so `state` is safe in dependency arrays.
+  if (!cache.current || !same(cache.current.insets, next)) cache.current = { insets: next, status: "noop" };
+  return cache.current;
 }
 
 /** Current insets: provider/adapter values, else the fallback (Android status bar height, otherwise zeros). */

@@ -63,13 +63,24 @@ describe("fallback (no adapter)", () => {
     assert.deepEqual(resolveFallbackInsets("ios", 44), { top: 0, right: 0, bottom: 0, left: 0 });
   });
 
-  it("useSafeInsets stays zero while useInsets uses the platform fallback", () => {
+  it("useSafeInsets and useInsets are both zero on a non-Android platform fallback", () => {
     // The react-native namespace is frozen ESM, so StatusBar.currentHeight itself cannot be stubbed here: the Android
     // mapping is covered through resolveFallbackInsets above, and the test shim has no StatusBar (zeros).
     const out: Parameters<typeof Probe>[0]["out"] = {};
     withPlatform("android", () => render(<Probe out={out} />));
     assert.deepEqual(out.insets, { top: 0, right: 0, bottom: 0, left: 0 });
     assert.deepEqual(out.safe, { top: 0, right: 0, bottom: 0, left: 0 });
+  });
+
+  it("the fallback state object keeps its identity across renders", () => {
+    const states: SafeAreaState[] = [];
+    function Capture() {
+      states.push(useSafeAreaState());
+      return null;
+    }
+    const r = render(<Capture />);
+    act(() => r.update(<Capture />));
+    assert.equal(states[0], states[states.length - 1]);
   });
 
   it("SafeAreaBox pads with zeros without a provider", () => {
@@ -164,7 +175,8 @@ describe("provider and adapter", () => {
     );
     const r = render(tree());
     act(() => r.update(tree()));
-    assert.equal(seen[0], seen[seen.length - 1]);
+    assert.ok(seen.length >= 2);
+    assert.ok(seen.every((insets) => insets === seen[0]));
   });
 });
 

@@ -14,3 +14,7 @@ Contract notes, superseding the "defer" stance of `audit/dependencies/safe-area-
   (stable identity). `insets={...}` overrides with fixed values and wins over the adapter.
 - **No double provider.** Do not mount your own `SafeAreaProvider` and also pass `mountProvider: true`.
 - `useInsets()` includes the fallback; `useSafeInsets()` returns zeros unless a provider is mounted.
+- **Web.** With no provider, `useInsets()` returns zeros but `SafeAreaBox` pads with CSS `env(safe-area-inset-*)`, which
+  only resolves when the page sets `viewport-fit=cover`.
+- **Adapters.** `adapter.useInsets` runs inside the provider, so keep the adapter object stable; switching a mounted
+  provider between `insets` and `adapter` remounts its subtree.
