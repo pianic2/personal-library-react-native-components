@@ -11,7 +11,7 @@ Every file class is labelled `GENERATED` (never edit by hand, rebuilt by a scrip
 | `src/components/<Name>/<Name>.meta.ts` | HAND-WRITTEN | Single metadata source (D8): maturity, status, usage, a11y and API notes per component. Read by the maturity gate, the catalog, the docs lint and the AI manifests. | no (excluded from the build) |
 | `ai/schema/*.schema.json` | HAND-WRITTEN | JSON Schemas that the manifests must satisfy. | no |
 | `ai/manifests/*.json` | GENERATED | Machine-readable manifests (today `props.json`, rebuilt by `npm run ai:build:props`). Never edit by hand. | copied to `dist/meta/` by `npm run ai:build` |
-| `dist/meta/*.json` | GENERATED | The published copy of the manifests, exposed as the `./meta` payload. Created by `npm run ai:build`, removed by `npm run clean`. | yes (inside `dist`) |
+| `dist/meta/*.json` | GENERATED | The published copy of the manifests, shipped under `dist/meta/` (the `package.json` `exports` map has no `./meta` subpath yet, so consumers read it by file path from `node_modules`). Created by `npm run ai:build`, removed by `npm run clean`. | yes (inside `dist`) |
 | `ai/cards/*` | GENERATED | Per-component agent cards, produced from the `.meta.ts` files by the AI scripts (not created yet). | no |
 | `scripts/ai/*.mjs` | HAND-WRITTEN | The generators and checks behind `ai:build:props` and, later, the cards. | no |
 | `skills/**` | HAND-WRITTEN | Agent skills for this repository (for example `texo-execute`). | no (D13) |
