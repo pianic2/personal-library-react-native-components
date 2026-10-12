@@ -1,0 +1,311 @@
+name: Release
+
+# PLRNUI-117: publishes the target package, then the legacy shim, with npm trusted publishing (OIDC) and provenance.
+# No npm token is used or needed: the registry trusts this workflow file (see docs/policies/release-process.md).
+#
+# Runs on:
+#   push to main that changes package.json or CHANGELOG.md   a merged version PR; nothing is published when the version
+#                                                            in package.json already exists on npm, otherwise the
+#                                                            publish jobs wait for a reviewer of the `npm-publish` environment
+#   workflow_dispatch                                         `dry-run` (default true) logs `npm publish --dry-run`
+#                                                            for each package and publishes nothing
+#
+# This file uses no third-party action. The release pull request is the one `npm run changeset:version` produces
+# (PLRNUI-113), so the changesets/action that would open it is not needed; actions/* are first-party.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+      - CHANGELOG.md
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Log `npm publish --dry-run` for each package and publish nothing
+        type: boolean
+        default: true
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    outputs:
+      name: ${{ steps.plan.outputs.name }}
+      version: ${{ steps.plan.outputs.version }}
+      channel: ${{ steps.plan.outputs.channel }}
+      dry_run: ${{ steps.plan.outputs.dry_run }}
+      publish: ${{ steps.plan.outputs.publish }}
+      shim: ${{ steps.plan.outputs.shim }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Decide what to release
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_DRY_RUN: ${{ inputs.dry-run }}
+        run: |
+          node --input-type=module -e '
+            import { readFileSync, appendFileSync } from "node:fs";
+            import { spawnSync } from "node:child_process";
+            const pkg = JSON.parse(readFileSync("package.json", "utf8"));
+            const identity = JSON.parse(readFileSync("config/package-identity.json", "utf8"));
+            if (typeof pkg.name !== "string" || !/^\d+\.\d+\.\d+(-rc\.\d+)?$/.test(pkg.version)) throw new Error(`not a releasable version: ${pkg.version}`);
+            const channel = pkg.version.includes("-rc.") ? "rc" : "latest";
+            const dryRun = process.env.EVENT === "workflow_dispatch" && process.env.INPUT_DRY_RUN === "true";
+            const view = spawnSync("npm", ["view", `${pkg.name}@${pkg.version}`, "version"], { encoding: "utf8" });
+            const published = view.status === 0 && view.stdout.trim() === pkg.version;
+            if (!published && !/E404|404 Not Found/.test(view.stderr)) throw new Error(`cannot tell whether ${pkg.name}@${pkg.version} is published: ${view.stderr.trim()}`);
+            const publish = dryRun || !published;
+            const shim = identity.shim?.enabled === true && identity.legacy !== null;
+            const out = { name: pkg.name, version: pkg.version, channel, dry_run: String(dryRun), publish: String(publish), shim: String(shim) };
+            for (const [key, value] of Object.entries(out)) appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
+            console.log(JSON.stringify({ ...out, published }));
+            if (!publish) console.log(`${pkg.name}@${pkg.version} is already on npm: nothing to publish`);
+          '
+
+  build:
+    name: build
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Release check
+        run: npm run release:check
+
+      - name: Publication guard
+        env:
+          CHANNEL: ${{ needs.plan.outputs.channel }}
+        run: node scripts/release-guard.mjs --channel "$CHANNEL"
+
+      # `npm pack` runs prepack (clean, typecheck, build, AI manifests, release guard).
+      - name: Pack the target
+        run: |
+          mkdir -p "$RUNNER_TEMP/target"
+          npm pack --pack-destination "$RUNNER_TEMP/target"
+          test "$(ls "$RUNNER_TEMP"/target/*.tgz | wc -l)" -eq 1
+
+      - name: Upload the target tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-target
+          path: ${{ runner.temp }}/target/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Generate and pack the shim
+        if: needs.plan.outputs.shim == 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/shim"
+          node scripts/build-shim.mjs --out "$RUNNER_TEMP/shim-src" --target-tarball "$(ls "$RUNNER_TEMP"/target/*.tgz)"
+          node scripts/release-guard.mjs --channel shim --root "$RUNNER_TEMP/shim-src"
+          (cd "$RUNNER_TEMP/shim-src" && npm pack --pack-destination "$RUNNER_TEMP/shim")
+          test "$(ls "$RUNNER_TEMP"/shim/*.tgz | wc -l)" -eq 1
+
+      - name: Upload the shim tarball
+        if: needs.plan.outputs.shim == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-shim
+          path: ${{ runner.temp }}/shim/*.tgz
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-dry-run:
+    name: publish-dry-run
+    needs: [plan, build]
+    if: needs.plan.outputs.dry_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Download the target tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: release-target
+          path: target
+
+      - name: Publish the target (dry run)
+        env:
+          DIST_TAG: ${{ needs.plan.outputs.channel }}
+        run: npm publish --dry-run --access public --tag "$DIST_TAG" target/*.tgz
+
+      - name: Download the shim tarball
+        if: needs.plan.outputs.shim == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-shim
+          path: shim
+
+      - name: Publish the shim (dry run)
+        if: needs.plan.outputs.shim == 'true'
+        run: npm publish --dry-run --access public --tag latest shim/*.tgz
+
+      - name: Shim not generated
+        if: needs.plan.outputs.shim != 'true'
+        run: echo "The shim is disabled in config/package-identity.json, so only the target is published (dry run)."
+
+  publish-target:
+    name: publish-target
+    needs: [plan, build]
+    if: needs.plan.outputs.dry_run != 'true' && needs.plan.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Human gate: required reviewers are configured on this environment in the repository settings.
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - name: Check the npm version
+        run: |
+          node -e '
+            const [a, b, c] = process.argv[1].split(".").map(Number);
+            if (a < 11 || (a === 11 && (b < 5 || (b === 5 && c < 1)))) { console.error(`npm ${process.argv[1]} is too old for trusted publishing (need >= 11.5.1)`); process.exit(1); }
+          ' "$(npm -v)"
+
+      - name: Download the target tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: release-target
+          path: target
+
+      - name: Publish the target
+        env:
+          DIST_TAG: ${{ needs.plan.outputs.channel }}
+        run: npm publish --provenance --access public --tag "$DIST_TAG" target/*.tgz
+
+      # The attestations appear on the registry shortly after the publish: retry for a few minutes.
+      - name: Verify the provenance
+        env:
+          NAME: ${{ needs.plan.outputs.name }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if npm view "$NAME@$VERSION" --json | node -e 'const v = JSON.parse(require("fs").readFileSync(0, "utf8")); process.exit(v.dist && v.dist.attestations ? 0 : 1)'; then
+              echo "dist.attestations present for $NAME@$VERSION"
+              exit 0
+            fi
+            echo "attempt $attempt: no dist.attestations yet"
+            sleep 30
+          done
+          echo "::error::$NAME@$VERSION has no dist.attestations"
+          exit 1
+
+  publish-shim:
+    name: publish-shim
+    needs: [plan, build, publish-target]
+    if: needs.plan.outputs.dry_run != 'true' && needs.plan.outputs.publish == 'true' && needs.plan.outputs.shim == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Download the shim tarball
+        uses: actions/download-artifact@v4
+        with:
+          name: release-shim
+          path: shim
+
+      - name: Publish the shim
+        run: npm publish --provenance --access public --tag latest shim/*.tgz
+
+      - name: Verify the provenance
+        run: |
+          tarball="$(ls shim/*.tgz)"
+          NAME="$(tar -xzOf "$tarball" package/package.json | node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(0, "utf8")).name)')"
+          VERSION="$(tar -xzOf "$tarball" package/package.json | node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(0, "utf8")).version)')"
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if npm view "$NAME@$VERSION" --json | node -e 'const v = JSON.parse(require("fs").readFileSync(0, "utf8")); process.exit(v.dist && v.dist.attestations ? 0 : 1)'; then
+              echo "dist.attestations present for $NAME@$VERSION"
+              exit 0
+            fi
+            echo "attempt $attempt: no dist.attestations yet"
+            sleep 30
+          done
+          echo "::error::$NAME@$VERSION has no dist.attestations"
+          exit 1
+
+  github-release:
+    name: github-release
+    needs: [plan, publish-target, publish-shim]
+    if: ${{ !cancelled() && needs.publish-target.result == 'success' && (needs.publish-shim.result == 'success' || needs.publish-shim.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          VERSION: ${{ needs.plan.outputs.version }}
+          CHANNEL: ${{ needs.plan.outputs.channel }}
+        run: |
+          flags=(--repo "$REPO" --target "$GITHUB_SHA" --generate-notes --title "v$VERSION")
+          if [ "$CHANNEL" = "rc" ]; then flags+=(--prerelease); fi
+          gh release create "v$VERSION" "${flags[@]}"
