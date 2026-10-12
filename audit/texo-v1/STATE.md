@@ -208,3 +208,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (ownership exception for PLRNUI-106) | #159 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-234) | #162 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (remove the spent PLRNUI-234, 106, 211 and 224 ownership arms) | #164 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (ownership exception for PLRNUI-227) | #166 | PR open (row committed pre-merge, see ADR 0020 Branching) |
