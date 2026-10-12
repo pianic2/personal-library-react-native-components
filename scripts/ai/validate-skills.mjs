@@ -54,8 +54,10 @@ export function parseFrontmatter(text) {
 }
 
 function unquote(value) {
-  const v = value.replace(/\s+#.*$/, "").trim();
-  return (v.startsWith('"') && v.endsWith('"') && v.length > 1) || (v.startsWith("'") && v.endsWith("'") && v.length > 1) ? v.slice(1, -1) : v;
+  const v = value.trim();
+  const quoted = v.length > 1 && ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")));
+  if (quoted) return v.slice(1, -1);
+  return v.replace(/\s+#.*$/, "").trim();
 }
 
 function listFiles(dir) {
@@ -67,7 +69,7 @@ function listFiles(dir) {
 
 function stripCode(text) {
   return text
-    .replace(/^(```|~~~)[^\n]*\n[\s\S]*?(?:\n\1[^\n]*(?=\n|$)|$)/gm, "")
+    .replace(/^(```|~~~)[^\n]*\n[\s\S]*?(?:\n\1[^\n]*(?=\n|(?![\s\S]))|(?![\s\S]))/gm, "")
     .replace(/`+[^`\n]*`+/g, "");
 }
 

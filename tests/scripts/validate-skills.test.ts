@@ -147,6 +147,22 @@ describe("PLRNUI-322 validate-skills", () => {
     }
   });
 
+  it("strips a multi-line fenced block and still checks links after it", () => {
+    const body = "text\n```md\nline one\n[x](bad1.md)\n[y](bad2.md)\n```\n[ok](real-missing.md)\n\n~~~\na\n[z](bad3.md)\nb\n~~~\n";
+    const p = pack({ "fence/SKILL.md": skill("fence", "", body) });
+    try {
+      const problems: string[] = validateSkills(p.root);
+      assert.deepEqual(problems, ['fence/SKILL.md: broken link "real-missing.md"']);
+    } finally {
+      p.cleanup();
+    }
+  });
+
+  it("keeps ' #' inside quoted values and strips comments from unquoted ones", () => {
+    assert.equal(parseFrontmatter('---\ndescription: "use # here"\nlicense: MIT # c\n---\n').description, "use # here");
+    assert.equal(parseFrontmatter('---\nlicense: MIT # c\n---\n').license, "MIT");
+  });
+
   it("flags a symlinked skill folder", () => {
     const p = pack({ "real/SKILL.md": skill("real") });
     symlinkSync(join(p.root, "real"), join(p.root, "alias"));
