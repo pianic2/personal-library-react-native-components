@@ -58,3 +58,9 @@ export function mixColors(base: string, overlay: string, amount: number): string
   const hex = (i: 0 | 1 | 2) => Math.round(a[i] * (1 - t) + b[i] * t).toString(16).padStart(2, "0");
   return `#${hex(0)}${hex(1)}${hex(2)}`.toUpperCase();
 }
+
+/**
+ * Opacity of the pressed state layer. Mirrors `stateLayer.pressed` in tokens/semantic.base.ts (a test keeps them equal);
+ * importing that module here would pull the whole palette into every Button bundle (about 1.4 KB gzip).
+ */
+export const PRESSED_LAYER = 0.12;

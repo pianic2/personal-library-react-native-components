@@ -4,7 +4,8 @@ import assert from "node:assert/strict";
 import TestRenderer, { act, type ReactTestInstance, type ReactTestRenderer } from "react-test-renderer";
 import { Button, ThemeProvider } from "../../src";
 import type { ButtonProps } from "../../src";
-import { contrastRatio, mixColors, readableOn } from "../../src/components/Button/contrast.js";
+import { stateLayer } from "../../src/tokens/semantic.base.js";
+import { PRESSED_LAYER, contrastRatio, mixColors, readableOn } from "../../src/components/Button/contrast.js";
 import { darkColors, lightColors } from "../../src/tokens/colors.base.js";
 
 type Mode = "light" | "dark";
@@ -104,6 +105,10 @@ describe("PLRNUI-285 Button variants", () => {
 });
 
 describe("PLRNUI-285 contrast helper", () => {
+  it("the local pressed layer equals the semantic token", () => {
+    assert.equal(PRESSED_LAYER, stateLayer.pressed);
+  });
+
   it("measures hex colours and leaves other formats alone", () => {
     assert.equal(contrastRatio("#000000", "#FFFFFF")!.toFixed(1), "21.0");
     assert.equal(contrastRatio("#fff", "#000")!.toFixed(1), "21.0");

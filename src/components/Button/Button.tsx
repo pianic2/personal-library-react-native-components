@@ -3,8 +3,7 @@
 import React, { ComponentType } from "react";
 import { Pressable, Text, type StyleProp, type ViewStyle } from "react-native";
 import { useTheme } from "../../theme/useTheme.js";
-import { stateLayer } from "../../tokens/semantic.base.js";
-import { mixColors, readableOn } from "./contrast.js";
+import { PRESSED_LAYER, mixColors, readableOn } from "./contrast.js";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "info";
 type Size = "xs" | "sm" | "md" | "lg";
@@ -42,7 +41,7 @@ export function Button({ icon: Icon, label, onPress, variant = "primary", size =
   const contentColor = isGhost ? colors.textPrimary : readableOn(backgroundColor, colors.textInverted, colors.textPrimary);
   const borderColor = isGhost ? colors.border : backgroundColor;
   const layerColor = contentColor === colors.textInverted ? colors.textPrimary : colors.textInverted;
-  const pressedBackground = isGhost ? colors.surface : (mixColors(backgroundColor, layerColor, stateLayer.pressed) ?? backgroundColor);
+  const pressedBackground = isGhost ? colors.surface : (mixColors(backgroundColor, layerColor, PRESSED_LAYER) ?? backgroundColor);
 
   if (__DEV__ && !Icon && !label) console.warn("[ui/Button] Button rendered without `icon` and `label`. It will appear empty.");
 
@@ -54,8 +53,8 @@ export function Button({ icon: Icon, label, onPress, variant = "primary", size =
       disabled={disabled}
       onPress={onPress}
       {...(testID === undefined ? {} : { testID })}
-      style={({ pressed }) => [
-        {
+      style={({ pressed }) => {
+        const base = {
           minHeight: Math.max(44, height),
           minWidth: 44,
           paddingHorizontal,
@@ -69,9 +68,9 @@ export function Button({ icon: Icon, label, onPress, variant = "primary", size =
           gap,
           backgroundColor: pressed ? pressedBackground : backgroundColor,
           opacity: disabled ? disabledOpacity : pressed ? pressedOpacity : 1,
-        },
-        style,
-      ]}
+        } as const;
+        return style ? [base, style] : base;
+      }}
     >
       {Icon && <Icon size={iconSize} color={contentColor} />}
       {label && <Text style={{ color: contentColor, fontSize: theme.typography.fontSize[size], fontWeight: theme.typography.fontWeight.semibold }}>{label}</Text>}
