@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 43 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 44 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 25 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 18 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -23,6 +23,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Alert](components/feedback/alert.md) | feedback | `demo` | Inline message block with a tone for success, warning, error or information. |
 | [ProgressBar](components/feedback/progress-bar.md) | feedback | `prototype` | Horizontal bar showing a progress value from 0 to 100. |
 | [Spinner](components/feedback/spinner.md) | feedback | `demo` | Activity indicator in three sizes. |
+| StateView | feedback | `prototype` | Empty, error, loading and result blocks plus an AsyncBoundary that picks one from a request status. |
 | [Checkbox](components/form/checkbox.md) | form | `demo` | Two-state checkbox with a label. |
 | [FormField](components/form/form-field.md) | form | `prototype` | Wrapper that adds a label, helper text and a status color to a form control. |
 | [Input](components/form/input.md) | form | `demo` | Text input with a label, helper text and an error state. |
