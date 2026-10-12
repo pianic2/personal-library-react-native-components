@@ -42,6 +42,7 @@ import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
 import { Slot } from "../../src/components/Slot/index.js";
 import { Label } from "../../src/components/Label/index.js";
+import { AsyncBoundary, EmptyState, ErrorState, LoadingState, Result } from "../../src/components/StateView/index.js";
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
 import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
 import { View } from "react-native";
@@ -186,6 +187,17 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Small: () => <Small>Caption</Small>,
   Spinner: () => <Spinner />,
+  StateView: () => (
+    <View>
+      <EmptyState variant="no-results" actionLabel="Clear filters" onAction={noop} />
+      <ErrorState message="Could not load" detail="Network request failed" onRetry={noop} />
+      <LoadingState />
+      <Result status="success" />
+      <AsyncBoundary status="success" data={["a"]}>
+        {(rows) => <Text>{rows.join(",")}</Text>}
+      </AsyncBoundary>
+    </View>
+  ),
   Switch: () => <Switch label="Enabled" value onChange={noop} />,
   Text: () => <Text>Body</Text>,
   TextGroup: () => (

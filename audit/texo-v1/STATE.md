@@ -237,3 +237,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-353 (E8-19: usePermission API and PermissionAdapter pattern) | #191 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-366 (E8-23: storage adapters and useStoredState with secure-store no-downgrade rule) | #192 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-360 (E4-23: LocaleProvider, typed messages catalog, direction and Intl formatters) | #193 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-412 (E6-20: StateView with EmptyState, ErrorState, LoadingState, Result and AsyncBoundary) | #195 | PR open (row committed pre-merge, see ADR 0020 Branching) |
