@@ -222,4 +222,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-240 (E17-09: release notes template, GitHub release categories, changelog-github generator) | #178 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (remove the spent PLRNUI-113 and PLRNUI-140 ownership arms) | #176 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-240) | #177 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-117 (E17-02: release workflow with npm trusted publishing and provenance) | #180 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-117) | #179 | PR open (row committed pre-merge, see ADR 0020 Branching) |
