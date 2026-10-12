@@ -104,6 +104,7 @@ jobs:
           case "$ticket" in
             PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
             PLRNUI-452) exceptions="docs/policies/branching.md tests/meta/meta-lint.test.tsx tests/scripts/check-component-docs.test.ts tests/scripts/maturity-check.test.ts" ;;
+            PLRNUI-191) exceptions="tests/scripts/gen-maturity-docs.test.ts tests/theme/theme-contract-v2.test.tsx" ;;
           esac
           # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
           code=0
