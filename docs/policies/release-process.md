@@ -13,6 +13,8 @@ A release is published by `.github/workflows/release.yml` with npm trusted publi
    - `publish-shim` runs after `publish-target` succeeded (and waits for the reviewer again), only when `config/package-identity.json` enables the shim.
    - `github-release` creates the tag and the GitHub release `v<version>` with generated notes (categories in `.github/release.yml`, template in [Release notes template](release-notes-template.md)); a release candidate is marked as a pre-release.
 
+Only a run on `main` can publish for real; a manual run on another branch must be a dry run. While `package.json` holds a version that is not on npm yet, every push to `main` that changes `package.json` or `CHANGELOG.md` starts a run that waits for the reviewer: reject it unless it is the release you want.
+
 The workflow uses no third-party action. The version pull request is the one `npm run changeset:version` produces, so `changesets/action` is not needed.
 
 ## Dry run
@@ -41,6 +43,14 @@ then set the package's publishing access to require two-factor authentication an
 ### Bootstrap exception: the first publish of a package
 
 npm allows a trusted publisher only on a package that already exists. The first version of a new package name (for example `@theopificium/texo`) is therefore published once by a maintainer from an authenticated npm session with two-factor authentication, as recorded in `audit/release/plrnui-63-npm-bootstrap-disposition.md` for the legacy name: `npm publish --access public --tag rc` (or `latest` for a stable version), without provenance claims. Right after that, configure the trusted publisher above, and from the next version on publish only through this workflow. No long-lived token is created for the bootstrap; if one is unavoidable, revoke it as soon as the trusted publisher is verified.
+
+## When a release only half succeeds
+
+Publishing a version is final, so a failed job after `publish-target` cannot be repeated: re-running the failed jobs stops at `npm publish` (the version exists) and a full re-run finds the version published and does nothing. Fix forward by case:
+
+- the provenance check timed out: look at `npm view <name>@<version> --json`; if `dist.attestations` is there, nothing is missing;
+- the shim publish failed: fix the cause, bump the version with a new changeset, and release the next version (target and shim stay in lockstep);
+- only the GitHub release failed: create it by hand from the tag `v<version>` (`gh release create v<version> --generate-notes`).
 
 ## Checks and limits
 

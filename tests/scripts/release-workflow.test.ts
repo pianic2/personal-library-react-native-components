@@ -36,7 +36,7 @@ describe("PLRNUI-117 release workflow", () => {
   });
 
   it("starts on main pushes of package.json or CHANGELOG.md and on a manual run whose dry-run defaults to true", () => {
-    assert.match(header, /push:\n\s+branches: \[main\]\n\s+paths:\n\s+- package\.json\n\s+- CHANGELOG\.md/);
+    assert.match(header, /push:\n\s+branches: \[main\]\n\s+paths:\n\s+- package\.json\n\s+- CHANGELOG\.md\n\s+workflow_dispatch:/);
     assert.match(header, /workflow_dispatch:\n\s+inputs:\n\s+dry-run:\n[\s\S]*?type: boolean\n\s+default: true/);
     assert.doesNotMatch(header, /pull_request/);
   });
@@ -99,6 +99,21 @@ describe("PLRNUI-117 release workflow", () => {
     assert.match(all["publish-shim"]!, /name: release-shim/);
     assert.match(all["build"]!, /npm run release:check/);
     assert.match(all["build"]!, /release-guard\.mjs --channel "\$CHANNEL"/);
+  });
+
+  it("never interpolates an expression into a run script, and only a run on main can publish for real", () => {
+    for (const [name, body] of Object.entries(all)) {
+      const runs = [...body.matchAll(/^\s+run:\s*(\|\n((?:\s{10,}.*\n?)+)|.*)/gm)].map((m) => m[0]);
+      for (const run of runs) assert.doesNotMatch(run, /\$\{\{/, `${name} has an expression inside a run script`);
+    }
+    assert.match(all["plan"]!, /REF: \$\{\{ github\.ref \}\}/);
+    assert.match(all["plan"]!, /refs\/heads\/main/);
+    assert.match(all["plan"]!, /identity\.current/);
+  });
+
+  it("repeats the dry-run guard in the shim job and checks npm in both publish jobs", () => {
+    assert.match(all["publish-shim"]!, /if: needs\.plan\.outputs\.dry_run != 'true' && needs\.plan\.outputs\.publish == 'true' && needs\.plan\.outputs\.shim == 'true'/);
+    for (const name of ["publish-target", "publish-shim"]) assert.match(all[name]!, /too old for trusted publishing/, name);
   });
 
   it("the planning step reads the version from package.json and asks npm before it publishes", () => {

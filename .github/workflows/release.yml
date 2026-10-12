@@ -64,15 +64,18 @@ jobs:
         env:
           EVENT: ${{ github.event_name }}
           INPUT_DRY_RUN: ${{ inputs.dry-run }}
+          REF: ${{ github.ref }}
         run: |
           node --input-type=module -e '
             import { readFileSync, appendFileSync } from "node:fs";
             import { spawnSync } from "node:child_process";
             const pkg = JSON.parse(readFileSync("package.json", "utf8"));
             const identity = JSON.parse(readFileSync("config/package-identity.json", "utf8"));
-            if (typeof pkg.name !== "string" || !/^\d+\.\d+\.\d+(-rc\.\d+)?$/.test(pkg.version)) throw new Error(`not a releasable version: ${pkg.version}`);
+            if (!/^@[a-z0-9~-][a-z0-9._~-]*\/[a-z0-9~-][a-z0-9._~-]*$/.test(String(pkg.name)) || pkg.name !== identity.current) throw new Error(`package name ${pkg.name} is not the current package of config/package-identity.json (${identity.current})`);
+            if (!/^\d+\.\d+\.\d+(-rc\.\d+)?$/.test(pkg.version)) throw new Error(`not a releasable version: ${pkg.version}`);
             const channel = pkg.version.includes("-rc.") ? "rc" : "latest";
             const dryRun = process.env.EVENT === "workflow_dispatch" && process.env.INPUT_DRY_RUN === "true";
+            if (!dryRun && process.env.REF !== "refs/heads/main") throw new Error(`a real publish runs from main only (this run is on ${process.env.REF})`);
             const view = spawnSync("npm", ["view", `${pkg.name}@${pkg.version}`, "version"], { encoding: "utf8" });
             const published = view.status === 0 && view.stdout.trim() === pkg.version;
             if (!published && !/E404|404 Not Found/.test(view.stderr)) throw new Error(`cannot tell whether ${pkg.name}@${pkg.version} is published: ${view.stderr.trim()}`);
@@ -263,6 +266,13 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+
+      - name: Check the npm version
+        run: |
+          node -e '
+            const [a, b, c] = process.argv[1].split(".").map(Number);
+            if (a < 11 || (a === 11 && (b < 5 || (b === 5 && c < 1)))) { console.error(`npm ${process.argv[1]} is too old for trusted publishing (need >= 11.5.1)`); process.exit(1); }
+          ' "$(npm -v)"
 
       - name: Download the shim tarball
         uses: actions/download-artifact@v4
