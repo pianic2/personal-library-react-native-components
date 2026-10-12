@@ -95,6 +95,22 @@ describe("PLRNUI-285 Button variants", () => {
     assert.equal(pressable(mount({})).props.testID, undefined);
   });
 
+  it("leaves a non-hex theme colour alone (no pressed mix, inverted label kept)", () => {
+    let renderer!: ReactTestRenderer;
+    act(() => {
+      renderer = TestRenderer.create(
+        <ThemeProvider themeOverrides={{ colors: { primary: "rgba(10, 20, 30, 1)" } }}>
+          <Button label="Save" />
+        </ThemeProvider>
+      );
+    });
+    const rest = styleOf(renderer, false);
+    const down = styleOf(renderer, true);
+    assert.equal(rest.backgroundColor, "rgba(10, 20, 30, 1)");
+    assert.equal(down.backgroundColor, "rgba(10, 20, 30, 1)");
+    assert.equal(labelColor(renderer), lightColors.textInverted);
+  });
+
   it("keeps role, label and the 44pt minimum hit area", () => {
     const p = pressable(mount({ size: "xs" }));
     assert.equal(p.props.accessibilityRole, "button");
@@ -114,6 +130,10 @@ describe("PLRNUI-285 contrast helper", () => {
     assert.equal(contrastRatio("#fff", "#000")!.toFixed(1), "21.0");
     assert.equal(contrastRatio("#FFFFFFFF", "#000000")!.toFixed(1), "21.0");
     assert.equal(contrastRatio("rgba(0,0,0,1)", "#FFFFFF"), null);
+    assert.equal(contrastRatio("#FFFFFF00", "#000000"), null, "alpha below 1 is not measurable");
+    assert.equal(contrastRatio("#12345", "#000000"), null);
+    assert.equal(contrastRatio("#1234567", "#000000"), null);
+    assert.equal(mixColors("#abcde", "#000000", 0.5), null);
     assert.equal(readableOn("rgba(0,0,0,0.5)", "#FFFFFF", "#000000"), "#FFFFFF");
     assert.equal(readableOn("#FF9F43", "#FFFFFF", "#020408"), "#020408");
     assert.equal(readableOn("#2563EB", "#FFFFFF", "#020408"), "#FFFFFF");

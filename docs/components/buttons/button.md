@@ -48,8 +48,9 @@ interface ButtonProps {
 
 ## Contrasto e stato premuto
 
-- Le varianti piene mantengono lo sfondo anche da premute: il feedback è l'opacità `components.button.opacity.pressed`, non
-  uno scambio con `colors.surface`.
+- Le varianti piene mantengono il proprio colore anche da premute: il feedback è l'opacità `components.button.opacity.pressed`
+  più un velo del 12% (stesso valore di `stateLayer.pressed`) sul colore opposto a quello del testo, non uno scambio con
+  `colors.surface`. Con colori non esadecimali il velo non viene applicato.
 - Il testo usa `colors.textInverted`; se questo non raggiunge 4.5:1 sullo sfondo (per esempio `primary` e `secondary` nel
   tema chiaro) passa a `colors.textPrimary`. I colori non esadecimali non vengono modificati.
 - `style` è applicato dopo gli stili della variante; `testID` è passato al `Pressable`. Il peso del testo viene da

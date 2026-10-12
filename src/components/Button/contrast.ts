@@ -1,4 +1,4 @@
-// WCAG 2.x contrast for the Button's filled variants. Only #RRGGBB / #RGB values can be measured; anything else
+// WCAG 2.x contrast for the Button's filled variants. Only opaque #RRGGBB / #RGB (or #RRGGBBFF) values can be measured; anything else
 // (rgba(), named colours, platform colours) is left alone. Kept local until the shared contrast util (E2-11) lands.
 
 function channel(value: number): number {
@@ -7,9 +7,10 @@ function channel(value: number): number {
 }
 
 function parseHex(color: string): [number, number, number] | null {
-  const match = /^#([0-9a-f]{3}|[0-9a-f]{6})(?:[0-9a-f]{2})?$/i.exec(color.trim());
-  if (!match) return null;
-  const hex = match[1]!.length === 3 ? match[1]!.replace(/./g, (c) => c + c) : match[1]!;
+  const match = /^#(?:([0-9a-f]{3})|([0-9a-f]{6})|([0-9a-f]{6})ff)$/i.exec(color.trim());
+  if (!match) return null; // 4/5/7-digit forms, rgba(), names and any colour with alpha below 1 are not measurable
+  const short = match[1];
+  const hex = short ? short.replace(/./g, (c) => c + c) : (match[2] ?? match[3])!;
   const n = parseInt(hex, 16);
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
