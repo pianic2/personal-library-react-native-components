@@ -74,6 +74,7 @@
     "dev": "tsc -p tsconfig.json --watch --noEmit",
     "typecheck": "tsc --noEmit",
     "typecheck:contracts": "tsc -p tsconfig.type-tests.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json --noEmit",
     "test": "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/react-native-loader.mjs --test \"tests/**/*.test.{ts,tsx}\"",
     "test:coverage": "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/react-native-loader.mjs --test --experimental-test-coverage --test-coverage-include=\"src/**/*\" --test-coverage-lines=90 --test-coverage-branches=86 --test-coverage-functions=92 \"tests/**/*.test.{ts,tsx}\"",
     "test:native": "node --import tsx --import ./tests/setup.ts --experimental-loader ./tests/react-native-loader.mjs --test \"tests/native/**/*.test.{ts,tsx}\"",
@@ -86,6 +87,10 @@
     "docs:compat:check": "node scripts/compatibility-docs.mjs --check",
     "api:snapshot": "node scripts/public-api-snapshot.mjs",
     "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
+    "maturity:check": "node scripts/maturity-check.mjs",
+    "maturity:docs": "node scripts/gen-maturity-docs.mjs",
+    "maturity:docs:check": "node scripts/gen-maturity-docs.mjs --check",
+    "tokens:check": "node scripts/check-token-usage.mjs",
     "ai:build:props": "node scripts/ai/build-props.mjs",
     "ai:build": "node -e \"const fs=require('fs');fs.mkdirSync('dist/meta',{recursive:true});for(const f of fs.readdirSync('ai/manifests').filter(f=>f.endsWith('.json')))fs.copyFileSync('ai/manifests/'+f,'dist/meta/'+f)\"",
     "ai:check": "node -e \"const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));const bad=(p.files||[]).filter(f=>/^(skills|AGENTS|llms)/.test(f));if(bad.length||!fs.readdirSync('ai/manifests').some(f=>f.endsWith('.json'))){console.error('ai:check failed',bad);process.exit(1)}\"",
@@ -97,7 +102,7 @@
     "release:security": "node scripts/audit-gate.mjs",
     "prepack": "npm run build:prod && npm run release:guard",
     "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
-    "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
+    "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm run typecheck:tests && npm run maturity:check && npm run maturity:docs:check && npm run tokens:check && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
   },
   "engines": {
     "node": ">=22.13.0"

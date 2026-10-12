@@ -58,10 +58,10 @@ describe("Theme contract v2", () => {
     const modes: ThemeMode[] = ["light", "dark"];
     const prefs: ThemePreference[] = [...modes, "system"];
     const level: DensityLevel = "regular";
-    const partial: DeepPartial<Theme> = { motion: { duration: { fast: 1 } } };
+    const partial: DeepPartial<Theme> = { motion: { duration: { fast: 120 } } };
     assert.equal(prefs.length, 3);
     assert.equal(level, "regular");
-    assert.equal(partial.motion?.duration?.fast, 1);
+    assert.equal(partial.motion?.duration?.fast, 120);
   });
 
   it("semantic tokens follow the mode", () => {
