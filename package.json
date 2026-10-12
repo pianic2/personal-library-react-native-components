@@ -87,6 +87,9 @@
     "docs:compat:check": "node scripts/compatibility-docs.mjs --check",
     "api:snapshot": "node scripts/public-api-snapshot.mjs",
     "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
+    "changeset": "changeset",
+    "changeset:version": "changeset version && node scripts/sync-shim-version.mjs",
+    "shim:version:check": "node scripts/sync-shim-version.mjs --check",
     "maturity:check": "node scripts/maturity-check.mjs",
     "maturity:docs": "node scripts/gen-maturity-docs.mjs",
     "maturity:docs:check": "node scripts/gen-maturity-docs.mjs --check",
@@ -102,7 +105,8 @@
     "release:security": "node scripts/audit-gate.mjs",
     "prepack": "npm run build:prod && npm run release:guard",
     "prepack:check": "npm run build:prod && npm run release:guard && npm run package:dry-run",
-    "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run typecheck && npm run typecheck:contracts && npm run typecheck:tests && npm run maturity:check && npm run maturity:docs:check && npm run tokens:check && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security"
+    "release:check": "npm run clean && npm ci && npm run release:guard && npm run docs:compat:check && npm run api:snapshot:check && npm run shim:version:check && npm run typecheck && npm run typecheck:contracts && npm run typecheck:tests && npm run maturity:check && npm run maturity:docs:check && npm run tokens:check && npm test && npm run build && npm run package:dry-run && npm run consumer:smoke && npm run consumer:expo && npm run release:security",
+    "release:publish": "npm run release:check && changeset publish"
   },
   "engines": {
     "node": ">=22.13.0"
@@ -112,6 +116,7 @@
     "react-native": ">=0.86.0 <0.87.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "^19.2.17",
     "@types/react-test-renderer": "^19.1.0",
