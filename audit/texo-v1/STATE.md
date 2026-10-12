@@ -234,3 +234,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (ownership exception for PLRNUI-285) | #188 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-285 (E1-09: Button info variant and pressed-state contrast fix) | #190 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-285: size budget and props manifest) | #189 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-353 (E8-19: usePermission API and PermissionAdapter pattern) | #191 | PR open (row committed pre-merge, see ADR 0020 Branching) |
