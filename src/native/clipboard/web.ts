@@ -33,7 +33,11 @@ function execCopy(doc: WebClipboardDocument, value: string): boolean {
     field.select();
     return doc.execCommand("copy") === true;
   } finally {
-    doc.body.removeChild(field);
+    try {
+      doc.body.removeChild(field);
+    } catch {
+      // the field is already gone; the copy result must not be masked
+    }
   }
 }
 
@@ -50,17 +54,18 @@ export function canWriteWebClipboard(env: WebClipboardEnv): boolean {
 export function createWebClipboard(env: WebClipboardEnv): ClipboardApi {
   return {
     async setString(value) {
+      let first: unknown;
       const writeText = env.navigator?.clipboard?.writeText;
       if (typeof writeText === "function") {
         try {
           await writeText.call(env.navigator!.clipboard, value);
           return;
-        } catch {
-          // fall through to execCommand
+        } catch (failure) {
+          first = failure; // keep the original error (for example NotAllowedError) if the fallback fails too
         }
       }
       if (env.document && execCopy(env.document, value)) return;
-      throw new Error("Clipboard write is not available");
+      throw first ?? new Error("Clipboard write is not available");
     },
     async getString() {
       const readText = env.navigator?.clipboard?.readText;

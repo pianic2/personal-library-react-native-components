@@ -22,10 +22,13 @@ export interface CopyToClipboard {
 /**
  * Copy-to-clipboard state. Resolves the `clipboard` capability (provider adapter, registry, then the web clipboard when
  * the platform has one), so it works with no provider and no optional package: `copy` then resolves false with
- * `error` null and `status` `noop`. Timers are cleared on unmount and a copy that finishes after unmount sets no state.
+ * `error` null and `status` `noop`. A provider adapter always wins, even an `unavailable` one: then the web clipboard is
+ * not used. `resetMs` that is not a finite number falls back to 2000. The web source is read once per adapter, so a
+ * server-rendered `noop` can become `available` after hydration. Timers are cleared on unmount and a copy that finishes after unmount sets no state.
  */
 export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}): CopyToClipboard {
-  const { resetMs = 2000 } = options;
+  const { resetMs: requested = 2000 } = options;
+  const resetMs = Number.isFinite(requested) ? Math.max(0, requested) : 2000;
   const adapter = useCapability("clipboard");
   const web = useMemo(() => (adapter.status === "noop" ? resolveWebClipboard() : undefined), [adapter]);
   const api = web ?? adapter.api;
@@ -63,7 +66,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}): Cop
         setCopied(true);
         timer.current = setTimeout(() => {
           if (mounted.current) setCopied(false);
-        }, Math.max(0, resetMs));
+        }, resetMs);
       }
       return true;
     },

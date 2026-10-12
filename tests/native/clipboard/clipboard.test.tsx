@@ -117,6 +117,11 @@ describe("web adapter", () => {
     const { doc, log } = fakeDocument(false);
     await assert.rejects(createWebClipboard({ document: doc }).setString("x"));
     assert.equal(log.at(-1), "remove");
+    const original = new Error("NotAllowedError");
+    await assert.rejects(
+      createWebClipboard({ navigator: { clipboard: { writeText: () => Promise.reject(original) } } }).setString("x"),
+      (error) => error === original
+    );
     assert.equal(await createWebClipboard({}).getString(), "");
     assert.equal(canWriteWebClipboard({}), false);
     assert.equal(canWriteWebClipboard({ document: fakeDocument(true).doc }), true);
@@ -216,6 +221,56 @@ describe("useCopyToClipboard", () => {
     });
     assert.equal(result, false);
     assert.equal(out.c!.error, null);
+  });
+
+  it("clears a pending reset timer on unmount (copy succeeded, then unmount)", async () => {
+    mock.timers.enable({ apis: ["setTimeout"] });
+    const { module } = mockExpo();
+    const { out, r } = renderCopy({ resetMs: 1000 }, { clipboard: createExpoClipboardAdapter(module) });
+    await act(async () => void (await out.c!.copy("x")));
+    assert.equal(out.c!.copied, true);
+    act(() => r.unmount());
+    // A timer left running would call setCopied on the unmounted tree; ticking must be silent and harmless.
+    assert.doesNotThrow(() => mock.timers.tick(5000));
+  });
+
+  it("overlapping copies: only the latest one drives copied and error", async () => {
+    mock.timers.enable({ apis: ["setTimeout"] });
+    const releases: Array<(fail?: boolean) => void> = [];
+    const { module } = mockExpo({
+      set: () => new Promise((resolve, reject) => releases.push((fail) => (fail ? reject(new Error("slow failed")) : resolve(undefined)))),
+    });
+    const { out } = renderCopy({ resetMs: 1000 }, { clipboard: createExpoClipboardAdapter(module) });
+    let a!: Promise<boolean>;
+    let b!: Promise<boolean>;
+    act(() => {
+      a = out.c!.copy("A");
+    });
+    act(() => {
+      b = out.c!.copy("B");
+    });
+    await act(async () => {
+      releases[1]!();
+      await b;
+    });
+    assert.equal(out.c!.copied, true);
+    await act(async () => {
+      releases[0]!(true); // the older copy fails after the newer one succeeded
+      assert.equal(await a, false);
+    });
+    assert.equal(out.c!.copied, true);
+    assert.equal(out.c!.error, null);
+  });
+
+  it("a non-finite resetMs falls back to the 2000 ms default", async () => {
+    mock.timers.enable({ apis: ["setTimeout"] });
+    const { module } = mockExpo();
+    const { out } = renderCopy({ resetMs: Number.NaN }, { clipboard: createExpoClipboardAdapter(module) });
+    await act(async () => void (await out.c!.copy("x")));
+    act(() => mock.timers.tick(1999));
+    assert.equal(out.c!.copied, true);
+    act(() => mock.timers.tick(1));
+    assert.equal(out.c!.copied, false);
   });
 
   it("clears the timer on unmount and sets no state for a copy that finishes after unmount", async () => {
