@@ -265,6 +265,29 @@ describe("PLRNUI-224 Portal in an OverlayHost", () => {
     assert.deepEqual(textsOf(flagged[0]!), ["modal"]);
   });
 
+  it("a prop removed from a Portal goes back to its default (layer, modal flag, scroll lock)", () => {
+    const seen: OverlayState[] = [];
+    function Probe() {
+      seen.push(useOverlayState());
+      return null;
+    }
+    const tree = (withProps: boolean) => (
+      <OverlayHost>
+        <Probe />
+        <Portal {...(withProps ? { layer: "toast" as const, accessibilityViewIsModal: true, lockScroll: true } : {})}><Text>p</Text></Portal>
+      </OverlayHost>
+    );
+    const r = create(tree(true));
+    const zOf = () => r.root.findAll((n) => (n.type as unknown) === host("View") && typeof flatten(n.props.style).zIndex === "number").map((n) => flatten(n.props.style).zIndex as number);
+    assert.deepEqual(zOf(), [zIndex.toast]);
+    assert.equal(seen.at(-1)!.scrollLocked, true);
+    assert.equal(r.root.findAll((n) => (n.type as unknown) === host("View") && n.props.accessibilityViewIsModal === true).length, 1);
+    act(() => r.update(tree(false)));
+    assert.deepEqual(zOf(), [zIndex.overlay]);
+    assert.equal(seen.at(-1)!.scrollLocked, false);
+    assert.equal(r.root.findAll((n) => (n.type as unknown) === host("View") && n.props.accessibilityViewIsModal === true).length, 0);
+  });
+
   it("is safe in StrictMode: no duplicate or leaked entries", () => {
     let renderer!: TestRenderer.ReactTestRenderer;
     act(() => {
@@ -450,15 +473,43 @@ describe("PLRNUI-224 nested host in a native-window surface", () => {
     assert.deepEqual(log, ["nested"]);
   });
 
-  it("only the root host subscribes to Back", () => {
-    let adds = 0;
-    const counting: BackHandlerLike = { addEventListener: () => ((adds += 1), { remove: () => undefined }) };
+  it("only the root host subscribes to Back and to the Escape key", () => {
+    const counts = { rootBack: 0, nestedBack: 0, rootKeys: 0, nestedKeys: 0 };
+    const back = (key: "rootBack" | "nestedBack"): BackHandlerLike => ({ addEventListener: () => ((counts[key] += 1), { remove: () => undefined }) });
+    const keys = (key: "rootKeys" | "nestedKeys"): KeyEventTargetLike => ({ addEventListener: () => void (counts[key] += 1), removeEventListener: () => undefined });
     create(
-      <OverlayHost backHandler={counting}>
-        <NativeWindow><Text>x</Text></NativeWindow>
+      <OverlayHost backHandler={back("rootBack")} keyTarget={keys("rootKeys")}>
+        <RNModal visible transparent>
+          <OverlayHost backHandler={back("nestedBack")} keyTarget={keys("nestedKeys")}>
+            <Text>x</Text>
+          </OverlayHost>
+        </RNModal>
       </OverlayHost>,
     );
-    assert.equal(adds, 1);
+    assert.deepEqual(counts, { rootBack: 1, nestedBack: 0, rootKeys: 1, nestedKeys: 0 });
+  });
+
+  it("an overlay opened with useOverlay inside a window leaves the stack when the window closes (Back is not swallowed by a ghost)", () => {
+    const back = fakeBackHandler();
+    const log: string[] = [];
+    const holder: { api?: OverlayApi } = {};
+    function Opener() {
+      holder.api = useOverlay();
+      return null;
+    }
+    const tree = (open: boolean) => (
+      <OverlayHost backHandler={back.backHandler}>
+        <Text>screen</Text>
+        {open ? <NativeWindow><Opener /></NativeWindow> : null}
+      </OverlayHost>
+    );
+    const r = create(tree(true));
+    act(() => void holder.api!.open(<Text>ghost</Text>, { dismissable: true, onDismiss: () => log.push("ghost") }));
+    assert.ok(allTexts(r).includes("ghost"));
+    act(() => r.update(tree(false)));
+    assert.deepEqual(allTexts(r), ["screen"]);
+    assert.equal(back.press(), false, "no dismissable overlay is left");
+    assert.deepEqual(log, []);
   });
 
   it("closing the window removes the portals that were inside it", () => {

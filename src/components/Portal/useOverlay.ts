@@ -22,7 +22,7 @@ function isDev(): boolean {
 
 /**
  * Imperative access to the overlay stack of the nearest `OverlayHost`. The scoped theme of the calling component is
- * forwarded to the content. An overlay stays open until it is closed (also when the caller unmounts) or its host goes.
+ * forwarded to the content. An overlay stays open until it is closed (also when the caller unmounts); when its host unmounts the host removes it.
  */
 export function useOverlay(): OverlayApi {
   const host = useOverlayHost();

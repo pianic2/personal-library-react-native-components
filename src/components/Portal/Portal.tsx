@@ -67,12 +67,13 @@ export function Portal({ children, dismissable = false, onDismiss, layer, access
   // Keep the registered entry in step with the props.
   useLayoutEffect(() => {
     if (!host || idRef.current === null) return;
+    // A prop that was removed goes back to its default: the update replaces every option, it does not merge.
     host.store.update(idRef.current, {
       content,
       dismissable,
-      ...(layer !== undefined ? { layer } : {}),
-      ...(accessibilityViewIsModal !== undefined ? { accessibilityViewIsModal } : {}),
-      ...(lockScroll !== undefined ? { lockScroll } : {}),
+      layer: layer ?? "overlay",
+      accessibilityViewIsModal: accessibilityViewIsModal ?? false,
+      lockScroll: lockScroll ?? false,
     });
   });
 

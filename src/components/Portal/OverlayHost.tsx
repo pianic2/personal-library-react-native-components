@@ -72,8 +72,16 @@ export function OverlayHost({ children, style, backHandler, keyTarget }: Overlay
     return () => subscriptions.forEach((unsubscribe) => unsubscribe());
   }, [isRoot, store, backHandler, keyTarget]);
 
-  // A host holds no state of its own: its entries belong to the Portals and callers that registered them, and a Portal
-  // unregisters when it unmounts, which includes the unmount of a closing native window and its nested host.
+  // The entries of a host go with it. A Portal unregisters itself when it unmounts, but an overlay opened with
+  // `useOverlay` has no component of its own: without this cleanup it would stay in the shared stack after its host (for
+  // example the nested host of a closed native window) is gone, and Back would keep calling its `onDismiss`.
+  useEffect(
+    () => () => {
+      for (const entry of store.getEntries()) if (entry.hostId === hostId) store.unregister(entry.id);
+    },
+    [store, hostId],
+  );
+
   const entries = useSyncExternalStore(store.subscribe, store.getEntries, store.getEntries);
   const mine = entries.filter((entry) => entry.hostId === hostId);
 
