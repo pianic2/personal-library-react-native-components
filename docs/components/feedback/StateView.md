@@ -69,6 +69,11 @@ interface AsyncBoundaryProps<T> {
 <Result status="404" actions={<Button label="Go home" onPress={goHome} />} />
 ```
 
+## Notes
+
+- `AsyncBoundary` shows the loading state for `idle` and `loading` even when earlier data exists (a refetch); keep your own stale view if you want one. `null` and `undefined` data are always empty, whatever `isEmpty` returns.
+- When wrapped by `style` or `testID`, the boundary's `View` is `flex: 1` so the state view still fills its container.
+
 ## Accessibility
 
 - Titles are `Heading`s; the order is icon, title, description, actions. Icons and illustrations are decorative.

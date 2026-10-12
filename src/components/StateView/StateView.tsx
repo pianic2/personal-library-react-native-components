@@ -1,6 +1,6 @@
 // EmptyState, ErrorState, LoadingState, Result and AsyncBoundary: the blocks every async screen needs.
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
 import { Button } from "../Button/index.js";
@@ -20,11 +20,11 @@ interface Common {
   testID?: string;
 }
 
-function useContainerStyle(size: Size, fill: boolean) {
+function useContainerStyle(size: Size) {
   const { theme } = useTheme();
   const pad = size === "sm" ? theme.space.md : theme.space.lg;
   return {
-    ...(fill && size === "md" ? { flex: 1 } : null),
+    ...(size === "md" ? { flex: 1 } : null),
     alignItems: "center",
     justifyContent: "center",
     padding: pad,
@@ -76,7 +76,7 @@ export function EmptyState({
   testID,
 }: EmptyStateProps) {
   const { theme } = useTheme();
-  const container = useContainerStyle(size, true);
+  const container = useContainerStyle(size);
   const copy = EMPTY_COPY[variant];
   const hasActions = (actionLabel && onAction) || (secondaryActionLabel && onSecondaryAction) || actions;
   return (
@@ -142,24 +142,31 @@ export function ErrorState({
 }: ErrorStateProps) {
   const { theme } = useTheme();
   const size: Size = variant === "inline" ? "sm" : "md";
-  const container = useContainerStyle(size, true);
+  const container = useContainerStyle(size);
   const [pending, setPending] = useState(false);
   const [innerOpen, setInnerOpen] = useState(defaultOpen);
   const inFlight = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   const isOpen = open ?? innerOpen;
   const isRetrying = retrying ?? pending;
 
   const handleRetry = useCallback(async () => {
     if (inFlight.current || !onRetry) return;
     inFlight.current = true;
-    setPending(true);
+    if (mounted.current) setPending(true);
     try {
       await onRetry();
     } catch {
       // the caller owns error reporting; the button becomes available again
     } finally {
       inFlight.current = false;
-      setPending(false);
+      if (mounted.current) setPending(false);
     }
   }, [onRetry]);
 
@@ -268,13 +275,14 @@ export interface ResultProps extends Common {
 
 export function Result({ status = "info", title, description, icon, actions, style, testID }: ResultProps) {
   const { theme, colors } = useTheme();
-  const container = useContainerStyle("md", true);
+  const container = useContainerStyle("md");
   const copy = RESULT_COPY[status];
   const toneColor = { success: colors.success, info: colors.info, warning: colors.warning, error: colors.error, "403": colors.warning, "404": colors.info }[status];
   const urgent = status === "error";
   return (
     <View
-      accessible={false}
+      // The error status is one accessible alert group (iOS announces roles on accessible elements only).
+      accessible={urgent}
       {...(urgent ? { accessibilityRole: "alert" as const, accessibilityLiveRegion: "polite" as const } : {})}
       style={[container, style]}
       {...(testID === undefined ? {} : { testID })}
@@ -318,11 +326,11 @@ export function Result({ status = "info", title, description, icon, actions, sty
 export type AsyncStatus = "idle" | "loading" | "error" | "success";
 
 export interface AsyncBoundaryProps<T> extends Common {
-  /** `idle` and `loading` show the loading state (nothing has been loaded yet). */
+  /** `idle` and `loading` show the loading state, even when earlier data exists (a refetch): keep your own stale view if you want one. */
   status: AsyncStatus;
   data?: T | null;
   error?: unknown;
-  /** Decides whether successful data counts as empty. Default: `null`, `undefined` and empty arrays. */
+  /** Decides whether successful data counts as empty. Default: `null`, `undefined` and empty arrays. `null` and `undefined` are always empty. */
   isEmpty?: (data: T | null | undefined) => boolean;
   /** Passed to the error state's retry button. */
   onRetry?: () => void | Promise<void>;
@@ -347,7 +355,7 @@ function errorDetail(error: unknown): string | undefined {
 export function AsyncBoundary<T>({ status, data, error, isEmpty = defaultIsEmpty, onRetry, loading, empty, errorView, children, style, testID }: AsyncBoundaryProps<T>) {
   const wrap = (node: React.ReactNode) =>
     style || testID !== undefined ? (
-      <View style={style} {...(testID === undefined ? {} : { testID })}>
+      <View style={[{ flex: 1 }, style]} {...(testID === undefined ? {} : { testID })}>
         {node}
       </View>
     ) : (
@@ -359,7 +367,8 @@ export function AsyncBoundary<T>({ status, data, error, isEmpty = defaultIsEmpty
     const detail = errorDetail(error);
     return wrap(<ErrorState {...(onRetry ? { onRetry } : {})} {...(detail ? { detail } : {})} {...(errorView as ErrorStateProps | undefined)} />);
   }
-  if (isEmpty(data)) {
+  // Missing data never reaches `children`, whatever a custom `isEmpty` says.
+  if (data === null || data === undefined || isEmpty(data)) {
     if (React.isValidElement(empty)) return wrap(empty);
     return wrap(<EmptyState {...(empty as EmptyStateProps | undefined)} />);
   }

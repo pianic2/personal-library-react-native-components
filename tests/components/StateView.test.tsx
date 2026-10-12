@@ -219,6 +219,55 @@ describe("PLRNUI-412 AsyncBoundary", () => {
     assert.ok(texts(render({ status: "error", error: "plain string", errorView: { defaultOpen: true } })).includes("plain string"));
   });
 
+  it("never calls children with missing data, even when a custom isEmpty says false", () => {
+    let calls = 0;
+    const r = mount(
+      <AsyncBoundary<string[]> status="success" data={undefined} isEmpty={() => false}>
+        {(rows) => (calls++, <Heading level={4}>{rows.join(",")}</Heading>)}
+      </AsyncBoundary>
+    );
+    assert.equal(calls, 0);
+    assert.ok(texts(r).includes("Nothing here yet"));
+  });
+
+  it("caller props in errorView win over the defaults derived from the error and onRetry", async () => {
+    const own: string[] = [];
+    const r = mount(
+      <AsyncBoundary<string[]> status="error" error={new Error("from error")} onRetry={() => void own.push("boundary")} errorView={{ detail: "from props", onRetry: () => void own.push("props"), defaultOpen: true }}>
+        {() => null}
+      </AsyncBoundary>
+    );
+    assert.ok(texts(r).includes("from props"));
+    assert.ok(!texts(r).includes("from error"));
+    await pressAsync(buttons(r)[0]!);
+    assert.deepEqual(own, ["props"]);
+  });
+
+  it("keeps the state view filling its container when wrapped by style or testID", () => {
+    const r = mount(
+      <AsyncBoundary<string[]> status="loading" testID="b" style={{ margin: 2 }}>
+        {() => null}
+      </AsyncBoundary>
+    );
+    const wrapper = flatten(r.root.find((n) => host(n) && n.props.testID === "b").props.style);
+    assert.deepEqual([wrapper.flex, wrapper.margin], [1, 2]);
+  });
+
+  it("a retry that settles after unmount does not touch state", async () => {
+    let release!: () => void;
+    const r = mount(<ErrorState onRetry={() => new Promise<void>((resolve) => (release = resolve))} />);
+    await pressAsync(buttons(r)[0]!);
+    act(() => r.unmount());
+    await act(async () => release());
+  });
+
+  it("the error Result is one accessible alert group; the other statuses are not", () => {
+    const err = mount(<Result status="error" testID="x" />).root.find((n) => host(n) && n.props.testID === "x");
+    assert.deepEqual([err.props.accessible, err.props.accessibilityRole], [true, "alert"]);
+    const ok = mount(<Result status="success" testID="x" />).root.find((n) => host(n) && n.props.testID === "x");
+    assert.equal(ok.props.accessible, false);
+  });
+
   it("wraps in a View only when style or testID is given", () => {
     const wrapped = render({ status: "success", data: ["a"], testID: "boundary", style: { margin: 2 } });
     assert.equal(wrapped.root.findAll((n) => host(n) && n.props.testID === "boundary").length, 1);
@@ -252,6 +301,7 @@ describe("PLRNUI-412 theming", () => {
   it("the source has no hardcoded colours", () => {
     const source = readFileSync("src/components/StateView/StateView.tsx", "utf8");
     assert.doesNotMatch(source, /#[0-9a-fA-F]{3,8}\b/);
-    assert.doesNotMatch(source, /rgba?\(/);
+    assert.doesNotMatch(source, /rgba?\(|hsla?\(/);
+    assert.doesNotMatch(source, /["'`](red|white|black|blue|green|gray|grey|yellow|orange|purple|pink|transparent)["'`]/i, "no named colours");
   });
 });
