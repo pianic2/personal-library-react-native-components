@@ -291,6 +291,49 @@ describe("usePermission races and adapter changes", () => {
     assert.equal(frames[frames.length - 1]!.status, "unavailable");
   });
 
+  it("changing the adapter while a request is pending checks the new adapter and does not stay loading", async () => {
+    let answer!: (r: PermissionResult) => void;
+    const a: PermissionAdapter = { check: async () => ({ status: "undetermined", canAskAgain: true }), request: () => new Promise((resolve) => (answer = resolve)) };
+    const b = fakeAdapter({ status: "granted", canAskAgain: true });
+    const t = mount({ camera: a });
+    await t.render();
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = t.out.c!.request();
+    });
+    await t.update({ camera: b.adapter });
+    assert.equal(b.calls.check, 1, "the new adapter is checked even though A's request is pending");
+    assert.deepEqual([t.out.c!.status, t.out.c!.isLoading], ["granted", false]);
+    await act(async () => {
+      answer({ status: "denied", canAskAgain: true });
+      await pending;
+    });
+    assert.deepEqual([t.out.c!.status, t.out.c!.isLoading], ["granted", false], "A's late answer does not touch B");
+  });
+
+  it("overlapping request() calls: loading lasts until the last one settles", async () => {
+    const answers: Array<(r: PermissionResult) => void> = [];
+    const adapter: PermissionAdapter = { check: async () => ({ status: "undetermined", canAskAgain: true }), request: () => new Promise((resolve) => answers.push(resolve)) };
+    const t = mount({ camera: adapter });
+    await t.render();
+    let p1!: Promise<unknown>;
+    let p2!: Promise<unknown>;
+    act(() => {
+      p1 = t.out.c!.request();
+      p2 = t.out.c!.request();
+    });
+    await act(async () => {
+      answers[0]!({ status: "denied", canAskAgain: true });
+      await p1;
+    });
+    assert.equal(t.out.c!.isLoading, true, "the second request is still pending");
+    await act(async () => {
+      answers[1]!({ status: "granted", canAskAgain: true });
+      await p2;
+    });
+    assert.deepEqual([t.out.c!.status, t.out.c!.isLoading], ["granted", false]);
+  });
+
   it("request keeps a stable identity across status changes", async () => {
     const f = fakeAdapter({ status: "undetermined", canAskAgain: true }, () => ({ status: "granted", canAskAgain: true }));
     const t = mount({ camera: f.adapter });

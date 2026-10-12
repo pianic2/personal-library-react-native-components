@@ -50,7 +50,9 @@ export function usePermission(kind: PermissionKind): PermissionControls {
 
   const mounted = useRef(true);
   const generation = useRef(0);
-  const requesting = useRef(false);
+  // Pending request() calls per adapter: a request on one adapter must not block checks of another.
+  const pending = useRef(new Map<PermissionAdapter, number>());
+  const isRequesting = (a: PermissionAdapter) => (pending.current.get(a) ?? 0) > 0;
   const current = useRef({ adapter, status: view.result.status });
   current.current = { adapter, status: view.result.status };
 
@@ -75,12 +77,15 @@ export function usePermission(kind: PermissionKind): PermissionControls {
       update(adapter, () => ({ result: UNAVAILABLE, checking: false }));
       return;
     }
-    if (requesting.current) return;
+    if (isRequesting(adapter)) {
+      // the request's answer is the last word; its completion clears `checking`
+      return;
+    }
     const id = ++generation.current;
     update(adapter, () => ({}));
     try {
       const next = normalise(await adapter.check());
-      if (id === generation.current && !requesting.current) update(adapter, () => ({ result: next }));
+      if (id === generation.current && !isRequesting(adapter)) update(adapter, () => ({ result: next }));
     } catch {
       // keep the last known status
     } finally {
@@ -98,7 +103,7 @@ export function usePermission(kind: PermissionKind): PermissionControls {
 
   const request = useCallback(async (): Promise<PermissionState> => {
     if (!adapter) return "unavailable";
-    requesting.current = true;
+    pending.current.set(adapter, (pending.current.get(adapter) ?? 0) + 1);
     generation.current += 1; // invalidates any check still in flight
     update(adapter, () => ({ requesting: true }));
     try {
@@ -108,8 +113,10 @@ export function usePermission(kind: PermissionKind): PermissionControls {
     } catch {
       return current.current.status;
     } finally {
-      requesting.current = false;
-      update(adapter, () => ({ requesting: false, checking: false }));
+      const left = (pending.current.get(adapter) ?? 1) - 1;
+      if (left > 0) pending.current.set(adapter, left);
+      else pending.current.delete(adapter);
+      if (left === 0) update(adapter, () => ({ requesting: false, checking: false }));
     }
   }, [adapter, update]);
 
