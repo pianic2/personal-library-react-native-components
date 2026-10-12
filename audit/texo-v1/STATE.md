@@ -202,3 +202,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-452 (remove the spent PLRNUI-154 ownership arm) | #156 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-211 (E7-08: useDataTable headless model) | #158 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-211) | #157 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (ownership exception for PLRNUI-106) | #159 | PR open (row committed pre-merge, see ADR 0020 Branching) |
