@@ -1,6 +1,7 @@
 /**
- * Permission kinds. Augment for app-specific kinds:
- * `declare module "<package>/native" { interface PermissionKinds { bluetooth: true } }`.
+ * Permission kinds. The interface is open: an app can add kinds by augmenting the module that declares it
+ * (`declare module "<path to this file>" { interface PermissionKinds { bluetooth: true } }`). The package does not yet
+ * expose a `./native` subpath (E14 wiring), so there is no public specifier to augment today.
  */
 export interface PermissionKinds {
   camera: true;

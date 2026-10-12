@@ -5,6 +5,7 @@ import { usePermissionAdapters } from "./PermissionsProvider.js";
 import type { PermissionAdapter, PermissionControls, PermissionKind, PermissionResult, PermissionState } from "./types.js";
 
 const UNAVAILABLE: PermissionResult = { status: "unavailable", canAskAgain: false };
+const UNDETERMINED: PermissionResult = { status: "undetermined", canAskAgain: true };
 
 function normalise(result: PermissionResult | null | undefined): PermissionResult {
   if (!result || typeof result.status !== "string") return UNAVAILABLE;
@@ -20,17 +21,38 @@ async function openSystemSettings(): Promise<void> {
   if (typeof linking?.openSettings === "function") await linking.openSettings();
 }
 
+// State is keyed by the adapter it belongs to: when the kind or its adapter changes, the first render already shows the
+// new adapter's initial state instead of the previous one's.
+interface Slot {
+  adapter: PermissionAdapter | undefined;
+  result: PermissionResult;
+  checking: boolean;
+  requesting: boolean;
+}
+
+const initialSlot = (adapter: PermissionAdapter | undefined): Slot => ({
+  adapter,
+  result: adapter ? UNDETERMINED : UNAVAILABLE,
+  checking: adapter !== undefined,
+  requesting: false,
+});
+
 /**
  * Status and controls for one permission kind. Checks on mount and again whenever the app returns to the foreground
  * (the user may have changed it in settings). A kind with no registered adapter is `unavailable` and `request()`
- * resolves `unavailable` without prompting. A failing adapter keeps the last known status and never throws.
+ * resolves `unavailable` without prompting. A failing adapter keeps the last known status and never throws. A foreground
+ * re-check never overrides a pending `request()`: the request's answer is always the last word.
  */
 export function usePermission(kind: PermissionKind): PermissionControls {
   const adapter: PermissionAdapter | undefined = usePermissionAdapters()[kind];
-  const [result, setResult] = useState<PermissionResult>(adapter ? { status: "undetermined", canAskAgain: true } : UNAVAILABLE);
-  const [loading, setLoading] = useState<boolean>(adapter !== undefined);
-  const generation = useRef(0);
+  const [slot, setSlot] = useState<Slot>(() => initialSlot(adapter));
+  const view = slot.adapter === adapter ? slot : initialSlot(adapter);
+
   const mounted = useRef(true);
+  const generation = useRef(0);
+  const requesting = useRef(false);
+  const current = useRef({ adapter, status: view.result.status });
+  current.current = { adapter, status: view.result.status };
 
   useEffect(() => {
     mounted.current = true;
@@ -39,27 +61,36 @@ export function usePermission(kind: PermissionKind): PermissionControls {
     };
   }, []);
 
+  // Applies `change` to the slot of `target` only (an update for an adapter that is no longer current is dropped).
+  const update = useCallback((target: PermissionAdapter | undefined, change: (slot: Slot) => Partial<Slot>) => {
+    if (!mounted.current || current.current.adapter !== target) return;
+    setSlot((prev) => {
+      const base = prev.adapter === target ? prev : initialSlot(target);
+      return { ...base, ...change(base) };
+    });
+  }, []);
+
   const refresh = useCallback(async () => {
-    const id = ++generation.current;
     if (!adapter) {
-      setResult(UNAVAILABLE);
-      setLoading(false);
+      update(adapter, () => ({ result: UNAVAILABLE, checking: false }));
       return;
     }
+    if (requesting.current) return;
+    const id = ++generation.current;
+    update(adapter, () => ({}));
     try {
       const next = normalise(await adapter.check());
-      if (mounted.current && id === generation.current) setResult(next);
+      if (id === generation.current && !requesting.current) update(adapter, () => ({ result: next }));
     } catch {
       // keep the last known status
     } finally {
-      if (mounted.current && id === generation.current) setLoading(false);
+      if (id === generation.current) update(adapter, () => ({ checking: false }));
     }
-  }, [adapter]);
+  }, [adapter, update]);
 
   useEffect(() => {
-    setLoading(adapter !== undefined);
     void refresh();
-  }, [refresh, adapter]);
+  }, [refresh]);
 
   useOnForeground(() => {
     void refresh();
@@ -67,18 +98,20 @@ export function usePermission(kind: PermissionKind): PermissionControls {
 
   const request = useCallback(async (): Promise<PermissionState> => {
     if (!adapter) return "unavailable";
-    const id = ++generation.current;
-    if (mounted.current) setLoading(true);
+    requesting.current = true;
+    generation.current += 1; // invalidates any check still in flight
+    update(adapter, () => ({ requesting: true }));
     try {
       const next = normalise(await adapter.request());
-      if (mounted.current && id === generation.current) setResult(next);
+      update(adapter, () => ({ result: next }));
       return next.status;
     } catch {
-      return result.status;
+      return current.current.status;
     } finally {
-      if (mounted.current && id === generation.current) setLoading(false);
+      requesting.current = false;
+      update(adapter, () => ({ requesting: false, checking: false }));
     }
-  }, [adapter, result.status]);
+  }, [adapter, update]);
 
   const openSettings = useCallback(async (): Promise<void> => {
     try {
@@ -89,5 +122,11 @@ export function usePermission(kind: PermissionKind): PermissionControls {
     }
   }, [adapter]);
 
-  return { status: result.status, canAskAgain: result.canAskAgain, isLoading: loading, request, openSettings };
+  return {
+    status: view.result.status,
+    canAskAgain: view.result.canAskAgain,
+    isLoading: view.checking || view.requesting,
+    request,
+    openSettings,
+  };
 }

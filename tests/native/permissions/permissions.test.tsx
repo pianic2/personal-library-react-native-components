@@ -25,8 +25,10 @@ function fakeAdapter(initial: PermissionResult, onRequest?: () => PermissionResu
 function mount(adapters: PermissionAdapters | undefined, kind: "camera" | "location" = "camera") {
   const mocks = createMockAdapters();
   const out: { c?: PermissionControls } = {};
+  const listeners: Array<(c: PermissionControls) => void> = [];
   function Probe() {
     out.c = usePermission(kind);
+    for (const listener of listeners) listener(out.c);
     return null;
   }
   let r!: TestRenderer.ReactTestRenderer;
@@ -49,6 +51,7 @@ function mount(adapters: PermissionAdapters | undefined, kind: "camera" | "locat
       await act(async () => r.update(tree(next)));
     },
     unmount: () => act(() => r.unmount()),
+    onRender: (listener: (c: PermissionControls) => void) => void listeners.push(listener),
   };
 }
 
@@ -76,7 +79,10 @@ describe("usePermission", () => {
   it("checks on mount: loading first, then the adapter's status", async () => {
     const f = fakeAdapter({ status: "denied", canAskAgain: true });
     const t = mount({ camera: f.adapter });
+    const first: PermissionControls[] = [];
+    t.onRender((c) => first.push(c));
     await t.render();
+    assert.deepEqual([first[0]!.status, first[0]!.isLoading], ["undetermined", true], "first frame is loading");
     assert.equal(t.out.c!.status, "denied");
     assert.equal(t.out.c!.canAskAgain, true);
     assert.equal(t.out.c!.isLoading, false);
@@ -221,6 +227,78 @@ describe("usePermission", () => {
     });
     assert.equal(out.c!.status, "limited");
     assert.equal(out.l!.status, "granted");
+  });
+});
+
+describe("usePermission races and adapter changes", () => {
+  it("a foreground re-check never overrides a pending request(); loading lasts until the request settles", async () => {
+    let answer!: (r: PermissionResult) => void;
+    const calls = { check: 0 };
+    const adapter: PermissionAdapter = {
+      check: async () => (calls.check++, { status: "undetermined", canAskAgain: true } as PermissionResult),
+      request: () => new Promise<PermissionResult>((resolve) => (answer = resolve)),
+    };
+    const t = mount({ camera: adapter });
+    await t.render();
+    let pending!: Promise<unknown>;
+    act(() => {
+      pending = t.out.c!.request();
+    });
+    assert.equal(t.out.c!.isLoading, true);
+    await act(async () => t.mocks.setAppState("background"));
+    await act(async () => t.mocks.setAppState("active")); // the system prompt makes the app inactive and active again
+    assert.equal(calls.check, 1, "no re-check while the request is pending");
+    assert.equal(t.out.c!.isLoading, true, "still loading: the request is pending");
+    await act(async () => {
+      answer({ status: "granted", canAskAgain: true });
+      await pending;
+    });
+    assert.equal(t.out.c!.status, "granted");
+    assert.equal(t.out.c!.isLoading, false);
+  });
+
+  it("an in-flight check cannot overwrite a later request() answer", async () => {
+    let finishCheck!: (r: PermissionResult) => void;
+    let first = true;
+    const adapter: PermissionAdapter = {
+      check: () => (first ? ((first = false), Promise.resolve({ status: "undetermined", canAskAgain: true } as PermissionResult)) : new Promise((resolve) => (finishCheck = resolve))),
+      request: async () => ({ status: "granted", canAskAgain: true }),
+    };
+    const t = mount({ camera: adapter });
+    await t.render();
+    await act(async () => t.mocks.setAppState("background"));
+    await act(async () => t.mocks.setAppState("active")); // starts a slow check that will answer "denied"
+    await act(async () => void (await t.out.c!.request()));
+    assert.equal(t.out.c!.status, "granted");
+    await act(async () => finishCheck({ status: "denied", canAskAgain: true }));
+    assert.equal(t.out.c!.status, "granted", "the stale check result is dropped");
+    assert.equal(t.out.c!.isLoading, false);
+  });
+
+  it("the first render after the adapter changes already shows the new adapter's initial state", async () => {
+    const a = fakeAdapter({ status: "granted", canAskAgain: true });
+    const b = fakeAdapter({ status: "denied", canAskAgain: true });
+    const t = mount({ camera: a.adapter });
+    await t.render();
+    assert.equal(t.out.c!.status, "granted");
+    const frames: PermissionControls[] = [];
+    t.onRender((c) => frames.push(c));
+    await t.update({ camera: b.adapter });
+    assert.deepEqual([frames[0]!.status, frames[0]!.isLoading], ["undetermined", true], "no frame shows the old adapter's status");
+    assert.equal(t.out.c!.status, "denied");
+    await t.update(undefined);
+    assert.deepEqual([t.out.c!.status, t.out.c!.isLoading], ["unavailable", false]);
+    assert.equal(frames[frames.length - 1]!.status, "unavailable");
+  });
+
+  it("request keeps a stable identity across status changes", async () => {
+    const f = fakeAdapter({ status: "undetermined", canAskAgain: true }, () => ({ status: "granted", canAskAgain: true }));
+    const t = mount({ camera: f.adapter });
+    await t.render();
+    const before = t.out.c!.request;
+    await act(async () => void (await t.out.c!.request()));
+    assert.equal(t.out.c!.status, "granted");
+    assert.equal(t.out.c!.request, before);
   });
 });
 

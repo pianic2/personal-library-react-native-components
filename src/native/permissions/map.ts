@@ -7,8 +7,6 @@ export interface ExpoPermissionResponseLike {
   canAskAgain?: boolean;
   /** expo-media-library: "all" | "limited" | "none". */
   accessPrivileges?: string;
-  /** expo-location (iOS): scope "whenInUse" | "always" | "none" does not change the status mapping. */
-  ios?: { status?: number };
 }
 
 const UNAVAILABLE: PermissionResult = { status: "unavailable", canAskAgain: false };
