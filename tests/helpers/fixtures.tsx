@@ -39,6 +39,7 @@ import {
 } from "../../src";
 import { Container } from "../../src/components/Container/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
+import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
 import { Slot } from "../../src/components/Slot/index.js";
 import { Label } from "../../src/components/Label/index.js";
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
@@ -46,6 +47,23 @@ import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
 import { View } from "react-native";
 
 const noop = () => undefined;
+
+// The DataTable folder has only the headless model so far: the fixture renders a minimal table driven by it.
+const tableColumns: DataTableColumn<{ id: string; name: string }>[] = [{ key: "name", header: "Name", sortable: true }];
+const tableRows = [
+  { id: "1", name: "Bea" },
+  { id: "2", name: "Ada" },
+];
+function DataTableFixture() {
+  const table = useDataTable({ rows: tableRows, columns: tableColumns, selectionMode: "multi", defaultSort: { key: "name", direction: "asc" } });
+  return (
+    <View>
+      {table.rows.map((row) => (
+        <Text key={row.id}>{row.name}</Text>
+      ))}
+    </View>
+  );
+}
 const items = [
   { label: "Home", href: "/" },
   { label: "Docs", href: "/docs" },
@@ -89,6 +107,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
       <Text>Bottom</Text>
     </Column>
   ),
+  DataTable: () => <DataTableFixture />,
   Divider: () => <Divider />,
   FormField: () => (
     <FormField label="Name" helperText="Helper">
