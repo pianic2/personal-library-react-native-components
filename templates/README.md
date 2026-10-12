@@ -30,6 +30,12 @@ node scripts/check-templates.mjs                       # checks templates/
 node scripts/check-templates.mjs --root <dir>          # checks another folder (used by tests)
 ```
 
+```
+node scripts/check-templates.mjs --build <name> [--work-dir <dir>]   # contract check, then build the template
+```
+
+`--build <name>` (PLRNUI-234) first runs the contract check; if it passes it builds that template against the **packed local library**: `npm run build` and `npm pack` of this repository, a copy of the template in `<work-dir>/app` (default `<tmpdir>/check-templates-build-<name>`) whose library dependency points at the tarball, `npm install`, the template's `typecheck` script when it has one, and `expo export --platform web`. It then checks the export: an `index.html` with a root element and a script, and a non-empty JavaScript bundle. The template folder itself is never changed. It needs network access (npm install) and takes a few minutes; it is the command a CI template job runs. Any failing step exits `1`; an unknown template or bad arguments exit `2`.
+
 Exit codes: `0` ok (an empty templates folder passes), `1` contract violations (listed on stderr), `2` usage error or unreadable input. The checker is dependency-free and deterministic.
 
 ## Generator CLI contract
@@ -38,4 +44,4 @@ A future generator reads `template.json` and copies the folder (excluding `node_
 
 ## Tests
 
-`tests/templates/contract.test.ts` covers an empty fixture (passes), a valid template (passes), a missing README (fails), and a deep import (fails). It is not part of `npm test`; run it with `node --import tsx --test tests/templates/contract.test.ts`.
+`tests/templates/contract.test.ts` covers an empty fixture (passes), a valid template (passes), a missing README (fails), a deep import (fails) and the `--build` orchestration (with a fake `npm` first on the PATH: the order of the commands, the rewritten dependency, every failing step, a broken export). It is not part of `npm test`; run it with `node --import tsx --test tests/templates/contract.test.ts`.

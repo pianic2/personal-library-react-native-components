@@ -1,10 +1,15 @@
-import { lstatSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { dirname, join, relative, sep } from "node:path";
+import { spawnSync } from "node:child_process";
+import { cpSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Template contract checker (PLRNUI-133). See templates/README.md for the contract.
-// Usage: check-templates.mjs [--root <templates-dir>] [--package-json <file>]
-// Exit 0 ok (an empty or missing-free templates dir passes), 1 contract violations, 2 usage/unreadable input.
+// Usage: check-templates.mjs [--root <templates-dir>] [--package-json <file>] [--build <name> [--work-dir <dir>]]
+// Exit 0 ok (an empty or missing-free templates dir passes), 1 contract violations or a failed build, 2 usage/unreadable input.
+// --build <name> (PLRNUI-234): after the contract check passes, builds the template <name> against the packed local library:
+// packs this repository, copies the template to <work-dir>/app with the library dependency pointing at the tarball, runs
+// npm install, the template's "typecheck" script when it has one, and `expo export --platform web`, then checks the export.
 // Dependency-free, deterministic (sorted traversal), fail-closed.
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -18,16 +23,22 @@ function usage(message) {
 const args = process.argv.slice(2);
 let root = join(REPO_ROOT, "templates");
 let pkgFile = join(REPO_ROOT, "package.json");
+let buildName = null;
+let workDir = null;
 for (let i = 0; i < args.length; i += 1) {
   const a = args[i];
-  if (a === "--root" || a === "--package-json") {
+  if (a === "--root" || a === "--package-json" || a === "--build" || a === "--work-dir") {
     const v = args[i + 1];
     if (!v || v.startsWith("--")) usage(`${a} needs a value`);
     if (a === "--root") root = v;
-    else pkgFile = v;
+    else if (a === "--package-json") pkgFile = v;
+    else if (a === "--build") buildName = v;
+    else workDir = resolve(v);
     i += 1;
   } else usage(`unknown argument ${a}`);
 }
+if (workDir !== null && buildName === null) usage("--work-dir needs --build");
+if (buildName !== null && !NAME_RE.test(buildName)) usage(`--build needs a kebab-case template name, got "${buildName}"`);
 
 function readJson(file) {
   try {
@@ -265,3 +276,94 @@ if (errors.length) {
   process.exit(1);
 }
 process.stdout.write(`check-templates: ok (${count} template(s))\n`);
+
+// ---- build --------------------------------------------------------------------------------------------------------
+
+const INSTALL_TIMEOUT_MS = 10 * 60 * 1000;
+const EXPORT_TIMEOUT_MS = 10 * 60 * 1000;
+
+function run(command, args, cwd, env = {}, timeout = undefined) {
+  process.stdout.write(`$ ${[command, ...args].join(" ")}   (in ${cwd})\n`);
+  const result = spawnSync(command, args, {
+    cwd,
+    env: { ...process.env, CI: "1", EXPO_NO_TELEMETRY: "1", ...env },
+    stdio: "inherit",
+    timeout,
+  });
+  if (result.error) throw new Error(`${command} ${args.join(" ")}: ${result.error.code === "ETIMEDOUT" ? "timed out" : result.error.message}`);
+  if (result.status !== 0) throw new Error(`${command} ${args.join(" ")} exited with ${result.status}`);
+}
+
+function listFiles(dir) {
+  const found = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...listFiles(full));
+    else found.push(full);
+  }
+  return found;
+}
+
+/** Checks a web export: an index.html with a root element and a script, and a non-empty JavaScript bundle. */
+function assertWebExport(outputDir) {
+  const indexFile = join(outputDir, "index.html");
+  if (!isFile(indexFile)) throw new Error(`web export has no index.html in ${outputDir}`);
+  const html = readFileSync(indexFile, "utf8");
+  if (!/<script[^>]+src="[^"]+\.js"/.test(html)) throw new Error("index.html references no script bundle");
+  if (!/id="root"/.test(html)) throw new Error('index.html has no element with id="root"');
+  const bundles = listFiles(outputDir).filter((file) => extname(file) === ".js" && statSync(file).size > 0);
+  if (bundles.length === 0) throw new Error(`no non-empty .js bundle in ${outputDir}`);
+  return bundles.sort((a, b) => statSync(b).size - statSync(a).size)[0];
+}
+
+function runBuild(name, templateDir, work) {
+  const artifacts = join(work, "artifacts");
+  const appDir = join(work, "app");
+  rmSync(work, { recursive: true, force: true });
+  mkdirSync(artifacts, { recursive: true });
+  const cache = join(work, "npm-cache");
+  const env = { npm_config_cache: cache };
+
+  // 1. The library, packed from this repository.
+  run("npm", ["run", "build"], REPO_ROOT, env);
+  run("npm", ["pack", "--pack-destination", artifacts], REPO_ROOT, env);
+  const tarballs = readdirSync(artifacts).filter((file) => file.endsWith(".tgz"));
+  if (tarballs.length !== 1) throw new Error(`expected exactly one packed tarball in ${artifacts}, found ${tarballs.length}`);
+  const tarball = join(artifacts, tarballs[0]);
+
+  // 2. The template, copied (no dependency or build folders) with the library pointing at the tarball.
+  cpSync(templateDir, appDir, { recursive: true, filter: (source) => !FORBIDDEN_DIRS.has(source.split(sep).pop()) });
+  const manifestFile = join(appDir, "package.json");
+  const manifest = readJson(manifestFile);
+  if (manifest.__error) throw new Error(`package.json is not valid JSON (${manifest.__error})`);
+  let rewrote = false;
+  for (const section of ["dependencies", "peerDependencies", "devDependencies", "optionalDependencies"]) {
+    if (manifest[section] && typeof manifest[section][LIB] === "string") {
+      manifest[section][LIB] = `file:${tarball}`;
+      rewrote = true;
+    }
+  }
+  if (!rewrote) throw new Error(`package.json does not depend on ${LIB}`);
+  writeFileSync(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`);
+
+  // 3. Install, typecheck when the template has a script for it, export for the web.
+  run("npm", ["install", "--no-audit", "--no-fund", "--ignore-scripts", "--prefer-offline"], appDir, env, INSTALL_TIMEOUT_MS);
+  if (manifest.scripts && typeof manifest.scripts.typecheck === "string") run("npm", ["run", "typecheck"], appDir, env);
+  const outputDir = join(appDir, "dist-web");
+  run("npm", ["exec", "--", "expo", "export", "--platform", "web", "--output-dir", "dist-web"], appDir, env, EXPORT_TIMEOUT_MS);
+
+  // 4. The export.
+  const bundle = assertWebExport(outputDir);
+  process.stdout.write(`check-templates: build ok (${name}): ${relative(outputDir, bundle)}, ${statSync(bundle).size} bytes\n`);
+}
+
+if (buildName !== null) {
+  const templateDir = join(root, buildName);
+  if (buildName.startsWith("_") || !isDir(templateDir) || lstatSync(templateDir).isSymbolicLink()) usage(`no template named "${buildName}" in ${root}`);
+  try {
+    runBuild(buildName, templateDir, workDir ?? join(tmpdir(), `check-templates-build-${buildName}`));
+  } catch (error) {
+    process.stderr.write(`FAIL build ${buildName}: ${error instanceof Error ? error.message : String(error)}\n`);
+    process.exit(1);
+  }
+}
