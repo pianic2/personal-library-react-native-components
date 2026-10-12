@@ -350,6 +350,8 @@ describe("Modal closing and animated layout", () => {
     assert.equal(nativeModal(r).props.visible, true, "still presented during the exit");
     act(() => nativeModal(r).props.onRequestClose());
     assert.equal(closes, 1, "the second request is ignored");
+    act(() => backdropButton(r)!.props.onPress());
+    assert.equal(closes, 1, "a backdrop press during the exit is ignored too");
     flush();
   });
 
@@ -385,8 +387,9 @@ describe("Modal closing and animated layout", () => {
       assert.equal(frame.props.pointerEvents, "box-none");
       const wrapper = frame.findAll((n) => isType(n, "View") && flatten(n.props.style).maxWidth === width);
       assert.ok(wrapper.length > 0, `the animated wrapper is limited to ${width}`);
-      const fill = backdropButton(r)!.parent!;
-      assert.ok(fill.findAll((n) => isType(n, "View") && flatten(n.props.style).position === "absolute").length > 0 || flatten(fill.props.style).position === "absolute", "the backdrop wrapper is absolute-fill");
+      let wrapperHost: ReactTestInstance | null = backdropButton(r)!.parent;
+      while (wrapperHost && typeof wrapperHost.type !== "string") wrapperHost = wrapperHost.parent;
+      assert.equal(flatten(wrapperHost!.props.style).position, "absolute", "the backdrop animation wrapper is absolute-fill");
     }
   });
 });
