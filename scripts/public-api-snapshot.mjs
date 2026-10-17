@@ -38,6 +38,9 @@ import ts from "typescript";
 
 class UsageError extends Error {}
 
+// Cannot find module (2307, 2792), no exported member (2305), untyped JS module (7016): each turns types into `any` or drops them.
+const UNRESOLVED_CODES = [2305, 2307, 2792, 7016];
+
 function parseArgs(argv) {
   const opts = { check: false, level: "shapes", root: process.cwd(), dist: false, packed: false };
   for (let i = 0; i < argv.length; i += 1) {
@@ -113,6 +116,7 @@ function emitDeclarations(root, outDir) {
   const read = ts.readConfigFile(configPath, ts.sys.readFile);
   if (read.error) throw new UsageError(`cannot read ${path.basename(configPath)}: ${ts.flattenDiagnosticMessageText(read.error.messageText, "\n")}`);
   const parsed = ts.parseJsonConfigFileContent(read.config, ts.sys, root);
+  if (parsed.errors.length > 0) throw new UsageError(`${path.basename(configPath)}: ${ts.flattenDiagnosticMessageText(parsed.errors[0].messageText, " ")}`);
   const options = { ...parsed.options, declaration: true, declarationMap: false, sourceMap: false, noEmit: false, outDir };
   delete options.emitDeclarationOnly;
   const program = ts.createProgram({ rootNames: parsed.fileNames, options });
@@ -127,6 +131,8 @@ function emitDeclarations(root, outDir) {
     }
   });
   if (result.emitSkipped) throw new UsageError("the declaration emit was skipped (compile errors?)");
+  const emitErrors = result.diagnostics.filter((d) => d.category === ts.DiagnosticCategory.Error);
+  if (emitErrors.length > 0) throw new UsageError(`declaration emit error: ${ts.flattenDiagnosticMessageText(emitErrors[0].messageText, " ")}`);
   return emitted;
 }
 
@@ -250,6 +256,9 @@ function main() {
   const { subpaths, files } = readExports(root);
   if (subpaths.length === 0) throw new UsageError("package.json has no exports with a types file");
 
+  // A run that was killed leaves its temporary emit behind; remove stale ones first.
+  for (const name of fs.readdirSync(root)) if (name.startsWith(".api-snapshot-")) fs.rmSync(path.join(root, name), { recursive: true, force: true });
+
   // Declarations: a temporary emit of the published build, or the real ./dist with --dist. The temporary directory is inside
   // the project so the declarations resolve react / react-native from the project's node_modules.
   const tmp = opts.dist ? undefined : fs.mkdtempSync(path.join(root, ".api-snapshot-"));
@@ -293,7 +302,7 @@ function main() {
       .getSourceFiles()
       .filter((f) => f.isDeclarationFile && path.resolve(f.fileName).startsWith(`${path.resolve(declRoot)}${path.sep}`))
       .flatMap((f) => program.getSemanticDiagnostics(f))
-      .filter((d) => d.code === 2307 || d.code === 2792);
+      .filter((d) => UNRESOLVED_CODES.includes(d.code));
     if (unresolved.length > 0) {
       throw new UsageError(`${unresolved.length} unresolved module import(s), is npm ci done? First: ${ts.flattenDiagnosticMessageText(unresolved[0].messageText, " ")}`);
     }

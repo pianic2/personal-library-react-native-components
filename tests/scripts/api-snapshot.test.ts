@@ -1,7 +1,7 @@
 import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
@@ -262,6 +262,30 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     assert.equal(build.status, 0, build.stdout + build.stderr);
     const check = run(root, "--check", "--dist");
     assert.equal(check.code, 0, check.err);
+  });
+
+  it("this repository: the real tsc build of ./dist and the packed tarball match the committed snapshots (enforced by npm test)", () => {
+    // A copy of the project (no dist/ of the working tree is touched): package.json, tsconfig files, src, the committed
+    // snapshots; node_modules is linked. The build goes to <copy>/dist with the same command as `npm run build`.
+    const copy = mkdtempSync(join(tmpdir(), "api-snapshot-repo-"));
+    dirs.push(copy);
+    for (const file of ["package.json", "tsconfig.json", "tsconfig.build.json", "README.md", "LICENSE"]) if (existsSync(join(repo, file))) cpSync(join(repo, file), join(copy, file));
+    cpSync(join(repo, "src"), join(copy, "src"), { recursive: true });
+    mkdirSync(join(copy, "audit/api"), { recursive: true });
+    cpSync(join(repo, "audit/api/snapshots"), join(copy, "audit/api/snapshots"), { recursive: true });
+    cpSync(join(repo, "audit/api/public-root-api.snapshot"), join(copy, "audit/api/public-root-api.snapshot"));
+    symlinkSync(join(repo, "node_modules"), join(copy, "node_modules"), "dir");
+    const tsc = join(repo, "node_modules/typescript/bin/tsc");
+    const build = spawnSync(process.execPath, [tsc, "-p", "tsconfig.build.json"], { cwd: copy, encoding: "utf8" });
+    assert.equal(build.status, 0, build.stdout + build.stderr);
+    const check = run(copy, "--check", "--packed");
+    assert.equal(check.code, 0, check.err);
+    assert.match(check.out, /from \.\/dist, packed tarball checked/);
+    // a dist that lost an exports target fails the same gate
+    rmSync(join(copy, "dist/theme/index.js"));
+    const broken = run(copy, "--check", "--packed");
+    assert.equal(broken.code, 1);
+    assert.match(broken.err, /exports target \.\/dist\/theme\/index\.js is not produced by the build/);
   });
 
   it("the emitted declarations are not left behind and nothing is written outside audit/api", () => {
