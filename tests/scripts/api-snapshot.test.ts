@@ -114,6 +114,76 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     assert.match(removed.err, /- function makeWidget/);
   });
 
+  it("detects a changed union alias member, and a prop that uses the alias", () => {
+    const root = project({
+      "src/modes.ts": 'export type Mode = "light" | "dark";\nexport interface ShellProps { mode: Mode }\n',
+      "src/index.ts": 'export * from "./modes.js";\n',
+    });
+    run(root);
+    write(root, "src/modes.ts", 'export type Mode = "light" | "dark" | "system";\nexport interface ShellProps { mode: Mode }\n');
+    const check = run(root, "--check");
+    assert.equal(check.code, 1);
+    assert.match(check.err, /type Mode /);
+    assert.match(check.err, /type ShellProps /);
+  });
+
+  it("covers generics, call and index signatures, readonly, enums, classes and dual type+value names", () => {
+    const base: Record<string, string> = {
+      "src/index.ts": 'export * from "./kinds.js";\n',
+      "src/kinds.ts": [
+        "export interface Box<T extends string> { readonly id: T; [key: string]: unknown }",
+        "export interface Callable { (value: number): string }",
+        "export enum Level { Low = 1, High = 2 }",
+        "export class Store { size = 0; add(item: string): void {} }",
+        "export const Both = 1;",
+        "export type Both = number;",
+        "",
+      ].join("\n"),
+    };
+    const root = project(base);
+    run(root);
+    const kinds = snapshot(root).split("\n").filter(Boolean).map((l) => l.split(" ").slice(0, 2).join(" "));
+    assert.deepEqual(kinds, ["const Both", "type Both", "type Box", "type Callable", "enum Level", "class Store"]);
+    const edits: Array<[string, string]> = [
+      ["T extends string", "T extends string | number"],
+      ["readonly id: T", "id: T"],
+      ["[key: string]: unknown", "[key: string]: string"],
+      ["(value: number): string", "(value: number): number"],
+      ["High = 2", "High = 3"],
+      ["size = 0", "size = ''"],
+    ];
+    for (const [from, to] of edits) {
+      write(root, "src/kinds.ts", base["src/kinds.ts"]!.replace(from, to));
+      assert.equal(run(root, "--check").code, 1, `${from} -> ${to}`);
+    }
+  });
+
+  it("keeps overload order significant", () => {
+    const root = project({
+      "src/index.ts": 'export function pick(a: string): string;\nexport function pick(a: number): number;\nexport function pick(a: unknown): unknown { return a; }\n',
+    });
+    run(root);
+    write(root, "src/index.ts", 'export function pick(a: number): number;\nexport function pick(a: string): string;\nexport function pick(a: unknown): unknown { return a; }\n');
+    assert.equal(run(root, "--check").code, 1);
+  });
+
+  it("produces the same snapshot when the project is copied to another root", () => {
+    const first = project();
+    const second = project();
+    run(first);
+    run(second);
+    assert.equal(snapshot(first), snapshot(second));
+    assert.equal(snapshot(first, "theme"), snapshot(second, "theme"));
+  });
+
+  it("refuses to write when an import does not resolve", () => {
+    const root = project({ "src/index.ts": 'import type { Missing } from "not-installed-package";\nexport type Wrapped = Missing;\n' });
+    const result = run(root);
+    assert.equal(result.code, 2);
+    assert.match(result.err, /unresolved module/);
+    assert.equal(existsSync(join(root, "audit/api/snapshots")), false);
+  });
+
   it("fails when a snapshot file is missing or stale, and the write run removes a stale one", () => {
     const root = project();
     run(root);

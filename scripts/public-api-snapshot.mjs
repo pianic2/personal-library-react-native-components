@@ -15,7 +15,10 @@
 //   (no flag)  write the snapshots
 //   --check    compare with the files on disk; exit 1 on drift, listing the changed lines
 //   --level    shapes (default): the hash covers props / signatures. names: the hash column is omitted from the comparison,
-//              so only added, removed or re-kinded exports count (a coarser level for noisy upgrades).
+//              so only added, removed or re-kinded exports count (a coarser level for noisy upgrades). It only changes
+//              --check; the write run always emits the hashes.
+// Only `./dist/<x>.d.ts` -> `src/<x>.ts` type targets are supported. The hashes include the rendered form of inherited
+// React / React Native types, so a bump of react-native, @types/react or typescript can change them (use --level names then).
 //   --root     project root (default: the current directory); used by the tests.
 // Exit 0 ok, 1 drift, 2 usage or input errors.
 import { createHash } from "node:crypto";
@@ -101,35 +104,50 @@ function describeExport(checker, symbol, root) {
   const resolved = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
   const flags = resolved.flags;
   const declaration = resolved.valueDeclaration ?? resolved.declarations?.[0];
-  const format = ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope;
+  // InTypeAlias prints the definition of a top-level alias (a union of literals, a mapped type) instead of its bare name, so
+  // changing the members of `type Mode = "a" | "b"` changes every hash that mentions it at the top level of a prop.
+  const format = ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope | ts.TypeFormatFlags.InTypeAlias;
   const show = (type) => clean(checker.typeToString(type, declaration, format), root);
+  const signaturesOf = (type, kind) => checker.getSignaturesOfType(type, kind).map((sig) => clean(checker.signatureToString(sig, declaration, format), root));
+  const propsOf = (type) =>
+    checker.getPropertiesOfType(type).map((prop) => {
+      const propDecl = prop.valueDeclaration ?? prop.declarations?.[0] ?? declaration;
+      const optional = prop.flags & ts.SymbolFlags.Optional ? "?" : "";
+      const readonly = propDecl && (ts.getCombinedModifierFlags(propDecl) & ts.ModifierFlags.Readonly) !== 0 ? "readonly " : "";
+      return `${readonly}${prop.getName()}${optional}: ${show(checker.getTypeOfSymbolAtLocation(prop, propDecl))}`;
+    });
   const lines = [];
 
   if (flags & (ts.SymbolFlags.Interface | ts.SymbolFlags.TypeAlias)) {
     const type = checker.getDeclaredTypeOfSymbol(resolved);
-    const props = checker.getPropertiesOfType(type).map((prop) => {
-      const propDecl = prop.valueDeclaration ?? prop.declarations?.[0] ?? declaration;
-      const optional = prop.flags & ts.SymbolFlags.Optional ? "?" : "";
-      const readonly = (ts.getCombinedModifierFlags(propDecl) & ts.ModifierFlags.Readonly) !== 0 ? "readonly " : "";
-      return `${readonly}${prop.getName()}${optional}: ${show(checker.getTypeOfSymbolAtLocation(prop, propDecl))}`;
-    });
-    // An object-like type is its sorted members; anything else (a union, a mapped primitive) is its rendered form.
-    const shape = props.length > 0 && !type.isUnion() ? props.sort().join("; ") : show(type);
-    lines.push(["type", shape]);
+    const parts = [];
+    const typeParameters = (resolved.declarations ?? []).flatMap((d) => (ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) ? (d.typeParameters ?? []).map((tp) => clean(tp.getText(), root)) : []));
+    if (typeParameters.length > 0) parts.push(`<${typeParameters.join(", ")}>`);
+    const props = propsOf(type);
+    const objectLike = props.length > 0 && !type.isUnion();
+    // A union, a mapped or conditional alias and an empty object are their definition; an object type is its members.
+    if (!objectLike) {
+      const alias = (resolved.declarations ?? []).find((d) => ts.isTypeAliasDeclaration(d));
+      parts.push(alias ? `= ${clean(alias.type.getText(), root)}` : show(type));
+    }
+    parts.push(...signaturesOf(type, ts.SignatureKind.Call).map((sig) => `call ${sig}`));
+    parts.push(...signaturesOf(type, ts.SignatureKind.Construct).map((sig) => `new ${sig}`));
+    parts.push(...checker.getIndexInfosOfType(type).map((info) => `${info.isReadonly ? "readonly " : ""}[${show(info.keyType)}]: ${show(info.type)}`));
+    parts.push(...props.sort());
+    lines.push(["type", parts.join("; ")]);
   }
   if (flags & ts.SymbolFlags.Class) {
     const instance = checker.getDeclaredTypeOfSymbol(resolved);
-    const members = checker.getPropertiesOfType(instance).map((prop) => prop.getName()).sort().join(",");
     const statics = checker.getTypeOfSymbolAtLocation(resolved, declaration);
-    lines.push(["class", `${show(statics)} {${members}}`]);
+    lines.push(["class", [show(statics), ...signaturesOf(statics, ts.SignatureKind.Construct).map((sig) => `new ${sig}`), ...propsOf(instance).sort()].join("; ")]);
   }
   if (flags & ts.SymbolFlags.Function) {
-    const signatures = checker.getTypeOfSymbolAtLocation(resolved, declaration).getCallSignatures().map((sig) => clean(checker.signatureToString(sig, declaration, format), root));
-    lines.push(["function", signatures.sort().join(" | ")]);
+    // Overload order is part of the contract (the first matching overload wins), so it is kept.
+    lines.push(["function", signaturesOf(checker.getTypeOfSymbolAtLocation(resolved, declaration), ts.SignatureKind.Call).join(" | ")]);
   }
   if (flags & ts.SymbolFlags.Enum) {
-    const members = (resolved.exports ? [...resolved.exports.keys()] : []).sort().join(",");
-    lines.push(["enum", members]);
+    const members = (resolved.exports ? [...resolved.exports.values()] : []).map((member) => `${member.getName()}=${String(checker.getConstantValue(member.valueDeclaration))}`).sort();
+    lines.push(["enum", members.join(",")]);
   }
   if (flags & ts.SymbolFlags.Variable) {
     lines.push(["const", show(checker.getTypeOfSymbolAtLocation(resolved, declaration))]);
@@ -169,6 +187,12 @@ function main() {
   const targets = subpaths(root);
   if (targets.length === 0) throw new UsageError("package.json has no exports with a types file");
   const program = createProgram(root, targets.map((t) => t.entry));
+  // An unresolved import turns its types into `any`; a snapshot written that way would silently weaken the gate.
+  const unresolved = program.getSemanticDiagnostics().filter((d) => d.code === 2307 || d.code === 2792);
+  if (unresolved.length > 0) {
+    const first = unresolved[0];
+    throw new UsageError(`${unresolved.length} unresolved module import(s), is npm ci done? First: ${ts.flattenDiagnosticMessageText(first.messageText, " ")}`);
+  }
   const outputs = new Map(targets.map((t) => [path.join(dir, `${t.name}.snapshot`), snapshotOf(program, t.entry, root)]));
   const legacyTarget = path.join(root, "audit/api/public-root-api.snapshot");
   const legacy = legacySnapshot(root);
