@@ -29,6 +29,7 @@ import {
   Select,
   SideBar,
   Small,
+  Spacer,
   Spinner,
   Switch,
   Text,
@@ -186,6 +187,13 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </Slot>
   ),
   Small: () => <Small>Caption</Small>,
+  Spacer: () => (
+    <View>
+      <Spacer size="md" />
+      <Spacer axis="horizontal" size="sm" />
+      <Spacer flex />
+    </View>
+  ),
   Spinner: () => <Spinner />,
   StateView: () => (
     <View>

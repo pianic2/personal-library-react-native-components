@@ -7,4 +7,5 @@ Componenti di layout basati su primitive `react-native` (`View`) e token del tem
 - [Column](column.md) — beta
 - [Divider](divider.md) — beta
 - [Row](row.md) — beta
+- [Spacer](spacer.md) — beta
 <!-- catalog:end -->

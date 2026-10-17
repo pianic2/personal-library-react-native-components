@@ -5,6 +5,7 @@ import {
   Column,
   Divider,
   Row,
+  Spacer,
   Text,
   ThemeAppShell,
   ThemeProvider,
@@ -17,6 +18,7 @@ export function LayoutPrimitivesExample() {
         <Column gap="md" style={{ padding: 16 }}>
           <Row align="center" justify="space-between" gap="sm">
             <Text>Layout primitives</Text>
+            <Spacer flex />
             <Badge>beta</Badge>
           </Row>
 

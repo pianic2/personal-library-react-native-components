@@ -48,6 +48,7 @@ ma la superficie consumer corrente è la root API di
 - [Column](components/layout/column.md) — beta
 - [Divider](components/layout/divider.md) — beta
 - [Row](components/layout/row.md) — beta
+- [Spacer](components/layout/spacer.md) — beta
 
 ## Navigation
 

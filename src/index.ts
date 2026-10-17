@@ -64,6 +64,8 @@ export type { RowProps } from "./components/Row/index.js";
 export { Select } from "./components/Select/index.js";
 export { Small } from "./components/Small/index.js";
 export type { SmallProps } from "./components/Small/index.js";
+export { Spacer } from "./components/Spacer/index.js";
+export type { SpacerProps } from "./components/Spacer/index.js";
 export { Spinner } from "./components/Spinner/index.js";
 export type { SpinnerProps } from "./components/Spinner/index.js";
 export { SideBar } from "./components/SideBar/index.js";
