@@ -1,0 +1,5 @@
+{
+  "name": "settings",
+  "description": "A settings screen with switch rows for notifications and a light/dark theme toggle, built only with existing library components.",
+  "version": "0.1.0"
+}
