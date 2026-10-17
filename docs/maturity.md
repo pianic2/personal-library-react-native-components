@@ -8,8 +8,8 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 19 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 25 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 20 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -46,7 +46,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [NavContext](components/navigation/nav-context.md) | navigation | `demo` | Provider and hooks that share navigation items, the current pathname and the navigate function. |
 | [SideBar](components/navigation/side-bar.md) | navigation | `prototype` | Vertical navigation panel with items, an optional logo and collapse control. |
 | [TopBar](components/navigation/top-bar.md) | navigation | `demo` | Top navigation bar with a logo and links. |
-| [BottomSheet](components/overlay/bottom-sheet.md) | overlay | `prototype` | Panel that slides up from the bottom edge with two snap positions. |
+| [BottomSheet](components/overlay/bottom-sheet.md) | overlay | `demo` | Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop. |
 | [Modal](components/overlay/modal.md) | overlay | `prototype` | Centered blocking dialog over a backdrop. |
 | [Popover](components/overlay/popover.md) | overlay | `prototype` | Floating panel anchored to a trigger. |
 | Portal | overlay | `prototype` | Mounts content into the nearest OverlayHost, which owns one stack for z-order, Android Back and the Escape key. |
