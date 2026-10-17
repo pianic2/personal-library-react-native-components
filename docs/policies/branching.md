@@ -36,7 +36,24 @@ Rules for `texo/v1`: pull request required, the three checks above must pass, no
 
 Rules for `main`: changes only through a pull request, no bypass for anyone, no direct push (the local pre-push hook is only a first barrier). Merging `texo/v1` into `main` belongs to the PO.
 
-Ownership exceptions: the backlog JSON is generated and not hand-edited, so files added to a ticket by an explicit PO decision are listed in the `File ownership` step of `texo-v1-pr.yml` (currently `PLRNUI-450`: `skills/texo-execute/SKILL.md`; `PLRNUI-452`: `docs/policies/branching.md`, `tests/meta/meta-lint.test.tsx`, `tests/scripts/check-component-docs.test.ts` and `tests/scripts/maturity-check.test.ts` (the three tests hard-coded the number of component directories and their status counts, so every new component broke them; they now derive the expectations from the repository; remove these three paths from the arm once the component tickets have landed); `PLRNUI-412`: `tests/helpers/fixtures.tsx` and `docs/maturity.md` (the ticket adds the `StateView` component folder with its meta file: the render matrix test requires one fixture per component directory, and the maturity page is generated from the component metadata and checked by `maturity:docs:check`, regenerated with `npm run maturity:docs`, never by hand; remove these paths when the ticket is merged); the arms for the merged tickets `PLRNUI-285`, `PLRNUI-117`, `PLRNUI-240`, `PLRNUI-113`, `PLRNUI-140`, `PLRNUI-191`, `PLRNUI-227`, `PLRNUI-234`, `PLRNUI-106`, `PLRNUI-211`, `PLRNUI-224`, `PLRNUI-154`, `PLRNUI-193`, `PLRNUI-186`, `PLRNUI-230`, `PLRNUI-177`, `PLRNUI-239`, `PLRNUI-201`, `PLRNUI-138`, `PLRNUI-174`, `PLRNUI-134`, `PLRNUI-144`, `PLRNUI-172`, `PLRNUI-178`, `PLRNUI-202`, `PLRNUI-121`, `PLRNUI-167`, `PLRNUI-137`, `PLRNUI-145`, `PLRNUI-143`, `PLRNUI-181`, `PLRNUI-225`, `PLRNUI-189`, `PLRNUI-210`, `PLRNUI-233`, `PLRNUI-209`, `PLRNUI-216`, `PLRNUI-180`, `PLRNUI-218`, `PLRNUI-219`, `PLRNUI-192`, `PLRNUI-214`, `PLRNUI-169` and `PLRNUI-152` were removed after their merge). The `Execution log` row of `audit/texo-v1/STATE.md` is always allowed.
+## Ownership exceptions
 
-Trust model: the workflow and the check scripts are read from the pull request head, and no approvals are required, so a PR could weaken its own gates. The independent review (ADR 0020) must therefore read every change to `.github/workflows`, `scripts/check-*.mjs` and the exception list. Exceptions are keyed on the ticket id taken from the branch name and do not expire; remove an entry when its ticket is merged. Branches that do not match `texo/PLRNUI-<n>-<slug>` (for example bot branches) fail `commit-and-ownership` on purpose.
+The backlog JSON is generated and is not hand-edited. Files added to a ticket by an explicit PO decision are therefore listed in the `File ownership` step of `.github/workflows/texo-v1-pr.yml`. Exceptions are ticket-keyed, exact-path only and must be removed after the corresponding ticket merges.
+
+Current governance exceptions include:
+- `PLRNUI-450`: `skills/texo-execute/SKILL.md`.
+- `PLRNUI-452`: this policy file and the CI/meta regression-test files already approved for E18-09 maintenance.
+- `PLRNUI-412`: `tests/helpers/fixtures.tsx` and generated `docs/maturity.md`; remove after the ticket is fully reconciled if still present.
+- `PLRNUI-328` (Spacer): gate-support files plus canonical `docs/components/layout/spacer.md` and `examples/spacer.tsx`.
+- `PLRNUI-338` (CodeBlock): gate-support files plus canonical `docs/components/typography/code-block.md` and `examples/code-block.tsx`.
+- `PLRNUI-343` (VideoPlayer): gate-support files plus canonical `docs/components/data-display/video-player.md` and `examples/video-player.tsx`.
+- `PLRNUI-414` (Markdown): gate-support files plus canonical `docs/components/data-display/markdown.md` and `examples/markdown.tsx`.
+- `PLRNUI-420` (Rating): gate-support files plus canonical `docs/components/form/rating.md` and `examples/rating.tsx`.
+
+For the five demo-component tickets above, `gate-support files` means only: `tests/helpers/fixtures.tsx`, generated `docs/maturity.md`, `src/index.ts`, `mkdocs.yml`, `docs/components.md`, and generated `audit/api/public-root-api.snapshot`. These are required by the canonical render/meta/maturity/API gates. The component stays at `status: demo`; the docs page uses `**Stability:** beta`. This exception does not authorize unrelated refactors or changes to other component directories.
+
+The historical arms for merged tickets should be removed promptly. The `Execution log` row of `audit/texo-v1/STATE.md` is always allowed by the ownership checker.
+
+Trust model: the workflow and the check scripts are read from the pull request head, and no approvals are required, so a PR could weaken its own gates. The independent review (ADR 0020) must therefore read every change to `.github/workflows`, `scripts/check-*.mjs` and the exception list. Exceptions are keyed on the ticket id taken from the branch name and do not expire automatically; remove an entry when its ticket is merged. Branches that do not match `texo/PLRNUI-<n>-<slug>` (for example bot branches) fail `commit-and-ownership` on purpose.
+
 The checks test the pull request head, not the result of merging it into `texo/v1`; bring `texo/v1` into the branch before the final run if other tickets merged in the meantime.
