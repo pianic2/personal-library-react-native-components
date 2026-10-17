@@ -14,6 +14,8 @@ function Button efad034598e5
 type ButtonProps 241b8a34fca9
 function Card dca1a6990f98
 type CardProps d1471846fd54
+function Carousel bb5feac60ee4
+type CarouselProps dd63ab1c4d6a
 function Checkbox 9fdb4f3577f7
 type CheckboxProps 6a4e5bba0edf
 function CodeInline ae4398dfa106
@@ -40,6 +42,10 @@ function NavProvider 01667517e54a
 function P 2d2a91790cb4
 const PACKAGE_NAME ac202c81e8e4
 type PProps 4ad1acc8a33d
+function PageIndicator 5946e5efefaf
+type PageIndicatorProps 17403be4f560
+function Pager 47522d2fac34
+type PagerProps d3bfac75aa2d
 function PasswordInput 06ce05eda0d1
 type PasswordInputProps f9a1685bee28
 function Popover 282995b4710a

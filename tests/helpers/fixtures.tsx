@@ -20,6 +20,8 @@ import {
   NavBar,
   NavProvider,
   P,
+  PageIndicator,
+  Pager,
   PasswordInput,
   Popover,
   ProgressBar,
@@ -111,6 +113,12 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   DataTable: () => <DataTableFixture />,
   Divider: () => <Divider />,
+  Pager: () => (
+    <>
+      <Pager count={3} renderPage={(i) => <Text>{`Page ${i + 1}`}</Text>} />
+      <PageIndicator count={3} index={0} />
+    </>
+  ),
   FormField: () => (
     <FormField label="Name" helperText="Helper">
       <Input label="Name" value="Ada" onChangeText={noop} />

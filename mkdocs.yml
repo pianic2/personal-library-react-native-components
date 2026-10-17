@@ -96,6 +96,9 @@ nav:
       - Buttons:
           - Overview: components/buttons/index.md
           - Button: components/buttons/button.md
+      - Data display:
+          - Overview: components/data-display/index.md
+          - Pager: components/data-display/pager.md
   - Tokens:
       - Overview: tokens/index.md
       - colors.base: tokens/colors.md
