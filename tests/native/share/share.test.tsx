@@ -212,22 +212,32 @@ describe("PLRNUI-301 useShare", () => {
     });
   });
 
-  it("does not set state after unmount", async () => {
-    const gate = deferred<{ action: string }>();
-    const { Share } = mockShare(() => gate.promise);
-    const { out, r } = renderShare({ adapter: createReactNativeShare(Share) });
-    const errors: unknown[] = [];
-    const original = console.error;
-    console.error = (...args: unknown[]) => void errors.push(args);
-    let finished!: Promise<unknown>;
+  // React 18 ignores a state update on an unmounted component and does not warn, so this can only prove that the promise still
+  // resolves its result and nothing throws; the `mounted` guard itself is not observable from here.
+  it("still resolves the result when the component unmounts before the share finishes", async () => {
+    let renders = 0;
+    const gate2 = deferred<{ action: string }>();
+    const adapter: ShareAdapter = { share: () => gate2.promise.then((a) => a as never) };
+    const counted: { s?: ShareState } = {};
+    function Counting() {
+      renders++;
+      counted.s = useShare({ adapter });
+      return null;
+    }
+    let r2!: TestRenderer.ReactTestRenderer;
     act(() => {
-      finished = out.s!.share({ message: "m" });
+      r2 = TestRenderer.create(<Counting />);
     });
-    act(() => r.unmount());
-    gate.resolve({ action: "sharedAction" });
-    assert.deepEqual(await finished, { action: "shared" });
-    console.error = original;
-    assert.deepEqual(errors, []);
+    let finished2!: Promise<unknown>;
+    act(() => {
+      finished2 = counted.s!.share({ message: "m" });
+    });
+    const before = renders;
+    act(() => r2.unmount());
+    gate2.resolve({ action: "shared" });
+    assert.deepEqual(await finished2, { action: "shared" });
+    assert.equal(counted.s!.pending, true);
+    assert.equal(renders, before);
   });
 });
 

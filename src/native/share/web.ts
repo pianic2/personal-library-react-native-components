@@ -7,7 +7,7 @@ export interface WebNavigatorLike {
 
 export interface WebShareOptions {
   /**
-   * Called with the url (or the message when there is no url) when `navigator.share` is missing, so the app can copy the link
+   * Called with the content to share when `navigator.share` is missing, so the app can copy `content.url` (or the message)
    * and show its own confirmation. The result is still `unsupported`: nothing was shared through a sheet. Errors from the hook
    * are swallowed.
    */

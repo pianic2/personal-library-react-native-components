@@ -5,7 +5,7 @@ One typed call for the system share sheet over an injected React Native `Share` 
 ## API
 
 ```ts
-type ShareContent = { message?: string; url?: string; title?: string }; // at least a message or a url
+type ShareContent = { message?: string; url?: string; title?: string }; // at least a message or a url; on Android put the link in `message` (RN ignores `url` there)
 type ShareResult = { action: "shared" | "dismissed" | "unsupported" };
 interface ShareAdapter { share(content: ShareContent): Promise<ShareResult> } // never rejects
 ```
@@ -13,7 +13,7 @@ interface ShareAdapter { share(content: ShareContent): Promise<ShareResult> } //
 - `createReactNativeShare(Share)`: `dismissedAction` is `dismissed`, `sharedAction` is `shared`. Empty content, a rejection or an unknown action is `unsupported`. `title` becomes the Android `dialogTitle`.
 - `createWebShare(navigator, { onUnsupported })`: a resolved `navigator.share` is `shared`, an `AbortError` is `dismissed`; a missing `navigator.share`, another rejection or empty content is `unsupported` and never throws. When `navigator.share` is missing, `onUnsupported(content)` runs first so the app can copy the link; the result stays `unsupported` because no sheet was shown.
 - `createNoopShare()`: always `unsupported`.
-- `useShare({ adapter })`: `{ share, pending, result }`. Without an adapter it uses the noop one.
+- `useShare({ adapter })`: `{ share, pending, result }`. Without an adapter it uses the noop one. A second `share` while one is pending resolves `unsupported` without opening a sheet.
 
 ```ts
 import { Share } from "react-native"; // in the app, not in this package
