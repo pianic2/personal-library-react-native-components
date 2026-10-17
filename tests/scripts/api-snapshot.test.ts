@@ -158,6 +158,15 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     }
   });
 
+  it("detects a changed literal or primitive alias", () => {
+    const root = project({ "src/index.ts": 'export type Single = "a";\nexport type Count = 1;\nexport type Flag = true;\n' });
+    run(root);
+    for (const edit of ['export type Single = "b";\nexport type Count = 1;\nexport type Flag = true;\n', 'export type Single = "a";\nexport type Count = 2;\nexport type Flag = true;\n', 'export type Single = "a";\nexport type Count = 1;\nexport type Flag = false;\n']) {
+      write(root, "src/index.ts", edit);
+      assert.equal(run(root, "--check").code, 1, edit);
+    }
+  });
+
   it("keeps overload order significant", () => {
     const root = project({
       "src/index.ts": 'export function pick(a: string): string;\nexport function pick(a: number): number;\nexport function pick(a: unknown): unknown { return a; }\n',

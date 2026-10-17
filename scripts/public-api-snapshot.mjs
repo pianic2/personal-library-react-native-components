@@ -17,6 +17,7 @@
 //   --level    shapes (default): the hash covers props / signatures. names: the hash column is omitted from the comparison,
 //              so only added, removed or re-kinded exports count (a coarser level for noisy upgrades). It only changes
 //              --check; the write run always emits the hashes.
+// A type nested in a prop (`items: Foo[]`) prints by name: only a top-level alias is expanded, and exported types have their own line.
 // Only `./dist/<x>.d.ts` -> `src/<x>.ts` type targets are supported. The hashes include the rendered form of inherited
 // React / React Native types, so a bump of react-native, @types/react or typescript can change them (use --level names then).
 //   --root     project root (default: the current directory); used by the tests.
@@ -124,7 +125,8 @@ function describeExport(checker, symbol, root) {
     const typeParameters = (resolved.declarations ?? []).flatMap((d) => (ts.isInterfaceDeclaration(d) || ts.isTypeAliasDeclaration(d) ? (d.typeParameters ?? []).map((tp) => clean(tp.getText(), root)) : []));
     if (typeParameters.length > 0) parts.push(`<${typeParameters.join(", ")}>`);
     const props = propsOf(type);
-    const objectLike = props.length > 0 && !type.isUnion();
+    const primitive = (type.flags & (ts.TypeFlags.StringLike | ts.TypeFlags.NumberLike | ts.TypeFlags.BigIntLike | ts.TypeFlags.BooleanLike | ts.TypeFlags.ESSymbolLike)) !== 0;
+    const objectLike = props.length > 0 && !type.isUnion() && !primitive;
     // A union, a mapped or conditional alias and an empty object are their definition; an object type is its members.
     if (!objectLike) {
       const alias = (resolved.declarations ?? []).find((d) => ts.isTypeAliasDeclaration(d));
