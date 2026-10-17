@@ -42,6 +42,7 @@ type:ThemeStorageAdapter
 type:ThemeTokens
 type:TokenPair
 type:TopBarProps
+type:TouchableProps
 value:Alert
 value:B
 value:Badge
@@ -83,6 +84,7 @@ value:ThemeAppShell
 value:ThemeProvider
 value:Tooltip
 value:TopBar
+value:Touchable
 value:createThemeTokens
 value:defaultThemeTokens
 value:isAndroid

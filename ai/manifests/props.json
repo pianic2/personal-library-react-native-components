@@ -14983,6 +14983,139 @@
           "description": ""
         }
       ]
+    },
+    "Touchable": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Required unless the content has text (a development warning is logged otherwise)."
+        },
+        {
+          "name": "asChild",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Render the single child as the pressable instead of a wrapper: `Slot` merges the props into it."
+        },
+        {
+          "name": "checked",
+          "type": "boolean | \"mixed\"",
+          "required": false,
+          "default": null,
+          "description": "Reported as `accessibilityState.checked` (for example for `checkbox`, `radio`, `switch`)."
+        },
+        {
+          "name": "children",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Pressable content. With `asChild` it is the single element that becomes the pressable."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "No presses, no feedback, no haptic; dimmed with `theme.components.button.opacity.disabled`."
+        },
+        {
+          "name": "feedback",
+          "type": "\"none\" | \"opacity\" | \"scale\" | \"ripple\"",
+          "required": false,
+          "default": "opacity",
+          "description": "Press feedback. `ripple` is the Android ripple and falls back to `opacity` elsewhere. Default `opacity`.",
+          "values": [
+            "opacity",
+            "scale",
+            "ripple",
+            "none"
+          ]
+        },
+        {
+          "name": "haptic",
+          "type": "false | \"light\" | \"medium\"",
+          "required": false,
+          "default": false,
+          "description": "Impact haptic once per accepted press (`onPress` or `onLongPress`). Uses the `haptics` capability: a no-op if absent. Default off."
+        },
+        {
+          "name": "hitSlop",
+          "type": "number | Insets",
+          "required": false,
+          "default": null,
+          "description": "Extra touch area around the element, passed to the pressable."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Blocks presses like `disabled` and reports `accessibilityState.busy`. Not dimmed."
+        },
+        {
+          "name": "minTarget",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Minimum width and height in points. Values below 44 are raised to 44. Default 44.",
+          "defaultExpression": "MIN_TARGET"
+        },
+        {
+          "name": "onLongPress",
+          "type": "(event: GestureResponderEvent) => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onPress",
+          "type": "(event: GestureResponderEvent) => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "role",
+          "type": "\"link\" | \"button\" | \"checkbox\" | \"menuitem\" | \"radio\" | \"switch\" | \"tab\"",
+          "required": false,
+          "default": "button",
+          "description": "Accessibility role. Default `button`.",
+          "values": [
+            "button",
+            "link",
+            "tab",
+            "checkbox",
+            "radio",
+            "switch",
+            "menuitem"
+          ]
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Reported as `accessibilityState.selected` (for example for `tab`)."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle> | ((state: TouchableState) => StyleProp<ViewStyle>)",
+          "required": false,
+          "default": null,
+          "description": "Style, or a function of the press/focus/disabled state. Applied after the Touchable's own style."
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ]
     }
   }
 }

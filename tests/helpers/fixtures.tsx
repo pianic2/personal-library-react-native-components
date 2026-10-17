@@ -36,6 +36,7 @@ import {
   TextGroup,
   Textarea,
   Tooltip,
+  Touchable,
   TopBar,
 } from "../../src";
 import { Container } from "../../src/components/Container/index.js";
@@ -219,6 +220,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     <Tooltip content="Hint">
       <Text>Target</Text>
     </Tooltip>
+  ),
+  Touchable: () => (
+    <Touchable accessibilityLabel="Touch" onPress={noop}>
+      <Text>Press</Text>
+    </Touchable>
   ),
   TopBar: () => <TopBar title="Docs" />,
 };
