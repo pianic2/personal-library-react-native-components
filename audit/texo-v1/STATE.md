@@ -254,5 +254,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-301 (E8-16: share adapter and useShare) | #209 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-315 (E14-11: TypeScript-compiler per-subpath API snapshot) | #210 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-356 (E8-20: Expo permission adapters) | #211 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-356 (follow-up: internal createUnavailablePermission, Expo Go evidence) | #213 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-460 (ownership extensions file for approved ticket classes) | #212 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-280 (E5-05: compound Field) | #217 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-461 (semver and migration-changelog impact of the native layer and density runtime) | #214 | PR open (row committed pre-merge, see ADR 0020 Branching) |

@@ -67,6 +67,37 @@ It is governance evidence only. It does not imply that package metadata, source 
   decision, component/API drift reconciliation, and current root-surface
   classification against `src/index.ts`.
 
+### PLRNUI-461 - Semver and migration impact of the native layer and density runtime
+
+Recorded centrally by PLRNUI-461 (PO decision of 2026-10-17): the implementation tickets below carry the DoD line "semver impact recorded in migration changelog" but do not own this file, so the obligation is recorded here and each ticket links back to PLRNUI-461.
+
+| Ticket | Change | Semver impact | PR |
+| --- | --- | --- | --- |
+| PLRNUI-138 (E8-01) | Native adapter contract: CapabilityProvider and registry | minor | #66 |
+| PLRNUI-146 (E8-03) | /native/testing mock adapters and renderWithCapabilities | minor | #77 |
+| PLRNUI-154 (E8-04) | Appearance and colour-scheme hooks with theme system-mode bridge | minor | #155 |
+| PLRNUI-167 (E8-05) | Accessibility preference hooks (reduced motion, transparency, screen reader, font scale) | minor | #96 |
+| PLRNUI-172 (E8-06) | App-state hooks (useAppState, useOnForeground, useIsAppActive) | minor | #87 |
+| PLRNUI-178 (E8-07) | Network status adapter and useNetworkStatus | minor | #89 |
+| PLRNUI-182 (E8-08) | Orientation and window metrics hooks | minor | #82 |
+| PLRNUI-187 (E8-09) | Device info and platform helpers with Expo Go detection | minor | #81 |
+| PLRNUI-274 (E2-09) | Density runtime (DensityProvider, useDensity) | minor | #205 |
+| PLRNUI-279 (E8-10) | Keyboard hooks and keyboard-avoiding/dismiss-on-tap primitives | minor | #183 |
+| PLRNUI-282 (E8-11) | Safe-area adapter with RN-core fallback and useInsets | minor | #184 |
+| PLRNUI-288 (E8-12) | ThemedStatusBar, useSystemBars and system UI adapters | minor | #207 |
+| PLRNUI-293 (E8-13) | Haptics adapter and useHaptics | minor | #185 |
+| PLRNUI-298 (E8-15) | Clipboard adapter and useCopyToClipboard | minor | #186 |
+| PLRNUI-301 (E8-16) | Share adapter and useShare | minor | #209 |
+| PLRNUI-353 (E8-19) | usePermission and the PermissionAdapter pattern | minor | #191 |
+| PLRNUI-356 (E8-20) | Expo permission adapters (camera, media library, location, notifications) | minor | #211, 213 |
+| PLRNUI-366 (E8-23) | Storage adapters and useStoredState | minor | #192 |
+| PLRNUI-368 (E8-24) | Biometric prompt adapter and useBiometricPrompt | minor | #198 |
+| PLRNUI-371 (E8-25) | AppReadyGate, useAppReady and the splash adapter | minor | #199 |
+
+- Every entry is additive: new hooks, adapters and providers under `src/native/**` and `src/theme/**`, none exported from the root entry yet (the `./native` subpaths are wired by their own export-contract tickets). No existing export, prop, default or behaviour is removed or changed, so none is a breaking change and `audit/migration/breaking-change-register.md` is unchanged by this entry.
+- No dependency changes: no entry adds or changes `dependencies` or `peerDependencies`; native packages stay injected and consumer-owned (native dependency gate).
+- Equivalent tickets that are not Done yet carry the same DoD line and will be recorded here when they are: PLRNUI-303, 308, 357, 359, 362 and 375 (expected minor) and PLRNUI-257, 261, 266 and 442 (expected none: smoke runs and docs).
+
 ### Changed
 
 - Clarified PLRNUI-17 canonical migration policy: new consumer-facing imports

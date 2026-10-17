@@ -43,8 +43,10 @@ export interface FieldControlAttributes {
   /** Web `aria-describedby`, same value as `accessibilityDescribedBy`. */
   "aria-describedby"?: string;
   accessibilityState?: { disabled?: boolean };
+  /** `false` while the Field is disabled, so controls that derive their disabled state from it (Input) are really disabled. */
+  editable?: false;
   "aria-invalid"?: boolean;
-  /** Native fallback: the error message, or the hint when there is no error (plain string children only). */
+  /** Native fallback: the error message followed by the hint, when they have text (strings, numbers, or text inside elements). */
   accessibilityHint?: string;
 }
 
@@ -88,16 +90,26 @@ export function useFieldControlProps(): FieldControlAttributes {
       accessibilityDescribedBy: describedBy,
       "aria-describedby": describedBy,
       accessibilityState: disabled ? { disabled: true } : undefined,
+      editable: disabled ? false : undefined,
       "aria-invalid": status === "error" ? true : undefined,
-      accessibilityHint: registered.error?.text ?? registered.hint?.text,
+      accessibilityHint: [registered.error?.text, registered.hint?.text].filter(Boolean).join(" ") || undefined,
     };
   }, [context]);
 }
 
-function textOf(children: React.ReactNode): string | undefined {
-  const text = React.Children.toArray(children)
-    .map((child) => (typeof child === "string" || typeof child === "number" ? String(child) : ""))
+function plainText(children: React.ReactNode): string {
+  return React.Children.toArray(children)
+    .map((child) => {
+      if (typeof child === "string" || typeof child === "number") return String(child);
+      if (React.isValidElement(child)) return plainText((child.props as { children?: React.ReactNode }).children);
+      return "";
+    })
     .join("");
+}
+
+/** The text of the children (also inside nested elements); `undefined` when there is none. */
+function textOf(children: React.ReactNode): string | undefined {
+  const text = plainText(children);
   return text === "" ? undefined : text;
 }
 
@@ -177,7 +189,7 @@ function FieldError({ children, style, ...rest }: FieldErrorProps) {
   if (!present) return null;
   const web = Platform.OS === "web" ? ({ role: "alert" } as object) : undefined;
   return (
-    <Small {...rest} {...web} nativeID={errorId} style={[styles.error, style]}>
+    <Small {...rest} {...web} nativeID={errorId} accessibilityLiveRegion="polite" style={[styles.error, style]}>
       {children}
     </Small>
   );

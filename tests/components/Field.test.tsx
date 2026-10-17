@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, TextInput } from "react-native";
+import { Platform, Text, TextInput, View } from "react-native";
 import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import TestRenderer, { act } from "react-test-renderer";
@@ -214,7 +214,7 @@ describe("PLRNUI-280 Field", () => {
 
     update(r, <Full error="Enter a valid address" />);
     assert.equal(flatten(hintOf().props.style).display, "none");
-    assert.equal(inputs(r)[0]!.props.accessibilityHint, "Enter a valid address");
+    assert.equal(inputs(r)[0]!.props.accessibilityHint, "Enter a valid address We never share it");
     assert.equal(inputs(r)[0]!.props.accessibilityDescribedBy?.split(" ").length, 2);
 
     update(r, <Full />);
@@ -265,6 +265,47 @@ describe("PLRNUI-280 Field", () => {
     assert.equal(input.props.accessibilityHint, "Required");
     assert.ok(input.props.accessibilityLabelledBy);
     assert.equal(input.props.nativeID.endsWith("-control"), true);
+  });
+
+  it("disabled makes the library Input really non-editable and disabled", () => {
+    const r = render(
+      <Field disabled>
+        <Field.Label>Name</Field.Label>
+        <Field.Control>
+          <LibraryInput />
+        </Field.Control>
+      </Field>,
+    );
+    assert.equal(inputs(r)[0]!.props.editable, false);
+    assert.deepEqual(inputs(r)[0]!.props.accessibilityState, { disabled: true });
+
+    const enabled = render(
+      <Field>
+        <Field.Control>
+          <LibraryInput />
+        </Field.Control>
+      </Field>,
+    );
+    assert.equal(inputs(enabled)[0]!.props.editable, true);
+    assert.deepEqual(inputs(enabled)[0]!.props.accessibilityState, { disabled: false });
+  });
+
+  it("a hint-only field gives the hint as the native hint and describes it", () => {
+    const r = render(<Full />);
+    const props = inputs(r)[0]!.props;
+    assert.equal(props.accessibilityHint, "We never share it");
+    assert.match(props.accessibilityDescribedBy, /-hint$/);
+    assert.equal(props["aria-invalid"], undefined);
+  });
+
+  it("joins the error and the hint in the native hint and reads text from element children", () => {
+    const r = render(<Full error="Enter a valid address" />);
+    assert.equal(inputs(r)[0]!.props.accessibilityHint, "Enter a valid address We never share it");
+    update(r, <Full error={<React.Fragment>Bad <Text>value</Text></React.Fragment>} />);
+    assert.equal(inputs(r)[0]!.props.accessibilityHint, "Bad value We never share it");
+    update(r, <Full error={<View />} hint="" />);
+    assert.equal(inputs(r)[0]!.props.accessibilityHint, undefined);
+    assert.equal(inputs(r)[0]!.props["aria-invalid"], true);
   });
 
   it("renders in light and dark without console errors or warnings", () => {

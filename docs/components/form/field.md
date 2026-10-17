@@ -33,7 +33,7 @@ interface FieldProps extends Omit<ViewProps, "children" | "style"> {
 useField(): { nativeID, labelId, hintId, errorId, status, required, disabled } // throws outside a Field
 useFieldControlProps(): {
   nativeID, accessibilityLabelledBy, accessibilityDescribedBy, "aria-describedby",
-  accessibilityState, "aria-invalid", accessibilityHint
+  accessibilityState, editable, "aria-invalid", accessibilityHint
 } // {} outside a Field
 ```
 
@@ -60,7 +60,8 @@ function EmailInput() {
 
 - The label has the id `labelId`; the control references it with `accessibilityLabelledBy`.
 - `accessibilityDescribedBy` and `aria-describedby` list the ids of the displayed hint and error. The hint stays described while an error replaces it visually.
-- `aria-invalid` is set for the error status. `accessibilityHint` carries the error message (or the hint without an error) as the native fallback, for plain string children.
+- `aria-invalid` is set for the error status. `accessibilityHint` carries the error message followed by the hint as the native fallback; the text is read from strings, numbers and the text inside nested elements, and no hint is set when there is none.
+- `disabled` makes `useFieldControlProps()` return `accessibilityState: { disabled: true }` and `editable: false`. A control that spreads them is therefore non-editable and disabled: the library `Input` derives its own disabled state from `editable`. A control that ignores these props is not disabled by the Field; the Field only guarantees what it returns.
 - `Field.Error` is a polite live region (`accessibilityLiveRegion="polite"`, `role="alert"` on web) and exists only with a message.
 - `accessibilityLabelledBy` is an Android prop: on other platforms keep an `accessibilityLabel` on the control.
 
