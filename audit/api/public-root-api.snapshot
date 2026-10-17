@@ -25,6 +25,8 @@ type:QuoteProps
 type:RadioGroupOption
 type:RadioGroupProps
 type:RowProps
+type:ScreenHosts
+type:ScreenProps
 type:SideBarProps
 type:SideBarVariant
 type:SmallProps
@@ -69,6 +71,7 @@ value:ProgressBar
 value:Quote
 value:RadioGroup
 value:Row
+value:Screen
 value:Select
 value:SideBar
 value:Small
@@ -98,5 +101,6 @@ value:useNavLogo
 value:useNavPathname
 value:useNavigate
 value:useOptionalNav
+value:useScreenInsets
 value:useTheme
 value:useToggle
