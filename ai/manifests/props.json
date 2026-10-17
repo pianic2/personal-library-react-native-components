@@ -9122,14 +9122,14 @@
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "The popover content, rendered through the nearest OverlayHost."
         },
         {
           "name": "gap",
           "type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\" | \"none\"",
           "required": false,
           "default": "xs",
-          "description": "",
+          "description": "Distance between the trigger and the content (a `theme.space` key). Default `\"xs\"`.",
           "values": [
             "lg",
             "md",
@@ -9145,7 +9145,7 @@
           "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
           "required": false,
           "default": "top",
-          "description": "",
+          "description": "The preferred side. It flips to the opposite side when the content does not fit. Default `\"top\"`.",
           "values": [
             "bottom",
             "top",
@@ -9158,7 +9158,7 @@
           "type": "(args: { open: boolean; toggle: () => void; }) => ReactNode",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "Renders the trigger. Call `toggle` from the trigger's own press handler: Popover does not wrap the trigger in a\npressable. The element it returns receives `accessibilityState.expanded` (and `aria-expanded`) reflecting `open`."
         }
       ]
     },
