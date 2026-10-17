@@ -251,3 +251,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-278 (E2-11: WCAG contrast util and theme contrast gate) | #206 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-288 (E8-12: ThemedStatusBar, useSystemBars and system UI adapters) | #207 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-290 (E1-10: CodeInline keeps chip styles with caller props) | #208 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-301 (E8-16: share adapter and useShare) | #209 | PR open (row committed pre-merge, see ADR 0020 Branching) |
