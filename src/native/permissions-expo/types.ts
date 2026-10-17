@@ -1,7 +1,8 @@
 // Structural slices of the Expo modules the permission adapters need. No Expo package is imported: the app passes its own.
 import type { ExpoPermissionResponseLike } from "../permissions/map.js";
 
-type Responder = () => Promise<ExpoPermissionResponseLike>;
+/** A permission call of an Expo module. */
+export type Responder = () => Promise<ExpoPermissionResponseLike>;
 
 /** The slice of `expo-camera`: `Camera.getCameraPermissionsAsync` / `Camera.requestCameraPermissionsAsync`. */
 export interface ExpoCameraModuleLike {

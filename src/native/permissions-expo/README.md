@@ -31,6 +31,11 @@ const adapters = {
 | location | `getForegroundPermissionsAsync` / `requestForegroundPermissionsAsync` | Works (foreground) | `expo-location`: `locationWhenInUsePermission` |
 | notifications | `getPermissionsAsync` / `requestPermissionsAsync` | Partial: remote push is not supported on Android in Expo Go (use a development build); local notifications work | `expo-notifications` plugin options (icon, color); Android 13+ needs the `POST_NOTIFICATIONS` runtime permission |
 
-**SDK 57 note: not verified here.** This table is written from the Expo documentation as known when the adapters were written; this environment has no network and no Expo packages installed, so it was not checked against SDK 57 (the ticket assigns that check to E8-27). Treat the Expo Go column and the plugin keys as to-be-confirmed against the installed SDK before relying on them.
+**SDK 57 note.** Checked against the packages published for SDK 57 (`expo-camera` 57.0.6, `expo-media-library` 57.0.5, `expo-location` 57.0.21, `expo-notifications` 57.0.23; their shipped `.d.ts` files and config plugins, read from the npm registry, nothing installed here):
+
+- The call names in the table exist with the expected shapes, and each response is a `PermissionResponse` (`status`, `granted`, `canAskAgain`); media-library adds `accessPrivileges?: "all" | "limited" | "none"`.
+- The plugin option names in the table exist (`expo-camera`: `cameraPermission`, `microphonePermission`; `expo-media-library`: `photosPermission`, `savePhotosPermission`; `expo-location`: `locationWhenInUsePermission`; `expo-notifications`: `icon`, `color`, `defaultChannel`).
+- In `expo-camera` 57 the `Camera` object that carries the two permission functions is marked `@hidden` in its types; the documented way is the `useCameraPermissions` hook. The adapter still reads `Camera.getCameraPermissionsAsync`, so pass the module namespace (`import * as Camera from "expo-camera"`, the adapter reads `Camera.Camera`) and expect to revisit it if Expo removes the hidden object (the adapter would then report `unavailable`).
+- **Not verified:** the Expo Go column. That is runtime behaviour, which type files do not show, and it is not checked in this environment; the real-device and Expo Go check is E8-27. Treat that column as to-be-confirmed.
 
 Semver impact: minor (new subpath API). The migration-changelog entry belongs to the ticket that owns `audit/migration/migration-changelog.md`.

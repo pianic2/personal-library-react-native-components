@@ -1,9 +1,6 @@
 import { mapExpoPermission } from "../permissions/map.js";
-import type { ExpoPermissionResponseLike } from "../permissions/map.js";
 import type { PermissionAdapter, PermissionResult } from "../permissions/types.js";
-import type { ExpoCameraModuleLike, ExpoLocationModuleLike, ExpoMediaLibraryModuleLike, ExpoNotificationsModuleLike } from "./types.js";
-
-type Responder = () => Promise<ExpoPermissionResponseLike>;
+import type { ExpoCameraModuleLike, ExpoLocationModuleLike, ExpoMediaLibraryModuleLike, ExpoNotificationsModuleLike, Responder } from "./types.js";
 
 const UNAVAILABLE: PermissionResult = Object.freeze({ status: "unavailable", canAskAgain: false }) as PermissionResult;
 

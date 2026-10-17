@@ -155,7 +155,7 @@ describe("PLRNUI-356 specifics", () => {
     assert.equal(adapter.openSettings, undefined);
   });
 
-  it("the result objects are not shared mutable state", async () => {
+  it("the unavailable result is frozen", async () => {
     const adapter = createUnavailablePermission();
     const first = await adapter.check();
     assert.equal(Object.isFrozen(first), true);
