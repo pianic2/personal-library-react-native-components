@@ -26,6 +26,11 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-465": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -111,14 +116,18 @@
    "audit/api/snapshots/*.snapshot"
   ],
   "PLRNUI-339": [
+   "ai/examples/BottomSheet.tsx",
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot",
-   "ai/examples/BottomSheet.tsx"
+   "tests/types/negative-cases.ts",
+   "tests/types/props-contracts.ts"
   ],
   "PLRNUI-346": [
+   "ai/examples/Popover.tsx",
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot",
-   "ai/examples/Popover.tsx"
+   "tests/types/negative-cases.ts",
+   "tests/types/props-contracts.ts"
   ],
   "PLRNUI-429": [
    "ai/manifests/props.json",
