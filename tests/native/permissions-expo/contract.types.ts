@@ -6,7 +6,6 @@ import {
   createExpoLocationPermission,
   createExpoMediaLibraryPermission,
   createExpoNotificationsPermission,
-  createUnavailablePermission,
 } from "../../../src/native/permissions-expo/index.js";
 
 declare const Camera: Parameters<typeof createExpoCameraPermission>[0];
@@ -19,7 +18,6 @@ export const adapters: PermissionAdapters = {
   mediaLibrary: createExpoMediaLibraryPermission(MediaLibrary),
   location: createExpoLocationPermission(Location),
   notifications: createExpoNotificationsPermission(Notifications),
-  microphone: createUnavailablePermission(),
 };
 export const provider = () => PermissionsProvider({ adapters });
 export const hook: () => PermissionControls = () => usePermission("camera");

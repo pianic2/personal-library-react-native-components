@@ -69,8 +69,8 @@ function Text 1770667dff79
 function TextGroup a965e0f584e2
 type TextGroupProps e83ee89bb7aa
 type TextProps 4ad1acc8a33d
-function Textarea da782398b62c
-type TextareaProps b951da433705
+function Textarea 26c2889ec84c
+type TextareaProps e34c65e8d853
 type Theme ef184010c34f
 function ThemeAppShell be4f6917a481
 type ThemeAppShellProps 8c2df6d84fdc
