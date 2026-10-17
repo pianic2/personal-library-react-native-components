@@ -32,7 +32,7 @@ const commit = (message: string) => {
   git("commit", "-q", "-m", message);
 };
 const run = (...args: string[]) =>
-  spawnSync("node", [SCRIPT, ...args, "--backlog-dir", join(fixtures, "backlog"), "--jira-map", join(fixtures, "jira-map.json")], {
+  spawnSync("node", [SCRIPT, ...args, "--backlog-dir", join(fixtures, "backlog"), "--jira-map", join(fixtures, "jira-map.json"), "--extensions", join(fixtures, "ownership-extensions.json")], {
     cwd: dir,
     encoding: "utf8",
     env: cleanEnv(),
@@ -194,5 +194,119 @@ describe("PLRNUI-449 hardening", () => {
     write("src/café.ts");
     commit("change");
     assert.equal(run("E99-01", "base").status, 0);
+  });
+});
+
+describe("PLRNUI-460 ownership extensions", () => {
+  const setExtensions = (value: unknown) => writeFileSync(join(fixtures, "ownership-extensions.json"), typeof value === "string" ? value : JSON.stringify(value));
+
+  it("allows exactly the extra paths of a backlog ticket and nothing else", () => {
+    setExtensions({ extra: { "PLRNUI-9999": ["src/index.ts", "audit/api/snapshots/*.snapshot"] } });
+    write("src/a.ts");
+    write("src/index.ts");
+    write("audit/api/snapshots/root.snapshot");
+    commit("change");
+    assert.equal(run("PLRNUI-9999", "base").status, 0);
+    write("src/other.ts");
+    commit("more");
+    const denied = run("PLRNUI-9999", "base");
+    assert.equal(denied.status, 1);
+    assert.match(denied.stderr, /src\/other\.ts/);
+  });
+
+  it("does not extend an unrelated ticket", () => {
+    setExtensions({ extra: { "PLRNUI-1": ["src/index.ts"] } });
+    write("src/index.ts");
+    commit("change");
+    const result = run("PLRNUI-9999", "base");
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /src\/index\.ts/);
+  });
+
+  it("the snapshot wildcard does not open other directories", () => {
+    setExtensions({ extra: { "PLRNUI-9999": ["audit/api/snapshots/*.snapshot"] } });
+    write("audit/api/other/x.snapshot");
+    commit("change");
+    assert.equal(run("PLRNUI-9999", "base").status, 1);
+  });
+
+  it("checks a ticket that is only in the extensions file against its filesTouched", () => {
+    setExtensions({ tickets: { "PLRNUI-7000": { filesTouched: ["tools/x.mjs", "docs/y/**"] } } });
+    write("tools/x.mjs");
+    write("docs/y/z.md");
+    commit("change");
+    assert.equal(run("PLRNUI-7000", "base").status, 0);
+    write("src/a.ts");
+    commit("more");
+    assert.equal(run("PLRNUI-7000", "base").status, 1);
+  });
+
+  it("still exits non-zero for a ticket that is in neither", () => {
+    setExtensions({ tickets: { "PLRNUI-7000": { filesTouched: ["tools/x.mjs"] } } });
+    write("tools/x.mjs");
+    commit("change");
+    assert.equal(run("PLRNUI-7001", "base").status, 2);
+  });
+
+  it("fails closed on a malformed or too broad extensions file", () => {
+    write("src/a.ts");
+    commit("change");
+    const bad: unknown[] = [
+      "{not json",
+      [],
+      { other: {} },
+      { extra: { "PLRNUI-9999": [] } },
+      { extra: { "PLRNUI-9999": ["src/*"] } },
+      { extra: { "PLRNUI-9999": ["**"] } },
+      { extra: { "PLRNUI-9999": ["src/**"] } },
+      { extra: { "PLRNUI-9999": ["../x"] } },
+      { extra: { "PLRNUI-9999": ["/etc/x"] } },
+      { extra: { "not-a-key": ["src/a.ts"] } },
+      { tickets: { "PLRNUI-7000": {} } },
+    ];
+    for (const value of bad) {
+      setExtensions(value);
+      assert.equal(run("PLRNUI-9999", "base").status, 2, JSON.stringify(value));
+    }
+  });
+
+  it("resolves a local backlog id to its Jira key for the extra paths", () => {
+    setExtensions({ extra: { "PLRNUI-9999": ["src/index.ts"] } });
+    write("src/a.ts");
+    write("src/index.ts");
+    commit("change");
+    assert.equal(run("E99-01", "base").status, 0);
+  });
+
+  it("accepts $comment and an extra path next to the ticket's own filesTouched", () => {
+    setExtensions({ $comment: "why", extra: { "PLRNUI-9999": ["docs/extra.md"] } });
+    write("docs/extra.md");
+    write("scripts/tool.mjs");
+    commit("change");
+    assert.equal(run("PLRNUI-9999", "base").status, 0);
+  });
+
+  it("refuses to add a gate file to a ticket through extra", () => {
+    write("src/a.ts");
+    commit("change");
+    for (const path of [".github/workflows/texo-v1-pr.yml", ".github/CODEOWNERS", "scripts/check-ownership.mjs", "scripts/check-commit-msg.mjs", "audit/texo-v1/ownership-extensions.json", "scripts/lib/meta.mjs", "audit/texo-v1/**", "audit/texo-v1/ownership-extensions.json", ".github/workflows/**", "scripts/lib/**"]) {
+      setExtensions({ extra: { "PLRNUI-9999": [path] } });
+      const result = run("PLRNUI-9999", "base");
+      assert.equal(result.status, 2, path);
+      assert.match(result.stderr, /protected gate file/);
+    }
+  });
+
+  it("a governance ticket may own gate files through tickets", () => {
+    setExtensions({ tickets: { "PLRNUI-7000": { filesTouched: ["scripts/check-ownership.mjs", "audit/texo-v1/ownership-extensions.json"] } } });
+    write("scripts/check-ownership.mjs");
+    commit("change");
+    assert.equal(run("PLRNUI-7000", "base").status, 0);
+  });
+
+  it("works without an extensions file", () => {
+    write("src/a.ts");
+    commit("change");
+    assert.equal(run("PLRNUI-9999", "base").status, 0);
   });
 });
