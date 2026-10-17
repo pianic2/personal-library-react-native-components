@@ -10,7 +10,7 @@ export const meta: ComponentMeta = {
   ],
   "whenNotToUse": [
     {
-      "reason": "A caller style or size prop replaces the computed style (known bug)",
+      "reason": "Prose that is not code",
       "instead": "Text"
     }
   ],

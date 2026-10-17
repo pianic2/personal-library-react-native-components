@@ -7,17 +7,16 @@ import type { ComponentProps } from "react";
 
 export type CodeInlineProps = ComponentProps<typeof Text>;
 
-export function CodeInline(props: CodeInlineProps) {
+export function CodeInline({ style, size, ...rest }: CodeInlineProps) {
   const { theme, colors } = useTheme();
   const typographySizes = theme.typography.fontSize;
   const resolvedSize: keyof typeof typographySizes =
-    props.size && Object.prototype.hasOwnProperty.call(typographySizes, props.size)
-      ? props.size
-      : "sm";
+    size && Object.prototype.hasOwnProperty.call(typographySizes, size) ? size : "sm";
   const resolvedFontSize = typographySizes[resolvedSize];
 
   return (
       <Text
+        {...rest}
         size={resolvedSize}
         style={[
           {
@@ -32,9 +31,8 @@ export function CodeInline(props: CodeInlineProps) {
               resolvedFontSize *
               theme.typography.lineHeight.normal,
             },
-          props.style,
+          style,
         ]}
-        {...props}
       />
   );
 }
