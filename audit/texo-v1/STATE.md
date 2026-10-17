@@ -245,3 +245,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-371 (E8-25: AppReadyGate, useAppReady, splash adapter and hydration task) | #199 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-328, 338, 343, 414 and 420: shared wiring files, PO decision) | #201 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-328 (E4-08: Spacer component with minimal wiring) | #202 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-452 (remediation follow-up: per-ticket exception text, remove the spent PLRNUI-328 arm) | #203 | PR open (row committed pre-merge, see ADR 0020 Branching) |
