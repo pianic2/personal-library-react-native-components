@@ -72,7 +72,19 @@ function loadTicket(ticketId, backlogDir, jiraMapFile) {
 const ALLOWED_WILDCARDS = ["audit/api/snapshots/*.snapshot"];
 // An "extra" grant (added to an existing ticket) may never reach the gates themselves: the workflows, the check scripts and
 // this file. Governance tickets that own those files are listed under "tickets" and reviewed as such.
-const PROTECTED = [/^\.github\//, /^scripts\/check-[^/]*$/, /^audit\/texo-v1\/ownership-extensions\.json$/];
+const PROTECTED_DIRS = [".github/", "scripts/lib/"];
+const PROTECTED_FILES = ["audit/texo-v1/ownership-extensions.json"];
+const PROTECTED_PREFIXES = ["scripts/check-"];
+// True when a grant would reach a gate file: the path itself, or a "dir/**" prefix grant that covers one.
+function reachesProtected(path) {
+  if (PROTECTED_DIRS.some((dir) => path.startsWith(dir)) || PROTECTED_FILES.includes(path)) return true;
+  if (PROTECTED_PREFIXES.some((prefix) => path.startsWith(prefix) && !path.slice(prefix.length).includes("/"))) return true;
+  if (path.endsWith("/**")) {
+    const base = `${path.slice(0, -3)}/`;
+    return PROTECTED_DIRS.some((dir) => dir.startsWith(base) || base.startsWith(dir)) || PROTECTED_FILES.some((file) => file.startsWith(base)) || PROTECTED_PREFIXES.some((prefix) => prefix.startsWith(base));
+  }
+  return false;
+}
 
 function loadExtensions(file) {
   let raw;
@@ -94,7 +106,7 @@ function loadExtensions(file) {
     for (const path of paths) {
       if (typeof path !== "string" || path.length === 0) fail(`${label}: empty or non-string path`);
       if (path.startsWith("/") || path.includes("..")) fail(`${label}: unsafe path ${path}`);
-      if (protectedPaths && PROTECTED.some((pattern) => pattern.test(path))) fail(`${label}: ${path} is a protected gate file and can not be added to a ticket`);
+      if (protectedPaths && reachesProtected(path)) fail(`${label}: ${path} is a protected gate file and can not be added to a ticket`);
       if (/[*?[]/.test(path) && !path.endsWith("/**") && !ALLOWED_WILDCARDS.includes(path)) fail(`${label}: wildcard not allowed in ${path}`);
       if (path === "**" || path === "*" || path.endsWith("/**") && path.split("/").length < 3) fail(`${label}: too broad ${path}`);
     }
@@ -128,7 +140,7 @@ function main() {
   const { positional, options } = parseArgs(process.argv.slice(2));
   const [ticketId, base = "origin/texo/v1"] = positional;
   if (!ticketId || base.startsWith("-")) {
-    console.error("usage: check-ownership.mjs <ticket-id> [base] [--backlog-dir <dir>] [--jira-map <file>]");
+    console.error("usage: check-ownership.mjs <ticket-id> [base] [--backlog-dir <dir>] [--jira-map <file>] [--extensions <file>]");
     return 2;
   }
   const backlogDir = options["--backlog-dir"] ?? join(REPO_ROOT, "audit", "texo-v1", "backlog");

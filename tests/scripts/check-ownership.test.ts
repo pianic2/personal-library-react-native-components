@@ -278,7 +278,7 @@ describe("PLRNUI-460 ownership extensions", () => {
     assert.equal(run("E99-01", "base").status, 0);
   });
 
-  it("combines tickets-less extras with filesTouched and accepts $comment", () => {
+  it("accepts $comment and an extra path next to the ticket's own filesTouched", () => {
     setExtensions({ $comment: "why", extra: { "PLRNUI-9999": ["docs/extra.md"] } });
     write("docs/extra.md");
     write("scripts/tool.mjs");
@@ -289,7 +289,7 @@ describe("PLRNUI-460 ownership extensions", () => {
   it("refuses to add a gate file to a ticket through extra", () => {
     write("src/a.ts");
     commit("change");
-    for (const path of [".github/workflows/texo-v1-pr.yml", ".github/CODEOWNERS", "scripts/check-ownership.mjs", "scripts/check-commit-msg.mjs", "audit/texo-v1/ownership-extensions.json"]) {
+    for (const path of [".github/workflows/texo-v1-pr.yml", ".github/CODEOWNERS", "scripts/check-ownership.mjs", "scripts/check-commit-msg.mjs", "audit/texo-v1/ownership-extensions.json", "scripts/lib/meta.mjs", "audit/texo-v1/**", "audit/texo-v1/ownership-extensions.json", ".github/workflows/**", "scripts/lib/**"]) {
       setExtensions({ extra: { "PLRNUI-9999": [path] } });
       const result = run("PLRNUI-9999", "base");
       assert.equal(result.status, 2, path);
