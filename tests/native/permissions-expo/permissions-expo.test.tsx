@@ -15,8 +15,8 @@ import {
   createExpoLocationPermission,
   createExpoMediaLibraryPermission,
   createExpoNotificationsPermission,
-  createUnavailablePermission,
 } from "../../../src/native/permissions-expo/index.js";
+import { createUnavailablePermission } from "../../../src/native/permissions-expo/adapters.js";
 
 const UNAVAILABLE = { status: "unavailable", canAskAgain: false };
 
@@ -203,6 +203,13 @@ describe("PLRNUI-356 with usePermission", () => {
       result = await out.c!.request();
     });
     assert.equal(result, "unavailable");
+  });
+});
+
+describe("PLRNUI-356 public surface", () => {
+  it("exports the four factories and keeps createUnavailablePermission internal", async () => {
+    const surface = await import("../../../src/native/permissions-expo/index.js");
+    assert.deepEqual(Object.keys(surface).sort(), ["createExpoCameraPermission", "createExpoLocationPermission", "createExpoMediaLibraryPermission", "createExpoNotificationsPermission"]);
   });
 });
 
