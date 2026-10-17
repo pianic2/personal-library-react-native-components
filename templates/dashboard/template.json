@@ -1,0 +1,5 @@
+{
+  "name": "dashboard",
+  "description": "A dashboard with a stats grid, a progress card and an activity list, built only with existing library components.",
+  "version": "0.1.0"
+}

@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Dashboard starter",
+    "slug": "dashboard-starter",
+    "platforms": ["android", "ios", "web"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
