@@ -4,7 +4,7 @@ import type { ExpoCameraModuleLike, ExpoLocationModuleLike, ExpoMediaLibraryModu
 
 const UNAVAILABLE: PermissionResult = Object.freeze({ status: "unavailable", canAskAgain: false }) as PermissionResult;
 
-/** The adapter used when the Expo module is missing: both calls resolve `unavailable`, nothing is prompted. */
+/** The adapter used when the Expo module is missing: both calls resolve `unavailable`, nothing is prompted. Internal: not part of the public API. */
 export function createUnavailablePermission(): PermissionAdapter {
   return { check: async () => UNAVAILABLE, request: async () => UNAVAILABLE };
 }
