@@ -242,3 +242,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-242 (E11-12: dashboard app starter template) | #196 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-263 (E11-17: settings app starter template) | #197 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-368 (E8-24: biometric prompt adapter, Expo mapping, noop and useBiometricPrompt) | #198 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-371 (E8-25: AppReadyGate, useAppReady, splash adapter and hydration task) | #199 | PR open (row committed pre-merge, see ADR 0020 Branching) |
