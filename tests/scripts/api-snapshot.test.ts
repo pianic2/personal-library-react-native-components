@@ -1,7 +1,7 @@
 import { afterEach, describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
@@ -193,6 +193,107 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     assert.equal(existsSync(join(root, "audit/api/snapshots")), false);
   });
 
+  /** Writes a hand-made ./dist that matches the fixture project (what a build would leave). */
+  function writeDist(root: string, files: Record<string, string> = {}) {
+    const defaults: Record<string, string> = {
+      "dist/index.d.ts": 'export declare function makeWidget(id: string): { id: string };\nexport interface WidgetOptions { size: number }\nexport declare const internalName = 1;\nexport { internalName as PublicName };\nexport interface ButtonProps { label: string; onPress?: () => void }\nexport declare function Button(props: ButtonProps): string;\nexport declare const VERSION = "1";\n',
+      "dist/index.js": "export {};\n",
+      "dist/theme/index.d.ts": 'export declare const mode: "light" | "dark";\n',
+      "dist/theme/index.js": "export {};\n",
+    };
+    for (const [file, text] of Object.entries({ ...defaults, ...files })) write(root, file, text);
+  }
+
+  it("--dist needs a built ./dist and exits 2 without it", () => {
+    const root = project();
+    const result = run(root, "--dist");
+    assert.equal(result.code, 2);
+    assert.match(result.err, /needs a built \.\/dist/);
+  });
+
+  it("--dist snapshots the real dist declarations, and --check --dist passes on the same tree", () => {
+    const root = project();
+    writeDist(root);
+    assert.equal(run(root, "--dist").code, 0);
+    const check = run(root, "--check", "--dist");
+    assert.equal(check.code, 0, check.err);
+    assert.match(check.out, /from \.\/dist/);
+  });
+
+  it("the preflight fails when the declarations and the source export different names", () => {
+    const root = project();
+    writeDist(root, { "dist/index.d.ts": 'export declare const VERSION = "1";\nexport declare const onlyInDeclarations = 1;\n' });
+    const result = run(root, "--dist", "--check");
+    assert.equal(result.code, 1);
+    assert.match(result.err, /preflight: root: const onlyInDeclarations is in the declarations but not in the source/);
+    assert.match(result.err, /preflight: root: function Button is in the source but not in the declarations/);
+    assert.equal(run(root, "--dist").code, 1, "a write is refused too");
+  });
+
+  it("reports an exports target that is not under ./dist, or that the build does not produce", () => {
+    const root = project();
+    write(root, "package.json", JSON.stringify({ name: "fixture", exports: { ".": { types: "./dist/index.d.ts", import: "./lib/index.js", default: "./dist/missing.js" }, "./theme": { types: "./dist/theme/index.d.ts" } } }));
+    const result = run(root, "--check");
+    assert.equal(result.code, 1);
+    assert.match(result.err, /exports target \.\/lib\/index\.js is not under \.\/dist\//);
+    assert.match(result.err, /exports target \.\/dist\/missing\.js is not produced by the build/);
+  });
+
+  it("--packed checks the tarball contents: it passes with files: [dist] and fails when dist is not packed", () => {
+    const root = project();
+    write(root, "package.json", JSON.stringify({ name: "fixture", version: "1.0.0", files: ["dist"], exports: { ".": { types: "./dist/index.d.ts", import: "./dist/index.js" }, "./theme": { types: "./dist/theme/index.d.ts", import: "./dist/theme/index.js" } } }));
+    writeDist(root);
+    assert.equal(run(root, "--dist").code, 0);
+    const ok = run(root, "--check", "--packed");
+    assert.equal(ok.code, 0, ok.err);
+    assert.match(ok.out, /packed tarball checked/);
+    write(root, "package.json", JSON.stringify({ name: "fixture", version: "1.0.0", files: ["README.md"], exports: { ".": { types: "./dist/index.d.ts", import: "./dist/index.js" }, "./theme": { types: "./dist/theme/index.d.ts", import: "./dist/theme/index.js" } } }));
+    write(root, "README.md", "x");
+    const bad = run(root, "--check", "--packed");
+    assert.equal(bad.code, 1);
+    assert.match(bad.err, /would not be in the packed tarball/);
+  });
+
+  it("a real tsc build of the project gives the same snapshot as the temporary emit (dist and emit agree)", () => {
+    const root = project();
+    assert.equal(run(root).code, 0);
+    const tsc = join(repo, "node_modules/typescript/bin/tsc");
+    const build = spawnSync(process.execPath, [tsc, "-p", "tsconfig.json", "--noEmit", "false", "--outDir", "dist", "--declaration", "--declarationMap", "--sourceMap"], { cwd: root, encoding: "utf8" });
+    assert.equal(build.status, 0, build.stdout + build.stderr);
+    const check = run(root, "--check", "--dist");
+    assert.equal(check.code, 0, check.err);
+  });
+
+  it("this repository: the real tsc build of ./dist and the packed tarball match the committed snapshots (enforced by npm test)", () => {
+    // A copy of the project (no dist/ of the working tree is touched): package.json, tsconfig files, src, the committed
+    // snapshots; node_modules is linked. The build goes to <copy>/dist with the same command as `npm run build`.
+    const copy = mkdtempSync(join(tmpdir(), "api-snapshot-repo-"));
+    dirs.push(copy);
+    for (const file of ["package.json", "tsconfig.json", "tsconfig.build.json", "README.md", "LICENSE"]) if (existsSync(join(repo, file))) cpSync(join(repo, file), join(copy, file));
+    cpSync(join(repo, "src"), join(copy, "src"), { recursive: true });
+    mkdirSync(join(copy, "audit/api"), { recursive: true });
+    cpSync(join(repo, "audit/api/snapshots"), join(copy, "audit/api/snapshots"), { recursive: true });
+    cpSync(join(repo, "audit/api/public-root-api.snapshot"), join(copy, "audit/api/public-root-api.snapshot"));
+    symlinkSync(join(repo, "node_modules"), join(copy, "node_modules"), "dir");
+    const tsc = join(repo, "node_modules/typescript/bin/tsc");
+    const build = spawnSync(process.execPath, [tsc, "-p", "tsconfig.build.json"], { cwd: copy, encoding: "utf8" });
+    assert.equal(build.status, 0, build.stdout + build.stderr);
+    const check = run(copy, "--check", "--packed");
+    assert.equal(check.code, 0, check.err);
+    assert.match(check.out, /from \.\/dist, packed tarball checked/);
+    // a dist that lost an exports target fails the same gate
+    rmSync(join(copy, "dist/theme/index.js"));
+    const broken = run(copy, "--check", "--packed");
+    assert.equal(broken.code, 1);
+    assert.match(broken.err, /exports target \.\/dist\/theme\/index\.js is not produced by the build/);
+  });
+
+  it("the emitted declarations are not left behind and nothing is written outside audit/api", () => {
+    const root = project();
+    run(root);
+    assert.deepEqual(readdirSync(root).sort(), ["audit", "package.json", "src", "tsconfig.json"]);
+  });
+
   it("fails when a snapshot file is missing or stale, and the write run removes a stale one", () => {
     const root = project();
     run(root);
@@ -212,15 +313,15 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     assert.match(run(root, "--check").err, /public-root-api\.snapshot/);
   });
 
-  it("exits 2 on usage errors and on an exports types path with no source file", () => {
+  it("exits 2 on usage errors, and reports an exports types target that the build does not produce", () => {
     const root = project();
     assert.equal(run(root, "--bogus").code, 2);
     assert.equal(run(root, "--level", "everything").code, 2);
     assert.equal(run(root, "--level").code, 2);
     rmSync(join(root, "src/theme/index.ts"));
     const missing = run(root, "--check");
-    assert.equal(missing.code, 2);
-    assert.match(missing.err, /does not exist/);
+    assert.equal(missing.code, 1);
+    assert.match(missing.err, /exports types target \.\/dist\/theme\/index\.d\.ts is not produced by the build/);
   });
 
   it("matches the committed snapshots of this repository", () => {
