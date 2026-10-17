@@ -1,27 +1,26 @@
 # Spacer
 
-**Stability:** beta — not yet exported from the package root (the wiring tickets own that).
+**Stability:** beta — public consumer API, usable but contract may still change.
 
 Empty space with a size taken from the spacing scale, or a flexible gap that fills the free space of its parent. It replaces ad-hoc `<View style={{ flex: 1 }} />` and margins when you push items apart.
 
 ## Import
 
-Not exported from the package root yet; import from the component folder:
-
 ```ts
-import { Spacer } from "./components/Spacer/index.js";
-import type { SpacerProps } from "./components/Spacer/index.js";
+import { Spacer } from "@personal-library/react-native-components";
+import type { SpacerProps } from "@personal-library/react-native-components";
 ```
 
 ## Props
 
 ```ts
-type SpaceKey = "none" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl"; // keys of theme.space
+type SpacerSize = "xs" | "sm" | "md" | "lg"; // keys of theme.space (ADR 0014 sizes)
 
 interface SpacerProps {
-  size?: SpaceKey | number; // default "md"; ignored when flex is set
+  size?: SpacerSize; // default "md"; ignored when flex is set
   axis?: "vertical" | "horizontal"; // default "vertical": vertical sets the height, horizontal the width
   flex?: boolean; // fills the free space (flex: 1)
+  style?: StyleProp<ViewStyle>; // applied after the size
   testID?: string;
 }
 ```
@@ -43,17 +42,17 @@ interface SpacerProps {
   <Text>Body</Text>
 </Column>
 
-// A fixed horizontal gap of 12 points
+// A fixed horizontal gap
 <Row>
   <Icon name="check" />
-  <Spacer axis="horizontal" size={12} />
+  <Spacer axis="horizontal" size="sm" />
   <Text>Done</Text>
 </Row>
 ```
 
 ## Behaviour
 
-- Fixed: `size` is a `theme.space` key or a number of points. `axis="vertical"` (the default) sets the height; `axis="horizontal"` sets the width.
+- Fixed: `size` is one of the `theme.space` keys `xs`, `sm`, `md`, `lg`. `axis="vertical"` (the default) sets the height; `axis="horizontal"` sets the width.
 - Flexible: `flex` renders `flex: 1`, so the Spacer takes the free space of its parent and pushes the siblings to the ends. `size` and `axis` are ignored then.
 - The axis is not inferred from the parent: in a `Row` pass `axis="horizontal"` for a fixed gap. `flex` works in both directions.
 

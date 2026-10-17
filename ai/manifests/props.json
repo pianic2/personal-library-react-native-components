@@ -10854,6 +10854,56 @@
         }
       ]
     },
+    "Spacer": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "axis",
+          "type": "\"vertical\" | \"horizontal\"",
+          "required": false,
+          "default": "vertical",
+          "description": "`vertical` sets the height, `horizontal` sets the width. The axis is not inferred from the parent. Default `vertical`.",
+          "values": [
+            "vertical",
+            "horizontal"
+          ]
+        },
+        {
+          "name": "flex",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Fills the free space of the parent (`flex: 1`), pushing the siblings apart."
+        },
+        {
+          "name": "size",
+          "type": "\"xs\" | \"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "default": "md",
+          "description": "A `theme.space` key (ADR 0014 sizes). Default `\"md\"`. Ignored when `flex` is set.",
+          "values": [
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Extra style, applied after the size."
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ]
+    },
     "Spinner": {
       "status": "demo",
       "props": [

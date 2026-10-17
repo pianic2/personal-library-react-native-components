@@ -28,6 +28,7 @@ type:RowProps
 type:SideBarProps
 type:SideBarVariant
 type:SmallProps
+type:SpacerProps
 type:SpinnerProps
 type:SwitchProps
 type:TextGroupProps
@@ -71,6 +72,7 @@ value:Row
 value:Select
 value:SideBar
 value:Small
+value:Spacer
 value:Spinner
 value:Stack
 value:Switch

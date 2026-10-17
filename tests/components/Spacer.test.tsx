@@ -23,7 +23,7 @@ const styleOf = (r: ReactTestRenderer) => flatten(spacer(r).props.style);
 describe("PLRNUI-328 Spacer", () => {
   it("a size token maps to the height on the default vertical axis", () => {
     const space = defaultTheme.space;
-    for (const key of ["none", "xs", "sm", "md", "lg", "xl", "xxl"] as const) {
+    for (const key of ["xs", "sm", "md", "lg"] as const) {
       assert.deepEqual(styleOf(mount(<Spacer size={key} testID="s" />)), { height: space[key] }, key);
     }
   });
@@ -36,14 +36,13 @@ describe("PLRNUI-328 Spacer", () => {
     assert.deepEqual(styleOf(mount(<Spacer axis="horizontal" size="lg" testID="s" />)), { width: defaultTheme.space.lg });
   });
 
-  it("a number is used as points on either axis", () => {
-    assert.deepEqual(styleOf(mount(<Spacer size={12} testID="s" />)), { height: 12 });
-    assert.deepEqual(styleOf(mount(<Spacer size={12} axis="horizontal" testID="s" />)), { width: 12 });
+  it("a style prop is applied after the size", () => {
+    assert.deepEqual(styleOf(mount(<Spacer size="sm" style={{ opacity: 0.5 }} testID="s" />)), { height: defaultTheme.space.sm, opacity: 0.5 });
   });
 
   it("flex fills the free space and ignores size and axis", () => {
     assert.deepEqual(styleOf(mount(<Spacer flex testID="s" />)), { flex: 1 });
-    assert.deepEqual(styleOf(mount(<Spacer flex size="xl" axis="horizontal" testID="s" />)), { flex: 1 });
+    assert.deepEqual(styleOf(mount(<Spacer flex size="lg" axis="horizontal" testID="s" />)), { flex: 1 });
   });
 
   it("is hidden from assistive technology", () => {
@@ -77,7 +76,7 @@ describe("PLRNUI-328 Spacer", () => {
   });
 
   it("SpacerProps accepts the documented props", () => {
-    const props: SpacerProps = { size: "sm", axis: "horizontal", flex: false, testID: "x" };
+    const props: SpacerProps = { size: "sm", axis: "horizontal", flex: false, style: { backgroundColor: "transparent" }, testID: "x" };
     assert.equal(props.size, "sm");
   });
 });

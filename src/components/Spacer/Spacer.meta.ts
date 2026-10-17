@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   "name": "Spacer",
   "category": "layout",
   "status": "demo",
-  "summary": "Empty space sized by a spacing token, or a flexible gap that pushes siblings apart in a Row or Column.",
+  "summary": "Empty space sized by a spacing token (xs to lg), or a flexible gap that pushes siblings apart in a Row or Column.",
   "whenToUse": [
     "Push one item to the end of a Row or Column with <Spacer flex />",
     "Add a fixed gap that is not the gap shared by all siblings"
@@ -31,13 +31,10 @@ export const meta: ComponentMeta = {
   ],
   "variants": {
     "size": [
-      "none",
       "xs",
       "sm",
       "md",
-      "lg",
-      "xl",
-      "xxl"
+      "lg"
     ],
     "axis": [
       "vertical",
@@ -51,8 +48,8 @@ export const meta: ComponentMeta = {
   "platformNotes": [],
   "examples": [
     {
-      "title": "Spacer",
-      "path": "docs/components/layout/Spacer.md"
+      "title": "Layout primitives",
+      "path": "examples/layout-primitives.tsx"
     }
   ]
 };

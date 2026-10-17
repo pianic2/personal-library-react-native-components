@@ -2,14 +2,14 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 44 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 45 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
 | `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 18 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `demo` | 19 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -39,6 +39,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Divider](components/layout/divider.md) | layout | `demo` | Full-width horizontal separator with token-based spacing. |
 | [Row](components/layout/row.md) | layout | `demo` | Horizontal flex container with a token-based gap. |
 | Slot | layout | `prototype` | Merges its props into its single child element (asChild) instead of rendering a wrapper. |
+| [Spacer](components/layout/spacer.md) | layout | `demo` | Empty space sized by a spacing token (xs to lg), or a flexible gap that pushes siblings apart in a Row or Column. |
 | [BottomBar](components/navigation/bottom-bar.md) | navigation | `prototype` | Bottom navigation bar for the main destinations on small screens. |
 | [Link](components/navigation/link.md) | navigation | `demo` | Text or button style link that navigates through the navigation context or a URL. |
 | [NavBar](components/navigation/nav-bar.md) | navigation | `demo` | Navigation shell that renders a top bar, bottom bar or sidebar from the same items. |

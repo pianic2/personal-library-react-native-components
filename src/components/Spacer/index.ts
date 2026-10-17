@@ -1,2 +1,2 @@
 export { Spacer } from "./Spacer.js";
-export type { SpacerProps } from "./Spacer.js";
+export type { SpacerProps, SpacerSize } from "./Spacer.js";
