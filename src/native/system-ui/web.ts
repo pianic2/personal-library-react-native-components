@@ -23,7 +23,10 @@ export function createWebSystemUi(doc: WebSystemUiDocument): SystemUiAdapter {
           existing.setAttribute("content", backgroundColor);
           return;
         }
-        if (!doc.head) return;
+        if (!doc.head) {
+          warnSwallowed("theme-color meta", new Error("document has no head"));
+          return;
+        }
         const meta = doc.createElement("meta");
         meta.setAttribute("name", "theme-color");
         meta.setAttribute("content", backgroundColor);

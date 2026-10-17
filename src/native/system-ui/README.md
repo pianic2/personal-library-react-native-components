@@ -23,3 +23,5 @@ function Root() {
 - `createExpoSystemUi({ systemUi, navigationBar })`: `expo-system-ui` `setBackgroundColorAsync`; `expo-navigation-bar` `setBackgroundColorAsync` and `setButtonStyleAsync` (Android, so pass it on Android only).
 - `createWebSystemUi(document)` / `resolveWebSystemUi()`: updates or creates `<meta name="theme-color">`.
 - Edge-to-edge configuration (`app.json`) stays with the app.
+
+Semver impact: **minor** (new API only; nothing changes for existing code). The migration changelog entry belongs to the ticket that owns `audit/migration/migration-changelog.md`.

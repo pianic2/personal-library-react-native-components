@@ -191,6 +191,18 @@ describe("PLRNUI-288 web path", () => {
     });
   });
 
+  it("a missing head warns in development, and a console.warn that throws does not escape", async () => {
+    await withDev(async (warnings) => {
+      await createWebSystemUi({ querySelector: () => null, createElement: () => ({ setAttribute: () => undefined }), head: null }).apply({ mode: "dark", backgroundColor: "#000" });
+      assert.equal(warnings.length, 1);
+      console.warn = () => {
+        throw new Error("hostile console");
+      };
+      const adapter = createExpoSystemUi({ systemUi: { setBackgroundColorAsync: () => Promise.reject(new Error("x")) } });
+      await adapter.apply({ mode: "dark", backgroundColor: "#000" });
+    });
+  });
+
   it("resolveWebSystemUi returns an adapter only where a document exists", () => {
     assert.equal(resolveWebSystemUi(), undefined);
     (globalThis as { document?: unknown }).document = fakeDocument(false).doc;
@@ -233,20 +245,74 @@ describe("PLRNUI-288 useSystemBars", () => {
     ]);
   });
 
-  it("explicit mode and backgroundColor win; a re-render with the same inputs does not apply again", async () => {
+  it("explicit mode and backgroundColor win", async () => {
     const { adapter, calls } = recording();
-    const tree = (
-      <ThemeProvider>
-        <Probe adapter={adapter} mode="dark" backgroundColor="#123456" />
-      </ThemeProvider>
-    );
-    let r!: TestRenderer.ReactTestRenderer;
-    act(() => {
-      r = TestRenderer.create(tree);
-    });
-    act(() => r.update(tree));
+    mount(<Probe adapter={adapter} mode="dark" backgroundColor="#123456" />);
     await flush();
     assert.deepEqual(calls, [{ mode: "dark", backgroundColor: "#123456" }]);
+  });
+
+  it("a re-render with the same inputs does not apply again, with an explicit adapter and with the default web adapter", async () => {
+    // A NEW element each time, so Probe really re-renders (React bails out on an identical element).
+    let renders = 0;
+    function Counting({ adapter }: { adapter?: SystemUiAdapter }) {
+      renders += 1;
+      useSystemBars({ adapter, mode: "dark", backgroundColor: "#123456" });
+      return null;
+    }
+    const { adapter, calls } = recording();
+    let r!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      r = TestRenderer.create(
+        <ThemeProvider>
+          <Counting adapter={adapter} />
+        </ThemeProvider>,
+      );
+    });
+    const before = renders;
+    act(() =>
+      r.update(
+        <ThemeProvider>
+          <Counting adapter={adapter} />
+        </ThemeProvider>,
+      ),
+    );
+    await flush();
+    assert.ok(renders > before, "the component re-rendered");
+    assert.equal(calls.length, 1);
+
+    // Default path: no adapter, a browser document. A new web adapter per render would write the meta tag on every render.
+    const { doc } = fakeDocument(false);
+    let writes = 0;
+    (globalThis as { document?: unknown }).document = {
+      ...doc,
+      querySelector: () => null,
+      createElement: () => ({ setAttribute: () => void (writes += 1) }),
+      head: { appendChild: () => undefined },
+    };
+    renders = 0;
+    act(() => {
+      r = TestRenderer.create(
+        <ThemeProvider>
+          <Counting />
+        </ThemeProvider>,
+      );
+    });
+    await flush();
+    const writesAfterMount = writes;
+    assert.ok(writesAfterMount > 0);
+    for (let i = 0; i < 3; i += 1) {
+      act(() =>
+        r.update(
+          <ThemeProvider>
+            <Counting />
+          </ThemeProvider>,
+        ),
+      );
+    }
+    await flush();
+    assert.ok(renders >= 4, "the component re-rendered");
+    assert.equal(writes, writesAfterMount, "no new write after re-renders with the same inputs");
   });
 
   it("an adapter that rejects or throws never breaks the render", async () => {
@@ -263,6 +329,23 @@ describe("PLRNUI-288 useSystemBars", () => {
         await flush();
       }
       assert.equal(warnings.length, 2);
+      // An adapter that returns a plain value (not a promise) and a thenable that throws are contained too.
+      mount(<Probe adapter={{ apply: () => undefined } as unknown as SystemUiAdapter} />);
+      mount(
+        <Probe
+          adapter={
+            {
+              apply: () => ({
+                then: () => {
+                  throw new Error("thenable boom");
+                },
+              }),
+            } as unknown as SystemUiAdapter
+          }
+        />,
+      );
+      await flush();
+      assert.equal(warnings.length, 3, "only the throwing thenable warns");
     });
   });
 
