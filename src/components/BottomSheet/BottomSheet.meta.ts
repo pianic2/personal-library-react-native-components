@@ -3,8 +3,8 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "BottomSheet",
   "category": "overlay",
-  "status": "demo",
-  "summary": "Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop.",
+  "status": "prototype",
+  "summary": "Panel that slides up from the bottom edge with two snap positions.",
   "whenToUse": [
     "Present secondary content or actions without leaving the screen"
   ],

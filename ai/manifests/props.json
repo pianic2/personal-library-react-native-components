@@ -1492,7 +1492,7 @@
       ]
     },
     "BottomSheet": {
-      "status": "demo",
+      "status": "prototype",
       "props": [
         {
           "name": "accessibilityLabel",
