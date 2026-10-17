@@ -22,6 +22,11 @@ ma la superficie consumer corrente è la root API di
 - Overview: [Buttons](components/buttons/index.md)
 - [Button](components/buttons/button.md) — beta
 
+## Data-display
+
+- Overview: [Data-display](components/data-display/index.md)
+- [Pager](components/data-display/pager.md) — beta
+
 ## Feedback
 
 - Overview: [Feedback](components/feedback/index.md)
