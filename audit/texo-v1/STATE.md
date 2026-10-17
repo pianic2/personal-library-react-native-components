@@ -258,3 +258,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-460 (ownership extensions file for approved ticket classes) | #212 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-280 (E5-05: compound Field) | #217 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-461 (semver and migration-changelog impact of the native layer and density runtime) | #214 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-463 (ownership extensions amendment: 462 legacy colour test, 197 snapshots and example) | #218 | PR open (row committed pre-merge, see ADR 0020 Branching) |
