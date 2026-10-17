@@ -69,6 +69,7 @@ describe("PLRNUI-244 ai examples", () => {
       const result = spawnSync(process.execPath, [tsc, "-p", join(dir, "tsconfig.json"), "--noEmit"], { cwd: root, encoding: "utf8" });
       assert.notEqual(result.status, 0);
       assert.match(result.stdout, /bad\.tsx/);
+      assert.match(result.stdout, /TS2322/, "the intended type error (label must be a string) is reported");
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -1,9 +1,9 @@
 // @ai-example
-import { Popover, Text } from "@personal-library/react-native-components";
+import { Button, Popover, Text } from "@personal-library/react-native-components";
 
 export function PopoverExample() {
   return (
-    <Popover renderTrigger={() => <Text>Open</Text>}>
+    <Popover renderTrigger={({ toggle }) => <Button label="Open" onPress={toggle} />}>
       <Text>Popover content</Text>
     </Popover>
   );

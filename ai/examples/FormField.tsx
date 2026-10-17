@@ -6,7 +6,7 @@ export function FormFieldExample() {
   const [name, setName] = useState("");
   return (
     <FormField label="Name" helperText="As shown on your profile">
-      <Input label="Name" value={name} onChangeText={setName} />
+      <Input value={name} onChangeText={setName} />
     </FormField>
   );
 }
