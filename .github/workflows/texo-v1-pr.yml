@@ -105,6 +105,11 @@ jobs:
             PLRNUI-450) exceptions="skills/texo-execute/SKILL.md" ;;
             PLRNUI-452) exceptions="docs/policies/branching.md tests/meta/meta-lint.test.tsx tests/scripts/check-component-docs.test.ts tests/scripts/maturity-check.test.ts" ;;
             PLRNUI-412) exceptions="tests/helpers/fixtures.tsx docs/maturity.md" ;;
+            PLRNUI-328) exceptions="ai/manifests/props.json audit/api/public-root-api.snapshot docs/components.md docs/maturity.md mkdocs.yml src/index.ts tests/helpers/fixtures.tsx docs/components/layout/index.md docs/components/layout/spacer.md examples/layout-primitives.tsx" ;;
+            PLRNUI-338) exceptions="ai/manifests/props.json audit/api/public-root-api.snapshot docs/components.md docs/maturity.md mkdocs.yml src/index.ts tests/helpers/fixtures.tsx docs/components/typography/index.md docs/components/typography/code-block.md examples/code-block.tsx" ;;
+            PLRNUI-343) exceptions="ai/manifests/props.json audit/api/public-root-api.snapshot docs/components.md docs/maturity.md mkdocs.yml src/index.ts tests/helpers/fixtures.tsx docs/components/data-display/index.md docs/components/data-display/video-player.md examples/video-player.tsx" ;;
+            PLRNUI-414) exceptions="ai/manifests/props.json audit/api/public-root-api.snapshot docs/components.md docs/maturity.md mkdocs.yml src/index.ts tests/helpers/fixtures.tsx docs/components/data-display/index.md docs/components/data-display/markdown.md examples/markdown.tsx" ;;
+            PLRNUI-420) exceptions="ai/manifests/props.json audit/api/public-root-api.snapshot docs/components.md docs/maturity.md mkdocs.yml src/index.ts tests/helpers/fixtures.tsx docs/components/form/index.md docs/components/form/rating.md examples/rating.tsx" ;;
           esac
           # GitHub runs this with bash -e: capture the exit code instead of letting a failing command end the step.
           code=0
