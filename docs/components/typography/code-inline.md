@@ -13,3 +13,6 @@ import { CodeInline } from "@personal-library/react-native-components";
 ## Props
 
 Uguali a `Text` (`ComponentProps<typeof Text>`).
+
+Il `style` del chiamante viene applicato per ultimo, dopo font mono, bordo e padding del tema, quindi li estende o li sovrascrive
+senza perderli. `size` accetta i token tipografici (default `sm`) e determina `fontSize` e `lineHeight`.
