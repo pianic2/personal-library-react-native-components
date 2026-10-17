@@ -8,22 +8,30 @@
 //                                            `<kind> <name> <hash>` (kind: type | class | function | const | enum | namespace).
 //   audit/api/public-root-api.snapshot       the legacy regex name list of src/index.ts, kept for the backward diff.
 //
-// The entry file of a subpath is the source file behind its "types" target (./dist/x/index.d.ts -> src/x/index.ts), so the
-// check needs no build. The root is "root.snapshot"; "./theme" is "theme.snapshot".
+// The AUTHORITATIVE surface is the generated declaration files: the script emits the .d.ts of tsconfig.build.json (the build
+// that is published) into a temporary directory and snapshots the "types" target of each exports entry from there, so what is
+// recorded is what a consumer's compiler reads. It also verifies the package exports map against that emit (every "types"
+// target must be emitted, every JS target must be an emitted module) and, as a PREFLIGHT, compares the export names of the
+// source entry file with the declaration entry file (a mismatch means the declarations lost or gained an export).
+// `--dist` snapshots the real ./dist folder instead of a temporary emit (use it on a built tree); `--packed` additionally runs
+// `npm pack --dry-run` and verifies that the tarball would contain every exports target. The root is "root.snapshot";
+// "./theme" is "theme.snapshot".
 //
-// Usage: node scripts/public-api-snapshot.mjs [--check] [--level names|shapes] [--root <dir>]
+// Usage: node scripts/public-api-snapshot.mjs [--check] [--level names|shapes] [--dist] [--packed] [--root <dir>]
 //   (no flag)  write the snapshots
 //   --check    compare with the files on disk; exit 1 on drift, listing the changed lines
 //   --level    shapes (default): the hash covers props / signatures. names: the hash column is omitted from the comparison,
 //              so only added, removed or re-kinded exports count (a coarser level for noisy upgrades). It only changes
 //              --check; the write run always emits the hashes.
 // A type nested in a prop (`items: Foo[]`) prints by name: only a top-level alias is expanded, and exported types have their own line.
-// Only `./dist/<x>.d.ts` -> `src/<x>.ts` type targets are supported. The hashes include the rendered form of inherited
+// Only `./dist/<x>.d.ts` type targets are supported. The hashes include the rendered form of inherited
 // React / React Native types, so a bump of react-native, @types/react or typescript can change them (use --level names then).
 //   --root     project root (default: the current directory); used by the tests.
 // Exit 0 ok, 1 drift, 2 usage or input errors.
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import ts from "typescript";
@@ -31,10 +39,15 @@ import ts from "typescript";
 class UsageError extends Error {}
 
 function parseArgs(argv) {
-  const opts = { check: false, level: "shapes", root: process.cwd() };
+  const opts = { check: false, level: "shapes", root: process.cwd(), dist: false, packed: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--check") opts.check = true;
+    else if (arg === "--dist") opts.dist = true;
+    else if (arg === "--packed") {
+      opts.packed = true;
+      opts.dist = true;
+    }
     else if (arg === "--level" || arg === "--root") {
       const value = argv[i + 1];
       if (value === undefined || value.startsWith("--")) throw new UsageError(`${arg} needs a value`);
@@ -66,26 +79,67 @@ function legacySnapshot(root) {
   return { text: entries.join("\n") + "\n", count: entries.length };
 }
 
-/** `{ name, entry }` for every "exports" key with a "types" file that maps to an existing source file. */
-function subpaths(root) {
+/**
+ * The exports map: `{ name, types }` for every key with a "types" file (types is a path relative to ./dist, without the
+ * leading "./dist/"), and `files`, every file target of the map (types, import, default, react-native, ...).
+ */
+function readExports(root) {
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-  const result = [];
+  const subpaths = [];
+  const files = new Set();
+  const collect = (value) => {
+    if (typeof value === "string") files.add(value);
+    else if (value && typeof value === "object") Object.values(value).forEach(collect);
+  };
   for (const [key, value] of Object.entries(pkg.exports ?? {})) {
+    if (key !== "./package.json") collect(value);
     const types = value && typeof value === "object" ? value.types : undefined;
     if (typeof types !== "string") continue;
-    const match = /^\.\/dist\/(.+)\.d\.ts$/.exec(types);
+    const match = /^\.\/dist\/(.+\.d\.ts)$/.exec(types);
     if (!match) throw new UsageError(`exports["${key}"].types is not a ./dist/*.d.ts path: ${types}`);
-    const entry = path.join(root, "src", `${match[1]}.ts`);
-    if (!fs.existsSync(entry)) throw new UsageError(`exports["${key}"].types maps to ${path.relative(root, entry)}, which does not exist`);
-    const name = key === "." ? "root" : key.slice(2).replace(/\//g, "__");
-    result.push({ name, entry });
+    subpaths.push({ name: key === "." ? "root" : key.slice(2).replace(/\//g, "__"), types: match[1], source: match[1].replace(/\.d\.ts$/, ".ts") });
   }
-  return result.sort((a, b) => a.name.localeCompare(b.name));
+  return { subpaths: subpaths.sort((a, b) => a.name.localeCompare(b.name)), files: [...files].sort() };
+}
+
+/**
+ * Emits the declarations (and the JS file list) of the published build, tsconfig.build.json, into `outDir` using the compiler
+ * API: nothing is written outside `outDir`, and only .d.ts files are written. Returns the set of emitted paths relative to
+ * `outDir` (".js" and ".d.ts" files, no maps).
+ */
+function emitDeclarations(root, outDir) {
+  const configPath = ["tsconfig.build.json", "tsconfig.json"].map((f) => path.join(root, f)).find((f) => fs.existsSync(f));
+  if (!configPath) throw new UsageError("no tsconfig.build.json or tsconfig.json to emit declarations from");
+  const read = ts.readConfigFile(configPath, ts.sys.readFile);
+  if (read.error) throw new UsageError(`cannot read ${path.basename(configPath)}: ${ts.flattenDiagnosticMessageText(read.error.messageText, "\n")}`);
+  const parsed = ts.parseJsonConfigFileContent(read.config, ts.sys, root);
+  const options = { ...parsed.options, declaration: true, declarationMap: false, sourceMap: false, noEmit: false, outDir };
+  delete options.emitDeclarationOnly;
+  const program = ts.createProgram({ rootNames: parsed.fileNames, options });
+  const emitted = new Set();
+  const result = program.emit(undefined, (fileName, text) => {
+    const relative = path.relative(outDir, fileName).split(path.sep).join("/");
+    if (relative.endsWith(".map")) return;
+    emitted.add(relative);
+    if (relative.endsWith(".d.ts")) {
+      fs.mkdirSync(path.dirname(fileName), { recursive: true });
+      fs.writeFileSync(fileName, text);
+    }
+  });
+  if (result.emitSkipped) throw new UsageError("the declaration emit was skipped (compile errors?)");
+  return emitted;
+}
+
+function walkFiles(dir, base = dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    return entry.isDirectory() ? walkFiles(full, base) : [path.relative(base, full).split(path.sep).join("/")];
+  });
 }
 
 const hash = (text) => createHash("sha256").update(text).digest("hex").slice(0, 12);
 
-function createProgram(root, entries) {
+function createProgram(root, entries, overrides = {}) {
   const configPath = path.join(root, "tsconfig.json");
   let options = { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler, jsx: ts.JsxEmit.ReactJSX, strict: true, skipLibCheck: true, noEmit: true };
   if (fs.existsSync(configPath)) {
@@ -93,12 +147,15 @@ function createProgram(root, entries) {
     if (read.error) throw new UsageError(`cannot read tsconfig.json: ${ts.flattenDiagnosticMessageText(read.error.messageText, "\n")}`);
     options = { ...ts.parseJsonConfigFileContent(read.config, ts.sys, root).options, noEmit: true };
   }
-  return ts.createProgram({ rootNames: entries, options });
+  return ts.createProgram({ rootNames: entries, options: { ...options, ...overrides } });
 }
 
 /** Everything before this separator in a rendered type is project-relative; absolute paths would differ per machine. */
-function clean(text, root) {
-  return text.split(root).join("<root>").replace(/\s+/g, " ").trim();
+let scrubRoots = [];
+function clean(text) {
+  let out = text;
+  for (const [needle, token] of scrubRoots) out = out.split(needle).join(token);
+  return out.replace(/\s+/g, " ").trim();
 }
 
 function describeExport(checker, symbol, root) {
@@ -182,64 +239,130 @@ function atLevel(text, level) {
   return new Set(level === "names" ? lines.map((line) => line.split(" ").slice(0, 2).join(" ")) : lines);
 }
 
+/** `kind name` pairs of a snapshot text, for the preflight comparison. */
+const namesOf = (text) => new Set(text.split("\n").filter(Boolean).map((line) => line.split(" ").slice(0, 2).join(" ")));
+
 function main() {
   const opts = parseArgs(process.argv.slice(2));
   const { root } = opts;
   const dir = path.join(root, "audit/api/snapshots");
-  const targets = subpaths(root);
-  if (targets.length === 0) throw new UsageError("package.json has no exports with a types file");
-  const program = createProgram(root, targets.map((t) => t.entry));
-  // An unresolved import turns its types into `any`; a snapshot written that way would silently weaken the gate.
-  const unresolved = program.getSemanticDiagnostics().filter((d) => d.code === 2307 || d.code === 2792);
-  if (unresolved.length > 0) {
-    const first = unresolved[0];
-    throw new UsageError(`${unresolved.length} unresolved module import(s), is npm ci done? First: ${ts.flattenDiagnosticMessageText(first.messageText, " ")}`);
-  }
-  const outputs = new Map(targets.map((t) => [path.join(dir, `${t.name}.snapshot`), snapshotOf(program, t.entry, root)]));
-  const legacyTarget = path.join(root, "audit/api/public-root-api.snapshot");
-  const legacy = legacySnapshot(root);
+  const { subpaths, files } = readExports(root);
+  if (subpaths.length === 0) throw new UsageError("package.json has no exports with a types file");
 
-  if (!opts.check) {
-    fs.mkdirSync(dir, { recursive: true });
-    for (const file of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
-      const full = path.join(dir, file);
-      if (file.endsWith(".snapshot") && !outputs.has(full)) fs.rmSync(full);
+  // Declarations: a temporary emit of the published build, or the real ./dist with --dist. The temporary directory is inside
+  // the project so the declarations resolve react / react-native from the project's node_modules.
+  const tmp = opts.dist ? undefined : fs.mkdtempSync(path.join(root, ".api-snapshot-"));
+  try {
+    const declRoot = opts.dist ? path.join(root, "dist") : tmp;
+    if (opts.dist && !fs.existsSync(declRoot)) throw new UsageError("--dist needs a built ./dist (run npm run build first)");
+    const produced = opts.dist ? new Set(walkFiles(declRoot).filter((f) => !f.endsWith(".map"))) : emitDeclarations(root, tmp);
+    scrubRoots = [...(tmp ? [[tmp, "<out>"]] : []), [root, "<root>"]];
+
+    const structure = [];
+    for (const target of files) {
+      const match = /^\.\/dist\/(.+)$/.exec(target);
+      if (!match) {
+        structure.push(`exports target ${target} is not under ./dist/`);
+        continue;
+      }
+      if (!produced.has(match[1])) structure.push(`exports target ${target} is not produced by the build`);
     }
-    for (const [file, text] of outputs) fs.writeFileSync(file, text);
-    fs.writeFileSync(legacyTarget, legacy.text);
-    console.log(`Wrote ${outputs.size} subpath snapshot(s) to audit/api/snapshots and ${legacy.count} root exports to audit/api/public-root-api.snapshot`);
+    if (opts.packed) {
+      let listed;
+      try {
+        const out = execFileSync("npm", ["pack", "--dry-run", "--json", "--ignore-scripts"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+        listed = new Set(JSON.parse(out)[0].files.map((f) => f.path));
+      } catch (error) {
+        throw new UsageError(`npm pack --dry-run failed: ${error.message}`);
+      }
+      for (const target of files) if (!listed.has(target.replace(/^\.\//, ""))) structure.push(`exports target ${target} would not be in the packed tarball`);
+    }
+
+    const entries = subpaths.map((t) => ({ ...t, entry: path.join(declRoot, t.types) }));
+    const missing = entries.filter((t) => !fs.existsSync(t.entry));
+    for (const t of missing) structure.push(`exports types target ./dist/${t.types} is not produced by the build`);
+    const present = entries.filter((t) => fs.existsSync(t.entry));
+
+    // skipLibCheck would also skip the diagnostics of our own .d.ts files, so it is off here; only the declaration files under
+    // the declaration root are asked for diagnostics (not node_modules).
+    const program = createProgram(root, present.map((t) => t.entry), { skipLibCheck: false });
+    // An unresolved import turns its types into `any`; a snapshot written that way would silently weaken the gate.
+    const unresolved = program
+      .getSourceFiles()
+      .filter((f) => f.isDeclarationFile && path.resolve(f.fileName).startsWith(`${path.resolve(declRoot)}${path.sep}`))
+      .flatMap((f) => program.getSemanticDiagnostics(f))
+      .filter((d) => d.code === 2307 || d.code === 2792);
+    if (unresolved.length > 0) {
+      throw new UsageError(`${unresolved.length} unresolved module import(s), is npm ci done? First: ${ts.flattenDiagnosticMessageText(unresolved[0].messageText, " ")}`);
+    }
+    const outputs = new Map(present.map((t) => [path.join(dir, `${t.name}.snapshot`), snapshotOf(program, t.entry, root)]));
+
+    // Preflight: the export names of the source entry file must equal those of the declarations.
+    const preflight = [];
+    const withSource = present.filter((t) => fs.existsSync(path.join(root, "src", t.source)));
+    if (withSource.length > 0) {
+      scrubRoots = [[root, "<root>"]];
+      const sourceProgram = createProgram(root, withSource.map((t) => path.join(root, "src", t.source)));
+      for (const t of withSource) {
+        const fromSource = namesOf(snapshotOf(sourceProgram, path.join(root, "src", t.source), root));
+        const fromDecl = namesOf(outputs.get(path.join(dir, `${t.name}.snapshot`)));
+        for (const name of fromSource) if (!fromDecl.has(name)) preflight.push(`${t.name}: ${name} is in the source but not in the declarations`);
+        for (const name of fromDecl) if (!fromSource.has(name)) preflight.push(`${t.name}: ${name} is in the declarations but not in the source`);
+      }
+    }
+
+    const legacyTarget = path.join(root, "audit/api/public-root-api.snapshot");
+    const legacy = legacySnapshot(root);
+
+    if (!opts.check) {
+      if (structure.length > 0 || preflight.length > 0) {
+        console.error("Refusing to write snapshots:");
+        for (const problem of [...structure, ...preflight]) console.error(`  ${problem}`);
+        return 1;
+      }
+      fs.mkdirSync(dir, { recursive: true });
+      for (const file of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+        const full = path.join(dir, file);
+        if (file.endsWith(".snapshot") && !outputs.has(full)) fs.rmSync(full);
+      }
+      for (const [file, text] of outputs) fs.writeFileSync(file, text);
+      fs.writeFileSync(legacyTarget, legacy.text);
+      console.log(`Wrote ${outputs.size} subpath snapshot(s) to audit/api/snapshots and ${legacy.count} root exports to audit/api/public-root-api.snapshot`);
+      return 0;
+    }
+
+    const problems = [...structure, ...preflight.map((p) => `preflight: ${p}`)];
+    for (const [file, expected] of outputs) {
+      const rel = path.relative(root, file);
+      if (!fs.existsSync(file)) {
+        problems.push(`${rel}: missing`);
+        continue;
+      }
+      const actual = atLevel(fs.readFileSync(file, "utf8"), opts.level);
+      const wanted = atLevel(expected, opts.level);
+      for (const line of wanted) if (!actual.has(line)) problems.push(`${rel}: + ${line}`);
+      for (const line of actual) if (!wanted.has(line)) problems.push(`${rel}: - ${line}`);
+    }
+    if (fs.existsSync(dir)) {
+      for (const file of fs.readdirSync(dir)) {
+        if (file.endsWith(".snapshot") && !outputs.has(path.join(dir, file))) problems.push(`audit/api/snapshots/${file}: stale (no matching subpath)`);
+      }
+    }
+    const legacyActual = fs.existsSync(legacyTarget) ? fs.readFileSync(legacyTarget, "utf8") : "";
+    if (legacyActual !== legacy.text) problems.push("audit/api/public-root-api.snapshot: differs from src/index.ts");
+
+    if (problems.length > 0) {
+      console.error("Public API snapshot drift detected (+ expected by the declarations, - found in the snapshot file):");
+      for (const problem of problems) console.error(`  ${problem}`);
+      console.error("Run npm run api:snapshot and review the explicit diff.");
+      return 1;
+    }
+    const total = [...outputs.values()].reduce((n, text) => n + text.split("\n").filter(Boolean).length, 0);
+    console.log(`Public API snapshot consistent (${outputs.size} subpath(s), ${total} exports from ${opts.dist ? "./dist" : "the emitted declarations"}${opts.packed ? ", packed tarball checked" : ""}, ${legacy.count} legacy root names, level ${opts.level}).`);
     return 0;
+  } finally {
+    if (tmp) fs.rmSync(tmp, { recursive: true, force: true });
   }
-
-  const problems = [];
-  for (const [file, expected] of outputs) {
-    const rel = path.relative(root, file);
-    if (!fs.existsSync(file)) {
-      problems.push(`${rel}: missing`);
-      continue;
-    }
-    const actual = atLevel(fs.readFileSync(file, "utf8"), opts.level);
-    const wanted = atLevel(expected, opts.level);
-    for (const line of wanted) if (!actual.has(line)) problems.push(`${rel}: + ${line}`);
-    for (const line of actual) if (!wanted.has(line)) problems.push(`${rel}: - ${line}`);
-  }
-  if (fs.existsSync(dir)) {
-    for (const file of fs.readdirSync(dir)) {
-      if (file.endsWith(".snapshot") && !outputs.has(path.join(dir, file))) problems.push(`audit/api/snapshots/${file}: stale (no matching subpath)`);
-    }
-  }
-  const legacyActual = fs.existsSync(legacyTarget) ? fs.readFileSync(legacyTarget, "utf8") : "";
-  if (legacyActual !== legacy.text) problems.push("audit/api/public-root-api.snapshot: differs from src/index.ts");
-
-  if (problems.length > 0) {
-    console.error("Public API snapshot drift detected (+ expected by the source, - found in the snapshot file):");
-    for (const problem of problems) console.error(`  ${problem}`);
-    console.error("Run npm run api:snapshot and review the explicit diff.");
-    return 1;
-  }
-  const total = [...outputs.values()].reduce((n, text) => n + text.split("\n").filter(Boolean).length, 0);
-  console.log(`Public API snapshot consistent (${outputs.size} subpath(s), ${total} exports, ${legacy.count} legacy root names, level ${opts.level}).`);
-  return 0;
 }
 
 try {
