@@ -240,3 +240,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-412 (E6-20: StateView with EmptyState, ErrorState, LoadingState, Result and AsyncBoundary) | #195 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-452 (ownership exception for PLRNUI-412: fixture and generated maturity page) | #194 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-242 (E11-12: dashboard app starter template) | #196 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-263 (E11-17: settings app starter template) | #197 | PR open (row committed pre-merge, see ADR 0020 Branching) |
