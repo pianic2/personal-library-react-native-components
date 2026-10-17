@@ -192,7 +192,8 @@ function describeExport(checker, symbol, root) {
     parts.push(...signaturesOf(type, ts.SignatureKind.Call).map((sig) => `call ${sig}`));
     parts.push(...signaturesOf(type, ts.SignatureKind.Construct).map((sig) => `new ${sig}`));
     parts.push(...checker.getIndexInfosOfType(type).map((info) => `${info.isReadonly ? "readonly " : ""}[${show(info.keyType)}]: ${show(info.type)}`));
-    parts.push(...props.sort());
+    // Only an object type is its members: the "members" of a union of literals are the apparent members of String (lib typings).
+    if (objectLike) parts.push(...props.sort());
     lines.push(["type", parts.join("; ")]);
   }
   if (flags & ts.SymbolFlags.Class) {
@@ -256,7 +257,8 @@ function main() {
     const declRoot = opts.dist ? path.join(root, "dist") : tmp;
     if (opts.dist && !fs.existsSync(declRoot)) throw new UsageError("--dist needs a built ./dist (run npm run build first)");
     const produced = opts.dist ? new Set(walkFiles(declRoot).filter((f) => !f.endsWith(".map"))) : emitDeclarations(root, tmp);
-    scrubRoots = [...(tmp ? [[tmp, "<out>"]] : []), [root, "<root>"]];
+    // The declaration root is scrubbed under one token so the temporary emit and a real ./dist render identically.
+    scrubRoots = [[declRoot, "<decl>"], [root, "<root>"]];
 
     const structure = [];
     for (const target of files) {

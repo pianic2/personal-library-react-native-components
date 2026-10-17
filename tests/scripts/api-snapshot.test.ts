@@ -254,6 +254,16 @@ describe("PLRNUI-315 per-subpath API snapshot", () => {
     assert.match(bad.err, /would not be in the packed tarball/);
   });
 
+  it("a real tsc build of the project gives the same snapshot as the temporary emit (dist and emit agree)", () => {
+    const root = project();
+    assert.equal(run(root).code, 0);
+    const tsc = join(repo, "node_modules/typescript/bin/tsc");
+    const build = spawnSync(process.execPath, [tsc, "-p", "tsconfig.json", "--noEmit", "false", "--outDir", "dist", "--declaration", "--declarationMap", "--sourceMap"], { cwd: root, encoding: "utf8" });
+    assert.equal(build.status, 0, build.stdout + build.stderr);
+    const check = run(root, "--check", "--dist");
+    assert.equal(check.code, 0, check.err);
+  });
+
   it("the emitted declarations are not left behind and nothing is written outside audit/api", () => {
     const root = project();
     run(root);
