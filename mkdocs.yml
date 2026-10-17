@@ -81,6 +81,7 @@ nav:
       - Feedback:
           - Overview: components/feedback/index.md
           - Alert: components/feedback/alert.md
+          - Banner: components/feedback/banner.md
           - ProgressBar: components/feedback/progress-bar.md
           - Spinner: components/feedback/spinner.md
       - Overlay:

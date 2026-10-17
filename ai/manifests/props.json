@@ -1461,6 +1461,120 @@
         }
       ]
     },
+    "Banner": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "actionLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actions",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Extra actions, rendered after the `actionLabel` button; the caller supplies the controls."
+        },
+        {
+          "name": "dismissKey",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "An identifier for this announcement, passed to `onDismiss`; the Banner never reads or writes storage itself."
+        },
+        {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": false,
+          "default": "Dismiss",
+          "description": "Accessibility label of the close button. Defaults to \"Dismiss\"."
+        },
+        {
+          "name": "dismissible",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Shows the close button. Defaults to true when `onDismiss` is set. Closing hides the banner and calls `onDismiss`."
+        },
+        {
+          "name": "icon",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "A leading icon. Decorative: it is hidden from assistive technology, the role and the text carry the meaning."
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onAction",
+          "type": "() => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onDismiss",
+          "type": "(dismissKey?: string | undefined) => void",
+          "required": false,
+          "default": null,
+          "description": "Called after the banner is dismissed, with `dismissKey` so the app can remember the dismissal (the Banner stores nothing)."
+        },
+        {
+          "name": "position",
+          "type": "\"inline\" | \"sticky\"",
+          "required": false,
+          "default": "inline",
+          "description": "`inline` (default) sits in the layout; `sticky` stays at the top of its parent and adds the top safe-area inset when a SafeAreaInsetsProvider is mounted.",
+          "values": [
+            "inline",
+            "sticky"
+          ]
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "\"info\" | \"success\" | \"warning\" | \"danger\" | \"neutral\"",
+          "required": false,
+          "default": "info",
+          "description": "Colour and urgency: `warning` and `danger` are announced with role alert, the others with role status.",
+          "values": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      ]
+    },
     "BottomBar": {
       "status": "prototype",
       "props": [
