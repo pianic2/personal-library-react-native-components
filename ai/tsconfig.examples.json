@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "baseUrl": ".",
+    "paths": {
+      "@personal-library/react-native-components": ["../src/index.ts"]
+    }
+  },
+  "include": ["examples/*.tsx"],
+  "exclude": ["../dist", "../node_modules"]
+}
