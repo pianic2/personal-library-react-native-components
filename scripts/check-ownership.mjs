@@ -70,6 +70,9 @@ function loadTicket(ticketId, backlogDir, jiraMapFile) {
 //   "extra": additional exact paths for a backlog ticket.
 // Paths are exact, or end in "/**", except the one allowed wildcard below. A malformed file is an error (exit 2).
 const ALLOWED_WILDCARDS = ["audit/api/snapshots/*.snapshot"];
+// An "extra" grant (added to an existing ticket) may never reach the gates themselves: the workflows, the check scripts and
+// this file. Governance tickets that own those files are listed under "tickets" and reviewed as such.
+const PROTECTED = [/^\.github\//, /^scripts\/check-[^/]*$/, /^audit\/texo-v1\/ownership-extensions\.json$/];
 
 function loadExtensions(file) {
   let raw;
@@ -86,11 +89,12 @@ function loadExtensions(file) {
   };
   if (!isObject(parsed)) fail("expected an object");
   for (const key of Object.keys(parsed)) if (key !== "tickets" && key !== "extra" && key !== "$comment") fail(`unknown key ${key}`);
-  const checkPaths = (label, paths) => {
+  const checkPaths = (label, paths, protectedPaths = false) => {
     if (!Array.isArray(paths) || paths.length === 0) fail(`${label}: expected a non-empty array of paths`);
     for (const path of paths) {
       if (typeof path !== "string" || path.length === 0) fail(`${label}: empty or non-string path`);
       if (path.startsWith("/") || path.includes("..")) fail(`${label}: unsafe path ${path}`);
+      if (protectedPaths && PROTECTED.some((pattern) => pattern.test(path))) fail(`${label}: ${path} is a protected gate file and can not be added to a ticket`);
       if (/[*?[]/.test(path) && !path.endsWith("/**") && !ALLOWED_WILDCARDS.includes(path)) fail(`${label}: wildcard not allowed in ${path}`);
       if (path === "**" || path === "*" || path.endsWith("/**") && path.split("/").length < 3) fail(`${label}: too broad ${path}`);
     }
@@ -105,7 +109,7 @@ function loadExtensions(file) {
   }
   for (const [key, value] of Object.entries(extra)) {
     if (!/^PLRNUI-\d+$/.test(key)) fail(`bad ticket key ${key}`);
-    checkPaths(`extra.${key}`, value);
+    checkPaths(`extra.${key}`, value, true);
   }
   return { tickets, extra };
 }

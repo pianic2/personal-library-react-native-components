@@ -245,7 +245,7 @@ describe("PLRNUI-460 ownership extensions", () => {
     setExtensions({ tickets: { "PLRNUI-7000": { filesTouched: ["tools/x.mjs"] } } });
     write("tools/x.mjs");
     commit("change");
-    assert.notEqual(run("PLRNUI-7001", "base").status, 0);
+    assert.equal(run("PLRNUI-7001", "base").status, 2);
   });
 
   it("fails closed on a malformed or too broad extensions file", () => {
@@ -268,6 +268,40 @@ describe("PLRNUI-460 ownership extensions", () => {
       setExtensions(value);
       assert.equal(run("PLRNUI-9999", "base").status, 2, JSON.stringify(value));
     }
+  });
+
+  it("resolves a local backlog id to its Jira key for the extra paths", () => {
+    setExtensions({ extra: { "PLRNUI-9999": ["src/index.ts"] } });
+    write("src/a.ts");
+    write("src/index.ts");
+    commit("change");
+    assert.equal(run("E99-01", "base").status, 0);
+  });
+
+  it("combines tickets-less extras with filesTouched and accepts $comment", () => {
+    setExtensions({ $comment: "why", extra: { "PLRNUI-9999": ["docs/extra.md"] } });
+    write("docs/extra.md");
+    write("scripts/tool.mjs");
+    commit("change");
+    assert.equal(run("PLRNUI-9999", "base").status, 0);
+  });
+
+  it("refuses to add a gate file to a ticket through extra", () => {
+    write("src/a.ts");
+    commit("change");
+    for (const path of [".github/workflows/texo-v1-pr.yml", ".github/CODEOWNERS", "scripts/check-ownership.mjs", "scripts/check-commit-msg.mjs", "audit/texo-v1/ownership-extensions.json"]) {
+      setExtensions({ extra: { "PLRNUI-9999": [path] } });
+      const result = run("PLRNUI-9999", "base");
+      assert.equal(result.status, 2, path);
+      assert.match(result.stderr, /protected gate file/);
+    }
+  });
+
+  it("a governance ticket may own gate files through tickets", () => {
+    setExtensions({ tickets: { "PLRNUI-7000": { filesTouched: ["scripts/check-ownership.mjs", "audit/texo-v1/ownership-extensions.json"] } } });
+    write("scripts/check-ownership.mjs");
+    commit("change");
+    assert.equal(run("PLRNUI-7000", "base").status, 0);
   });
 
   it("works without an extensions file", () => {
