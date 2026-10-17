@@ -1,0 +1,25 @@
+{
+  "name": "settings-starter",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "export:web": "expo export --platform web --output-dir dist-web"
+  },
+  "dependencies": {
+    "@personal-library/react-native-components": "^0.1.0",
+    "expo": "57.0.21",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-web": "0.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.0.0",
+    "@types/react": "19.2.17",
+    "typescript": "6.0.3"
+  }
+}

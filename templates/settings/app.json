@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Settings starter",
+    "slug": "settings-starter",
+    "platforms": ["android", "ios", "web"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
