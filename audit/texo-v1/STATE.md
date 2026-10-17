@@ -259,3 +259,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-461 (semver and migration-changelog impact of the native layer and density runtime) | #214 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-462 (outline colour-role contrast fix) | #215 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-463 (ownership extensions amendment: 462 legacy colour test, 197 snapshots and example) | #218 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-465 (ownership extensions amendment: pinned prop contracts for 339 and 346) | #220 | PR open (row committed pre-merge, see ADR 0020 Branching) |
