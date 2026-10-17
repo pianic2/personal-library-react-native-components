@@ -21,6 +21,11 @@
     "scripts/validate-theme-contrast.mjs",
     "tests/theme/contrast.test.tsx"
    ]
+  },
+  "PLRNUI-463": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -96,8 +101,10 @@
   ],
   "PLRNUI-197": [
    "ai/manifests/props.json",
+   "audit/api/snapshots/*.snapshot",
    "docs/components.md",
-   "docs/maturity.md"
+   "docs/maturity.md",
+   "examples/text-inputs.tsx"
   ],
   "PLRNUI-295": [
    "ai/manifests/props.json",
@@ -117,6 +124,9 @@
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot",
    "ai/examples/NavContext.tsx"
+  ],
+  "PLRNUI-462": [
+   "tests/theme/semantic-colors.test.tsx"
   ]
  }
 }
