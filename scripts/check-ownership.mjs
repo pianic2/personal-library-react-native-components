@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // File-ownership guard (ADR 0020, PLRNUI-449): a branch diff may touch only the ticket's filesTouched.
-// Usage: check-ownership.mjs <ticket-id> [base] [--backlog-dir <dir>] [--jira-map <file>]
+// Usage: check-ownership.mjs <ticket-id> [base] [--backlog-dir <dir>] [--jira-map <file>] [--extensions <file>]
 // <ticket-id> is a local id (E18-06) or a Jira key (PLRNUI-449). Exit 0 ok, 1 violations, 2 usage/unknown ticket/git error.
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -65,11 +65,56 @@ function loadTicket(ticketId, backlogDir, jiraMapFile) {
   return undefined;
 }
 
+// PO-approved additions (PLRNUI-460): audit/texo-v1/ownership-extensions.json, keyed by Jira key.
+//   "tickets": tickets that are not in the generated backlog, with their filesTouched;
+//   "extra": additional exact paths for a backlog ticket.
+// Paths are exact, or end in "/**", except the one allowed wildcard below. A malformed file is an error (exit 2).
+const ALLOWED_WILDCARDS = ["audit/api/snapshots/*.snapshot"];
+
+function loadExtensions(file) {
+  let raw;
+  try {
+    raw = readFileSync(file, "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return { tickets: {}, extra: {} };
+    throw error;
+  }
+  const parsed = JSON.parse(raw);
+  const isObject = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
+  const fail = (message) => {
+    throw new Error(`invalid ownership extensions: ${message}`);
+  };
+  if (!isObject(parsed)) fail("expected an object");
+  for (const key of Object.keys(parsed)) if (key !== "tickets" && key !== "extra" && key !== "$comment") fail(`unknown key ${key}`);
+  const checkPaths = (label, paths) => {
+    if (!Array.isArray(paths) || paths.length === 0) fail(`${label}: expected a non-empty array of paths`);
+    for (const path of paths) {
+      if (typeof path !== "string" || path.length === 0) fail(`${label}: empty or non-string path`);
+      if (path.startsWith("/") || path.includes("..")) fail(`${label}: unsafe path ${path}`);
+      if (/[*?[]/.test(path) && !path.endsWith("/**") && !ALLOWED_WILDCARDS.includes(path)) fail(`${label}: wildcard not allowed in ${path}`);
+      if (path === "**" || path === "*" || path.endsWith("/**") && path.split("/").length < 3) fail(`${label}: too broad ${path}`);
+    }
+  };
+  const tickets = parsed.tickets ?? {};
+  const extra = parsed.extra ?? {};
+  if (!isObject(tickets) || !isObject(extra)) fail("tickets and extra must be objects");
+  for (const [key, value] of Object.entries(tickets)) {
+    if (!/^PLRNUI-\d+$/.test(key)) fail(`bad ticket key ${key}`);
+    if (!isObject(value)) fail(`tickets.${key}: expected an object`);
+    checkPaths(`tickets.${key}.filesTouched`, value.filesTouched);
+  }
+  for (const [key, value] of Object.entries(extra)) {
+    if (!/^PLRNUI-\d+$/.test(key)) fail(`bad ticket key ${key}`);
+    checkPaths(`extra.${key}`, value);
+  }
+  return { tickets, extra };
+}
+
 function parseArgs(argv) {
   const positional = [];
   const options = {};
   for (let i = 0; i < argv.length; i += 1) {
-    if (argv[i] === "--backlog-dir" || argv[i] === "--jira-map") options[argv[i]] = argv[++i];
+    if (argv[i] === "--backlog-dir" || argv[i] === "--jira-map" || argv[i] === "--extensions") options[argv[i]] = argv[++i];
     else positional.push(argv[i]);
   }
   return { positional, options };
@@ -84,13 +129,25 @@ function main() {
   }
   const backlogDir = options["--backlog-dir"] ?? join(REPO_ROOT, "audit", "texo-v1", "backlog");
   const jiraMapFile = options["--jira-map"] ?? join(REPO_ROOT, "audit", "texo-v1", "jira-map.json");
+  const extensionsFile = options["--extensions"] ?? join(REPO_ROOT, "audit", "texo-v1", "ownership-extensions.json");
   let ticket;
+  let extensions;
   try {
+    extensions = loadExtensions(extensionsFile);
     ticket = loadTicket(ticketId, backlogDir, jiraMapFile);
   } catch (error) {
-    console.error(`cannot read backlog: ${error.message}`);
+    console.error(`cannot read backlog or ownership extensions: ${error.message}`);
     return 2;
   }
+  let jiraKey = ticketId;
+  if (!/^PLRNUI-\d+$/.test(ticketId)) {
+    try {
+      jiraKey = JSON.parse(readFileSync(jiraMapFile, "utf8")).tickets?.[ticketId] ?? ticketId;
+    } catch {
+      jiraKey = ticketId;
+    }
+  }
+  if (!ticket && extensions.tickets[jiraKey]) ticket = { filesTouched: extensions.tickets[jiraKey].filesTouched };
   const isStrings = (value) => Array.isArray(value) && value.every((item) => typeof item === "string" && item.length > 0);
   if (!ticket || !isStrings(ticket.filesTouched) || ticket.filesTouched.length === 0) {
     console.error(`unknown ticket or invalid filesTouched: ${ticketId}`);
@@ -101,7 +158,7 @@ function main() {
     return 2;
   }
   // Optional per-ticket allow-list of generated files; the current backlog schema has no such field.
-  const patterns = [...ticket.filesTouched, ...(ticket.allowGenerated ?? []), ...ALWAYS_ALLOWED];
+  const patterns = [...ticket.filesTouched, ...(ticket.allowGenerated ?? []), ...(extensions.extra[jiraKey] ?? []), ...ALWAYS_ALLOWED];
   let files;
   try {
     const output = execFileSync("git", ["diff", "-z", "--name-only", "--no-renames", `${base}...HEAD`, "--"], { encoding: "utf8" });
