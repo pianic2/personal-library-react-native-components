@@ -249,3 +249,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-244 (E13-13: compile-checked AI example per root component) | #204 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-274 (E2-09: DensityProvider and useDensity) | #205 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-278 (E2-11: WCAG contrast util and theme contrast gate) | #206 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-288 (E8-12: ThemedStatusBar, useSystemBars and system UI adapters) | #207 | PR open (row committed pre-merge, see ADR 0020 Branching) |
