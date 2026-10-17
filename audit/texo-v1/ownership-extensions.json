@@ -1,0 +1,122 @@
+{
+ "$comment": "PO-approved ownership additions (PLRNUI-460, decisions of 2026-10-17). Keyed by Jira key. 'tickets': tickets absent from the generated backlog. 'extra': additional exact paths for a backlog ticket (shared wiring required by the repository gates; generated files are regenerated, never hand-edited). Remove an entry when its ticket is merged. See docs/policies/branching.md.",
+ "tickets": {
+  "PLRNUI-460": {
+   "filesTouched": [
+    "scripts/check-ownership.mjs",
+    "tests/scripts/check-ownership.test.ts",
+    "audit/texo-v1/ownership-extensions.json",
+    "docs/policies/branching.md"
+   ]
+  },
+  "PLRNUI-461": {
+   "filesTouched": [
+    "audit/migration/migration-changelog.md",
+    "audit/migration/breaking-change-register.md"
+   ]
+  },
+  "PLRNUI-462": {
+   "filesTouched": [
+    "src/tokens/semantic.base.ts",
+    "scripts/validate-theme-contrast.mjs",
+    "tests/theme/contrast.test.tsx"
+   ]
+  }
+ },
+ "extra": {
+  "PLRNUI-229": [
+   "ai/manifests/props.json",
+   "audit/api/public-root-api.snapshot",
+   "audit/api/snapshots/*.snapshot",
+   "docs/components.md",
+   "docs/maturity.md",
+   "mkdocs.yml",
+   "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "docs/components/buttons/index.md",
+   "docs/components/buttons/touchable.md",
+   "examples/touchable.tsx",
+   "ai/examples/Touchable.tsx"
+  ],
+  "PLRNUI-280": [
+   "ai/manifests/props.json",
+   "audit/api/public-root-api.snapshot",
+   "audit/api/snapshots/*.snapshot",
+   "docs/components.md",
+   "docs/maturity.md",
+   "mkdocs.yml",
+   "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "docs/components/form/index.md",
+   "docs/components/form/field.md",
+   "examples/field.tsx",
+   "ai/examples/Field.tsx"
+  ],
+  "PLRNUI-297": [
+   "ai/manifests/props.json",
+   "audit/api/public-root-api.snapshot",
+   "audit/api/snapshots/*.snapshot",
+   "docs/components.md",
+   "docs/maturity.md",
+   "mkdocs.yml",
+   "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "docs/components/data-display/index.md",
+   "docs/components/data-display/pager.md",
+   "examples/pager.tsx",
+   "ai/examples/Pager.tsx"
+  ],
+  "PLRNUI-330": [
+   "ai/manifests/props.json",
+   "audit/api/public-root-api.snapshot",
+   "audit/api/snapshots/*.snapshot",
+   "docs/components.md",
+   "docs/maturity.md",
+   "mkdocs.yml",
+   "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "docs/components/feedback/index.md",
+   "docs/components/feedback/banner.md",
+   "examples/banner.tsx",
+   "ai/examples/Banner.tsx"
+  ],
+  "PLRNUI-428": [
+   "ai/manifests/props.json",
+   "audit/api/public-root-api.snapshot",
+   "audit/api/snapshots/*.snapshot",
+   "docs/components.md",
+   "docs/maturity.md",
+   "mkdocs.yml",
+   "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "docs/components/layout/index.md",
+   "docs/components/layout/screen.md",
+   "examples/screen.tsx",
+   "ai/examples/Screen.tsx"
+  ],
+  "PLRNUI-197": [
+   "ai/manifests/props.json",
+   "docs/components.md",
+   "docs/maturity.md"
+  ],
+  "PLRNUI-295": [
+   "ai/manifests/props.json",
+   "audit/api/snapshots/*.snapshot"
+  ],
+  "PLRNUI-339": [
+   "ai/manifests/props.json",
+   "audit/api/snapshots/*.snapshot",
+   "ai/examples/BottomSheet.tsx"
+  ],
+  "PLRNUI-346": [
+   "ai/manifests/props.json",
+   "audit/api/snapshots/*.snapshot",
+   "ai/examples/Popover.tsx"
+  ],
+  "PLRNUI-429": [
+   "ai/manifests/props.json",
+   "audit/api/snapshots/*.snapshot",
+   "ai/examples/NavContext.tsx"
+  ]
+ }
+}
