@@ -2,6 +2,7 @@
 
 <!-- catalog:begin -->
 - [Checkbox](checkbox.md) — beta
+- [Field](field.md) — beta
 - [FormField](form-field.md) — experimental
 - [Input](input.md) — beta
 - [PasswordInput](password-input.md) — experimental
