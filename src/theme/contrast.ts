@@ -18,7 +18,10 @@ export interface Rgba {
 }
 
 const HEX = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-const FUNCTION = /^rgba?\(\s*([^)]*?)\s*\)$/i;
+const NUMBER = "(?:\\d*\\.?\\d+%?)";
+// rgb(r, g, b), rgba(r, g, b, a) (commas) or rgb(r g b), rgb(r g b / a) (spaces, a slash before the alpha). Nothing else.
+const COMMA_FORM = new RegExp(`^rgba?\\(\\s*(${NUMBER})\\s*,\\s*(${NUMBER})\\s*,\\s*(${NUMBER})(?:\\s*,\\s*(${NUMBER}))?\\s*\\)$`, "i");
+const SPACE_FORM = new RegExp(`^rgba?\\(\\s*(${NUMBER})\\s+(${NUMBER})\\s+(${NUMBER})(?:\\s*/\\s*(${NUMBER}))?\\s*\\)$`, "i");
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -37,8 +40,8 @@ function alphaValue(token: string): number | null {
 }
 
 /**
- * Parses `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`, `rgb(r, g, b)` and `rgba(r, g, b, a)` (comma or space separated, a
- * `/` before the alpha is accepted, channels and alpha may be percentages). Returns `null` for anything else.
+ * Parses `#RGB`, `#RGBA`, `#RRGGBB`, `#RRGGBBAA`, `rgb(r, g, b)`, `rgba(r, g, b, a)` and the space form `rgb(r g b / a)`
+ * (channels and alpha may be percentages). Returns `null` for anything else, including mixed or doubled separators.
  */
 export function parseColor(input: string): Rgba | null {
   if (typeof input !== "string") return null;
@@ -50,12 +53,10 @@ export function parseColor(input: string): Rgba | null {
     const value = (from: number) => parseInt(digits.slice(from, from + 2), 16);
     return { r: value(0), g: value(2), b: value(4), a: digits.length === 8 ? value(6) / 255 : 1 };
   }
-  const fn = FUNCTION.exec(text);
+  const fn = COMMA_FORM.exec(text) ?? SPACE_FORM.exec(text);
   if (fn) {
-    const parts = fn[1]!.split(/[\s,/]+/).filter(Boolean);
-    if (parts.length !== 3 && parts.length !== 4) return null;
-    const channels = parts.slice(0, 3).map(channelValue);
-    const alpha = parts.length === 4 ? alphaValue(parts[3]!) : 1;
+    const channels = [fn[1]!, fn[2]!, fn[3]!].map(channelValue);
+    const alpha = fn[4] === undefined ? 1 : alphaValue(fn[4]);
     if (channels.some((c) => c === null) || alpha === null) return null;
     return { r: channels[0]!, g: channels[1]!, b: channels[2]!, a: alpha };
   }
@@ -89,7 +90,9 @@ export function relativeLuminance(color: string): number {
 
 /**
  * WCAG contrast ratio (1 to 21) of `foreground` on `background`. A translucent `background` is first composited over
- * `backdrop` (default white); a translucent `foreground` is composited over the resulting background. Throws a
+ * `backdrop` (default white); a translucent `foreground` is composited over the resulting background. The composited
+ * colour is rounded to whole 8-bit channels before its luminance is taken (as a screen shows it), which can move a borderline
+ * pair by a few thousandths. Throws a
  * `TypeError` for a colour it cannot parse, so a gate built on it fails closed.
  */
 export function contrastRatio(foreground: string, background: string, backdrop = "#FFFFFF"): number {

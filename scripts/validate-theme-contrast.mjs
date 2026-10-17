@@ -3,49 +3,57 @@
 //
 // Usage: validate-theme-contrast.mjs [--theme-file <json>] [--json]
 //   (default)       the default theme, light and dark (roles from src/tokens/semantic.base.ts)
-//   --theme-file    another theme: { "name": "...", "modes": { "light": <roles>, "dark": <roles> } } where <roles> has the
-//                   shape of SemanticRoles (surface.0..3, onSurface, onSurfaceMuted, primary/secondary/error with
-//                   main/on/container/onContainer, outline, focusRing). Colours may be #RGB(A), #RRGGBB(AA), rgb() or rgba().
+//   --theme-file    another theme: { "name": "...", "modes": { "light": <roles>, "dark": <roles> }, "pairs"?: [...] } where
+//                   <roles> has the shape of SemanticRoles (surface.0..3, onSurface, onSurfaceMuted, primary/secondary/error
+//                   with main/on/container/onContainer, outline, focusRing). Both modes are required. Colours may be
+//                   #RGB(A), #RRGGBB(AA), rgb() or rgba(); a background must be opaque. "pairs" adds pairs to the built-in
+//                   list: { "id": string, "fg": role path, "bg": role path, "min": number }.
 //                   Waivers apply to the default theme only: a file theme must pass every pair.
 //   --json          print the result as JSON instead of a table
-// Exit 0: every pair passes or is waived. Exit 1: a pair fails (the table names it), or a waiver is stale (its pair now
-// passes, so remove it). Exit 2: usage error or unreadable / malformed input (an unparseable colour included).
+// Exit 0: every pair passes or is waived. Exit 1: a pair fails (the table names it), a waived pair got WORSE than its floor
+// (the waiver covers only the documented finding), or a waiver is stale (its pair now passes) or dead (no such pair).
+// Exit 2: usage error or unreadable / malformed input (an unparseable colour or a translucent background included).
 //
 // The pair list (PAIRS) and the waivers (WAIVERS) are data. A preset adds its own pairs by extending PAIRS in a copy of
 // this list; a waiver needs a reason and is printed on every run, never silent. Disabled states are exempt from WCAG and are
 // not listed. Token values are not changed here: a failing pair is a finding for a separate fix ticket.
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const AA_TEXT = 4.5;
-const AA_NON_TEXT = 3;
 
-/** id, foreground role path, background role path, minimum ratio and what it protects. Paths are dotted keys of the roles. */
+/**
+ * id, foreground role path, background role path and kind: "text" (WCAG AA 4.5) or "non-text" (3). Paths are dotted keys of
+ * the roles. The minimum comes from src/theme/contrast.ts (AA_TEXT, AA_NON_TEXT), the single source of the thresholds.
+ */
 export const PAIRS = [
-  ...[0, 1, 2, 3].map((tier) => ({ id: `onSurface/surface.${tier}`, fg: "onSurface", bg: `surface.${tier}`, min: AA_TEXT, kind: "text" })),
-  ...[0, 1, 2, 3].map((tier) => ({ id: `onSurfaceMuted/surface.${tier}`, fg: "onSurfaceMuted", bg: `surface.${tier}`, min: AA_TEXT, kind: "text" })),
-  { id: "onPrimary/primary", fg: "primary.on", bg: "primary.main", min: AA_TEXT, kind: "text" },
-  { id: "onSecondary/secondary", fg: "secondary.on", bg: "secondary.main", min: AA_TEXT, kind: "text" },
-  { id: "onError/error", fg: "error.on", bg: "error.main", min: AA_TEXT, kind: "text" },
-  { id: "onContainer/container (primary)", fg: "primary.onContainer", bg: "primary.container", min: AA_TEXT, kind: "text" },
-  { id: "onContainer/container (error)", fg: "error.onContainer", bg: "error.container", min: AA_TEXT, kind: "text" },
-  { id: "outline/surface.0", fg: "outline", bg: "surface.0", min: AA_NON_TEXT, kind: "non-text" },
-  { id: "outline/surface.1", fg: "outline", bg: "surface.1", min: AA_NON_TEXT, kind: "non-text" },
-  { id: "focusRing/surface.0", fg: "focusRing", bg: "surface.0", min: AA_NON_TEXT, kind: "non-text" },
-  { id: "focusRing/surface.1", fg: "focusRing", bg: "surface.1", min: AA_NON_TEXT, kind: "non-text" },
+  ...[0, 1, 2, 3].map((tier) => ({ id: `onSurface/surface.${tier}`, fg: "onSurface", bg: `surface.${tier}`, kind: "text" })),
+  ...[0, 1, 2, 3].map((tier) => ({ id: `onSurfaceMuted/surface.${tier}`, fg: "onSurfaceMuted", bg: `surface.${tier}`, kind: "text" })),
+  { id: "onPrimary/primary", fg: "primary.on", bg: "primary.main", kind: "text" },
+  { id: "onSecondary/secondary", fg: "secondary.on", bg: "secondary.main", kind: "text" },
+  { id: "onError/error", fg: "error.on", bg: "error.main", kind: "text" },
+  { id: "onContainer/container (primary)", fg: "primary.onContainer", bg: "primary.container", kind: "text" },
+  { id: "onContainer/container (error)", fg: "error.onContainer", bg: "error.container", kind: "text" },
+  { id: "outline/surface.0", fg: "outline", bg: "surface.0", kind: "non-text" },
+  { id: "outline/surface.1", fg: "outline", bg: "surface.1", kind: "non-text" },
+  { id: "focusRing/surface.0", fg: "focusRing", bg: "surface.0", kind: "non-text" },
+  { id: "focusRing/surface.1", fg: "focusRing", bg: "surface.1", kind: "non-text" },
 ];
 
 const OUTLINE_REASON =
-  "known finding: the default outline role measures below 3:1 on the surfaces; changing token values is out of scope for PLRNUI-278, fix it in a separate ticket (then remove this waiver)";
+  "known finding: the default outline role measures 2.3 to 2.7 against the surfaces, below 3:1; changing token values is out of scope for PLRNUI-278, a separate token-fix ticket (no id yet, to be filed by the PO) removes this waiver";
 
-/** Waivers of the default theme, keyed "mode pair-id". Each needs a reason; a waiver whose pair passes is reported as stale. */
+/**
+ * Waivers of the default theme, keyed "mode pair-id": { reason, floor }. A waiver covers a ratio between `floor` and the
+ * minimum only; below `floor` the pair fails again (a regression of the documented finding is not covered). A waiver whose
+ * pair now passes is stale and one whose key matches no pair is dead: both fail the run, so waivers cannot accumulate.
+ */
 export const WAIVERS = {
-  "light outline/surface.0": OUTLINE_REASON,
-  "light outline/surface.1": OUTLINE_REASON,
-  "dark outline/surface.0": OUTLINE_REASON,
-  "dark outline/surface.1": OUTLINE_REASON,
+  "light outline/surface.0": { reason: OUTLINE_REASON, floor: 2.5 },
+  "light outline/surface.1": { reason: OUTLINE_REASON, floor: 2.25 },
+  "dark outline/surface.0": { reason: OUTLINE_REASON, floor: 2.6 },
+  "dark outline/surface.1": { reason: OUTLINE_REASON, floor: 2.4 },
 };
 
 class InputError extends Error {}
@@ -58,12 +66,15 @@ function lookup(roles, path, where) {
 }
 
 /**
- * Evaluates `pairs` for each mode of `theme` ({ name, modes: { light, dark } }). Returns rows
- * { theme, mode, id, fg, bg, min, ratio, status } with status "pass", "fail" or "waived".
- * `contrast` is the module of src/theme/contrast.ts. Throws InputError for a missing role or an unparseable colour.
+ * Evaluates `pairs` for each mode of `theme` ({ name, modes: { light, dark } }). Returns { rows, unusedWaivers }; a row is
+ * { theme, mode, id, fg, bg, min, ratio, status, waiver } with status "pass", "fail", "waived" or "stale-waiver", and
+ * `unusedWaivers` lists the waiver keys that matched no pair. `contrast` is the module of src/theme/contrast.ts.
+ * Throws InputError for a missing role, an unparseable colour or a translucent background.
  */
 export function evaluateTheme(theme, contrast, pairs = PAIRS, waivers = {}) {
   const rows = [];
+  const used = new Set();
+  const minimum = (pair) => (typeof pair.min === "number" ? pair.min : pair.kind === "non-text" ? contrast.AA_NON_TEXT : contrast.AA_TEXT);
   for (const [mode, roles] of Object.entries(theme.modes)) {
     for (const pair of pairs) {
       const where = `${theme.name} ${mode} ${pair.id}`;
@@ -71,16 +82,24 @@ export function evaluateTheme(theme, contrast, pairs = PAIRS, waivers = {}) {
       const bg = lookup(roles, pair.bg, where);
       let ratio;
       try {
+        const parsed = contrast.parseColor(bg);
+        if (parsed && parsed.a < 1) throw new TypeError(`background "${bg}" is translucent; a surface must be opaque to be measured`);
         ratio = contrast.contrastRatio(fg, bg);
       } catch (error) {
         throw new InputError(`${where}: ${error instanceof Error ? error.message : String(error)}`);
       }
-      const passes = contrast.meetsContrast(ratio, pair.min);
-      const waiver = waivers[`${mode} ${pair.id}`];
-      rows.push({ theme: theme.name, mode, id: pair.id, fg, bg, min: pair.min, ratio, status: passes ? (waiver ? "stale-waiver" : "pass") : waiver ? "waived" : "fail", waiver });
+      const min = minimum(pair);
+      const passes = contrast.meetsContrast(ratio, min);
+      const key = `${mode} ${pair.id}`;
+      const waiver = waivers[key];
+      if (waiver) used.add(key);
+      let status = "pass";
+      if (!passes) status = waiver && ratio >= waiver.floor ? "waived" : "fail";
+      else if (waiver) status = "stale-waiver";
+      rows.push({ theme: theme.name, mode, id: pair.id, fg, bg, min, ratio, status, waiver: waiver?.reason, floor: waiver?.floor });
     }
   }
-  return rows;
+  return { rows, unusedWaivers: Object.keys(waivers).filter((key) => !used.has(key)) };
 }
 
 function table(rows) {
@@ -123,6 +142,7 @@ async function main() {
   const { contrast, semantic } = await loadContrast();
   let theme;
   let waivers = {};
+  let extraPairs = [];
   if (options.themeFile) {
     let raw;
     try {
@@ -130,28 +150,46 @@ async function main() {
     } catch (error) {
       throw new InputError(`cannot read ${options.themeFile}: ${error instanceof Error ? error.message : String(error)}`);
     }
-    if (!raw || typeof raw.name !== "string" || typeof raw.modes !== "object" || raw.modes === null || Object.keys(raw.modes).length === 0) {
-      throw new InputError('theme file must be { "name": string, "modes": { "light"?: roles, "dark"?: roles } }');
+    if (!raw || typeof raw.name !== "string" || typeof raw.modes !== "object" || raw.modes === null) {
+      throw new InputError('theme file must be { "name": string, "modes": { "light": roles, "dark": roles }, "pairs"?: [...] }');
+    }
+    const modes = Object.keys(raw.modes).sort().join(",");
+    if (modes !== "dark,light") throw new InputError(`theme file "modes" must have exactly light and dark, got ${modes || "none"}`);
+    if (raw.pairs !== undefined) {
+      if (!Array.isArray(raw.pairs)) throw new InputError('"pairs" must be an array');
+      for (const pair of raw.pairs) {
+        if (!pair || typeof pair.id !== "string" || typeof pair.fg !== "string" || typeof pair.bg !== "string" || typeof pair.min !== "number" || !(pair.min >= 1)) {
+          throw new InputError('each pair must be { "id": string, "fg": string, "bg": string, "min": number >= 1 }');
+        }
+      }
+      extraPairs = raw.pairs;
     }
     theme = raw;
   } else {
     theme = { name: "default", modes: { light: semantic.createSemanticRoles("light"), dark: semantic.createSemanticRoles("dark") } };
     waivers = WAIVERS;
   }
-  const rows = evaluateTheme(theme, contrast, PAIRS, waivers);
+  const { rows, unusedWaivers } = evaluateTheme(theme, contrast, [...PAIRS, ...extraPairs], waivers);
   const failed = rows.filter((r) => r.status === "fail" || r.status === "stale-waiver");
-  if (options.json) console.log(JSON.stringify({ rows, ok: failed.length === 0 }, null, 2));
+  const problems = failed.length + unusedWaivers.length;
+  if (options.json) console.log(JSON.stringify({ rows, unusedWaivers, ok: problems === 0 }, null, 2));
   else {
     console.log(table(rows));
     for (const r of rows.filter((x) => x.status === "waived")) console.log(`WAIVED ${r.mode} ${r.id} (${r.ratio.toFixed(2)} < ${r.min}): ${r.waiver}`);
     for (const r of rows.filter((x) => x.status === "stale-waiver")) console.error(`STALE WAIVER ${r.mode} ${r.id}: it now passes (${r.ratio.toFixed(2)}), remove the waiver`);
-    for (const r of rows.filter((x) => x.status === "fail")) console.error(`FAIL ${r.theme} ${r.mode} ${r.id}: ${r.ratio.toFixed(2)} < ${r.min} (${r.fg} on ${r.bg})`);
-    console.log(`${rows.length} pair(s), ${rows.filter((r) => r.status === "pass").length} pass, ${rows.filter((r) => r.status === "waived").length} waived, ${failed.length} failing`);
+    for (const key of unusedWaivers) console.error(`DEAD WAIVER ${key}: no such pair, remove it`);
+    for (const r of rows.filter((x) => x.status === "fail")) {
+      const note = r.floor === undefined ? "" : ` (waiver floor ${r.floor}: the documented finding got worse)`;
+      console.error(`FAIL ${r.theme} ${r.mode} ${r.id}: ${r.ratio.toFixed(2)} < ${r.min} (${r.fg} on ${r.bg})${note}`);
+    }
+    console.log(`${rows.length} pair(s), ${rows.filter((r) => r.status === "pass").length} pass, ${rows.filter((r) => r.status === "waived").length} waived, ${problems} failing`);
   }
-  return failed.length === 0 ? 0 : 1;
+  return problems === 0 ? 0 : 1;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// realpath on both sides: a symlinked invocation path must not turn the gate into a silent no-op.
+const isCli = process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+if (isCli) {
   main().then(
     (code) => {
       process.exitCode = code;
