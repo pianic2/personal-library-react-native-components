@@ -10,6 +10,8 @@ export { B } from "./components/B/index.js";
 export type { BProps } from "./components/B/index.js";
 export { Badge } from "./components/Badge/index.js";
 export type { BadgeProps } from "./components/Badge/index.js";
+export { Banner } from "./components/Banner/index.js";
+export type { BannerProps } from "./components/Banner/index.js";
 export { BottomBar } from "./components/BottomBar/index.js";
 export type { BottomBarProps } from "./components/BottomBar/index.js";
 export { BottomSheet } from "./components/BottomSheet/index.js";

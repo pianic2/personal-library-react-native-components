@@ -4,6 +4,8 @@ function B 881d9b0296f3
 type BProps 1dd1e5d10c55
 function Badge 21bcf67b8118
 type BadgeProps 4955d1ab51df
+function Banner 004b0f5221d2
+type BannerProps e9264e479ebd
 function BottomBar 93955c4fa6f2
 type BottomBarProps 93c92dfc1ed4
 function BottomSheet 064182adbd63

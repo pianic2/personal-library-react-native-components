@@ -1,6 +1,7 @@
 type:AlertProps
 type:BProps
 type:BadgeProps
+type:BannerProps
 type:BottomBarProps
 type:BoxProps
 type:Breakpoint
@@ -45,6 +46,7 @@ type:TopBarProps
 value:Alert
 value:B
 value:Badge
+value:Banner
 value:BottomBar
 value:BottomSheet
 value:Box
