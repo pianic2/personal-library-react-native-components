@@ -8,8 +8,8 @@ function Banner 004b0f5221d2
 type BannerProps e9264e479ebd
 function BottomBar 93955c4fa6f2
 type BottomBarProps 93c92dfc1ed4
-function BottomSheet e04ba431fe12
-type BottomSheetProps 00194161c6ca
+function BottomSheet 2ade26283913
+type BottomSheetProps e49b353bb615
 function Box 7a898380a585
 type BoxProps 42c2b50191c8
 type Breakpoint 05a1144747fc

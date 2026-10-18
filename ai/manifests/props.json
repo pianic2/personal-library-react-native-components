@@ -1744,13 +1744,6 @@
           "required": false,
           "default": null,
           "description": ""
-        },
-        {
-          "name": "visible",
-          "type": "boolean",
-          "required": false,
-          "default": null,
-          "description": ""
         }
       ]
     },
