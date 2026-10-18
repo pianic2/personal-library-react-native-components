@@ -29,6 +29,8 @@ export { Column, Stack } from "./components/Column/index.js";
 export type { ColumnProps } from "./components/Column/index.js";
 export { Divider } from "./components/Divider/index.js";
 export type { DividerProps } from "./components/Divider/index.js";
+export { Field, useField, useFieldControlProps } from "./components/Field/index.js";
+export type { FieldProps, FieldStatus, FieldContextValue, FieldControlAttributes } from "./components/Field/index.js";
 export { FormField } from "./components/FormField/index.js";
 export type { FormFieldProps } from "./components/FormField/index.js";
 export { Heading } from "./components/Heading/index.js";

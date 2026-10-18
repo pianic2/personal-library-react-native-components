@@ -2,14 +2,14 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 48 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 49 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
 | `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 24 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `demo` | 25 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -28,6 +28,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Spinner](components/feedback/spinner.md) | feedback | `demo` | Activity indicator in three sizes. |
 | StateView | feedback | `prototype` | Empty, error, loading and result blocks plus an AsyncBoundary that picks one from a request status. |
 | [Checkbox](components/form/checkbox.md) | form | `demo` | Two-state checkbox with a label. |
+| [Field](components/form/field.md) | form | `demo` | Compound form field: Label, Control, Hint and Error share ids so any control is labelled, described and announces its error. |
 | [FormField](components/form/form-field.md) | form | `prototype` | Wrapper that adds a label, helper text and a status color to a form control. |
 | [Input](components/form/input.md) | form | `demo` | Text input with a label, helper text and an error state. |
 | Label | form | `prototype` | Label for form and custom controls with a required marker, optional hint, disabled state and press-to-focus. |
