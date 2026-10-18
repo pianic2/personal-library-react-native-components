@@ -3,7 +3,7 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "PasswordInput",
   "category": "form",
-  "status": "prototype",
+  "status": "demo",
   "summary": "Input with a show/hide toggle for secrets.",
   "whenToUse": [
     "Collect a password or another secret"
@@ -25,7 +25,7 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "The toggle is an unstyled hardcoded English Show/Hide text"
+    "The toggle is a button named by showPasswordLabel / hidePasswordLabel (default: the password.show / password.hide messages) with accessibilityState checked"
   ],
   "variants": {
     "size": [
