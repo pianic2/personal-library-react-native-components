@@ -103,7 +103,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   Banner: () => <Banner message="Fixture message" />,
   BottomBar: () => <BottomBar />,
   BottomSheet: () => (
-    <BottomSheet visible onClose={noop}>
+    <BottomSheet open onOpenChange={noop}>
       <Text>Sheet content</Text>
     </BottomSheet>
   ),

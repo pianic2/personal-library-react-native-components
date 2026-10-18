@@ -23,8 +23,6 @@ export interface BottomSheetProps {
   defaultOpen?: boolean;
   /** Called with `false` once per dismissal: Back (Android), Escape (web), backdrop press or a drag past the threshold. */
   onOpenChange?: (open: boolean) => void;
-  /** @deprecated Use `open`. */
-  visible?: boolean;
   /** @deprecated Alias of `onOpenChange(false)`, called together with it. */
   onClose?: () => void;
 
@@ -80,7 +78,6 @@ export function BottomSheet({
   open,
   defaultOpen = false,
   onOpenChange,
-  visible,
   onClose,
   snapPoints,
   snapIndex,
@@ -103,7 +100,7 @@ export function BottomSheet({
   const windowHeight = useWindowDimensions().height;
 
   const [isOpen, setOpen] = useControllableState<boolean>({
-    value: open ?? visible,
+    value: open,
     defaultValue: defaultOpen,
     onChange: (next) => {
       onOpenChange?.(next);

@@ -1,6 +1,6 @@
 # BottomSheet
 
-**Stability:** experimental — provisional API, not recommended for production dependency.
+**Stability:** beta — public consumer API, usable but contract may still change.
 
 Panel that slides up from the bottom edge. It snaps to configurable heights, can be dragged by its handle, and closes with Android Back, the web Escape key, a backdrop press or a drag past the threshold. It is built on the overlay stack (`OverlayHost` and `Portal`, ADR 0015) and needs no native dependency.
 
@@ -10,7 +10,7 @@ Panel that slides up from the bottom edge. It snaps to configurable heights, can
 import { BottomSheet } from "@personal-library/react-native-components";
 ```
 
-`BottomSheetProps`, `resolveSnap`, `resolveSnapHeights`, `createPanResponderDriver` and the gesture types are exported from `src/components/BottomSheet`; they are not on the package root yet. Render an `OverlayHost` near the root of the app: it owns Back and Escape. Without one the sheet falls back to a React Native `Modal` (Back works through `onRequestClose`, Escape is not handled).
+`BottomSheetProps` is exported from the package root. `resolveSnap`, `resolveSnapHeights`, `createPanResponderDriver` and the gesture types are exported from `src/components/BottomSheet`; they are not on the package root. Render an `OverlayHost` near the root of the app: it owns Back and Escape. Without one the sheet falls back to a React Native `Modal` (Back works through `onRequestClose`, Escape is not handled).
 
 ## Props
 
@@ -19,7 +19,6 @@ interface BottomSheetProps {
   open?: boolean;                      // controlled
   defaultOpen?: boolean;               // default false
   onOpenChange?: (open: boolean) => void; // called with false once per dismissal
-  visible?: boolean;                   // @deprecated alias of open
   onClose?: () => void;                // @deprecated alias, called together with onOpenChange(false)
   snapPoints?: readonly (number | `${number}%` | "content")[]; // ascending, default ["35%", "70%"]
   snapIndex?: number;                  // controlled snap
@@ -58,7 +57,7 @@ const [snap, setSnap] = useState(0);
 </BottomSheet>
 ```
 
-The original API keeps working: `<BottomSheet visible={v} onClose={close} snap="collapsed">`.
+The original `snap="collapsed"|"expanded"` and `onClose` keep working: `<BottomSheet open={v} onClose={close} snap="collapsed">`. The `visible` prop was removed: use `open` (and `defaultOpen`, `onOpenChange`). This is a breaking change for consumers that passed `visible`, in line with ADR 0014 (`visible` is not used for overlays).
 
 Snap points are heights: pixels, a share of the window (`"50%"`) or `"content"` (the measured content). `snapPoints` must be ascending after resolution; invalid entries are dropped. `resolveSnap({ heights, currentHeight, velocity })` decides where a released drag ends and is exported for tests and custom drivers.
 
@@ -81,4 +80,4 @@ Snap points are heights: pixels, a share of the window (`"50%"`) or `"content"` 
 
 ## Stability
 
-`prototype` in the component metadata (`BottomSheet.meta.ts`). It cannot reach `demo` yet: the demo bar needs `BottomSheetProps` exported from the package root, and `src/index.ts` belongs to the wiring tickets. The API may still change before 1.0. Behavior change for existing consumers: the sheet is rendered through the overlay stack instead of a native `Modal`, and the two snaps are now 35% and 70% of the window height as pixel values.
+`demo` in the component metadata (`BottomSheet.meta.ts`), label `beta`. The API may still change before 1.0. Behavior change for existing consumers: the sheet is rendered through the overlay stack instead of a native `Modal`, and the two snaps are now 35% and 70% of the window height as pixel values.

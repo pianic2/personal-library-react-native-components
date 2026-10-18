@@ -238,7 +238,6 @@ export type UnnamedPropsContracts = [
       | "open"
       | "defaultOpen"
       | "onOpenChange"
-      | "visible"
       | "onClose"
       | "snapPoints"
       | "snapIndex"

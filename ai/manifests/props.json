@@ -1606,7 +1606,7 @@
       ]
     },
     "BottomSheet": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "accessibilityLabel",

@@ -15,6 +15,7 @@ export type { BannerProps } from "./components/Banner/index.js";
 export { BottomBar } from "./components/BottomBar/index.js";
 export type { BottomBarProps } from "./components/BottomBar/index.js";
 export { BottomSheet } from "./components/BottomSheet/index.js";
+export type { BottomSheetProps } from "./components/BottomSheet/index.js";
 export { Box } from "./components/Box/index.js";
 export type { BoxProps } from "./components/Box/index.js";
 export { Button } from "./components/Button/index.js";

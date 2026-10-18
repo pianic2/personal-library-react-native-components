@@ -158,13 +158,11 @@ describe("BottomSheet heights", () => {
 });
 
 describe("BottomSheet open state", () => {
-  it("renders nothing when closed and supports defaultOpen and the visible alias", () => {
+  it("renders nothing when closed and supports defaultOpen", () => {
     const closed = setup({ open: false });
     assert.equal(sheet(closed.renderer), undefined);
     const dflt = setup({ open: undefined, defaultOpen: true });
     assert.ok(sheet(dflt.renderer));
-    const legacy = setup({ open: undefined, visible: true });
-    assert.ok(sheet(legacy.renderer));
   });
 
   it("uncontrolled: a dismissal closes the sheet", () => {

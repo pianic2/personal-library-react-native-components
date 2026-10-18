@@ -35,7 +35,7 @@ export function ExperimentalOverlaysExample() {
           </Modal>
 
           <Button label="Open bottom sheet" onPress={() => setSheetOpen(true)} />
-          <BottomSheet visible={sheetOpen} onClose={() => setSheetOpen(false)}>
+          <BottomSheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <Text>Experimental bottom sheet content</Text>
           </BottomSheet>
 

@@ -3,6 +3,7 @@ type:BProps
 type:BadgeProps
 type:BannerProps
 type:BottomBarProps
+type:BottomSheetProps
 type:BoxProps
 type:Breakpoint
 type:ButtonProps
