@@ -21,6 +21,7 @@ ma la superficie consumer corrente è la root API di
 
 - Overview: [Buttons](components/buttons/index.md)
 - [Button](components/buttons/button.md) — beta
+- [Touchable](components/buttons/touchable.md) — beta
 
 ## Feedback
 
