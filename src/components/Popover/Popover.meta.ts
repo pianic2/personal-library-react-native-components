@@ -3,7 +3,7 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "Popover",
   "category": "overlay",
-  "status": "prototype",
+  "status": "demo",
   "summary": "Floating panel anchored to a trigger.",
   "whenToUse": [
     "Show a small anchored panel of content or actions next to a trigger",

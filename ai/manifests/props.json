@@ -10238,7 +10238,7 @@
       ]
     },
     "Popover": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "children",

@@ -1,6 +1,6 @@
 # Popover
 
-**Stability:** experimental — provisional API, not recommended for production dependency.
+**Stability:** beta — usable, but the API may still change before 1.0.
 
 A panel anchored to a trigger, on iOS, Android and web. The content is mounted into the nearest `OverlayHost` through `Portal` (ADR 0015), positioned from the trigger's `measureInWindow` rectangle, and flipped and shifted so that it stays inside the window and the safe area. It replaces the earlier behaviour where native rendered the trigger only.
 
@@ -8,10 +8,10 @@ A panel anchored to a trigger, on iOS, Android and web. The content is mounted i
 
 ```ts
 import { Popover } from "@personal-library/react-native-components";
-import type { PopoverProps } from "src/components/Popover"; // not on the package root yet
+import type { PopoverProps } from "@personal-library/react-native-components";
 ```
 
-`PopoverProps` is exported from `src/components/Popover`. Render an `OverlayHost` once near the root of the app (see [Portal](Portal.md)).
+`PopoverProps` is exported from the package root. Render an `OverlayHost` once near the root of the app (see [Portal](Portal.md)).
 
 ## Props
 
@@ -68,4 +68,4 @@ Known limits: the host is assumed to fill the window (the positions are window c
 
 ## Stability
 
-`experimental`: the behaviour above is covered by tests (`tests/components/popover.test.tsx`), but it is not yet verified on devices or in a browser, and the props listed above are the whole contract for now.
+`beta`: the behaviour above is covered by tests (`tests/components/popover.test.tsx`), but it is not yet verified on devices or in a browser, and the props listed above are the whole contract for now.

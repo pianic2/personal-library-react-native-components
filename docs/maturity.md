@@ -8,8 +8,8 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 25 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 26 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -52,7 +52,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [TopBar](components/navigation/top-bar.md) | navigation | `demo` | Top navigation bar with a logo and links. |
 | [BottomSheet](components/overlay/bottom-sheet.md) | overlay | `prototype` | Panel that slides up from the bottom edge with two snap positions. |
 | [Modal](components/overlay/modal.md) | overlay | `prototype` | Centered blocking dialog over a backdrop. |
-| [Popover](components/overlay/popover.md) | overlay | `prototype` | Floating panel anchored to a trigger. |
+| [Popover](components/overlay/popover.md) | overlay | `demo` | Floating panel anchored to a trigger. |
 | Portal | overlay | `prototype` | Mounts content into the nearest OverlayHost, which owns one stack for z-order, Android Back and the Escape key. |
 | [Tooltip](components/overlay/tooltip.md) | overlay | `prototype` | Short hint shown near a trigger after a delay. |
 | [Badge](components/surfaces/badge.md) | surfaces | `demo` | Small label for a status, count or category. |

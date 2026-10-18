@@ -56,6 +56,7 @@ type PagerProps d3bfac75aa2d
 function PasswordInput 06ce05eda0d1
 type PasswordInputProps dc3640140ed7
 function Popover da2d3efeb3e1
+type PopoverProps 092140855960
 function ProgressBar a8eef9dd024b
 type ProgressBarProps 387a4272836c
 function Quote 9a5d99847870
