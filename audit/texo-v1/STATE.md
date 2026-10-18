@@ -262,6 +262,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-462 (outline colour-role contrast fix) | #215 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-463 (ownership extensions amendment: 462 legacy colour test, 197 snapshots and example) | #218 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-346 (upgrade Popover: native anchored rendering, placement, collision, a11y) | #221 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-297 (Add Pager and Carousel with page indicator) | #219 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-429 (Upgrade NavContext: active state, nested routes, adapter interface) | #223 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-295 (Row dead flex prop and rowGap on wrap) | #222 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-465 (ownership extensions amendment: pinned prop contracts for 339 and 346) | #220 | PR open (row committed pre-merge, see ADR 0020 Branching) |
@@ -269,3 +270,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-330 (Banner persistent announcement) | #226 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-197 (PasswordInput and Textarea to demo) | #225 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-229 (Touchable pressable primitive) | #227 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-467 (ownership extensions amendment: docs/maturity.md for 339 and 346) | #228 | PR open (row committed pre-merge, see ADR 0020 Branching) |

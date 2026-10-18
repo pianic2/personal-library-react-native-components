@@ -7,6 +7,7 @@ type:BoxProps
 type:Breakpoint
 type:ButtonProps
 type:CardProps
+type:CarouselProps
 type:CheckboxProps
 type:CodeInlineProps
 type:ColumnProps
@@ -24,6 +25,8 @@ type:NavBarProps
 type:NavContextValue
 type:NavItem
 type:PProps
+type:PageIndicatorProps
+type:PagerProps
 type:PasswordInputProps
 type:ProgressBarProps
 type:QuoteProps
@@ -57,6 +60,7 @@ value:BottomSheet
 value:Box
 value:Button
 value:Card
+value:Carousel
 value:Checkbox
 value:CodeInline
 value:Column
@@ -71,6 +75,8 @@ value:NavBar
 value:NavProvider
 value:P
 value:PACKAGE_NAME
+value:PageIndicator
+value:Pager
 value:PasswordInput
 value:Popover
 value:ProgressBar
