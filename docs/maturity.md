@@ -8,8 +8,8 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 19 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 21 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -28,11 +28,11 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [FormField](components/form/form-field.md) | form | `prototype` | Wrapper that adds a label, helper text and a status color to a form control. |
 | [Input](components/form/input.md) | form | `demo` | Text input with a label, helper text and an error state. |
 | Label | form | `prototype` | Label for form and custom controls with a required marker, optional hint, disabled state and press-to-focus. |
-| [PasswordInput](components/form/password-input.md) | form | `prototype` | Input with a show/hide toggle for secrets. |
+| [PasswordInput](components/form/password-input.md) | form | `demo` | Input with a show/hide toggle for secrets. |
 | [RadioGroup](components/form/radio-group.md) | form | `demo` | Group of radio options where exactly one value is selected. |
 | [Select](components/form/select.md) | form | `prototype` | Single-choice dropdown that opens a list of options. |
 | [Switch](components/form/switch.md) | form | `demo` | On/off toggle for a setting that applies immediately. |
-| [Textarea](components/form/textarea.md) | form | `prototype` | Multi-line text input with a label. |
+| [Textarea](components/form/textarea.md) | form | `demo` | Multi-line text input with a label. |
 | [Box](components/layout/box.md) | layout | `demo` | Themed container with padding, background and radius from tokens. |
 | [Column](components/layout/column.md) | layout | `demo` | Vertical flex container with a token-based gap. |
 | Container | layout | `prototype` | Centred, width-capped layout box with breakpoint gutters that also provides its measured size to descendants. |
