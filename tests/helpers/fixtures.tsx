@@ -3,6 +3,7 @@ import {
   Alert,
   B,
   Badge,
+  Banner,
   BottomBar,
   BottomSheet,
   Box,
@@ -38,6 +39,7 @@ import {
   TextGroup,
   Textarea,
   Tooltip,
+  Touchable,
   TopBar,
 } from "../../src";
 import { Container } from "../../src/components/Container/index.js";
@@ -81,6 +83,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   Alert: () => <Alert title="Heads up" message="Fixture message" />,
   B: () => <B>Bold</B>,
   Badge: () => <Badge>New</Badge>,
+  Banner: () => <Banner message="Fixture message" />,
   BottomBar: () => <BottomBar />,
   BottomSheet: () => (
     <BottomSheet visible onClose={noop}>
@@ -227,6 +230,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     <Tooltip content="Hint">
       <Text>Target</Text>
     </Tooltip>
+  ),
+  Touchable: () => (
+    <Touchable accessibilityLabel="Touch" onPress={noop}>
+      <Text>Press</Text>
+    </Touchable>
   ),
   TopBar: () => <TopBar title="Docs" />,
 };

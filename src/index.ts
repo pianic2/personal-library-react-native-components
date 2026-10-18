@@ -10,6 +10,8 @@ export { B } from "./components/B/index.js";
 export type { BProps } from "./components/B/index.js";
 export { Badge } from "./components/Badge/index.js";
 export type { BadgeProps } from "./components/Badge/index.js";
+export { Banner } from "./components/Banner/index.js";
+export type { BannerProps } from "./components/Banner/index.js";
 export { BottomBar } from "./components/BottomBar/index.js";
 export type { BottomBarProps } from "./components/BottomBar/index.js";
 export { BottomSheet } from "./components/BottomSheet/index.js";
@@ -81,6 +83,8 @@ export type { TextGroupProps } from "./components/TextGroup/index.js";
 export { Textarea } from "./components/Textarea/index.js";
 export type { TextareaProps } from "./components/Textarea/index.js";
 export { Tooltip } from "./components/Tooltip/index.js";
+export { Touchable } from "./components/Touchable/index.js";
+export type { TouchableProps } from "./components/Touchable/index.js";
 export { TopBar } from "./components/TopBar/index.js";
 export type { TopBarProps } from "./components/TopBar/index.js";
 

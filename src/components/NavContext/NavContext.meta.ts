@@ -31,7 +31,8 @@ export const meta: ComponentMeta = {
     "default"
   ],
   "platformNotes": [
-    "The helper hooks are not exported from the root yet"
+    "The helper hooks, the active-state helpers and the NavAdapter type are not exported from the root yet",
+    "NavAdapter is router-agnostic; history and back-button integration belongs to the adapter and is unverified on devices"
   ],
   "examples": [
     {

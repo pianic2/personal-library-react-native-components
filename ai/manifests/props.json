@@ -1461,6 +1461,120 @@
         }
       ]
     },
+    "Banner": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "actionLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "actions",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Extra actions, rendered after the `actionLabel` button; the caller supplies the controls."
+        },
+        {
+          "name": "dismissKey",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "An identifier for this announcement, passed to `onDismiss`; the Banner never reads or writes storage itself."
+        },
+        {
+          "name": "dismissLabel",
+          "type": "string",
+          "required": false,
+          "default": "Dismiss",
+          "description": "Accessibility label of the close button. Defaults to \"Dismiss\"."
+        },
+        {
+          "name": "dismissible",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Shows the close button. Defaults to true when `onDismiss` is set. Closing hides the banner and calls `onDismiss`."
+        },
+        {
+          "name": "icon",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "A leading icon. Decorative: it is hidden from assistive technology, the role and the text carry the meaning."
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onAction",
+          "type": "() => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onDismiss",
+          "type": "(dismissKey?: string | undefined) => void",
+          "required": false,
+          "default": null,
+          "description": "Called after the banner is dismissed, with `dismissKey` so the app can remember the dismissal (the Banner stores nothing)."
+        },
+        {
+          "name": "position",
+          "type": "\"inline\" | \"sticky\"",
+          "required": false,
+          "default": "inline",
+          "description": "`inline` (default) sits in the layout; `sticky` stays at the top of its parent and adds the top safe-area inset when a SafeAreaInsetsProvider is mounted.",
+          "values": [
+            "inline",
+            "sticky"
+          ]
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "tone",
+          "type": "\"info\" | \"success\" | \"warning\" | \"danger\" | \"neutral\"",
+          "required": false,
+          "default": "info",
+          "description": "Colour and urgency: `warning` and `danger` are announced with role alert, the others with role status.",
+          "values": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      ]
+    },
     "BottomBar": {
       "status": "prototype",
       "props": [
@@ -6916,6 +7030,13 @@
     "NavProvider": {
       "props": [
         {
+          "name": "adapter",
+          "type": "NavAdapter",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
@@ -6938,15 +7059,15 @@
         },
         {
           "name": "navigate",
-          "type": "(href: string) => void",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         },
         {
           "name": "pathname",
-          "type": "string",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         }
@@ -7778,7 +7899,7 @@
       ]
     },
     "PasswordInput": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "accessibilityActions",
@@ -8232,7 +8353,7 @@
           "type": "boolean",
           "required": false,
           "default": false,
-          "description": ""
+          "description": "Initial visibility when uncontrolled. Default: `false` (hidden)."
         },
         {
           "name": "defaultValue",
@@ -8317,8 +8438,8 @@
           "name": "hidePasswordLabel",
           "type": "string",
           "required": false,
-          "default": "Hide password",
-          "description": ""
+          "default": null,
+          "description": "Text and accessibility label of the toggle while the password is visible. Default: the `password.hide` message."
         },
         {
           "name": "hitSlop",
@@ -8879,7 +9000,7 @@
           "type": "boolean",
           "required": false,
           "default": null,
-          "description": ""
+          "description": "Controlled visibility of the password."
         },
         {
           "name": "placeholder",
@@ -9099,8 +9220,8 @@
           "name": "showPasswordLabel",
           "type": "string",
           "required": false,
-          "default": "Show password",
-          "description": ""
+          "default": null,
+          "description": "Text and accessibility label of the toggle while the password is hidden. Default: the `password.show` message."
         },
         {
           "name": "showSoftInputOnFocus",
@@ -13467,7 +13588,7 @@
       ]
     },
     "Textarea": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "accessibilityActions",
@@ -14701,6 +14822,14 @@
           ]
         },
         {
+          "name": "rows",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Number of visible text lines the field is at least tall for. Default: 4. Values below 1 count as 1.",
+          "defaultExpression": "DEFAULT_ROWS"
+        },
+        {
           "name": "screenReaderFocusable",
           "type": "boolean",
           "required": false,
@@ -15185,6 +15314,139 @@
         },
         {
           "name": "title",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ]
+    },
+    "Touchable": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Required unless the content has text (a development warning is logged otherwise)."
+        },
+        {
+          "name": "asChild",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Render the single child as the pressable instead of a wrapper: `Slot` merges the props into it."
+        },
+        {
+          "name": "checked",
+          "type": "boolean | \"mixed\"",
+          "required": false,
+          "default": null,
+          "description": "Reported as `accessibilityState.checked` (for example for `checkbox`, `radio`, `switch`)."
+        },
+        {
+          "name": "children",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Pressable content. With `asChild` it is the single element that becomes the pressable."
+        },
+        {
+          "name": "disabled",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "No presses, no feedback, no haptic; dimmed with `theme.components.button.opacity.disabled`."
+        },
+        {
+          "name": "feedback",
+          "type": "\"none\" | \"opacity\" | \"scale\" | \"ripple\"",
+          "required": false,
+          "default": "opacity",
+          "description": "Press feedback. `ripple` is the Android ripple and falls back to `opacity` elsewhere. Default `opacity`.",
+          "values": [
+            "opacity",
+            "scale",
+            "ripple",
+            "none"
+          ]
+        },
+        {
+          "name": "haptic",
+          "type": "false | \"light\" | \"medium\"",
+          "required": false,
+          "default": false,
+          "description": "Impact haptic once per accepted press (`onPress` or `onLongPress`). Uses the `haptics` capability: a no-op if absent. Default off."
+        },
+        {
+          "name": "hitSlop",
+          "type": "number | Insets",
+          "required": false,
+          "default": null,
+          "description": "Extra touch area around the element, passed to the pressable."
+        },
+        {
+          "name": "loading",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Blocks presses like `disabled` and reports `accessibilityState.busy`. Not dimmed."
+        },
+        {
+          "name": "minTarget",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Minimum width and height in points. Values below 44 are raised to 44. Default 44.",
+          "defaultExpression": "MIN_TARGET"
+        },
+        {
+          "name": "onLongPress",
+          "type": "(event: GestureResponderEvent) => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "onPress",
+          "type": "(event: GestureResponderEvent) => void",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "role",
+          "type": "\"link\" | \"button\" | \"checkbox\" | \"menuitem\" | \"radio\" | \"switch\" | \"tab\"",
+          "required": false,
+          "default": "button",
+          "description": "Accessibility role. Default `button`.",
+          "values": [
+            "button",
+            "link",
+            "tab",
+            "checkbox",
+            "radio",
+            "switch",
+            "menuitem"
+          ]
+        },
+        {
+          "name": "selected",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Reported as `accessibilityState.selected` (for example for `tab`)."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle> | ((state: TouchableState) => StyleProp<ViewStyle>)",
+          "required": false,
+          "default": null,
+          "description": "Style, or a function of the press/focus/disabled state. Applied after the Touchable's own style."
+        },
+        {
+          "name": "testID",
           "type": "string",
           "required": false,
           "default": null,
