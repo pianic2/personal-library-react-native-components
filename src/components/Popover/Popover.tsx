@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Pressable, View, useWindowDimensions } from "react-native";
+import { Pressable, View, useWindowDimensions, type StyleProp, type ViewStyle } from "react-native";
 import { useInsets } from "../../native/safe-area/index.js";
 import { useTheme } from "../../theme/useTheme.js";
 import { Box } from "../Box/index.js";
@@ -21,6 +21,16 @@ export interface PopoverProps {
   placement?: PopoverPlacement;
   /** Distance between the trigger and the content (a `theme.space` key). Default `"xs"`. */
   gap?: keyof ReturnType<typeof useTheme>["theme"]["space"];
+  /** Controlled open state. When set, the popover is open exactly when this is true; change it from `onOpenChange`. */
+  open?: boolean;
+  /** Initial open state when uncontrolled. Default `false`. */
+  defaultOpen?: boolean;
+  /** Called with the next open state when the trigger toggles it or the popover is dismissed (backdrop, Escape, Back, dismiss action). */
+  onOpenChange?: (open: boolean) => void;
+  /** Style of the root element that wraps the trigger. */
+  style?: StyleProp<ViewStyle>;
+  /** Test id of the root element; the content gets `<testID>-content`. */
+  testID?: string;
 }
 
 const FILL = { position: "absolute", top: 0, right: 0, bottom: 0, left: 0 } as const;
@@ -32,17 +42,24 @@ const CLOSE_LABEL = "Close";
  * the safe area. A press outside, Escape (web) and Android Back close it; screen readers get a "dismiss" action and the
  * focus returns to the trigger. Assumes the host fills the window (the usual app root).
  */
-export function Popover({ renderTrigger, children, placement = "top", gap = "xs" }: PopoverProps) {
+export function Popover({ renderTrigger, children, placement = "top", gap = "xs", open: openProp, defaultOpen = false, onOpenChange, style, testID }: PopoverProps) {
   const { theme, colors } = useTheme();
   const insets = useInsets();
   const windowSize = useWindowDimensions();
-  const [open, setOpen] = useState(false);
+  const [innerOpen, setInnerOpen] = useState(defaultOpen);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : innerOpen;
   const [measured, setMeasured] = useState(false);
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const anchorRef = useRef<View>(null);
   const anchor = useOverlayAnchor(anchorRef as React.RefObject<AnchorHandle | null>);
 
-  const toggle = () => setOpen((value) => !value);
+  const setOpen = (next: boolean) => {
+    if (next === open) return;
+    if (!controlled) setInnerOpen(next);
+    onOpenChange?.(next);
+  };
+  const toggle = () => setOpen(!open);
   const close = () => setOpen(false);
 
   // Measure the trigger every time the popover opens (and when the window changes size).
@@ -92,7 +109,7 @@ export function Popover({ renderTrigger, children, placement = "top", gap = "xs"
 
   return (
     <>
-      <View ref={anchorRef} collapsable={false} style={{ alignSelf: "flex-start" }}>
+      <View ref={anchorRef} collapsable={false} testID={testID} style={[{ alignSelf: "flex-start" }, style]}>
         {expandedTrigger}
       </View>
       {open ? (
@@ -100,6 +117,7 @@ export function Popover({ renderTrigger, children, placement = "top", gap = "xs"
           <Pressable testID="popover-backdrop" accessible={false} importantForAccessibility="no" onPress={close} style={FILL} />
           <Box
             role="dialog"
+            testID={testID === undefined ? undefined : `${testID}-content`}
             accessibilityActions={[{ name: "dismiss", label: CLOSE_LABEL }]}
             onAccessibilityAction={(event) => {
               if (event.nativeEvent.actionName === "dismiss") close();

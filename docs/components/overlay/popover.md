@@ -23,6 +23,11 @@ interface PopoverProps {
   children: React.ReactNode;
   placement?: PopoverPlacement;                          // preferred side, default "top"
   gap?: keyof Theme["space"];                            // distance to the trigger, default "xs"
+  open?: boolean;                                        // controlled open state
+  defaultOpen?: boolean;                                 // initial state when uncontrolled, default false
+  onOpenChange?: (open: boolean) => void;                // next state, from toggle or any dismissal
+  style?: StyleProp<ViewStyle>;                          // root element around the trigger
+  testID?: string;                                       // root; the content gets `<testID>-content`
 }
 ```
 
@@ -59,7 +64,7 @@ Call `toggle` from the trigger's own press handler. Popover no longer wraps the 
 | Android | Same; Back closes it through the host. Not verified on a device. |
 | Web | Same; Escape closes it through the host. Not verified in a browser. |
 
-Known limits: the host is assumed to fill the window (the positions are window coordinates); the safe-area insets come from `SafeAreaInsetsProvider` (the Android status-bar fallback applies without it); `style`, `testID`, a controlled `open` and a custom dismiss label are not props yet.
+Known limits: the host is assumed to fill the window (the positions are window coordinates); the safe-area insets come from `SafeAreaInsetsProvider` (the Android status-bar fallback applies without it); the dismiss action label ("Close") is not a prop yet.
 
 ## Stability
 

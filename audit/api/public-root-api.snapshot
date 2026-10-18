@@ -1,6 +1,7 @@
 type:AlertProps
 type:BProps
 type:BadgeProps
+type:BannerProps
 type:BottomBarProps
 type:BoxProps
 type:Breakpoint
@@ -10,6 +11,10 @@ type:CheckboxProps
 type:CodeInlineProps
 type:ColumnProps
 type:DividerProps
+type:FieldContextValue
+type:FieldControlAttributes
+type:FieldProps
+type:FieldStatus
 type:FormFieldProps
 type:HeadingProps
 type:InputProps
@@ -42,9 +47,11 @@ type:ThemeStorageAdapter
 type:ThemeTokens
 type:TokenPair
 type:TopBarProps
+type:TouchableProps
 value:Alert
 value:B
 value:Badge
+value:Banner
 value:BottomBar
 value:BottomSheet
 value:Box
@@ -54,6 +61,7 @@ value:Checkbox
 value:CodeInline
 value:Column
 value:Divider
+value:Field
 value:FormField
 value:Heading
 value:Input
@@ -83,6 +91,7 @@ value:ThemeAppShell
 value:ThemeProvider
 value:Tooltip
 value:TopBar
+value:Touchable
 value:createThemeTokens
 value:defaultThemeTokens
 value:isAndroid
@@ -92,6 +101,8 @@ value:isWeb
 value:mergeStyles
 value:useBreakpoint
 value:useDebounce
+value:useField
+value:useFieldControlProps
 value:useNav
 value:useNavItems
 value:useNavLogo

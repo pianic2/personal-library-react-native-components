@@ -341,6 +341,7 @@ describe("PLRNUI-346 Popover", () => {
     const warnings: unknown[][] = [];
     const warn = console.warn;
     console.warn = (...args: unknown[]) => void warnings.push(args);
+    const previousDev = (globalThis as { __DEV__?: boolean }).__DEV__;
     (globalThis as { __DEV__?: boolean }).__DEV__ = true;
     try {
       const r = await render(
@@ -356,12 +357,48 @@ describe("PLRNUI-346 Popover", () => {
       assert.ok(warnings.some((w) => String(w[0]).includes("[Portal]")));
     } finally {
       console.warn = warn;
-      delete (globalThis as { __DEV__?: boolean }).__DEV__;
+      (globalThis as { __DEV__?: boolean }).__DEV__ = previousDev;
     }
   });
 
+  it("controlled open: follows `open`, reports changes through onOpenChange and does not change by itself", async () => {
+    const changes: boolean[] = [];
+    const r = await render(app({ open: false, onOpenChange: (o) => void changes.push(o) }));
+    await press(r);
+    assert.deepEqual(changes, [true]);
+    assert.equal(content(r).length, 0, "the owner has not accepted the change");
+    await act(async () => {
+      r.update(app({ open: true, onOpenChange: (o) => void changes.push(o) }));
+    });
+    assert.equal(content(r).length, 1);
+    await act(async () => {
+      backdrop(r)[0]!.props.onPress();
+    });
+    assert.deepEqual(changes, [true, false]);
+    assert.equal(content(r).length, 1, "still open until the owner closes it");
+  });
+
+  it("defaultOpen opens it at mount and onOpenChange reports the uncontrolled changes", async () => {
+    const changes: boolean[] = [];
+    const r = await render(app({ defaultOpen: true, onOpenChange: (o) => void changes.push(o) }));
+    assert.equal(content(r).length, 1);
+    await act(async () => {
+      backdrop(r)[0]!.props.onPress();
+    });
+    assert.equal(content(r).length, 0);
+    assert.deepEqual(changes, [false]);
+  });
+
+  it("passes style and testID to the root, and a derived testID to the content", async () => {
+    const r = await render(app({ testID: "pop", style: { margin: 3 }, defaultOpen: true }));
+    const rootView = r.root.findAll((n) => (n.type as unknown) === host("View") && n.props.testID === "pop")[0]!;
+    assert.equal(flatten(rootView.props.style).margin, 3);
+    assert.equal(flatten(rootView.props.style).alignSelf, "flex-start");
+    assert.equal(content(r)[0]!.props.testID, "pop-content");
+  });
+
   it("exports PopoverProps from the component index (compile-time) and documents the native behaviour", () => {
-    const props: PopoverProps = { renderTrigger: () => null, children: null, placement: "left", gap: "md" };
+    const props: PopoverProps = { renderTrigger: () => null, children: null, placement: "left", gap: "md", open: true, defaultOpen: false, onOpenChange: () => undefined, style: {}, testID: "x" };
     assert.equal(props.placement, "left");
     const docs = readFileSync(resolve(root, "docs/components/overlay/popover.md"), "utf8");
     assert.match(docs, /OverlayHost/);
