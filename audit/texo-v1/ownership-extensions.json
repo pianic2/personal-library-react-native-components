@@ -37,6 +37,11 @@
     "config/size-limits.json",
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-467": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -125,6 +130,7 @@
    "ai/examples/BottomSheet.tsx",
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot",
+   "docs/maturity.md",
    "tests/types/negative-cases.ts",
    "tests/types/props-contracts.ts"
   ],
@@ -132,6 +138,7 @@
    "ai/examples/Popover.tsx",
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot",
+   "docs/maturity.md",
    "tests/types/negative-cases.ts",
    "tests/types/props-contracts.ts"
   ],
