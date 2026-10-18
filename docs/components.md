@@ -27,6 +27,7 @@ ma la superficie consumer corrente è la root API di
 
 - Overview: [Feedback](components/feedback/index.md)
 - [Alert](components/feedback/alert.md) — beta
+- [Banner](components/feedback/banner.md) — beta
 - [ProgressBar](components/feedback/progress-bar.md) — experimental
 - [Spinner](components/feedback/spinner.md) — beta
 
