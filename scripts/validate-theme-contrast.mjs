@@ -37,24 +37,19 @@ export const PAIRS = [
   { id: "onContainer/container (error)", fg: "error.onContainer", bg: "error.container", kind: "text" },
   { id: "outline/surface.0", fg: "outline", bg: "surface.0", kind: "non-text" },
   { id: "outline/surface.1", fg: "outline", bg: "surface.1", kind: "non-text" },
+  { id: "outline/surface.2", fg: "outline", bg: "surface.2", kind: "non-text" },
+  { id: "outline/surface.3", fg: "outline", bg: "surface.3", kind: "non-text" },
   { id: "focusRing/surface.0", fg: "focusRing", bg: "surface.0", kind: "non-text" },
   { id: "focusRing/surface.1", fg: "focusRing", bg: "surface.1", kind: "non-text" },
 ];
-
-const OUTLINE_REASON =
-  "known finding: the default outline role measures 2.3 to 2.7 against the surfaces, below 3:1; changing token values is out of scope for PLRNUI-278, a separate token-fix ticket (no id yet, to be filed by the PO) removes this waiver";
 
 /**
  * Waivers of the default theme, keyed "mode pair-id": { reason, floor }. A waiver covers a ratio between `floor` and the
  * minimum only; below `floor` the pair fails again (a regression of the documented finding is not covered). A waiver whose
  * pair now passes is stale and one whose key matches no pair is dead: both fail the run, so waivers cannot accumulate.
+ * There are none: the outline role reaches 3:1 on the surfaces since PLRNUI-462 (it was waived under PLRNUI-278).
  */
-export const WAIVERS = {
-  "light outline/surface.0": { reason: OUTLINE_REASON, floor: 2.5 },
-  "light outline/surface.1": { reason: OUTLINE_REASON, floor: 2.25 },
-  "dark outline/surface.0": { reason: OUTLINE_REASON, floor: 2.6 },
-  "dark outline/surface.1": { reason: OUTLINE_REASON, floor: 2.4 },
-};
+export const WAIVERS = {};
 
 class InputError extends Error {}
 

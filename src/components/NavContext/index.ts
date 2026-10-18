@@ -1,5 +1,10 @@
 export {
   NavProvider,
+  useActiveItem,
+  useIsActive,
+  isActive,
+  isItemActive,
+  findActiveItem,
   useNav,
   useNavItems,
   useNavLogo,
@@ -7,4 +12,12 @@ export {
   useNavigate,
   useOptionalNav,
 } from "./NavContext.js";
-export type { NavContextValue, NavItem } from "./NavContext.js";
+export type {
+  NavActiveMatch,
+  NavAdapter,
+  NavContextValue,
+  NavItem,
+  NavProviderAdapterProps,
+  NavProviderLegacyProps,
+  NavProviderProps,
+} from "./NavContext.js";

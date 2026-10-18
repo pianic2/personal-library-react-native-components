@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 import TestRenderer, { act } from "react-test-renderer";
 import { Platform } from "react-native";
 import { NavBar, NavProvider, ThemeProvider } from "../../src";
-import { useNav, useNavItems, useNavLogo, useNavPathname, useNavigate, useOptionalNav, type NavContextValue } from "../../src/components/NavContext/index.js";
+import { findActiveItem, isActive, isItemActive, useActiveItem, useIsActive, type NavAdapter, type NavProviderLegacyProps,type NavItem, useNav, useNavItems, useNavLogo, useNavPathname, useNavigate, useOptionalNav, type NavContextValue } from "../../src/components/NavContext/index.js";
 
 const platform = Platform as { OS: string };
 const originalOS = platform.OS;
@@ -32,7 +32,7 @@ function create(ui: React.ReactElement): TestRenderer.ReactTestRenderer {
 }
 
 /** Renders `hook` under a NavProvider (or none) and returns what it produced. */
-function probe<T>(hook: () => T, provider = true, props: Partial<React.ComponentProps<typeof NavProvider>> = {}): T {
+function probe<T>(hook: () => T, provider = true, props: Partial<NavProviderLegacyProps> = {}): T {
   let out!: T;
   function Probe() {
     out = hook();
@@ -202,5 +202,130 @@ describe("PLRNUI-222 documentation", () => {
     for (const name of ["useNav", "useNavItems", "useNavLogo", "useNavPathname", "useNavigate", "useOptionalNav"]) {
       assert.ok(ctxDoc.includes("`" + name + "()`"), name);
     }
+  });
+});
+
+describe("PLRNUI-429 isActive matching", () => {
+  it("exact matches only the same path, ignoring query, hash and trailing slash", () => {
+    assert.equal(isActive("/library", "/library"), true);
+    assert.equal(isActive("/library", "/library/"), true);
+    assert.equal(isActive("/library", "/library?tab=1#x"), true);
+    assert.equal(isActive("/library", "/library/42"), false);
+    assert.equal(isActive("/library", "/library/42", "exact"), false);
+  });
+
+  it("prefix matches nested paths on a segment boundary", () => {
+    assert.equal(isActive("/library", "/library/42", "prefix"), true);
+    assert.equal(isActive("/library", "/library", "prefix"), true);
+    assert.equal(isActive("/library", "/library-x", "prefix"), false);
+    assert.equal(isActive("/library", "/other", "prefix"), false);
+  });
+
+  it("the root href with prefix matches only the root", () => {
+    assert.equal(isActive("/", "/", "prefix"), true);
+    assert.equal(isActive("/", "/library", "prefix"), false);
+  });
+
+  it("isItemActive is true for a parent whose child matches", () => {
+    const parent: NavItem = { label: "Lib", href: "/lib", children: [{ label: "Shelf", href: "/shelf/1" }] };
+    assert.equal(isItemActive(parent, "/shelf/1"), true);
+    assert.equal(isItemActive(parent, "/shelf/2"), false);
+  });
+});
+
+describe("PLRNUI-429 useActiveItem", () => {
+  const tree: NavItem[] = [
+    { label: "Home", href: "/" },
+    { label: "Library", href: "/library", activeMatch: "prefix", children: [{ label: "Shelves", href: "/library/shelves", activeMatch: "prefix", disabled: true }] },
+  ];
+
+  it("returns the most specific nested match", () => {
+    assert.equal(findActiveItem(tree, "/library/shelves/3")?.label, "Shelves");
+    assert.equal(findActiveItem(tree, "/library/other")?.label, "Library");
+    assert.equal(findActiveItem(tree, "/nowhere"), undefined);
+  });
+
+  it("reads items and pathname from the provider", () => {
+    assert.equal(probe(() => useActiveItem(), true, { items: tree, pathname: "/library/shelves" })?.label, "Shelves");
+    assert.equal(probe(() => useIsActive(tree[1] as NavItem), true, { items: tree, pathname: "/library/shelves" }), true);
+    assert.equal(probe(() => useIsActive(tree[0] as NavItem), true, { items: tree, pathname: "/library/shelves" }), false);
+  });
+});
+
+function makeAdapter(initial: string) {
+  let path = initial;
+  const listeners = new Set<() => void>();
+  const calls: string[] = [];
+  const set = (next: string) => {
+    path = next;
+    listeners.forEach((l) => l());
+  };
+  const adapter: NavAdapter = {
+    navigate: (href) => {
+      calls.push("navigate:" + href);
+      set(href);
+    },
+    replace: (href) => {
+      calls.push("replace:" + href);
+      set(href);
+    },
+    back: () => calls.push("back"),
+    currentPath: () => path,
+    subscribe: (l) => {
+      listeners.add(l);
+      return () => listeners.delete(l);
+    },
+  };
+  return { adapter, calls, set, listeners };
+}
+
+describe("PLRNUI-429 NavAdapter", () => {
+  it("reads the pathname from the adapter and exposes navigate/replace/back", () => {
+    const { adapter, calls } = makeAdapter("/library");
+    let value!: NavContextValue;
+    function Probe() {
+      value = useNav();
+      return null;
+    }
+    create(
+      <NavProvider items={items} adapter={adapter}>
+        <Probe />
+      </NavProvider>,
+    );
+    assert.equal(value.pathname, "/library");
+    value.navigate("/a");
+    value.replace?.("/b");
+    value.back?.();
+    assert.deepEqual(calls, ["navigate:/a", "replace:/b", "back"]);
+  });
+
+  it("re-renders when the adapter path changes and unsubscribes on unmount", () => {
+    const { adapter, set, listeners } = makeAdapter("/");
+    const seen: string[] = [];
+    function Probe() {
+      seen.push(useNavPathname());
+      return null;
+    }
+    const r = create(
+      <NavProvider items={items} adapter={adapter}>
+        <Probe />
+      </NavProvider>,
+    );
+    assert.equal(listeners.size, 1);
+    act(() => set("/library"));
+    assert.equal(seen.at(-1), "/library");
+    act(() => r.unmount());
+    assert.equal(listeners.size, 0);
+  });
+
+  it("legacy usage keeps replace and back undefined", () => {
+    const value = probe(() => useNav());
+    assert.equal(value.replace, undefined);
+    assert.equal(value.back, undefined);
+  });
+
+  it("core imports no router", () => {
+    const src = readFileSync(resolve(root, "src/components/NavContext/NavContext.tsx"), "utf8");
+    assert.doesNotMatch(src, /from\s+["'](expo-router|@react-navigation|react-router|next\/)/);
   });
 });

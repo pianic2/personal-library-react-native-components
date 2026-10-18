@@ -3,6 +3,7 @@ import {
   Alert,
   B,
   Badge,
+  Banner,
   BottomBar,
   BottomSheet,
   Box,
@@ -96,6 +97,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   Alert: () => <Alert title="Heads up" message="Fixture message" />,
   B: () => <B>Bold</B>,
   Badge: () => <Badge>New</Badge>,
+  Banner: () => <Banner message="Fixture message" />,
   BottomBar: () => <BottomBar />,
   BottomSheet: () => (
     <BottomSheet visible onClose={noop}>
