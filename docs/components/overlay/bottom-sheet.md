@@ -81,4 +81,4 @@ Snap points are heights: pixels, a share of the window (`"50%"`) or `"content"` 
 
 ## Stability
 
-`prototype` in the component metadata (`BottomSheet.meta.ts`); promotion to `demo` needs `docs/maturity.md` to be regenerated, which this ticket does not own. The API may still change before 1.0. Behavior change for existing consumers: the sheet is rendered through the overlay stack instead of a native `Modal`, and the two snaps are now 35% and 70% of the window height as pixel values.
+`prototype` in the component metadata (`BottomSheet.meta.ts`). It cannot reach `demo` yet: the demo bar needs `BottomSheetProps` exported from the package root, and `src/index.ts` belongs to the wiring tickets. The API may still change before 1.0. Behavior change for existing consumers: the sheet is rendered through the overlay stack instead of a native `Modal`, and the two snaps are now 35% and 70% of the window height as pixel values.

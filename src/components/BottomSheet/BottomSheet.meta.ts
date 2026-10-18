@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   "name": "BottomSheet",
   "category": "overlay",
   "status": "prototype",
-  "summary": "Panel that slides up from the bottom edge with two snap positions.",
+  "summary": "Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop.",
   "whenToUse": [
     "Present secondary content or actions without leaving the screen"
   ],
