@@ -272,3 +272,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-467 (ownership extensions amendment: docs/maturity.md for 339 and 346) | #228 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-468 (ownership extensions amendment: root props-type export for 339 and 346) | #230 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-469 (ownership extensions amendment: extract-props pin, fixture and overlay example for 339 and 346) | #231 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-470 (ownership extensions amendment: component smoke test and public-types note for 339 and 346) | #TBD | PR open (row committed pre-merge, see ADR 0020 Branching) |
