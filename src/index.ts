@@ -52,6 +52,8 @@ export {
   useOptionalNav,
 } from "./components/NavContext/index.js";
 export type { NavContextValue, NavItem } from "./components/NavContext/index.js";
+export { Carousel, PageIndicator, Pager } from "./components/Pager/index.js";
+export type { CarouselProps, PageIndicatorProps, PagerProps } from "./components/Pager/index.js";
 export { P } from "./components/P/index.js";
 export type { PProps } from "./components/P/index.js";
 export { PasswordInput } from "./components/PasswordInput/index.js";

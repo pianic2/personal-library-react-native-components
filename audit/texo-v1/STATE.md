@@ -261,6 +261,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-315 (amendment: snapshot of the generated declarations, exports and packed tarball) | #216 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-462 (outline colour-role contrast fix) | #215 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-463 (ownership extensions amendment: 462 legacy colour test, 197 snapshots and example) | #218 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-297 (Add Pager and Carousel with page indicator) | #219 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-429 (Upgrade NavContext: active state, nested routes, adapter interface) | #223 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-295 (Row dead flex prop and rowGap on wrap) | #222 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-465 (ownership extensions amendment: pinned prop contracts for 339 and 346) | #220 | PR open (row committed pre-merge, see ADR 0020 Branching) |

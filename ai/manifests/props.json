@@ -2679,6 +2679,94 @@
         }
       ]
     },
+    "Carousel": {
+      "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "autoplay",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Advances by itself, pausing while the user touches it. Ignored under reduced motion. It stops on the last page (no loop)."
+        },
+        {
+          "name": "autoplayInterval",
+          "type": "number",
+          "required": false,
+          "default": 4000,
+          "description": "Milliseconds between automatic advances. Default 4000."
+        },
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Number of pages."
+        },
+        {
+          "name": "defaultIndex",
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Initial page when `index` is not set. Default 0."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Current page, zero-based. Controlled: the pager follows it and reports swipes through `onIndexChange`."
+        },
+        {
+          "name": "lazy",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Mounts only the current page and its two neighbours. Default true; false mounts every page."
+        },
+        {
+          "name": "onIndexChange",
+          "type": "(index: number) => void",
+          "required": false,
+          "default": null,
+          "description": "Called once per swipe, when the pager has settled on a new page."
+        },
+        {
+          "name": "peek",
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Points of the previous and next page shown beside the current one. Default 0 (no peek)."
+        },
+        {
+          "name": "renderPage",
+          "type": "(index: number) => ReactNode",
+          "required": true,
+          "default": null,
+          "description": "Renders the page at `index`. Called only for mounted pages."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ]
+    },
     "Checkbox": {
       "status": "demo",
       "props": [
@@ -8481,6 +8569,126 @@
             "regular",
             "semibold"
           ]
+        }
+      ]
+    },
+    "PageIndicator": {
+      "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Replaces the default label \"Page X of Y\"."
+        },
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Number of pages (dots)."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Current page, zero-based."
+        },
+        {
+          "name": "size",
+          "type": "\"xs\" | \"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "default": "sm",
+          "description": "Dot diameter, a key of the spacing scale. Default `\"sm\"`.",
+          "values": [
+            "xs",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        }
+      ]
+    },
+    "Pager": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "accessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "count",
+          "type": "number",
+          "required": true,
+          "default": null,
+          "description": "Number of pages."
+        },
+        {
+          "name": "defaultIndex",
+          "type": "number",
+          "required": false,
+          "default": 0,
+          "description": "Initial page when `index` is not set. Default 0."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Current page, zero-based. Controlled: the pager follows it and reports swipes through `onIndexChange`."
+        },
+        {
+          "name": "lazy",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Mounts only the current page and its two neighbours. Default true; false mounts every page."
+        },
+        {
+          "name": "onIndexChange",
+          "type": "(index: number) => void",
+          "required": false,
+          "default": null,
+          "description": "Called once per swipe, when the pager has settled on a new page."
+        },
+        {
+          "name": "renderPage",
+          "type": "(index: number) => ReactNode",
+          "required": true,
+          "default": null,
+          "description": "Renders the page at `index`. Called only for mounted pages."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
         }
       ]
     },
