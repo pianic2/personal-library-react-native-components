@@ -11,6 +11,10 @@ type:CheckboxProps
 type:CodeInlineProps
 type:ColumnProps
 type:DividerProps
+type:FieldContextValue
+type:FieldControlAttributes
+type:FieldProps
+type:FieldStatus
 type:FormFieldProps
 type:HeadingProps
 type:InputProps
@@ -57,6 +61,7 @@ value:Checkbox
 value:CodeInline
 value:Column
 value:Divider
+value:Field
 value:FormField
 value:Heading
 value:Input
@@ -96,6 +101,8 @@ value:isWeb
 value:mergeStyles
 value:useBreakpoint
 value:useDebounce
+value:useField
+value:useFieldControlProps
 value:useNav
 value:useNavItems
 value:useNavLogo

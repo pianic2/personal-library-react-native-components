@@ -13,6 +13,7 @@ import {
   CodeInline,
   Column,
   Divider,
+  Field,
   FormField,
   Heading,
   Input,
@@ -39,6 +40,7 @@ import {
   Tooltip,
   Touchable,
   TopBar,
+  useFieldControlProps,
 } from "../../src";
 import { Container } from "../../src/components/Container/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
@@ -66,6 +68,21 @@ function DataTableFixture() {
         <Text key={row.id}>{row.name}</Text>
       ))}
     </View>
+  );
+}
+function FieldInput() {
+  return <Input accessibilityLabel="Email" value="ada@example.com" onChangeText={noop} {...useFieldControlProps()} />;
+}
+function FieldFixture() {
+  return (
+    <Field status="error" required>
+      <Field.Label>Email</Field.Label>
+      <Field.Control>
+        <FieldInput />
+      </Field.Control>
+      <Field.Hint>We never share it</Field.Hint>
+      <Field.Error>Enter a valid address</Field.Error>
+    </Field>
   );
 }
 const items = [
@@ -114,6 +131,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   DataTable: () => <DataTableFixture />,
   Divider: () => <Divider />,
+  Field: () => <FieldFixture />,
   FormField: () => (
     <FormField label="Name" helperText="Helper">
       <Input label="Name" value="Ada" onChangeText={noop} />
