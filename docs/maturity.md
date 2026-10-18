@@ -2,14 +2,14 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 45 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 48 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 19 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 24 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -19,20 +19,23 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Component | Category | Level | Summary |
 | --- | --- | --- | --- |
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
+| [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
 | [Alert](components/feedback/alert.md) | feedback | `demo` | Inline message block with a tone for success, warning, error or information. |
+| [Banner](components/feedback/banner.md) | feedback | `demo` | Persistent full-width announcement for a page or section, with a tone, optional actions and a dismiss button. |
 | [ProgressBar](components/feedback/progress-bar.md) | feedback | `prototype` | Horizontal bar showing a progress value from 0 to 100. |
 | [Spinner](components/feedback/spinner.md) | feedback | `demo` | Activity indicator in three sizes. |
 | StateView | feedback | `prototype` | Empty, error, loading and result blocks plus an AsyncBoundary that picks one from a request status. |
 | [Checkbox](components/form/checkbox.md) | form | `demo` | Two-state checkbox with a label. |
+| [Field](components/form/field.md) | form | `demo` | Compound form field: Label, Control, Hint and Error share ids so any control is labelled, described and announces its error. |
 | [FormField](components/form/form-field.md) | form | `prototype` | Wrapper that adds a label, helper text and a status color to a form control. |
 | [Input](components/form/input.md) | form | `demo` | Text input with a label, helper text and an error state. |
 | Label | form | `prototype` | Label for form and custom controls with a required marker, optional hint, disabled state and press-to-focus. |
-| [PasswordInput](components/form/password-input.md) | form | `prototype` | Input with a show/hide toggle for secrets. |
+| [PasswordInput](components/form/password-input.md) | form | `demo` | Input with a show/hide toggle for secrets. |
 | [RadioGroup](components/form/radio-group.md) | form | `demo` | Group of radio options where exactly one value is selected. |
 | [Select](components/form/select.md) | form | `prototype` | Single-choice dropdown that opens a list of options. |
 | [Switch](components/form/switch.md) | form | `demo` | On/off toggle for a setting that applies immediately. |
-| [Textarea](components/form/textarea.md) | form | `prototype` | Multi-line text input with a label. |
+| [Textarea](components/form/textarea.md) | form | `demo` | Multi-line text input with a label. |
 | [Box](components/layout/box.md) | layout | `demo` | Themed container with padding, background and radius from tokens. |
 | [Column](components/layout/column.md) | layout | `demo` | Vertical flex container with a token-based gap. |
 | Container | layout | `prototype` | Centred, width-capped layout box with breakpoint gutters that also provides its measured size to descendants. |

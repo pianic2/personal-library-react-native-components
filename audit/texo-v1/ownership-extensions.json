@@ -31,6 +31,12 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-466": {
+   "filesTouched": [
+    "config/size-limits.json",
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {

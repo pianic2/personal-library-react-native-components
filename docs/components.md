@@ -21,11 +21,13 @@ ma la superficie consumer corrente è la root API di
 
 - Overview: [Buttons](components/buttons/index.md)
 - [Button](components/buttons/button.md) — beta
+- [Touchable](components/buttons/touchable.md) — beta
 
 ## Feedback
 
 - Overview: [Feedback](components/feedback/index.md)
 - [Alert](components/feedback/alert.md) — beta
+- [Banner](components/feedback/banner.md) — beta
 - [ProgressBar](components/feedback/progress-bar.md) — experimental
 - [Spinner](components/feedback/spinner.md) — beta
 
@@ -33,6 +35,7 @@ ma la superficie consumer corrente è la root API di
 
 - Overview: [Form](components/form/index.md)
 - [Checkbox](components/form/checkbox.md) — beta
+- [Field](components/form/field.md) — beta
 - [FormField](components/form/form-field.md) — experimental
 - [Input](components/form/input.md) — beta
 - [PasswordInput](components/form/password-input.md) — experimental

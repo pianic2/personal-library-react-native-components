@@ -26,6 +26,7 @@ export function Row({
   align = "center",
   justify = "flex-start",
   wrap = false,
+  flex,
   style,
   children,
   ...rest
@@ -42,6 +43,8 @@ export function Row({
           justifyContent: justify,
           flexWrap: wrap ? "wrap" : "nowrap",
           columnGap: theme.space[gap],
+          ...(wrap ? { rowGap: theme.space[gap] } : null),
+          ...(flex !== undefined ? { flex } : null),
         },
         style,
       ]}
