@@ -10238,21 +10238,28 @@
       ]
     },
     "Popover": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "The popover content, rendered through the nearest OverlayHost."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Initial open state when uncontrolled. Default `false`."
         },
         {
           "name": "gap",
           "type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\" | \"none\"",
           "required": false,
           "default": "xs",
-          "description": "",
+          "description": "Distance between the trigger and the content (a `theme.space` key). Default `\"xs\"`.",
           "values": [
             "lg",
             "md",
@@ -10264,11 +10271,25 @@
           ]
         },
         {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "default": null,
+          "description": "Called with the next open state when the trigger toggles it or the popover is dismissed (backdrop, Escape, Back, dismiss action)."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Controlled open state. When set, the popover is open exactly when this is true; change it from `onOpenChange`."
+        },
+        {
           "name": "placement",
           "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
           "required": false,
           "default": "top",
-          "description": "",
+          "description": "The preferred side. It flips to the opposite side when the content does not fit. Default `\"top\"`.",
           "values": [
             "bottom",
             "top",
@@ -10281,7 +10302,21 @@
           "type": "(args: { open: boolean; toggle: () => void; }) => ReactNode",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "Renders the trigger. Call `toggle` from the trigger's own press handler: Popover does not wrap the trigger in a\npressable. The element it returns receives `accessibilityState.expanded` (and `aria-expanded`) reflecting `open`."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the root element that wraps the trigger."
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Test id of the root element; the content gets `<testID>-content`."
         }
       ]
     },

@@ -28,6 +28,7 @@ type:PProps
 type:PageIndicatorProps
 type:PagerProps
 type:PasswordInputProps
+type:PopoverProps
 type:ProgressBarProps
 type:QuoteProps
 type:RadioGroupOption

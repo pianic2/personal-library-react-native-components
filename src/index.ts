@@ -59,6 +59,7 @@ export type { PProps } from "./components/P/index.js";
 export { PasswordInput } from "./components/PasswordInput/index.js";
 export type { PasswordInputProps } from "./components/PasswordInput/index.js";
 export { Popover } from "./components/Popover/index.js";
+export type { PopoverProps } from "./components/Popover/index.js";
 export { ProgressBar } from "./components/ProgressBar/index.js";
 export type { ProgressBarProps } from "./components/ProgressBar/index.js";
 export { Quote } from "./components/Quote/index.js";

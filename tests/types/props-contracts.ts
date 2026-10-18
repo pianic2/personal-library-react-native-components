@@ -227,7 +227,7 @@ export type UnnamedPropsContracts = [
   >,
   Expect<Equal<RequiredKeys<ComponentProps<typeof Modal>>, "visible" | "onClose" | "children">>,
   Expect<
-    Equal<keyof ComponentProps<typeof Popover>, "renderTrigger" | "children" | "placement" | "gap">
+    Equal<keyof ComponentProps<typeof Popover>, "renderTrigger" | "children" | "placement" | "gap" | "open" | "defaultOpen" | "onOpenChange" | "style" | "testID">
   >,
   Expect<Equal<RequiredKeys<ComponentProps<typeof Popover>>, "renderTrigger" | "children">>,
   Expect<Equal<keyof ComponentProps<typeof Tooltip>, "content" | "placement" | "delay" | "children">>,
