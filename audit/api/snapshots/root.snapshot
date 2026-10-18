@@ -90,6 +90,8 @@ type TokenPair dfe71e14f70e
 function Tooltip 2d89066e994b
 function TopBar a7f3883e7ce7
 type TopBarProps 28bdfd59b489
+function Touchable 7e9104507f42
+type TouchableProps 0c2d2c4417ca
 function createThemeTokens 02bf21f5dc94
 const defaultThemeTokens a713d9451601
 const isAndroid bf84d3d60e93

@@ -38,6 +38,7 @@ import {
   TextGroup,
   Textarea,
   Tooltip,
+  Touchable,
   TopBar,
   useFieldControlProps,
 } from "../../src";
@@ -239,6 +240,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     <Tooltip content="Hint">
       <Text>Target</Text>
     </Tooltip>
+  ),
+  Touchable: () => (
+    <Touchable accessibilityLabel="Touch" onPress={noop}>
+      <Text>Press</Text>
+    </Touchable>
   ),
   TopBar: () => <TopBar title="Docs" />,
 };

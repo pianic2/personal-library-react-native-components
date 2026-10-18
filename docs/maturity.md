@@ -19,6 +19,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Component | Category | Level | Summary |
 | --- | --- | --- | --- |
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
+| [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
 | [Alert](components/feedback/alert.md) | feedback | `demo` | Inline message block with a tone for success, warning, error or information. |
 | [Banner](components/feedback/banner.md) | feedback | `demo` | Persistent full-width announcement for a page or section, with a tone, optional actions and a dismiss button. |

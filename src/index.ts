@@ -83,6 +83,8 @@ export type { TextGroupProps } from "./components/TextGroup/index.js";
 export { Textarea } from "./components/Textarea/index.js";
 export type { TextareaProps } from "./components/Textarea/index.js";
 export { Tooltip } from "./components/Tooltip/index.js";
+export { Touchable } from "./components/Touchable/index.js";
+export type { TouchableProps } from "./components/Touchable/index.js";
 export { TopBar } from "./components/TopBar/index.js";
 export type { TopBarProps } from "./components/TopBar/index.js";
 

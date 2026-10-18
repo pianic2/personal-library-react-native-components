@@ -267,3 +267,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-466 (bundle budget re-baseline: root-all and . to 50000 B gzip) | #224 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-330 (Banner persistent announcement) | #226 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-197 (PasswordInput and Textarea to demo) | #225 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-229 (Touchable pressable primitive) | #227 | PR open (row committed pre-merge, see ADR 0020 Branching) |
