@@ -6828,6 +6828,13 @@
     "NavProvider": {
       "props": [
         {
+          "name": "adapter",
+          "type": "NavAdapter",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
@@ -6850,15 +6857,15 @@
         },
         {
           "name": "navigate",
-          "type": "(href: string) => void",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         },
         {
           "name": "pathname",
-          "type": "string",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         }
