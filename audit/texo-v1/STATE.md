@@ -262,4 +262,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-463 (ownership extensions amendment: 462 legacy colour test, 197 snapshots and example) | #218 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-295 (Row dead flex prop and rowGap on wrap) | #222 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-465 (ownership extensions amendment: pinned prop contracts for 339 and 346) | #220 | PR open (row committed pre-merge, see ADR 0020 Branching) |
-| PLRNUI-466 (bundle budget re-baseline: root-all and . to 50000 B gzip) | #TBD | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-466 (bundle budget re-baseline: root-all and . to 50000 B gzip) | #224 | PR open (row committed pre-merge, see ADR 0020 Branching) |
