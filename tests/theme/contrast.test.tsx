@@ -88,13 +88,17 @@ describe("PLRNUI-278 contrast util", () => {
 });
 
 describe("PLRNUI-278 validate-theme-contrast", () => {
-  it("exits 0 for the default theme in both modes and prints the ratios, with the outline waivers reported", () => {
+  it("exits 0 for the default theme in both modes, prints the ratios, and nothing is waived (outline reaches 3:1)", () => {
     const result = run();
     assert.equal(result.status, 0, result.stderr + result.stdout);
     assert.match(result.stdout, /default\s+light\s+onSurface\/surface\.0\s+#020408\s+#FFFFFF\s+20\.52\s+4\.5\s+PASS/);
     assert.match(result.stdout, /default\s+dark\s+onPrimary\/primary/);
-    assert.match(result.stdout, /WAIVED light outline\/surface\.0 \(2\.56 < 3\): known finding/);
-    assert.match(result.stdout, /0 failing/);
+    assert.match(result.stdout, /default\s+light\s+outline\/surface\.0\s+#64748B\s+#FFFFFF\s+4\.76\s+3\s+PASS/);
+    assert.match(result.stdout, /default\s+light\s+outline\/surface\.1\s+#64748B\s+#F4F4F4\s+4\.\d\d\s+3\s+PASS/);
+    assert.match(result.stdout, /default\s+dark\s+outline\/surface\.0\s+#64748B\s+#020617\s+\d\.\d\d\s+3\s+PASS/);
+    assert.match(result.stdout, /default\s+dark\s+outline\/surface\.1\s+#64748B\s+#0B1220\s+\d\.\d\d\s+3\s+PASS/);
+    assert.doesNotMatch(result.stdout, /WAIVED/);
+    assert.match(result.stdout, /0 waived, 0 failing/);
   });
 
   it("exits 1 and names the pair when a fixture theme has a failing pair (negative test)", () => {
@@ -105,8 +109,12 @@ describe("PLRNUI-278 validate-theme-contrast", () => {
     assert.match(result.stderr, /FAIL fixture light onSurface\/surface\.0: 1\.\d+ < 4\.5 \(#BBBBBB on #FFFFFF\)/);
   });
 
-  it("a file theme gets no waivers: the default outline role fails there", () => {
-    const result = withThemeFile({ name: "fixture", modes: { light: roles("light"), dark: roles("dark") } });
+  it("the former outline values (2.3 to 2.7 on the surfaces) fail again: a regression is caught", () => {
+    const light = roles("light");
+    const dark = roles("dark");
+    light.outline = "#94A3B8";
+    dark.outline = "#475569";
+    const result = withThemeFile({ name: "fixture", modes: { light, dark } });
     assert.equal(result.status, 1);
     assert.match(result.stderr, /FAIL fixture light outline\/surface\.0/);
     assert.match(result.stderr, /FAIL fixture dark outline\/surface\.1/);
@@ -129,7 +137,8 @@ describe("PLRNUI-278 validate-theme-contrast", () => {
     assert.equal(result.status, 0);
     const parsed = JSON.parse(result.stdout) as { ok: boolean; rows: Array<{ status: string }> };
     assert.equal(parsed.ok, true);
-    assert.equal(parsed.rows.filter((r) => r.status === "waived").length, 4);
+    assert.equal(parsed.rows.filter((r) => r.status === "waived").length, 0);
+    assert.equal(parsed.rows.filter((r) => r.status === "pass").length, 38);
   });
 
   it("exits 2 for bad input: unknown option, missing value, unreadable or malformed file, missing role, unparseable colour", () => {
@@ -156,31 +165,58 @@ type Row = { id: string; mode: string; status: string; ratio: number };
 const defaultTheme = () => ({ name: "default", modes: { light: roles("light"), dark: roles("dark") } });
 const statusOf = (rows: Row[], mode: string, id: string) => rows.find((r) => r.mode === mode && r.id === id)?.status;
 
-describe("PLRNUI-278 waivers cover the documented finding only", () => {
-  it("the default theme: the four outline pairs are waived, everything else passes, no waiver is unused", () => {
+// The waiver machinery is kept (an exception must be explicit, bounded and expire); these tests use local waivers on a theme
+// carrying the former outline values, because the default theme has none since PLRNUI-462.
+const FORMER_OUTLINE_REASON = "former default outline finding (tests only)";
+const LOCAL_WAIVERS = {
+  "light outline/surface.0": { reason: FORMER_OUTLINE_REASON, floor: 2.5 },
+  "light outline/surface.1": { reason: FORMER_OUTLINE_REASON, floor: 2.25 },
+  "dark outline/surface.0": { reason: FORMER_OUTLINE_REASON, floor: 2.6 },
+  "dark outline/surface.1": { reason: FORMER_OUTLINE_REASON, floor: 2.4 },
+};
+const formerOutlineTheme = () => {
+  const theme = defaultTheme();
+  theme.modes.light.outline = "#94A3B8";
+  theme.modes.dark.outline = "#475569";
+  return theme;
+};
+
+describe("PLRNUI-278 waivers (machinery) and PLRNUI-462 (no waivers left)", () => {
+  it("the default theme has no waiver: every pair passes, in both modes, outline at least 3:1", () => {
+    assert.deepEqual(WAIVERS, {});
     const { rows, unusedWaivers } = evaluateTheme(defaultTheme(), contrast, PAIRS, WAIVERS) as { rows: Row[]; unusedWaivers: string[] };
     assert.deepEqual(unusedWaivers, []);
-    assert.deepEqual(rows.filter((r) => r.status === "waived").map((r) => `${r.mode} ${r.id}`).sort(), Object.keys(WAIVERS).sort());
-    assert.deepEqual(rows.filter((r) => r.status === "fail" || r.status === "stale-waiver"), []);
+    assert.equal(rows.length, 38);
+    assert.deepEqual(rows.filter((r) => r.status !== "pass"), []);
+    for (const mode of ["light", "dark"]) {
+      for (const id of ["outline/surface.0", "outline/surface.1", "outline/surface.2", "outline/surface.3"]) {
+        const ratio = rows.find((r) => r.mode === mode && r.id === id)?.ratio ?? 0;
+        assert.ok(ratio >= 3, `${mode} ${id} is ${ratio}`);
+      }
+    }
+  });
+
+  it("a waiver covers the former outline finding only between its floor and the minimum", () => {
+    const { rows, unusedWaivers } = evaluateTheme(formerOutlineTheme(), contrast, PAIRS, LOCAL_WAIVERS) as { rows: Row[]; unusedWaivers: string[] };
+    assert.deepEqual(unusedWaivers, []);
+    assert.deepEqual(rows.filter((r) => r.status === "waived").map((r) => `${r.mode} ${r.id}`).sort(), Object.keys(LOCAL_WAIVERS).sort());
   });
 
   it("an outline that gets worse than the documented finding fails again, waiver or not", () => {
-    const theme = defaultTheme();
+    const theme = formerOutlineTheme();
     theme.modes.light.outline = "#C0C8D2"; // about 1.6 on white: below the waiver floor
-    const { rows } = evaluateTheme(theme, contrast, PAIRS, WAIVERS) as { rows: Row[] };
+    const { rows } = evaluateTheme(theme, contrast, PAIRS, LOCAL_WAIVERS) as { rows: Row[] };
     assert.equal(statusOf(rows, "light", "outline/surface.0"), "fail");
     assert.equal(statusOf(rows, "dark", "outline/surface.0"), "waived");
   });
 
   it("an outline that now passes makes its waiver stale (and the CLI treats that as a failure)", () => {
-    const theme = defaultTheme();
-    theme.modes.light.outline = "#000000";
-    const { rows } = evaluateTheme(theme, contrast, PAIRS, WAIVERS) as { rows: Row[] };
+    const { rows } = evaluateTheme(defaultTheme(), contrast, PAIRS, LOCAL_WAIVERS) as { rows: Row[] };
     assert.equal(statusOf(rows, "light", "outline/surface.0"), "stale-waiver");
   });
 
   it("a waiver that matches no pair is reported as unused", () => {
-    const { unusedWaivers } = evaluateTheme(defaultTheme(), contrast, PAIRS, { ...WAIVERS, "light nope/typo": { reason: "x", floor: 1 } }) as { unusedWaivers: string[] };
+    const { unusedWaivers } = evaluateTheme(defaultTheme(), contrast, PAIRS, { "light nope/typo": { reason: "x", floor: 1 } }) as { unusedWaivers: string[] };
     assert.deepEqual(unusedWaivers, ["light nope/typo"]);
   });
 
@@ -206,7 +242,7 @@ describe("PLRNUI-278 validate-theme-contrast CLI hardening", () => {
       assert.match(failing.stderr, /FAIL fixture light onSurface\/surface\.0/);
       const plain = spawnSync(process.execPath, [link], { cwd: root, encoding: "utf8" });
       assert.equal(plain.status, 0, plain.stderr);
-      assert.match(plain.stdout, /34 pair/);
+      assert.match(plain.stdout, /38 pair/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
