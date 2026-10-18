@@ -270,3 +270,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-197 (PasswordInput and Textarea to demo) | #225 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-229 (Touchable pressable primitive) | #227 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-467 (ownership extensions amendment: docs/maturity.md for 339 and 346) | #228 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-339 (BottomSheet snap points, drag, dismissal) | #229 | PR open (row committed pre-merge, see ADR 0020 Branching) |
