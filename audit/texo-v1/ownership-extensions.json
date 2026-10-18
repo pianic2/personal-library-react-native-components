@@ -47,6 +47,11 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-469": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -137,7 +142,10 @@
    "audit/api/public-root-api.snapshot",
    "audit/api/snapshots/*.snapshot",
    "docs/maturity.md",
+   "examples/overlays.experimental.tsx",
    "src/index.ts",
+   "tests/helpers/fixtures.tsx",
+   "tests/scripts/extract-props.test.ts",
    "tests/types/negative-cases.ts",
    "tests/types/props-contracts.ts"
   ],
@@ -147,7 +155,9 @@
    "audit/api/public-root-api.snapshot",
    "audit/api/snapshots/*.snapshot",
    "docs/maturity.md",
+   "examples/overlays.experimental.tsx",
    "src/index.ts",
+   "tests/scripts/extract-props.test.ts",
    "tests/types/negative-cases.ts",
    "tests/types/props-contracts.ts"
   ],
