@@ -48,7 +48,7 @@ export function ExperimentalOverlaysExample() {
               <Button label="Toggle popover" onPress={toggle} />
             )}
           >
-            <Text>Web popover content; native renders trigger only.</Text>
+            <Text>Popover content, anchored to the trigger on iOS, Android and web (rendered through the nearest OverlayHost, or a Modal without one).</Text>
           </Popover>
 
           <Select
