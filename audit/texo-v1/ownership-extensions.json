@@ -52,6 +52,11 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-470": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -140,10 +145,12 @@
    "ai/examples/BottomSheet.tsx",
    "ai/manifests/props.json",
    "audit/api/public-root-api.snapshot",
+   "audit/api/public-types.md",
    "audit/api/snapshots/*.snapshot",
    "docs/maturity.md",
    "examples/overlays.experimental.tsx",
    "src/index.ts",
+   "tests/components/component-smoke.test.tsx",
    "tests/helpers/fixtures.tsx",
    "tests/scripts/extract-props.test.ts",
    "tests/types/negative-cases.ts",
@@ -153,6 +160,7 @@
    "ai/examples/Popover.tsx",
    "ai/manifests/props.json",
    "audit/api/public-root-api.snapshot",
+   "audit/api/public-types.md",
    "audit/api/snapshots/*.snapshot",
    "docs/maturity.md",
    "examples/overlays.experimental.tsx",
