@@ -34,4 +34,5 @@ interface RowProps extends ViewProps {
 ## Comportamento
 
 - `gap` è applicato come `columnGap` usando `theme.space[gap]`.
-- `wrap=true` usa `flexWrap: "wrap"`.
+- `wrap=true` usa `flexWrap: "wrap"` e applica lo stesso valore di `gap` anche come `rowGap` (`theme.space[gap]`), così le righe a capo restano distanziate quanto le colonne.
+- `flex` è applicato allo `style` del `View` (`style.flex`) e non viene inoltrato come prop al `View`. Uno `style` passato dal consumatore ha la precedenza.

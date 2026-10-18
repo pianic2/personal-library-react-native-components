@@ -6828,6 +6828,13 @@
     "NavProvider": {
       "props": [
         {
+          "name": "adapter",
+          "type": "NavAdapter",
+          "required": true,
+          "default": null,
+          "description": ""
+        },
+        {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
@@ -6850,15 +6857,15 @@
         },
         {
           "name": "navigate",
-          "type": "(href: string) => void",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         },
         {
           "name": "pathname",
-          "type": "string",
-          "required": true,
+          "type": "never",
+          "required": false,
           "default": null,
           "description": ""
         }
@@ -7570,7 +7577,7 @@
       ]
     },
     "PasswordInput": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "accessibilityActions",
@@ -8024,7 +8031,7 @@
           "type": "boolean",
           "required": false,
           "default": false,
-          "description": ""
+          "description": "Initial visibility when uncontrolled. Default: `false` (hidden)."
         },
         {
           "name": "defaultValue",
@@ -8109,8 +8116,8 @@
           "name": "hidePasswordLabel",
           "type": "string",
           "required": false,
-          "default": "Hide password",
-          "description": ""
+          "default": null,
+          "description": "Text and accessibility label of the toggle while the password is visible. Default: the `password.hide` message."
         },
         {
           "name": "hitSlop",
@@ -8671,7 +8678,7 @@
           "type": "boolean",
           "required": false,
           "default": null,
-          "description": ""
+          "description": "Controlled visibility of the password."
         },
         {
           "name": "placeholder",
@@ -8891,8 +8898,8 @@
           "name": "showPasswordLabel",
           "type": "string",
           "required": false,
-          "default": "Show password",
-          "description": ""
+          "default": null,
+          "description": "Text and accessibility label of the toggle while the password is hidden. Default: the `password.show` message."
         },
         {
           "name": "showSoftInputOnFocus",
@@ -13259,7 +13266,7 @@
       ]
     },
     "Textarea": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "accessibilityActions",
@@ -14491,6 +14498,14 @@
             "treegrid",
             "treeitem"
           ]
+        },
+        {
+          "name": "rows",
+          "type": "number",
+          "required": false,
+          "default": null,
+          "description": "Number of visible text lines the field is at least tall for. Default: 4. Values below 1 count as 1.",
+          "defaultExpression": "DEFAULT_ROWS"
         },
         {
           "name": "screenReaderFocusable",

@@ -3,7 +3,7 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "Textarea",
   "category": "form",
-  "status": "prototype",
+  "status": "demo",
   "summary": "Multi-line text input with a label.",
   "whenToUse": [
     "Collect longer free text such as a message or a note"
@@ -24,7 +24,9 @@ export const meta: ComponentMeta = {
       "Button"
     ]
   },
-  "a11y": [],
+  "a11y": [
+    "Takes the same label, helperText and accessibilityLabel as Input; without a label give an accessibilityLabel"
+  ],
   "variants": {
     "size": [
       "xs",
@@ -39,7 +41,7 @@ export const meta: ComponentMeta = {
     "disabled"
   ],
   "platformNotes": [
-    "Hardcoded minimum height of 100"
+    "The minimum height follows the rows prop (default 4) from the typography and space tokens"
   ],
   "examples": [
     {
