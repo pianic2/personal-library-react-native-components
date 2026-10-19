@@ -277,4 +277,5 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-472 (ownership amendment for 428 Screen: system-ui test and RN shim) | #237 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-251 (Pack verification: content, size and entrypoint checks on the tarball) | #236 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-317 (TexoProvider composition root, ADR-R1) | #233 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-473 (ownership extensions amendment: package.json scripts and docs-api test for 148 and 251) | #239 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-475 (ownership extensions amendment: shim type-parity generator and type-tests tsconfig for 150) | #243 | PR open (row committed pre-merge, see ADR 0020 Branching) |
