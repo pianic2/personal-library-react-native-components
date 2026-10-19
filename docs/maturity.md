@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 49 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 50 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 26 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -41,6 +41,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Column](components/layout/column.md) | layout | `demo` | Vertical flex container with a token-based gap. |
 | Container | layout | `prototype` | Centred, width-capped layout box with breakpoint gutters that also provides its measured size to descendants. |
 | [Divider](components/layout/divider.md) | layout | `demo` | Full-width horizontal separator with token-based spacing. |
+| Grid | layout | `prototype` | Equal-width wrapping columns with responsive column counts, optional spans and token gaps. |
 | [Row](components/layout/row.md) | layout | `demo` | Horizontal flex container with a token-based gap. |
 | Slot | layout | `prototype` | Merges its props into its single child element (asChild) instead of rendering a wrapper. |
 | [Spacer](components/layout/spacer.md) | layout | `demo` | Empty space sized by a spacing token (xs to lg), or a flexible gap that pushes siblings apart in a Row or Column. |
