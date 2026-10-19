@@ -275,3 +275,6 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-469 (ownership extensions amendment: extract-props pin, fixture and overlay example for 339 and 346) | #231 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-470 (ownership extensions amendment: component smoke test and public-types note for 339 and 346) | #232 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-428 (Screen) | #PR | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-472 (ownership amendment for 428 Screen: system-ui test and RN shim) | #237 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-251 (Pack verification: content, size and entrypoint checks on the tarball) | #236 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-317 (TexoProvider composition root, ADR-R1) | #233 | PR open (row committed pre-merge, see ADR 0020 Branching) |
