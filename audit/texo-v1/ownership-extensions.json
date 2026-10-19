@@ -176,6 +176,9 @@
   ],
   "PLRNUI-462": [
    "tests/theme/semantic-colors.test.tsx"
+  ],
+  "PLRNUI-317": [
+   "src/theme/ThemeScope.tsx"
   ]
  }
 }
