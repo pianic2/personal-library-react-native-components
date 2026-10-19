@@ -57,6 +57,16 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-472": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
+  },
+  "PLRNUI-473": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -128,7 +138,16 @@
    "docs/components/layout/index.md",
    "docs/components/layout/screen.md",
    "examples/screen.tsx",
-   "ai/examples/Screen.tsx"
+   "ai/examples/Screen.tsx",
+   "tests/native/system-ui/systemUi.test.tsx",
+   "tests/shims/react-native.tsx"
+  ],
+  "PLRNUI-148": [
+   "package.json",
+   "tests/scripts/docs-api.test.ts"
+  ],
+  "PLRNUI-251": [
+   "package.json"
   ],
   "PLRNUI-197": [
    "ai/manifests/props.json",
