@@ -60,9 +60,6 @@
   }
  },
  "extra": {
-  "PLRNUI-307": [
-   "tests/scripts/dev-link.test.ts"
-  ],
   "PLRNUI-229": [
    "ai/manifests/props.json",
    "audit/api/public-root-api.snapshot",
