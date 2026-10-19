@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import TestRenderer, { act } from "react-test-renderer";
 import { TexoProvider } from "../../src/providers/index.js";
-import { createSingletonContext } from "../../src/providers/createSingletonContext.js";
+import { createSingletonContext, registerSingletonContext } from "../../src/providers/createSingletonContext.js";
 import { ThemeProvider } from "../../src/theme/ThemeProvider.js";
 import { ThemeContext } from "../../src/theme/ThemeScope.js";
 import { LocaleProvider, useLocale } from "../../src/i18n/index.js";
@@ -86,9 +86,12 @@ describe("createSingletonContext", () => {
     console.warn = (...args: unknown[]) => void warnings.push(args);
     (globalThis as { __DEV__?: boolean }).__DEV__ = true;
     try {
-      const second = createSingletonContext("theme", null);
-      assert.equal(second, ThemeContext);
+      const second = registerSingletonContext("theme", React.createContext<unknown>(null));
+      assert.equal(second, ThemeContext as unknown);
       assert.equal(warnings.length, 1);
+      registerSingletonContext("theme", ThemeContext); // the same context again is silent
+      assert.equal(createSingletonContext("theme", null), ThemeContext as unknown);
+      assert.equal(warnings.length, 2, "createSingletonContext registers a new context, so it warns too");
       assert.match(String(warnings[0]![0]), /"theme"/);
       assert.equal(Symbol.for("texo.theme") in globalThis, true);
     } finally {
@@ -102,7 +105,7 @@ describe("createSingletonContext", () => {
     const original = console.warn;
     console.warn = (...args: unknown[]) => void warnings.push(args);
     try {
-      createSingletonContext("theme", null);
+      registerSingletonContext("theme", React.createContext<unknown>(null));
     } finally {
       console.warn = original;
     }

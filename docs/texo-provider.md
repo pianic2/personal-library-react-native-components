@@ -54,4 +54,4 @@ The root `OverlayHost` owns the overlay stack, Android Back and the web Escape k
 
 ## Singleton contexts
 
-`createSingletonContext(name, defaultValue)` registers a context on `globalThis[Symbol.for("texo.<name>")]`. When two copies of the library are loaded they share the first context, so a provider of one copy is seen by the hooks of the other. A second registration logs one warning in development. `ThemeContext` uses it; the other contexts are not converted yet.
+`createSingletonContext(name, defaultValue)` registers a context on `globalThis[Symbol.for("texo.<name>")]`. When two copies of the library are loaded they share the first context, so a provider of one copy is seen by the hooks of the other. A second registration logs one warning in development. `ThemeContext` is registered with `registerSingletonContext` when `ThemeProvider` loads; the other contexts are not converted yet.

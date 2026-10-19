@@ -2,8 +2,7 @@
 //
 // The theme context and the nested scope. The context lives here (not in ThemeProvider.tsx) so the scope can provide it
 // without widening what `ThemeProvider.tsx` exports to the package root.
-import React, { useContext, useMemo } from "react";
-import { createSingletonContext } from "../providers/createSingletonContext.js";
+import React, { createContext, useContext, useMemo } from "react";
 import { density as densityTokens } from "../tokens/density.base.js";
 import type { DensityLevel, ThemePreference } from "./contract.js";
 import { mergeThemes, type DeepPartial } from "./createTheme.js";
@@ -34,7 +33,7 @@ export interface ThemeContextValue {
   config: ThemeConfig;
 }
 
-export const ThemeContext = createSingletonContext<ThemeContextValue | null>("theme", null);
+export const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function isDensityLevel(value: unknown): value is DensityLevel {
   return typeof value === "string" && Object.hasOwn(densityTokens.scale, value);
