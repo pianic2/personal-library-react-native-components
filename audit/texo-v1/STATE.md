@@ -274,6 +274,10 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-468 (ownership extensions amendment: root props-type export for 339 and 346) | #230 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-469 (ownership extensions amendment: extract-props pin, fixture and overlay example for 339 and 346) | #231 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-470 (ownership extensions amendment: component smoke test and public-types note for 339 and 346) | #232 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-428 (Screen) | #244 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-307 (Local development link workflow for consumer apps) | #238 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-142 (E15-04: export-parity test shim vs Texo) | #241 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-313 (E14-10: subpath resolution matrix script) | #245 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-472 (ownership amendment for 428 Screen: system-ui test and RN shim) | #237 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-251 (Pack verification: content, size and entrypoint checks on the tarball) | #236 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-317 (TexoProvider composition root, ADR-R1) | #233 | PR open (row committed pre-merge, see ADR 0020 Branching) |

@@ -50,6 +50,7 @@ nav:
           - Column / Stack: components/layout/column.md
           - Divider: components/layout/divider.md
           - Spacer: components/layout/spacer.md
+          - Screen: components/layout/screen.md
       - Typography:
           - Overview: components/typography/index.md
           - Text: components/typography/text.md

@@ -381,7 +381,17 @@ describe("PLRNUI-288 boundaries", () => {
     const root = join(import.meta.dirname, "../../..");
     const walk = (d: string): string[] => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));
     assert.equal(/system-ui/.test(readFileSync(join(root, "src/index.ts"), "utf8")), false);
-    const outside = walk(join(root, "src")).filter((f) => !f.includes("/native/") && /\.tsx?$/.test(f)).filter((f) => /native\/system-ui/.test(readFileSync(f, "utf8")));
+    // PLRNUI-428 (decision H10): Screen is the one exact-path exception, and only for the themed status bar.
+    const allowed = new Map([["src/components/Screen/Screen.tsx", 'import { ThemedStatusBar } from "../../native/system-ui/index.js";']]);
+    const outside = walk(join(root, "src"))
+      .filter((f) => !f.includes("/native/") && /\.tsx?$/.test(f))
+      .filter((f) => /native\/system-ui/.test(readFileSync(f, "utf8")))
+      .filter((f) => {
+        const line = allowed.get(f.slice(root.length + 1));
+        if (!line) return true;
+        const refs = readFileSync(f, "utf8").split("\n").filter((l) => /native\/system-ui/.test(l));
+        return refs.length !== 1 || refs[0] !== line;
+      });
     assert.deepEqual(outside, []);
     const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
     for (const section of ["dependencies", "peerDependencies"]) {
