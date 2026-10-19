@@ -141,10 +141,6 @@
    "ai/manifests/props.json",
    "audit/api/snapshots/*.snapshot"
   ],
-  "PLRNUI-329": [
-    "docs/maturity.md",
-    "tests/helpers/fixtures.tsx"
-  ],
   "PLRNUI-339": [
    "ai/examples/BottomSheet.tsx",
    "ai/manifests/props.json",
