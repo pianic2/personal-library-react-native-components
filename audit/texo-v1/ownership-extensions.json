@@ -130,7 +130,8 @@
    "examples/screen.tsx",
    "ai/examples/Screen.tsx",
    "tests/native/system-ui/systemUi.test.tsx",
-   "tests/shims/react-native.tsx"
+   "tests/shims/react-native.tsx",
+   "audit/texo-v1/ownership-extensions.json"
   ],
   "PLRNUI-197": [
    "ai/manifests/props.json",
