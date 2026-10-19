@@ -128,7 +128,9 @@
    "docs/components/layout/index.md",
    "docs/components/layout/screen.md",
    "examples/screen.tsx",
-   "ai/examples/Screen.tsx"
+   "ai/examples/Screen.tsx",
+   "tests/native/system-ui/systemUi.test.tsx",
+   "tests/shims/react-native.tsx"
   ],
   "PLRNUI-197": [
    "ai/manifests/props.json",
