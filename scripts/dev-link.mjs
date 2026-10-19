@@ -84,10 +84,17 @@ export function assertSingleReact(target) {
 export function sync(target, source = repoRoot) {
   const dist = join(source, "dist");
   if (!existsSync(join(dist, "index.js"))) throw new Error(`${dist}/index.js missing: the build did not emit`);
-  const dest = join(target, "node_modules", ...PACKAGE_NAME.split("/"));
-  mkdirSync(dirname(dest), { recursive: true });
-  // A leftover symlink (npm link) must go: writing through it would modify the repository.
+  const modules = join(target, "node_modules");
+  const scope = join(modules, PACKAGE_NAME.split("/")[0]);
+  const dest = join(modules, ...PACKAGE_NAME.split("/"));
+  // Deleting or writing through a symlinked node_modules or scope directory would touch files outside the target.
+  for (const dir of [modules, scope]) {
+    if (existsSync(dir) && lstatSync(dir).isSymbolicLink()) throw new Error(`${dir} is a symlink; refusing to write through it. Replace it with a real directory.`);
+  }
+  mkdirSync(scope, { recursive: true });
+  // A leftover package symlink (npm link) is removed as a link, never followed: writing through it would modify the repository.
   if (existsSync(dest) && lstatSync(dest).isSymbolicLink()) rmSync(dest);
+  mkdirSync(dest, { recursive: true });
   rmSync(join(dest, "dist"), { recursive: true, force: true });
   cpSync(dist, join(dest, "dist"), { recursive: true });
   cpSync(join(source, "package.json"), join(dest, "package.json"));
