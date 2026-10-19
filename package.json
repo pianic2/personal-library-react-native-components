@@ -87,8 +87,6 @@
     "docs:compat:check": "node scripts/compatibility-docs.mjs --check",
     "api:snapshot": "node scripts/public-api-snapshot.mjs",
     "api:snapshot:check": "node scripts/public-api-snapshot.mjs --check",
-    "docs:api": "node scripts/docs-api.mjs",
-    "docs:api:check": "node scripts/docs-api.mjs --check",
     "changeset": "changeset",
     "changeset:version": "changeset version && npm install --package-lock-only --ignore-scripts && node scripts/sync-shim-version.mjs",
     "shim:version:check": "node scripts/sync-shim-version.mjs --check",
