@@ -60,6 +60,10 @@
   }
  },
  "extra": {
+  "PLRNUI-148": [
+   "package.json",
+   "tests/scripts/docs-api.test.ts"
+  ],
   "PLRNUI-229": [
    "ai/manifests/props.json",
    "audit/api/public-root-api.snapshot",
