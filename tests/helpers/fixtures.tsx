@@ -45,6 +45,7 @@ import {
   TopBar,
   useFieldControlProps,
 } from "../../src";
+import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
@@ -121,6 +122,16 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
+  Collapsible: () => (
+    <Collapsible defaultOpen>
+      <Collapsible.Trigger>
+        <Text>Toggle</Text>
+      </Collapsible.Trigger>
+      <Collapsible.Content>
+        <Text>Body</Text>
+      </Collapsible.Content>
+    </Collapsible>
+  ),
   Container: () => (
     <Container size="md">
       <Text>Contained</Text>
