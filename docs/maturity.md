@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 56 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 57 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 29 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 30 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -64,6 +64,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Card](components/surfaces/card.md) | surfaces | `prototype` | Surface that groups related content with padding, shadow and an outline or elevated variant. |
 | Collapsible | surfaces | `prototype` | Disclosure region: a trigger shows or hides content with an animated height, controlled or uncontrolled. |
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
+| BulletList | typography | `prototype` | Semantic list for bulleted, numbered, checklist or plain content, with nesting up to three levels and a custom marker. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
 | ExpandableText | typography | `prototype` | Text clamped to a number of lines with a read more / show less toggle that appears only when the text is truncated. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |

@@ -45,6 +45,7 @@ import {
   TopBar,
   useFieldControlProps,
 } from "../../src";
+import { BulletList } from "../../src/components/BulletList/index.js";
 import { CircularProgress } from "../../src/components/CircularProgress/index.js";
 import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
@@ -109,6 +110,12 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   Badge: () => <Badge>New</Badge>,
   Banner: () => <Banner message="Fixture message" />,
   BottomBar: () => <BottomBar />,
+  BulletList: () => (
+    <BulletList>
+      <BulletList.Item>First</BulletList.Item>
+      <BulletList.Item>Second</BulletList.Item>
+    </BulletList>
+  ),
   BottomSheet: () => (
     <BottomSheet open onOpenChange={noop}>
       <Text>Sheet content</Text>
