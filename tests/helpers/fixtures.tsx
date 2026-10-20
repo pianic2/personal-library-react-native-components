@@ -45,6 +45,7 @@ import {
   TopBar,
   useFieldControlProps,
 } from "../../src";
+import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
@@ -53,6 +54,7 @@ import { Label } from "../../src/components/Label/index.js";
 import { AsyncBoundary, EmptyState, ErrorState, LoadingState, Result } from "../../src/components/StateView/index.js";
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
 import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
+import { Chip } from "../../src/components/Chip/index.js";
 import { View } from "react-native";
 
 const noop = () => undefined;
@@ -120,7 +122,18 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </Card>
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
+  Chip: () => <Chip label="Fixture chip" selected onSelectedChange={noop} onRemove={noop} />,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
+  Collapsible: () => (
+    <Collapsible defaultOpen>
+      <Collapsible.Trigger>
+        <Text>Toggle</Text>
+      </Collapsible.Trigger>
+      <Collapsible.Content>
+        <Text>Body</Text>
+      </Collapsible.Content>
+    </Collapsible>
+  ),
   Container: () => (
     <Container size="md">
       <Text>Contained</Text>
