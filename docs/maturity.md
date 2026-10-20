@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 54 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 57 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 27 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 30 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -21,7 +21,9 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
 | Chip | buttons | `prototype` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
 | [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
+| CircularProgress | data-display | `prototype` | Ring showing a progress value from 0 to 100, or an indeterminate rotating ring, drawn with plain Views. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
+| DescriptionList | data-display | `prototype` | Label/value pairs for detail views: stacked, inline or in grid columns, with an optional consumer-handled copy action. |
 | [Pager](components/data-display/pager.md) | data-display | `demo` | Horizontal paging with a controlled index, a Carousel with peek and optional autoplay, and a dot PageIndicator. |
 | [Alert](components/feedback/alert.md) | feedback | `demo` | Inline message block with a tone for success, warning, error or information. |
 | [Banner](components/feedback/banner.md) | feedback | `demo` | Persistent full-width announcement for a page or section, with a tone, optional actions and a dismiss button. |
@@ -64,6 +66,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
 | BulletList | typography | `prototype` | Semantic list for bulleted, numbered, checklist or plain content, with nesting up to three levels and a custom marker. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
+| ExpandableText | typography | `prototype` | Text clamped to a number of lines with a read more / show less toggle that appears only when the text is truncated. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |
 | Icon | typography | `prototype` | Draws an icon by name from pluggable icon sets, decorative by default and an image when labelled. |
 | IconGlyphs | typography | `prototype` | A built-in set of about 30 own-drawn UI glyphs (check, close, chevrons, search, eye ...) for Icon, drawn through react-native-svg. |

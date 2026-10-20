@@ -46,8 +46,10 @@ import {
   useFieldControlProps,
 } from "../../src";
 import { BulletList } from "../../src/components/BulletList/index.js";
+import { CircularProgress } from "../../src/components/CircularProgress/index.js";
 import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
+import { DescriptionList } from "../../src/components/DescriptionList/index.js";
 import { Grid } from "../../src/components/Grid/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
@@ -57,6 +59,7 @@ import { AsyncBoundary, EmptyState, ErrorState, LoadingState, Result } from "../
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
 import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
 import { Chip } from "../../src/components/Chip/index.js";
+import { ExpandableText } from "../../src/components/ExpandableText/index.js";
 import { View } from "react-native";
 
 const noop = () => undefined;
@@ -131,6 +134,8 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
   Chip: () => <Chip label="Fixture chip" selected onSelectedChange={noop} onRemove={noop} />,
+  CircularProgress: () => <CircularProgress progress={50} label="50%" />,
+  ExpandableText: () => <ExpandableText numberOfLines={2}>A short fixture sentence.</ExpandableText>,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
   Collapsible: () => (
     <Collapsible defaultOpen>
@@ -162,6 +167,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </Column>
   ),
   DataTable: () => <DataTableFixture />,
+  DescriptionList: () => <DescriptionList items={[{ label: "Name", value: "Ada" }]} />,
   Divider: () => <Divider />,
   Pager: () => (
     <>
