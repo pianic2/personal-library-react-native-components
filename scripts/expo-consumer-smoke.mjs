@@ -1,17 +1,25 @@
 // Expo consumer smoke (PLRNUI-64, extended by PLRNUI-119): packs the library, installs the tarball into an Expo 57
 // consumer and exports it for web, iOS and Android (Hermes bundles).
-//   node scripts/expo-consumer-smoke.mjs [--platform web|ios|android|all] [--work-dir <dir>]
+//   node scripts/expo-consumer-smoke.mjs [--platform web|ios|android|all] [--work-dir <dir>] [--via-shim]
+// --via-shim (PLRNUI-170) also packs the generated legacy shim, installs both tarballs and imports from the legacy name
+// (ThemeProvider and useTheme from the target name: mixed imports), then asserts one copy of react, react-native and the target.
 // Default platform: all. Default work dir: <os.tmpdir()>/plrnui-64-expo-consumer. Exit 0 ok, 1 a step failed, 2 usage.
-import { existsSync, readdirSync, realpathSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { packageName as currentPackageName } from "./lib/identity.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
-const packageName = "@personal-library/react-native-components";
+// The package name comes from the single-source identity (config/package-identity.json); today it is
+// @personal-library/react-native-components, and assertPackageSurface checks that package.json agrees.
+const packageName = currentPackageName();
+let viaShim = false;
+let shimName = "";
+let shimTarball = "";
 const PLATFORMS = ["web", "ios", "android"];
 const installTimeoutMs = 7 * 60 * 1000;
 // Markers rendered by the consumer app; they must appear in every exported bundle.
@@ -27,10 +35,13 @@ export function defaultWorkDir() {
 }
 
 export function parseArgs(argv) {
-  const opts = { platforms: PLATFORMS, workDir: defaultWorkDir() };
+  const opts = { platforms: PLATFORMS, workDir: defaultWorkDir(), viaShim: false };
   for (let i = 0; i < argv.length; i += 2) {
     const value = argv[i + 1];
-    if (argv[i] === "--platform" && value !== undefined) {
+    if (argv[i] === "--via-shim") {
+      opts.viaShim = true;
+      i -= 1;
+    } else if (argv[i] === "--platform" && value !== undefined) {
       if (value === "all") opts.platforms = PLATFORMS;
       else if (PLATFORMS.includes(value)) opts.platforms = [value];
       else throw new UsageError(`--platform must be one of ${PLATFORMS.join(", ")}, all`);
@@ -44,6 +55,37 @@ export function parseArgs(argv) {
 }
 
 export class UsageError extends Error {}
+
+/**
+ * Walks the tree of `npm ls --all --json --long` and returns, per name, the distinct install paths and versions found.
+ * A name is "single" when it has one path and one version.
+ */
+export function collectCopies(tree, names) {
+  const result = Object.fromEntries(names.map((name) => [name, { paths: new Set(), versions: new Set() }]));
+  const walk = (deps) => {
+    for (const [dep, node] of Object.entries(deps ?? {})) {
+      if (result[dep]) {
+        result[dep].paths.add(node.path ?? `${node.version}:${node.resolved}`);
+        result[dep].versions.add(node.version);
+      }
+      walk(node.dependencies);
+    }
+  };
+  walk(tree.dependencies);
+  return result;
+}
+
+/** Throws unless every name appears with exactly one install path and one version. */
+export function assertSingleCopies(tree, names) {
+  const copies = collectCopies(tree, names);
+  for (const name of names) {
+    const { paths, versions } = copies[name];
+    if (paths.size !== 1 || versions.size !== 1) {
+      throw new Error(`npm ls --all: expected one copy of ${name}, found ${paths.size} path(s) [${[...paths].join(", ")}] and version(s) [${[...versions].join(", ")}]`);
+    }
+  }
+  return copies;
+}
 
 function listFiles(dir) {
   const found = [];
@@ -210,7 +252,23 @@ async function packLibrary() {
   return tarballPath;
 }
 
+// Builds the shim from the packed target tarball (names and version come from the identity config and the tarball)
+// and packs it. Returns the shim tarball path and records the shim package name.
+async function packShim(targetTarball) {
+  const shimDir = join(smokeRoot, "shim");
+  run("node", ["scripts/build-shim.mjs", "--out", shimDir, "--target-tarball", targetTarball]);
+  const shimPackage = JSON.parse(readFileSync(join(shimDir, "package.json"), "utf8"));
+  shimName = shimPackage.name;
+  run("npm", ["pack", "--pack-destination", artifactsDir], { cwd: shimDir });
+  const tarball = join(artifactsDir, `${shimName.replace(/^@/, "").replace(/\//g, "-")}-${shimPackage.version}.tgz`);
+  if (!existsSync(tarball)) throw new Error(`Packed shim was not created: ${tarball}`);
+  return tarball;
+}
+
 async function writeConsumerFixture(tarballPath) {
+  // In shim mode the app imports from the legacy name, except ThemeProvider and useTheme, which come from the target
+  // name (mixed imports, R1 M4): both names must resolve to one module instance and one theme context.
+  const importName = viaShim ? shimName : packageName;
   await writeJson(join(consumerDir, "package.json"), {
     name: "plrnui-64-expo-57-consumer",
     version: "0.0.0",
@@ -220,8 +278,12 @@ async function writeConsumerFixture(tarballPath) {
       typecheck: "tsc --noEmit",
       "expo:export": "expo export --platform web --output-dir dist-web",
     },
+    // The shim depends on ^<major>.0.0 of the target, which a 0.x tarball does not satisfy; the override pins the
+    // shim's dependency to the tarball installed here, so only one copy of the target exists.
+    ...(viaShim ? { overrides: { [packageName]: `$${packageName}` } } : {}),
     dependencies: {
       [packageName]: `file:${tarballPath}`,
+      ...(viaShim ? { [shimName]: `file:${shimTarball}` } : {}),
       expo: "57.0.21",
       react: "19.2.3",
       "react-dom": "19.2.3",
@@ -274,10 +336,8 @@ import {
   Card,
   Input,
   Text,
-  ThemeProvider,
-  useTheme,
-} from "${packageName}";
-
+  ${viaShim ? "" : "ThemeProvider,\n  useTheme,\n"}} from "${importName}";
+${viaShim ? `import { ThemeProvider, useTheme } from "${packageName}";\n` : ""}
 function Probe() {
   const [value, setValue] = useState("Ada");
   const [count, setCount] = useState(0);
@@ -307,6 +367,7 @@ export default function App() {
 }
 
 async function validateConsumer(tarballPath, platforms) {
+  if (viaShim) shimTarball = await packShim(tarballPath);
   await writeConsumerFixture(tarballPath);
 
   run(
@@ -323,9 +384,15 @@ async function validateConsumer(tarballPath, platforms) {
 
   run(
     "npm",
-    ["ls", packageName, "expo", "react", "react-dom", "react-native", "--depth=0"],
+    ["ls", packageName, ...(viaShim ? [shimName] : []), "expo", "react", "react-dom", "react-native", "--depth=0"],
     { cwd: consumerDir }
   );
+  if (viaShim) {
+    const names = [packageName, "react", "react-native"];
+    const listing = run("npm", ["ls", "--all", "--json", "--long", ...names], { cwd: consumerDir, capture: true });
+    const copies = assertSingleCopies(JSON.parse(listing.stdout), names);
+    console.log(`single copy of ${names.join(", ")} (versions ${names.map((n) => [...copies[n].versions][0]).join(", ")})`);
+  }
   run("npm", ["run", "typecheck"], { cwd: consumerDir });
   for (const platform of platforms) {
     const outputDir = `dist-${platform}`;
@@ -339,6 +406,7 @@ async function validateConsumer(tarballPath, platforms) {
 
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
+  viaShim = opts.viaShim;
   smokeRoot = opts.workDir;
   artifactsDir = join(smokeRoot, "artifacts");
   consumerDir = join(smokeRoot, "consumer");
@@ -353,7 +421,7 @@ async function main() {
   const tarballPath = await packLibrary();
   await validateConsumer(tarballPath, opts.platforms);
 
-  console.log(`PLRNUI-64 Expo 57 consumer smoke passed (${opts.platforms.join(", ")}) using ${tarballPath}`);
+  console.log(`PLRNUI-64 Expo 57 consumer smoke passed${viaShim ? ` via shim ${shimName}` : ""} (${opts.platforms.join(", ")}) using ${tarballPath}`);
 }
 
 if (process.argv[1] && realpathSync(resolve(process.argv[1])) === realpathSync(fileURLToPath(import.meta.url))) {
