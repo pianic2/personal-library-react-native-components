@@ -442,7 +442,7 @@ describe("PLRNUI-23 overlay and modal form component coverage", () => {
 
   it("renders BottomSheet without throwing", () => {
     const renderer = renderWithTheme(
-      <BottomSheet visible={true} onClose={() => undefined}>
+      <BottomSheet open onOpenChange={() => undefined}>
         <Text>Sheet content</Text>
       </BottomSheet>
     );

@@ -4,7 +4,7 @@ export const meta: ComponentMeta = {
   "name": "BottomSheet",
   "category": "overlay",
   "status": "prototype",
-  "summary": "Panel that slides up from the bottom edge with two snap positions.",
+  "summary": "Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop.",
   "whenToUse": [
     "Present secondary content or actions without leaving the screen"
   ],
@@ -23,7 +23,8 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "No accessibilityViewIsModal, label or drag gesture yet"
+    "The sheet is a dialog on the overlay stack with accessibilityViewIsModal; the backdrop is a labelled button",
+    "The drag handle exposes a screen-reader action that closes the sheet (closeActionLabel)"
   ],
   "variants": {
     "snap": [
@@ -36,7 +37,10 @@ export const meta: ComponentMeta = {
     "visible"
   ],
   "platformNotes": [
-    "BottomSheetProps is not exported from the root yet"
+    "BottomSheetProps is not exported from the root while the status is prototype",
+    "`visible` is a deprecated alias of `open`, kept through 1.x (ADR 0014)",
+    "Back and Escape are handled by the root OverlayHost; without a host the sheet falls back to a native Modal",
+    "The drag uses PanResponder; pass gestureDriver to use another gesture library"
   ],
   "examples": [
     {

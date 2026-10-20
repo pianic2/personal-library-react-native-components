@@ -29,7 +29,7 @@ Current-state note for PLRNUI-26: root type exports remain explicit `export type
 | `HoverableProps` | `ToastProvider` internals | Not exported | No | Internal implementation helper. |  |
 | `ProgressBarProps` | `ProgressBar` | Exported from root | Yes, beta after PLRNUI-21 | PLRNUI-21 fixed clamped width behavior and keeps the props type explicit. | HUMAN REVIEW REQUIRED |
 | `ModalProps` | `Modal` | Not exported | Maybe experimental | Overlay API needs platform behavior decision. | HUMAN REVIEW REQUIRED |
-| `BottomSheetProps` | `BottomSheet` | Not exported | Maybe experimental | Overlay API needs gesture/keyboard/snap contract decision. | HUMAN REVIEW REQUIRED |
+| `BottomSheetProps` | `BottomSheet` | Not exported | Prototype | PLRNUI-339 defined snap points, drag and dismissal; `visible` stays as a deprecated alias (ADR 0014), so the type stays unexported while the status is prototype. | HUMAN REVIEW REQUIRED |
 | `TooltipProps` | `Tooltip` | Not exported | Maybe experimental | Native behavior is not equivalent to web. | HUMAN REVIEW REQUIRED |
 | `PopoverProps` | `Popover` | Root export (demo) | Demo | Renders through Portal on iOS, Android and web; not yet verified on devices. | Decided in PLRNUI-346 |
 | `BadgeProps` | `Badge` | Exported from root; verified by PLRNUI-24 | Yes | Props for proposed public surface component. | HUMAN REVIEW REQUIRED |
