@@ -4,7 +4,7 @@
 
 `import { ... } from "@personal-library/react-native-components"`
 
-120 exports.
+123 exports.
 
 | Symbol | Kind |
 | --- | --- |
@@ -76,6 +76,8 @@
 | [RadioGroupProps](#radiogroupprops) | type |
 | [Row](#row) | function |
 | [RowProps](#rowprops) | type |
+| [Screen](#screen) | function |
+| [ScreenProps](#screenprops) | type |
 | [Select](#select) | function |
 | [SideBar](#sidebar) | function |
 | [SideBarProps](#sidebarprops) | type |
@@ -126,6 +128,7 @@
 | [useNavPathname](#usenavpathname) | function |
 | [useNavigate](#usenavigate) | function |
 | [useOptionalNav](#useoptionalnav) | function |
+| [useScreenInsets](#usescreeninsets) | function |
 | [useTheme](#usetheme) | function |
 | [useToggle](#usetoggle) | function |
 
@@ -1898,6 +1901,42 @@ focus returns to the trigger. Assumes the host fills the window (the usual app r
 | `tvParallaxTiltAngle` | `number \| undefined` | no | *(Apple TV only)* May be used to change the appearance of the Apple TV parallax effect when this view goes in or out of focus. Defaults to 0.05. |
 | `wrap` | `boolean \| undefined` | no |  |
 
+### Screen
+
+*function*
+
+Page root: background, safe-area padding for the chosen edges (from the safe-area adapter, zero fallback), a header,
+a static or scrolling body, a sticky footer, optional keyboard avoidance and the themed status bar. It does not trap
+focus and renders header, body and footer in reading order. It composes `src/native` primitives and leaves
+`ThemeAppShell` untouched.
+
+```ts
+({ children, scroll, edges, padding, bg, keyboardAvoiding, dismissKeyboardOnTapOutside, statusBar, refreshing, onRefresh, refreshAccessibilityLabel, header, footer, contentContainerStyle, style, testID, }: ScreenProps): React.JSX.Element
+```
+
+### ScreenProps
+
+*type*
+
+| Prop | Type | Required | Description |
+| --- | --- | --- | --- |
+| `bg` | `"outline" \| "primary" \| "info" \| "success" \| "warning" \| "error" \| "secondary" \| "primaryHover" \| "primaryActive" \| "secondaryHover" \| "secondaryActive" \| "accent" \| "background" \| "surface" \| "surfaceElevated" \| "textPrimary" \| "textSecond ...` | no | Background, as a `theme.colors` key. Default `"background"`. |
+| `children` | `React.ReactNode` | no |  |
+| `contentContainerStyle` | `ReactNative.StyleProp&lt;ReactNative.ViewStyle>` | no | Style of the scroll content container (`scroll`) or of the static body. |
+| `dismissKeyboardOnTapOutside` | `boolean \| undefined` | no | Dismisses the keyboard when the empty area of the body is pressed. Default `false`. |
+| `edges` | `readonly Edge[] \| undefined` | no | Edges padded by the safe-area insets. Default: all four. Pass `[]` when a parent already handles the insets. |
+| `footer` | `React.ReactNode` | no | Rendered below the body, outside the scroll content, sticky at the bottom. |
+| `header` | `React.ReactNode` | no | Rendered above the body, outside the scroll content. |
+| `keyboardAvoiding` | `boolean \| undefined` | no | Keeps the footer above the keyboard: `KeyboardAvoidingView` with `padding` on iOS and `height` on Android; the bottom inset is dropped while the keyboard is open. Default `false`. |
+| `onRefresh` | `(() => void) \| undefined` | no | Enables pull-to-refresh on the scrolling body. |
+| `padding` | `"none" \| "xs" \| "sm" \| "md" \| "lg" \| "xl" \| "xxl" \| undefined` | no | Padding of the body, as a `theme.space` key. Not applied to the header and the footer. |
+| `refreshAccessibilityLabel` | `string \| undefined` | no | Accessibility label of the refresh control. Default `"Refresh"`. |
+| `refreshing` | `boolean \| undefined` | no | Pull-to-refresh state. Only used when `scroll` and `onRefresh` are set. Default `false`. |
+| `scroll` | `boolean \| undefined` | no | Renders the body in a vertical `ScrollView` (with pull-to-refresh when `onRefresh` is set) instead of a static `View`. Default `false`. |
+| `statusBar` | `"auto" \| "light" \| "dark" \| undefined` | no | `auto` follows the theme mode; `light` forces light content (for dark backgrounds) and `dark` forces dark content. Default `auto`. |
+| `style` | `ReactNative.StyleProp&lt;ReactNative.ViewStyle>` | no |  |
+| `testID` | `string \| undefined` | no |  |
+
 ### Select
 
 *function*
@@ -2767,6 +2806,16 @@ The props a control spreads (`<Input {...useFieldControlProps()} />`) to be link
 
 ```ts
 (): NavContextValue | null
+```
+
+### useScreenInsets
+
+*function*
+
+The safe-area insets the nearest `Screen` applies: the selected `edges` only, and a bottom of 0 while the keyboard is avoided. Zeros outside a `Screen`.
+
+```ts
+(): Insets
 ```
 
 ### useTheme

@@ -6,6 +6,6 @@ Generated from the TSDoc of the public entry files; one page per package entry p
 
 | Entry point | Import | Exports |
 | --- | --- | --- |
-| [@personal-library/react-native-components](root.md) | `import { ... } from "@personal-library/react-native-components"` | 120 |
+| [@personal-library/react-native-components](root.md) | `import { ... } from "@personal-library/react-native-components"` | 123 |
 | [@personal-library/react-native-components/theme](theme.md) | `import { ... } from "@personal-library/react-native-components/theme"` | 18 |
 | [@personal-library/react-native-components/tokens](tokens.md) | `import { ... } from "@personal-library/react-native-components/tokens"` | 4 |
