@@ -288,8 +288,13 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-473 (ownership extensions amendment: package.json scripts and docs-api test for 148 and 251) | #239 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-474 (ownership extensions amendment: docs/maturity.md and fixtures for 329, 331, 332, 334, 340, 287, 407) | #242 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-475 (ownership extensions amendment: shim type-parity generator and type-tests tsconfig for 150) | #243 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-332 (List and ListItemText: BulletList bulleted, numbered and checklist) | #248 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-150 (E15-05: type-parity test, identical public types through the shim) | #249 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-331 (Chip: selectable, removable, icon-capable filter/input chip) | #247 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-340 (Collapsible animated expand/collapse region) | #246 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-142 (fix: parity CLI test counts follow the snapshot) | #250 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-203 (E5-02 Resolver contract and built-in rules) | #252 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-312 (E13-17: root AGENTS.md and consumer AGENTS snippet) | #251 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-407 (CircularProgress with pure-View default) | #256 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-287 (DescriptionList key-value pairs) | #255 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-334 (ExpandableText with read more/less toggle) | #254 | PR open (row committed pre-merge, see ADR 0020 Branching) |
