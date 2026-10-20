@@ -47,6 +47,7 @@ import {
 } from "../../src";
 import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
+import { DescriptionList } from "../../src/components/DescriptionList/index.js";
 import { Grid } from "../../src/components/Grid/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
@@ -155,6 +156,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </Column>
   ),
   DataTable: () => <DataTableFixture />,
+  DescriptionList: () => <DescriptionList items={[{ label: "Name", value: "Ada" }]} />,
   Divider: () => <Divider />,
   Pager: () => (
     <>

@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 53 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 54 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 27 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -22,6 +22,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Chip | buttons | `prototype` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
 | [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
+| DescriptionList | data-display | `prototype` | Label/value pairs for detail views: stacked, inline or in grid columns, with an optional consumer-handled copy action. |
 | [Pager](components/data-display/pager.md) | data-display | `demo` | Horizontal paging with a controlled index, a Carousel with peek and optional autoplay, and a dot PageIndicator. |
 | [Alert](components/feedback/alert.md) | feedback | `demo` | Inline message block with a tone for success, warning, error or information. |
 | [Banner](components/feedback/banner.md) | feedback | `demo` | Persistent full-width announcement for a page or section, with a tone, optional actions and a dismiss button. |
