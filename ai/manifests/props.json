@@ -1606,7 +1606,7 @@
       ]
     },
     "BottomSheet": {
-      "status": "demo",
+      "status": "prototype",
       "props": [
         {
           "name": "accessibilityLabel",
@@ -1741,6 +1741,13 @@
         {
           "name": "testID",
           "type": "string",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "visible",
+          "type": "boolean",
           "required": false,
           "default": null,
           "description": ""
@@ -10336,21 +10343,28 @@
       ]
     },
     "Popover": {
-      "status": "prototype",
+      "status": "demo",
       "props": [
         {
           "name": "children",
           "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "The popover content, rendered through the nearest OverlayHost."
+        },
+        {
+          "name": "defaultOpen",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Initial open state when uncontrolled. Default `false`."
         },
         {
           "name": "gap",
           "type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\" | \"none\"",
           "required": false,
           "default": "xs",
-          "description": "",
+          "description": "Distance between the trigger and the content (a `theme.space` key). Default `\"xs\"`.",
           "values": [
             "lg",
             "md",
@@ -10362,11 +10376,25 @@
           ]
         },
         {
+          "name": "onOpenChange",
+          "type": "(open: boolean) => void",
+          "required": false,
+          "default": null,
+          "description": "Called with the next open state when the trigger toggles it or the popover is dismissed (backdrop, Escape, Back, dismiss action)."
+        },
+        {
+          "name": "open",
+          "type": "boolean",
+          "required": false,
+          "default": null,
+          "description": "Controlled open state. When set, the popover is open exactly when this is true; change it from `onOpenChange`."
+        },
+        {
           "name": "placement",
           "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
           "required": false,
           "default": "top",
-          "description": "",
+          "description": "The preferred side. It flips to the opposite side when the content does not fit. Default `\"top\"`.",
           "values": [
             "bottom",
             "top",
@@ -10379,7 +10407,21 @@
           "type": "(args: { open: boolean; toggle: () => void; }) => ReactNode",
           "required": true,
           "default": null,
-          "description": ""
+          "description": "Renders the trigger. Call `toggle` from the trigger's own press handler: Popover does not wrap the trigger in a\npressable. The element it returns receives `accessibilityState.expanded` (and `aria-expanded`) reflecting `open`."
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the root element that wraps the trigger."
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Test id of the root element; the content gets `<testID>-content`."
         }
       ]
     },
@@ -11303,6 +11345,169 @@
           "type": "boolean",
           "required": false,
           "default": false,
+          "description": ""
+        }
+      ]
+    },
+    "Screen": {
+      "status": "demo",
+      "props": [
+        {
+          "name": "bg",
+          "type": "\"primary\" | \"info\" | \"success\" | \"warning\" | \"error\" | \"outline\" | \"secondary\" | \"primaryHover\" | \"primaryActive\" | \"secondaryHover\" | \"secondaryActive\" | \"accent\" | \"background\" | \"surface\" | \"surfaceElevated\" | \"textPrimary\" | \"textSecondary\" | \"textMuted\" | \"textInverted\" | \"border\" | \"divider\" | \"disabled\" | \"disabledBg\" | \"overlay\" | \"backdrop\" | \"codeBorder\" | \"codeBg\" | \"codeText\"",
+          "required": false,
+          "default": "background",
+          "description": "Background, as a `theme.colors` key. Default `\"background\"`.",
+          "values": [
+            "accent",
+            "backdrop",
+            "background",
+            "border",
+            "codeBg",
+            "codeBorder",
+            "codeText",
+            "disabled",
+            "disabledBg",
+            "divider",
+            "error",
+            "info",
+            "outline",
+            "overlay",
+            "primary",
+            "primaryActive",
+            "primaryHover",
+            "secondary",
+            "secondaryActive",
+            "secondaryHover",
+            "success",
+            "surface",
+            "surfaceElevated",
+            "textInverted",
+            "textMuted",
+            "textPrimary",
+            "textSecondary",
+            "warning"
+          ]
+        },
+        {
+          "name": "children",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "contentContainerStyle",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": "Style of the scroll content container (`scroll`) or of the static body."
+        },
+        {
+          "name": "dismissKeyboardOnTapOutside",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Dismisses the keyboard when the empty area of the body is pressed. Default `false`."
+        },
+        {
+          "name": "edges",
+          "type": "readonly Edge[]",
+          "required": false,
+          "default": null,
+          "description": "Edges padded by the safe-area insets. Default: all four. Pass `[]` when a parent already handles the insets.",
+          "defaultExpression": "ALL_EDGES"
+        },
+        {
+          "name": "footer",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Rendered below the body, outside the scroll content, sticky at the bottom."
+        },
+        {
+          "name": "header",
+          "type": "string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode>",
+          "required": false,
+          "default": null,
+          "description": "Rendered above the body, outside the scroll content."
+        },
+        {
+          "name": "keyboardAvoiding",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Keeps the footer above the keyboard: `KeyboardAvoidingView` with `padding` on iOS and `height` on Android; the bottom inset is dropped while the keyboard is open. Default `false`."
+        },
+        {
+          "name": "onRefresh",
+          "type": "() => void",
+          "required": false,
+          "default": null,
+          "description": "Enables pull-to-refresh on the scrolling body."
+        },
+        {
+          "name": "padding",
+          "type": "\"xs\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"xxl\" | \"none\"",
+          "required": false,
+          "default": null,
+          "description": "Padding of the body, as a `theme.space` key. Not applied to the header and the footer.",
+          "values": [
+            "lg",
+            "md",
+            "none",
+            "sm",
+            "xl",
+            "xs",
+            "xxl"
+          ]
+        },
+        {
+          "name": "refreshAccessibilityLabel",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Accessibility label of the refresh control. Default `\"Refresh\"`.",
+          "defaultExpression": "DEFAULT_REFRESH_LABEL"
+        },
+        {
+          "name": "refreshing",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Pull-to-refresh state. Only used when `scroll` and `onRefresh` are set. Default `false`."
+        },
+        {
+          "name": "scroll",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Renders the body in a vertical `ScrollView` (with pull-to-refresh when `onRefresh` is set) instead of a static `View`. Default `false`."
+        },
+        {
+          "name": "statusBar",
+          "type": "\"light\" | \"dark\" | \"auto\"",
+          "required": false,
+          "default": "auto",
+          "description": "`auto` follows the theme mode; `light` forces light content (for dark backgrounds) and `dark` forces dark content. Default `auto`.",
+          "values": [
+            "auto",
+            "light",
+            "dark"
+          ]
+        },
+        {
+          "name": "style",
+          "type": "false | \"\" | ViewStyle | RecursiveArray<Falsy | ViewStyle>",
+          "required": false,
+          "default": null,
+          "description": ""
+        },
+        {
+          "name": "testID",
+          "type": "string",
+          "required": false,
+          "default": null,
           "description": ""
         }
       ]

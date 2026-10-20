@@ -79,6 +79,10 @@ export const modalMissingRequired: ComponentProps<typeof Modal> = { size: "md" }
 export const modalWrongSize: ComponentProps<typeof Modal> = { visible: true, onClose: () => undefined, children: null, size: "xl" };
 // @ts-expect-error Popover requires renderTrigger.
 export const popoverMissingTrigger: ComponentProps<typeof Popover> = { children: null };
+// @ts-expect-error Popover open must be a boolean.
+export const popoverWrongOpen: ComponentProps<typeof Popover> = { renderTrigger: () => null, children: null, open: "yes" };
+// @ts-expect-error Popover onOpenChange receives the next open state.
+export const popoverWrongOnOpenChange: ComponentProps<typeof Popover> = { renderTrigger: () => null, children: null, onOpenChange: (open: string) => open };
 // @ts-expect-error Tooltip content must be a string.
 export const tooltipWrongContent: ComponentProps<typeof Tooltip> = { content: 1, children: null };
 // @ts-expect-error BottomSheet requires children.

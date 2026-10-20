@@ -3,7 +3,6 @@ type:BProps
 type:BadgeProps
 type:BannerProps
 type:BottomBarProps
-type:BottomSheetProps
 type:BoxProps
 type:Breakpoint
 type:ButtonProps
@@ -29,11 +28,13 @@ type:PProps
 type:PageIndicatorProps
 type:PagerProps
 type:PasswordInputProps
+type:PopoverProps
 type:ProgressBarProps
 type:QuoteProps
 type:RadioGroupOption
 type:RadioGroupProps
 type:RowProps
+type:ScreenProps
 type:SideBarProps
 type:SideBarVariant
 type:SmallProps
@@ -84,6 +85,7 @@ value:ProgressBar
 value:Quote
 value:RadioGroup
 value:Row
+value:Screen
 value:Select
 value:SideBar
 value:Small
@@ -116,5 +118,6 @@ value:useNavLogo
 value:useNavPathname
 value:useNavigate
 value:useOptionalNav
+value:useScreenInsets
 value:useTheme
 value:useToggle

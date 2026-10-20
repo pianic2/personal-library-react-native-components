@@ -50,7 +50,7 @@ describe("PLRNUI-130 props extractor on the repo", () => {
   });
 
   it("components without an exported Props type are still extracted and flagged", () => {
-    for (const name of ["Modal", "Select", "Popover", "Tooltip"]) {
+    for (const name of ["Modal", "Select", "BottomSheet", "Tooltip"]) {
       const entry = repo.components[name];
       assert.ok(entry, `${name} missing`);
       assert.equal(entry.propsTypeExported, false);

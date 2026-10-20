@@ -165,6 +165,22 @@ describe("BottomSheet open state", () => {
     assert.ok(sheet(dflt.renderer));
   });
 
+  it("deprecated visible still opens and closes the sheet (ADR 0014 alias), open wins", () => {
+    const shown = setup({ open: undefined, visible: true });
+    assert.ok(sheet(shown.renderer));
+    const hidden = setup({ open: undefined, visible: false });
+    assert.equal(sheet(hidden.renderer), undefined);
+    const both = setup({ open: false, visible: true });
+    assert.equal(sheet(both.renderer), undefined);
+  });
+
+  it("visible + onClose (original API) dismisses once through onClose", () => {
+    const r = setup({ open: undefined, visible: true });
+    act(() => void r.back.press());
+    assert.equal(r.closeCalls(), 1);
+    assert.deepEqual(r.calls, [false]);
+  });
+
   it("uncontrolled: a dismissal closes the sheet", () => {
     const r = setup({ open: undefined, defaultOpen: true });
     act(() => void r.back.press());

@@ -8,8 +8,7 @@ function Banner 004b0f5221d2
 type BannerProps e9264e479ebd
 function BottomBar 93955c4fa6f2
 type BottomBarProps 93c92dfc1ed4
-function BottomSheet 2ade26283913
-type BottomSheetProps e49b353bb615
+function BottomSheet 60be17519ccc
 function Box 7a898380a585
 type BoxProps 42c2b50191c8
 type Breakpoint 05a1144747fc
@@ -56,7 +55,8 @@ function Pager 47522d2fac34
 type PagerProps d3bfac75aa2d
 function PasswordInput 06ce05eda0d1
 type PasswordInputProps dc3640140ed7
-function Popover 282995b4710a
+function Popover da2d3efeb3e1
+type PopoverProps 092140855960
 function ProgressBar a8eef9dd024b
 type ProgressBarProps 387a4272836c
 function Quote 9a5d99847870
@@ -66,6 +66,8 @@ type RadioGroupOption c886103abac2
 type RadioGroupProps bf4c858484ed
 function Row e213691cf732
 type RowProps a9980a3c3226
+function Screen f4fbaa1599b3
+type ScreenProps c0e6245fa1d4
 function Select 18070548721e
 function SideBar 1bfa59e9bd9f
 type SideBarProps fe6077d9f2ce
@@ -116,5 +118,6 @@ function useNavLogo 5bc75737803a
 function useNavPathname 42d7bdb50794
 function useNavigate 33a13366d8af
 function useOptionalNav fb129fcbeaaf
+function useScreenInsets 496709796e4b
 function useTheme 67e6c8a96c2f
 function useToggle 432b401396d9

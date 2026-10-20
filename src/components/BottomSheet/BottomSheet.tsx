@@ -19,6 +19,8 @@ export type Snap = "collapsed" | "expanded";
 export interface BottomSheetProps {
   /** Whether the sheet is open (controlled). */
   open?: boolean;
+  /** @deprecated Use `open`. Alias kept through 1.x (ADR 0014); `open` wins when both are given. */
+  visible?: boolean;
   /** Initial state when `open` is not given. Default `false`. */
   defaultOpen?: boolean;
   /** Called with `false` once per dismissal: Back (Android), Escape (web), backdrop press or a drag past the threshold. */
@@ -75,7 +77,8 @@ function defaultDriver(): GestureDriver | undefined {
 const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max);
 
 export function BottomSheet({
-  open,
+  open: openProp,
+  visible,
   defaultOpen = false,
   onOpenChange,
   onClose,
@@ -99,6 +102,8 @@ export function BottomSheet({
   const animate = useAnimate(theme.motion);
   const windowHeight = useWindowDimensions().height;
 
+  // `visible` is the deprecated alias of `open` (ADR 0014).
+  const open = openProp ?? visible;
   const [isOpen, setOpen] = useControllableState<boolean>({
     value: open,
     defaultValue: defaultOpen,

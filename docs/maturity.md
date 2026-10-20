@@ -2,14 +2,14 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 49 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 50 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
 | `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 26 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -42,6 +42,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Container | layout | `prototype` | Centred, width-capped layout box with breakpoint gutters that also provides its measured size to descendants. |
 | [Divider](components/layout/divider.md) | layout | `demo` | Full-width horizontal separator with token-based spacing. |
 | [Row](components/layout/row.md) | layout | `demo` | Horizontal flex container with a token-based gap. |
+| [Screen](components/layout/screen.md) | layout | `demo` | Page root with safe-area edges, a static or scrolling body, header and sticky footer slots, keyboard avoidance and a themed status bar. |
 | Slot | layout | `prototype` | Merges its props into its single child element (asChild) instead of rendering a wrapper. |
 | [Spacer](components/layout/spacer.md) | layout | `demo` | Empty space sized by a spacing token (xs to lg), or a flexible gap that pushes siblings apart in a Row or Column. |
 | [BottomBar](components/navigation/bottom-bar.md) | navigation | `prototype` | Bottom navigation bar for the main destinations on small screens. |
@@ -50,9 +51,9 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [NavContext](components/navigation/nav-context.md) | navigation | `demo` | Provider and hooks that share navigation items, the current pathname and the navigate function. |
 | [SideBar](components/navigation/side-bar.md) | navigation | `prototype` | Vertical navigation panel with items, an optional logo and collapse control. |
 | [TopBar](components/navigation/top-bar.md) | navigation | `demo` | Top navigation bar with a logo and links. |
-| [BottomSheet](components/overlay/bottom-sheet.md) | overlay | `demo` | Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop. |
+| [BottomSheet](components/overlay/bottom-sheet.md) | overlay | `prototype` | Panel that slides up from the bottom edge, snaps to configurable heights and closes by drag, Back, Escape or backdrop. |
 | [Modal](components/overlay/modal.md) | overlay | `prototype` | Centered blocking dialog over a backdrop. |
-| [Popover](components/overlay/popover.md) | overlay | `prototype` | Floating panel anchored to a trigger. |
+| [Popover](components/overlay/popover.md) | overlay | `demo` | Floating panel anchored to a trigger. |
 | Portal | overlay | `prototype` | Mounts content into the nearest OverlayHost, which owns one stack for z-order, Android Back and the Escape key. |
 | [Tooltip](components/overlay/tooltip.md) | overlay | `prototype` | Short hint shown near a trigger after a delay. |
 | [Badge](components/surfaces/badge.md) | surfaces | `demo` | Small label for a status, count or category. |
