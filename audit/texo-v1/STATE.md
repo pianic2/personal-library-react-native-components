@@ -274,6 +274,7 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-468 (ownership extensions amendment: root props-type export for 339 and 346) | #230 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-469 (ownership extensions amendment: extract-props pin, fixture and overlay example for 339 and 346) | #231 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-470 (ownership extensions amendment: component smoke test and public-types note for 339 and 346) | #232 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-329 (Grid responsive columns and token gaps) | #235 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-148 (E16-08: API reference generated from TSDoc, scripts/docs-api.mjs) | #234 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-428 (Screen) | #244 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-307 (Local development link workflow for consumer apps) | #238 | PR open (row committed pre-merge, see ADR 0020 Branching) |

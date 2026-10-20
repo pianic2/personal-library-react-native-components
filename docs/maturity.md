@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 52 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 53 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 25 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -42,6 +42,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Column](components/layout/column.md) | layout | `demo` | Vertical flex container with a token-based gap. |
 | Container | layout | `prototype` | Centred, width-capped layout box with breakpoint gutters that also provides its measured size to descendants. |
 | [Divider](components/layout/divider.md) | layout | `demo` | Full-width horizontal separator with token-based spacing. |
+| Grid | layout | `prototype` | Equal-width wrapping columns with responsive column counts, optional spans and token gaps. |
 | [Row](components/layout/row.md) | layout | `demo` | Horizontal flex container with a token-based gap. |
 | [Screen](components/layout/screen.md) | layout | `demo` | Page root with safe-area edges, a static or scrolling body, header and sticky footer slots, keyboard avoidance and a themed status bar. |
 | Slot | layout | `prototype` | Merges its props into its single child element (asChild) instead of rendering a wrapper. |
