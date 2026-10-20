@@ -54,6 +54,7 @@ import { Label } from "../../src/components/Label/index.js";
 import { AsyncBoundary, EmptyState, ErrorState, LoadingState, Result } from "../../src/components/StateView/index.js";
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
 import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
+import { Chip } from "../../src/components/Chip/index.js";
 import { View } from "react-native";
 
 const noop = () => undefined;
@@ -121,6 +122,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     </Card>
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
+  Chip: () => <Chip label="Fixture chip" selected onSelectedChange={noop} onRemove={noop} />,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
   Collapsible: () => (
     <Collapsible defaultOpen>
