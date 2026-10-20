@@ -119,8 +119,11 @@ describe("PLRNUI-345 Accordion", () => {
 
   it("renders in light and dark without console errors or warnings", () => {
     const logged: unknown[] = [];
-    console.error = (...a) => void logged.push(a);
-    console.warn = (...a) => void logged.push(a);
+    const record = (...a: unknown[]) => {
+      if (!String(a[0]).includes("react-test-renderer is deprecated")) logged.push(a);
+    };
+    console.error = record;
+    console.warn = record;
     for (const mode of ["light", "dark"] as Mode[]) {
       const r = render(<Example type="multiple" defaultValue={["a"]} />, mode);
       press(r, "b");
@@ -135,7 +138,7 @@ describe("PLRNUI-345 Accordion", () => {
   });
 
   it("uses no hardcoded colours", () => {
-    const dir = join(__dirname, "../../src/components/Accordion");
+    const dir = join(import.meta.dirname, "../../src/components/Accordion");
     for (const f of readdirSync(dir)) assert.doesNotMatch(readFileSync(join(dir, f), "utf8"), /#[0-9a-fA-F]{3,8}\b/, f);
   });
 });
