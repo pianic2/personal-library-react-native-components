@@ -81,6 +81,8 @@ export type _Root_RadioGroupOption = Expect<Equal<ShimRoot.RadioGroupOption, Tar
 export type _Root_RadioGroupProps = Expect<Equal<ShimRoot.RadioGroupProps, TargetRoot.RadioGroupProps>>;
 export type _Root_Row = Expect<Equal<typeof ShimRoot.Row, typeof TargetRoot.Row>>;
 export type _Root_RowProps = Expect<Equal<ShimRoot.RowProps, TargetRoot.RowProps>>;
+export type _Root_Screen = Expect<Equal<typeof ShimRoot.Screen, typeof TargetRoot.Screen>>;
+export type _Root_ScreenProps = Expect<Equal<ShimRoot.ScreenProps, TargetRoot.ScreenProps>>;
 export type _Root_Select = Expect<Equal<typeof ShimRoot.Select, typeof TargetRoot.Select>>;
 export type _Root_SideBar = Expect<Equal<typeof ShimRoot.SideBar, typeof TargetRoot.SideBar>>;
 export type _Root_SideBarProps = Expect<Equal<ShimRoot.SideBarProps, TargetRoot.SideBarProps>>;
@@ -131,6 +133,7 @@ export type _Root_useNavLogo = Expect<Equal<typeof ShimRoot.useNavLogo, typeof T
 export type _Root_useNavPathname = Expect<Equal<typeof ShimRoot.useNavPathname, typeof TargetRoot.useNavPathname>>;
 export type _Root_useNavigate = Expect<Equal<typeof ShimRoot.useNavigate, typeof TargetRoot.useNavigate>>;
 export type _Root_useOptionalNav = Expect<Equal<typeof ShimRoot.useOptionalNav, typeof TargetRoot.useOptionalNav>>;
+export type _Root_useScreenInsets = Expect<Equal<typeof ShimRoot.useScreenInsets, typeof TargetRoot.useScreenInsets>>;
 export type _Root_useTheme = Expect<Equal<typeof ShimRoot.useTheme, typeof TargetRoot.useTheme>>;
 export type _Root_useToggle = Expect<Equal<typeof ShimRoot.useToggle, typeof TargetRoot.useToggle>>;
 
