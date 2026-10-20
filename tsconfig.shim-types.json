@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "paths": {
+      "@legacy-placeholder/shim": ["./dist-shim/dist/index.d.ts"],
+      "@legacy-placeholder/shim/*": ["./dist-shim/dist/*/index.d.ts"],
+      "@personal-library/react-native-components": ["./src/index.ts"],
+      "@personal-library/react-native-components/*": ["./src/*/index.ts"]
+    }
+  },
+  "include": ["tests/types/shim-parity.ts"],
+  "exclude": ["dist", "dist-shim", "node_modules"]
+}
