@@ -72,6 +72,11 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-475": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -228,6 +233,10 @@
   "PLRNUI-407": [
    "docs/maturity.md",
    "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-150": [
+   "scripts/gen-shim-type-parity.mjs",
+   "tsconfig.type-tests.json"
   ]
  }
 }
