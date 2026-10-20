@@ -1,10 +1,23 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { packageName as currentPackageName } from "./lib/identity.mjs";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
-const packageName = "@personal-library/react-native-components";
+// The package name comes from the single-source identity (config/package-identity.json); today it is
+// @personal-library/react-native-components, and assertPackageSurface checks that package.json agrees.
+const packageName = currentPackageName();
+// --via-shim (PLRNUI-170): also pack the generated legacy shim, install both tarballs and import from the legacy name.
+const viaShim = process.argv.slice(2).includes("--via-shim");
+for (const arg of process.argv.slice(2)) {
+  if (arg !== "--via-shim") {
+    console.error(`unknown argument: ${arg} (usage: node scripts/consumer-smoke.mjs [--via-shim])`);
+    process.exit(2);
+  }
+}
+let shimName = "";
+let shimTarball = "";
 const smokeRoot = "/tmp/plrnui-64-consumer-smoke";
 const artifactsDir = join(smokeRoot, "artifacts");
 const consumerDir = join(smokeRoot, "consumer");
@@ -120,7 +133,67 @@ async function packLibrary() {
   return tarballPath;
 }
 
+// Builds the shim from the packed target tarball (names and version come from the identity config and the tarball)
+// and packs it. Returns the shim tarball path and records the shim package name.
+async function packShim(targetTarball) {
+  const shimDir = join(smokeRoot, "shim");
+  run("node", ["scripts/build-shim.mjs", "--out", shimDir, "--target-tarball", targetTarball]);
+  const shimPackage = JSON.parse(readFileSync(join(shimDir, "package.json"), "utf8"));
+  shimName = shimPackage.name;
+  run("npm", ["pack", "--pack-destination", artifactsDir], { cwd: shimDir });
+  const tarball = join(artifactsDir, `${shimName.replace(/^@/, "").replace(/\//g, "-")}-${shimPackage.version}.tgz`);
+  if (!existsSync(tarball)) throw new Error(`Packed shim was not created: ${tarball}`);
+  return tarball;
+}
+
+// Every physical copy of `name` below node_modules (including nested ones) of the consumer.
+function installedCopies(dir, name) {
+  const found = [];
+  const visit = (nodeModules) => {
+    if (!existsSync(nodeModules)) return;
+    for (const entry of readdirSync(nodeModules, { withFileTypes: true })) {
+      if (entry.name.startsWith(".")) continue;
+      const entries = entry.name.startsWith("@") ? readdirSync(join(nodeModules, entry.name)).map((n) => `${entry.name}/${n}`) : [entry.name];
+      for (const rel of entries) {
+        const pkgDir = join(nodeModules, rel);
+        if (rel === name && existsSync(join(pkgDir, "package.json"))) found.push(pkgDir);
+        visit(join(pkgDir, "node_modules"));
+      }
+    }
+  };
+  visit(join(dir, "node_modules"));
+  return found;
+}
+
+// Asserts one resolved copy (one version, one install location) of each name in `npm ls --all`.
+function assertSingleCopies(names) {
+  const listing = run("npm", ["ls", "--all", "--json", "--long", ...names], { cwd: consumerDir, capture: true });
+  const copies = new Map(names.map((n) => [n, new Set()]));
+  const versions = new Map(names.map((n) => [n, new Set()]));
+  const walk = (deps) => {
+    for (const [dep, node] of Object.entries(deps ?? {})) {
+      if (copies.has(dep)) {
+        copies.get(dep).add(node.path ?? `${node.version}:${node.resolved}`);
+        versions.get(dep).add(node.version);
+      }
+      walk(node.dependencies);
+    }
+  };
+  walk(JSON.parse(listing.stdout).dependencies);
+  for (const name of names) {
+    if (versions.get(name).size !== 1) throw new Error(`npm ls --all: expected one version of ${name}, found ${[...versions.get(name)].join(", ") || "none"}`);
+    const installed = installedCopies(consumerDir, name);
+    if (installed.length !== 1) throw new Error(`expected one installed copy of ${name}, found ${installed.length}: ${installed.join(", ")}`);
+  }
+  console.log(`single copy of ${names.join(", ")} (versions ${names.map((n) => [...versions.get(n)][0]).join(", ")})`);
+}
+
 async function writeConsumerFixture(tarballPath) {
+  // In shim mode the app imports from the legacy name, except ThemeProvider and useTheme, which come from the target
+  // name (mixed imports, R1 M4): both names must resolve to one module instance and one theme context.
+  const importName = viaShim ? shimName : packageName;
+  const renderScript = viaShim ? "test/consumer-render.test.tsx test/mixed-imports.test.tsx" : "test/consumer-render.test.tsx";
+
   await mkdir(join(consumerDir, "app"), { recursive: true });
   await mkdir(join(consumerDir, "test"), { recursive: true });
 
@@ -133,13 +206,17 @@ async function writeConsumerFixture(tarballPath) {
       typecheck: "tsc --noEmit",
       "typecheck:matrix": tsconfigMatrix.map((v) => `tsc -p tsconfig.${v.name}.json`).join(" && "),
       "render:smoke":
-        "node --import tsx --import ./test/setup.ts --experimental-loader ./test/react-native-loader.mjs --test test/consumer-render.test.tsx",
+        `node --import tsx --import ./test/setup.ts --experimental-loader ./test/react-native-loader.mjs --test ${renderScript}`,
     },
     dependencies: {
       [packageName]: `file:${tarballPath}`,
+      ...(viaShim ? { [shimName]: `file:${shimTarball}` } : {}),
       react: "19.2.3",
       "react-native": "0.86.3",
     },
+    // The shim depends on ^<major>.0.0 of the target, which a 0.x tarball does not satisfy; the override pins the
+    // shim's dependency to the tarball installed above, so only one copy of the target exists.
+    ...(viaShim ? { overrides: { [packageName]: `$${packageName}` } } : {}),
     devDependencies: {
       "@types/node": "26.0.0",
       "@types/react": "19.2.17",
@@ -210,14 +287,12 @@ import {
   Card,
   Input,
   Text,
-  ThemeProvider,
-  type ButtonProps,
+  ${viaShim ? "" : "ThemeProvider,\n  "}type ButtonProps,
   type CardProps,
   type InputProps,
   type TextProps,
-  type ThemeProviderProps,
-} from "${packageName}";
-
+  ${viaShim ? "" : "type ThemeProviderProps,\n"}} from "${importName}";
+${viaShim ? `import { ThemeProvider, type ThemeProviderProps } from "${packageName}";\n` : ""}
 const buttonProps: ButtonProps = {
   label: "Save",
   onPress: () => undefined,
@@ -392,6 +467,49 @@ describe("packed package consumer smoke", () => {
   );
 }
 
+async function writeMixedImportsTest() {
+  await writeFile(
+    join(consumerDir, "test", "mixed-imports.test.tsx"),
+    `import React from "react";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import TestRenderer, { act } from "react-test-renderer";
+import * as Target from "${packageName}";
+import * as Legacy from "${shimName}";
+import { ThemeProvider } from "${packageName}";
+import { Button, Text, useTheme } from "${shimName}";
+
+function Probe() {
+  const { mode } = useTheme();
+  return <Text>{"mode:" + mode}</Text>;
+}
+
+describe("shim mixed imports", () => {
+  it("re-exports the same instances as the target name", () => {
+    for (const symbol of ["ThemeProvider", "Button", "Text", "Box", "Input", "Card", "useTheme"]) {
+      assert.equal(Legacy[symbol as keyof typeof Legacy], Target[symbol as keyof typeof Target], symbol);
+    }
+  });
+
+  it("renders a legacy-name Button with the theme of a target-name ThemeProvider", () => {
+    let renderer: TestRenderer.ReactTestRenderer | undefined;
+    act(() => {
+      renderer = TestRenderer.create(
+        <ThemeProvider initialMode="dark">
+          <Probe />
+          <Button label="Save" onPress={() => undefined} />
+        </ThemeProvider>
+      );
+    });
+    const json = JSON.stringify(renderer?.toJSON());
+    assert.ok(json.includes("mode:dark"), "the legacy-name useTheme must see the target-name ThemeProvider");
+    assert.ok(json.includes("Save"), "the legacy-name Button must render inside it");
+  });
+});
+`
+  );
+}
+
 async function validateConsumerInstall() {
   run(
     "npm",
@@ -406,9 +524,10 @@ async function validateConsumerInstall() {
     { cwd: consumerDir, timeout: installTimeoutMs }
   );
 
-  run("npm", ["ls", packageName, "react", "react-native", "--depth=0"], {
+  run("npm", ["ls", packageName, ...(viaShim ? [shimName] : []), "react", "react-native", "--depth=0"], {
     cwd: consumerDir,
   });
+  if (viaShim) assertSingleCopies([packageName, "react", "react-native"]);
   run("npm", ["run", "typecheck"], { cwd: consumerDir });
   run("npm", ["run", "typecheck:matrix"], { cwd: consumerDir });
   run("npm", ["run", "render:smoke"], { cwd: consumerDir });
@@ -420,7 +539,9 @@ await mkdir(artifactsDir, { recursive: true });
 await mkdir(npmCache, { recursive: true });
 
 const tarballPath = await packLibrary();
+if (viaShim) shimTarball = await packShim(tarballPath);
 await writeConsumerFixture(tarballPath);
+if (viaShim) await writeMixedImportsTest();
 await validateConsumerInstall();
 
-console.log(`PLRNUI-64 consumer smoke passed using ${tarballPath}`);
+console.log(`PLRNUI-64 consumer smoke passed${viaShim ? ` via shim ${shimName}` : ""} using ${tarballPath}`);

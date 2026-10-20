@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 50 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 52 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 25 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -19,6 +19,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Component | Category | Level | Summary |
 | --- | --- | --- | --- |
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
+| Chip | buttons | `prototype` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
 | [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
 | [Pager](components/data-display/pager.md) | data-display | `demo` | Horizontal paging with a controlled index, a Carousel with peek and optional autoplay, and a dot PageIndicator. |
@@ -58,6 +59,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Tooltip](components/overlay/tooltip.md) | overlay | `prototype` | Short hint shown near a trigger after a delay. |
 | [Badge](components/surfaces/badge.md) | surfaces | `demo` | Small label for a status, count or category. |
 | [Card](components/surfaces/card.md) | surfaces | `prototype` | Surface that groups related content with padding, shadow and an outline or elevated variant. |
+| Collapsible | surfaces | `prototype` | Disclosure region: a trigger shows or hides content with an animated height, controlled or uncontrolled. |
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |
