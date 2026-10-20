@@ -47,6 +47,7 @@ import {
 } from "../../src";
 import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
+import { Grid } from "../../src/components/Grid/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
 import { Slot } from "../../src/components/Slot/index.js";
@@ -138,6 +139,14 @@ export const fixtures: Record<string, () => React.ReactElement> = {
     <Container size="md">
       <Text>Contained</Text>
     </Container>
+  ),
+  Grid: () => (
+    <Grid columns={2} gap="sm">
+      <Text>One</Text>
+      <Grid.Item>
+        <Text>Two</Text>
+      </Grid.Item>
+    </Grid>
   ),
   Column: () => (
     <Column gap="sm">
