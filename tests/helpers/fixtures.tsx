@@ -45,6 +45,7 @@ import {
   TopBar,
   useFieldControlProps,
 } from "../../src";
+import { CircularProgress } from "../../src/components/CircularProgress/index.js";
 import { Collapsible } from "../../src/components/Collapsible/index.js";
 import { Container } from "../../src/components/Container/index.js";
 import { DescriptionList } from "../../src/components/DescriptionList/index.js";
@@ -126,6 +127,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
   Chip: () => <Chip label="Fixture chip" selected onSelectedChange={noop} onRemove={noop} />,
+  CircularProgress: () => <CircularProgress progress={50} label="50%" />,
   ExpandableText: () => <ExpandableText numberOfLines={2}>A short fixture sentence.</ExpandableText>,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
   Collapsible: () => (
