@@ -30,6 +30,7 @@ import {
   Quote,
   RadioGroup,
   Row,
+  Screen,
   Select,
   SideBar,
   Small,
@@ -207,6 +208,11 @@ export const fixtures: Record<string, () => React.ReactElement> = {
       <Text>Left</Text>
       <Text>Right</Text>
     </Row>
+  ),
+  Screen: () => (
+    <Screen scroll padding="md" header={<Text>Header</Text>} footer={<Text>Footer</Text>}>
+      <Text>Body</Text>
+    </Screen>
   ),
   Select: () => (
     <Select

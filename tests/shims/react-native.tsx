@@ -9,7 +9,7 @@ function createHostComponent(name: string) {
     { children, ...props },
     ref
   ) {
-    return React.createElement(name, { ...props, ref }, children);
+    return React.createElement(name, { ...props, ref }, children as React.ReactNode);
   });
 }
 
@@ -50,4 +50,24 @@ export function useWindowDimensions() {
     scale: 1,
     width: 1280,
   };
+}
+
+// Test-only seam (PLRNUI-428): react-native core members the shim does not provide by default, installed per test through
+// installNativeHosts() and reset with installNativeHosts({}). They are live bindings, so `import * as ReactNative` sees them.
+type AnyComponent = React.ComponentType<any>;
+export let Keyboard: unknown;
+export let StatusBar: AnyComponent | undefined;
+export let KeyboardAvoidingView: AnyComponent | undefined;
+export let RefreshControl: AnyComponent | undefined;
+
+export function installNativeHosts(hosts: {
+  keyboard?: unknown;
+  statusBar?: AnyComponent;
+  keyboardAvoidingView?: AnyComponent;
+  refreshControl?: AnyComponent;
+}): void {
+  Keyboard = hosts.keyboard;
+  StatusBar = hosts.statusBar;
+  KeyboardAvoidingView = hosts.keyboardAvoidingView;
+  RefreshControl = hosts.refreshControl;
 }

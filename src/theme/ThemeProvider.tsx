@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as ReactNative from "react-native";
 
+import { registerSingletonContext } from "../providers/createSingletonContext.js";
 import type { DensityLevel, ThemePreference } from "./contract.js";
 import type { DeepPartial } from "./createTheme.js";
 import type { ThemePreset as ThemePresetPair } from "./defineTheme.js";
@@ -15,6 +16,9 @@ import {
   type ThemeContextValue,
 } from "./ThemeScope.js";
 import type { Theme, ThemeMode, ThemeStorageAdapter } from "./types.js";
+
+// Registered once per copy of the library; a second copy logs one development warning (D10).
+registerSingletonContext("theme", ThemeContext);
 
 const DEFAULT_THEME_STORAGE_KEY = "personal-library.theme";
 
