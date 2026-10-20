@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 50 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 51 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -58,6 +58,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Tooltip](components/overlay/tooltip.md) | overlay | `prototype` | Short hint shown near a trigger after a delay. |
 | [Badge](components/surfaces/badge.md) | surfaces | `demo` | Small label for a status, count or category. |
 | [Card](components/surfaces/card.md) | surfaces | `prototype` | Surface that groups related content with padding, shadow and an outline or elevated variant. |
+| Collapsible | surfaces | `prototype` | Disclosure region: a trigger shows or hides content with an animated height, controlled or uncontrolled. |
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |
