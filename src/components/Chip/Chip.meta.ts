@@ -3,7 +3,7 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "Chip",
   "category": "buttons",
-  "status": "demo",
+  "status": "prototype",
   "summary": "Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar.",
   "whenToUse": [
     "Show a filter that the user turns on and off",

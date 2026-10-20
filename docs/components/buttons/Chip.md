@@ -1,6 +1,6 @@
 # Chip
 
-**Stability:** beta — public consumer API, usable but contract may still change.
+**Stability:** experimental — prototype, not yet promoted; the API may change.
 
 A compact token for filters, multi-select values and tags. It can be selected, removed, and carry an icon or an avatar. Use `Badge` for a label that carries no action and `Button` for an action.
 
@@ -62,4 +62,4 @@ The colour prop is `tone`, not `color`, and `danger` replaces `error` (ADR 0014)
 
 ## Stability
 
-Status `demo` (ADR 0003). The root export and the catalog wiring are added by the wave-wiring ticket.
+Status `prototype` (ADR 0003). The root export and the catalog wiring are added by the wave-wiring ticket.

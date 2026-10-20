@@ -8,8 +8,8 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 28 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -19,7 +19,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Component | Category | Level | Summary |
 | --- | --- | --- | --- |
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
-| Chip | buttons | `demo` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
+| Chip | buttons | `prototype` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
 | [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
 | [Pager](components/data-display/pager.md) | data-display | `demo` | Horizontal paging with a controlled index, a Carousel with peek and optional autoplay, and a dot PageIndicator. |
