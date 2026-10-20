@@ -5,7 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSyn
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 // @ts-expect-error plain ESM script without type declarations
-import { assertBundle, assertWebRender, defaultWorkDir, parseArgs } from "../../scripts/expo-consumer-smoke.mjs";
+import { assertBundle, assertSingleCopies, assertWebRender, defaultWorkDir, parseArgs } from "../../scripts/expo-consumer-smoke.mjs";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
   scripts?: Record<string, string>;
@@ -113,5 +113,44 @@ describe("PLRNUI-119 Expo consumer smoke: platforms, bundles and work dir", () =
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe("PLRNUI-170 Expo consumer smoke --via-shim", () => {
+  const target = "@personal-library/react-native-components";
+
+  it("parses --via-shim anywhere among the other flags and defaults to off", () => {
+    assert.equal(parseArgs([]).viaShim, false);
+    assert.equal(parseArgs(["--via-shim"]).viaShim, true);
+    const both = parseArgs(["--platform", "web", "--via-shim", "--work-dir", "x"]);
+    assert.deepEqual([both.viaShim, both.platforms, both.workDir.endsWith("/x")], [true, ["web"], true]);
+    assert.deepEqual(parseArgs(["--via-shim", "--platform", "ios"]).platforms, ["ios"]);
+  });
+
+  it("reads the package name from the identity config, packs the shim and mixes imports", () => {
+    const script = readFileSync("scripts/expo-consumer-smoke.mjs", "utf8");
+    assert.match(script, /const packageName = currentPackageName\(\)/);
+    assert.doesNotMatch(script, /const packageName = "/);
+    assert.match(script, /"scripts\/build-shim\.mjs", "--out", shimDir, "--target-tarball", targetTarball/);
+    assert.match(script, /import \{ ThemeProvider, useTheme \} from "\$\{packageName\}"/);
+    assert.match(script, /overrides: \{ \[packageName\]: `\$\$\{packageName\}` \}/);
+  });
+
+  it("assertSingleCopies accepts deduped repeats of one copy and rejects a second path or version", () => {
+    const node = (version: string, path: string, dependencies?: object) => ({ version, path, dependencies });
+    const names = [target, "react"];
+    const one = {
+      dependencies: {
+        [target]: node("1.0.0", "/c/node_modules/t"),
+        react: node("19.2.3", "/c/node_modules/react"),
+        shim: node("1.0.0", "/c/node_modules/shim", { [target]: node("1.0.0", "/c/node_modules/t"), react: node("19.2.3", "/c/node_modules/react") }),
+      },
+    };
+    assert.equal(assertSingleCopies(one, names)[target].paths.size, 1);
+    const nestedPath = { dependencies: { ...one.dependencies, shim: node("1.0.0", "/c/s", { [target]: node("1.0.0", "/c/s/node_modules/t") }) } };
+    assert.throws(() => assertSingleCopies(nestedPath, names), /expected one copy of @personal-library\/react-native-components, found 2 path/);
+    const otherVersion = { dependencies: { ...one.dependencies, shim: node("1.0.0", "/c/s", { react: node("19.0.0", "/c/s/node_modules/react") }) } };
+    assert.throws(() => assertSingleCopies(otherVersion, names), /expected one copy of react/);
+    assert.throws(() => assertSingleCopies({ dependencies: {} }, names), /found 0 path/);
   });
 });

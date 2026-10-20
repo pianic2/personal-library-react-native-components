@@ -281,8 +281,10 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-472 (ownership amendment for 428 Screen: system-ui test and RN shim) | #237 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-251 (Pack verification: content, size and entrypoint checks on the tarball) | #236 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-317 (TexoProvider composition root, ADR-R1) | #233 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-170 (E15-08: consumer smoke --via-shim for Node/TS and Expo 57 consumers) | #240 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-473 (ownership extensions amendment: package.json scripts and docs-api test for 148 and 251) | #239 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-474 (ownership extensions amendment: docs/maturity.md and fixtures for 329, 331, 332, 334, 340, 287, 407) | #242 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-475 (ownership extensions amendment: shim type-parity generator and type-tests tsconfig for 150) | #243 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-331 (Chip: selectable, removable, icon-capable filter/input chip) | #247 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-340 (Collapsible animated expand/collapse region) | #246 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-142 (fix: parity CLI test counts follow the snapshot) | #250 | PR open (row committed pre-merge, see ADR 0020 Branching) |
