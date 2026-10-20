@@ -45,6 +45,7 @@ import {
   TopBar,
   useFieldControlProps,
 } from "../../src";
+import { BulletList } from "../../src/components/BulletList/index.js";
 import { Container } from "../../src/components/Container/index.js";
 import { OverlayHost, Portal } from "../../src/components/Portal/index.js";
 import { useDataTable, type DataTableColumn } from "../../src/components/DataTable/index.js";
@@ -103,6 +104,12 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   Badge: () => <Badge>New</Badge>,
   Banner: () => <Banner message="Fixture message" />,
   BottomBar: () => <BottomBar />,
+  BulletList: () => (
+    <BulletList>
+      <BulletList.Item>First</BulletList.Item>
+      <BulletList.Item>Second</BulletList.Item>
+    </BulletList>
+  ),
   BottomSheet: () => (
     <BottomSheet visible onClose={noop}>
       <Text>Sheet content</Text>
