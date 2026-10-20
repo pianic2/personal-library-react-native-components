@@ -102,6 +102,50 @@ Valid fixes:
 Do not fix Metro issues by importing from `src`, `dist`, repository-relative
 paths or unpublished subpaths.
 
+## Local development link (contributors)
+
+Use this loop when changing the library and testing it in a real Expo app without packing a tarball each time.
+Do not use `npm link` or `file:` symlinks: Metro does not watch or resolve a symlinked package root reliably, and the
+linked repository brings its own `node_modules/react`, which gives the app a second React copy.
+
+```sh
+# in the library checkout
+node scripts/dev-link.mjs --target /path/to/consumer-app
+```
+
+The script builds with `tsc --watch` and, after every rebuild with zero errors, copies `dist/` and `package.json`
+into `/path/to/consumer-app/node_modules/@personal-library/react-native-components` (copy mode, no symlink). Use
+`--once` to build and sync a single time. It refuses to run, exit code 1, when the target has no `react` or more than
+one `react` in its `node_modules` tree; dedupe the consumer install and run it again.
+
+Add this to the consumer app's `metro.config.js` (the script prints it too):
+
+```js
+const { getDefaultConfig } = require("expo/metro-config");
+const path = require("path");
+
+const config = getDefaultConfig(__dirname);
+
+// Resolve the package "exports" map (dist/index.js, ./theme, ./tokens).
+config.resolver.unstable_enablePackageExports = true;
+// Pin one copy of react and react-native for every module Metro bundles.
+config.resolver.extraNodeModules = {
+  react: path.resolve(__dirname, "node_modules/react"),
+  "react-native": path.resolve(__dirname, "node_modules/react-native"),
+};
+
+module.exports = config;
+```
+
+Notes:
+
+- `watchFolders` is not needed in copy mode, because the synced files live inside the app's `node_modules`. Add
+  `config.watchFolders = [...]` only if you point Metro at a folder outside the app root (monorepo or symlink).
+- Expo SDK 57 enables package exports by default; `unstable_enablePackageExports` keeps the setting explicit.
+- Restart Metro with `npx expo start --clear` after the first sync or after changing `metro.config.js`.
+- This flow is for local development only. Release validation still uses the packed tarball
+  (`npm run consumer:expo`).
+
 ## TypeScript module resolution
 
 Common symptoms:

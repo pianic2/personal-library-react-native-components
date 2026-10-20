@@ -57,6 +57,26 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-472": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
+  },
+  "PLRNUI-473": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
+  },
+  "PLRNUI-474": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
+  },
+  "PLRNUI-475": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -128,7 +148,16 @@
    "docs/components/layout/index.md",
    "docs/components/layout/screen.md",
    "examples/screen.tsx",
-   "ai/examples/Screen.tsx"
+   "ai/examples/Screen.tsx",
+   "tests/native/system-ui/systemUi.test.tsx",
+   "tests/shims/react-native.tsx"
+  ],
+  "PLRNUI-148": [
+   "package.json",
+   "tests/scripts/docs-api.test.ts"
+  ],
+  "PLRNUI-251": [
+   "package.json"
   ],
   "PLRNUI-197": [
    "ai/manifests/props.json",
@@ -176,6 +205,38 @@
   ],
   "PLRNUI-462": [
    "tests/theme/semantic-colors.test.tsx"
+  ],
+  "PLRNUI-329": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-331": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-332": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-334": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-340": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-287": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-407": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-150": [
+   "scripts/gen-shim-type-parity.mjs",
+   "tsconfig.type-tests.json"
   ]
  }
 }
