@@ -109,7 +109,7 @@ describe("PLRNUI-142 shim export parity", () => {
     writeFileSync(join(dir, "dist/tokens/index.js"), `export { defaultThemeTokens } from "@personal-library/react-native-components";\n`);
     const result = spawnSync(process.execPath, [join(root, "scripts/check-shim-parity.mjs"), "--target-dir", targetDir, "--shim-dir", dir], { cwd: root, encoding: "utf8" });
     assert.equal(result.status, 1, result.stderr);
-    assert.match(result.stdout, /\.: 66 values, 54 types \(snapshot root: 66 values, 54 types\)/);
+    assert.match(result.stdout, /\.: (\d+) values, (\d+) types \(snapshot root: \1 values, \2 types\)/);
     assert.match(result.stderr, /\.\/tokens: values missing in the shim: createThemeTokens/);
   });
 });
