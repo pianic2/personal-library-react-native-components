@@ -3,9 +3,9 @@ import { useState } from "react";
 import { BottomSheet, Text } from "@personal-library/react-native-components";
 
 export function BottomSheetExample() {
-  const [visible, setVisible] = useState(true);
+  const [open, setOpen] = useState(true);
   return (
-    <BottomSheet visible={visible} onClose={() => setVisible(false)}>
+    <BottomSheet open={open} onOpenChange={setOpen} snapPoints={["35%", "70%"]}>
       <Text>Sheet content</Text>
     </BottomSheet>
   );

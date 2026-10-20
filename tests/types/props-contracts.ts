@@ -233,9 +233,31 @@ export type UnnamedPropsContracts = [
   Expect<Equal<keyof ComponentProps<typeof Tooltip>, "content" | "placement" | "delay" | "children">>,
   Expect<Equal<RequiredKeys<ComponentProps<typeof Tooltip>>, "content" | "children">>,
   Expect<
-    Equal<keyof ComponentProps<typeof BottomSheet>, "visible" | "onClose" | "snap" | "header" | "children">
+    Equal<
+      keyof ComponentProps<typeof BottomSheet>,
+      | "open"
+      | "visible"
+      | "defaultOpen"
+      | "onOpenChange"
+      | "onClose"
+      | "snapPoints"
+      | "snapIndex"
+      | "defaultSnapIndex"
+      | "onSnapIndexChange"
+      | "snap"
+      | "header"
+      | "children"
+      | "dismissOnBackdrop"
+      | "dismissLabel"
+      | "accessibilityLabel"
+      | "handleLabel"
+      | "closeActionLabel"
+      | "gestureDriver"
+      | "style"
+      | "testID"
+    >
   >,
-  Expect<Equal<RequiredKeys<ComponentProps<typeof BottomSheet>>, "visible" | "onClose" | "children">>,
+  Expect<Equal<RequiredKeys<ComponentProps<typeof BottomSheet>>, "children">>,
 ];
 
 // Theme and provider contracts.

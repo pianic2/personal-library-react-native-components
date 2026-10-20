@@ -10,7 +10,7 @@ function ThemeAppShell be4f6917a481
 type ThemeAppShellProps 8c2df6d84fdc
 type ThemeMode 6d4533915522
 function ThemeProvider 6fc1bff82fb5
-type ThemeProviderProps dedb24157649
+type ThemeProviderProps eb542f62ffed
 type ThemeStorageAdapter 22e56e443e60
 function createTheme 918e20bb5dd1
 function mergeThemes 3b208b2cfa08

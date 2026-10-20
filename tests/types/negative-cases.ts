@@ -85,8 +85,10 @@ export const popoverWrongOpen: ComponentProps<typeof Popover> = { renderTrigger:
 export const popoverWrongOnOpenChange: ComponentProps<typeof Popover> = { renderTrigger: () => null, children: null, onOpenChange: (open: string) => open };
 // @ts-expect-error Tooltip content must be a string.
 export const tooltipWrongContent: ComponentProps<typeof Tooltip> = { content: 1, children: null };
-// @ts-expect-error BottomSheet requires visible and onClose.
-export const bottomSheetMissingRequired: ComponentProps<typeof BottomSheet> = { children: null };
+// @ts-expect-error BottomSheet requires children.
+export const bottomSheetMissingRequired: ComponentProps<typeof BottomSheet> = { open: true };
+// @ts-expect-error BottomSheet snap points are pixels, a percentage string or "content".
+export const bottomSheetWrongSnapPoint: ComponentProps<typeof BottomSheet> = { open: true, children: null, snapPoints: ["half"] };
 
 // @ts-expect-error Card variant is a closed union.
 export const cardWrongVariant: CardProps = { variant: "flat" };
