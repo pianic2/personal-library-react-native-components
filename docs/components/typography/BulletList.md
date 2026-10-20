@@ -1,6 +1,6 @@
 # BulletList
 
-**Stability:** beta — public consumer API, usable but contract may still change.
+**Stability:** experimental — not yet exported from the package root; the API may change.
 
 Semantic list typography for legal, onboarding and help content: bulleted, numbered, checklist or plain items, with nested lists and a custom marker. Use `P` for a single paragraph.
 

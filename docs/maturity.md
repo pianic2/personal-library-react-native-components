@@ -8,8 +8,8 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 23 | Stability label `experimental`: the API can change without notice. |
-| `demo` | 28 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
+| `prototype` | 24 | Stability label `experimental`: the API can change without notice. |
+| `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
 | `deprecated` | 0 | Kept for compatibility; removal follows the deprecation policy. |
@@ -59,7 +59,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | [Badge](components/surfaces/badge.md) | surfaces | `demo` | Small label for a status, count or category. |
 | [Card](components/surfaces/card.md) | surfaces | `prototype` | Surface that groups related content with padding, shadow and an outline or elevated variant. |
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
-| BulletList | typography | `demo` | Semantic list for bulleted, numbered, checklist or plain content, with nesting up to three levels and a custom marker. |
+| BulletList | typography | `prototype` | Semantic list for bulleted, numbered, checklist or plain content, with nesting up to three levels and a custom marker. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |
 | Icon | typography | `prototype` | Draws an icon by name from pluggable icon sets, decorative by default and an image when labelled. |

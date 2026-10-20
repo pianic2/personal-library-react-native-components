@@ -3,7 +3,7 @@ import type { ComponentMeta } from "../../meta/types.js";
 export const meta: ComponentMeta = {
   "name": "BulletList",
   "category": "typography",
-  "status": "demo",
+  "status": "prototype",
   "summary": "Semantic list for bulleted, numbered, checklist or plain content, with nesting up to three levels and a custom marker.",
   "whenToUse": [
     "Show legal, onboarding or help content as a list instead of faking bullets with text",
