@@ -282,3 +282,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-251 (Pack verification: content, size and entrypoint checks on the tarball) | #236 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-317 (TexoProvider composition root, ADR-R1) | #233 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-473 (ownership extensions amendment: package.json scripts and docs-api test for 148 and 251) | #239 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-474 (ownership extensions amendment: docs/maturity.md and fixtures for 329, 331, 332, 334, 340, 287, 407) | #242 | PR open (row committed pre-merge, see ADR 0020 Branching) |

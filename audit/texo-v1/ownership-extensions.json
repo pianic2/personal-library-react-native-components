@@ -67,6 +67,11 @@
    "filesTouched": [
     "audit/texo-v1/ownership-extensions.json"
    ]
+  },
+  "PLRNUI-474": {
+   "filesTouched": [
+    "audit/texo-v1/ownership-extensions.json"
+   ]
   }
  },
  "extra": {
@@ -195,6 +200,34 @@
   ],
   "PLRNUI-462": [
    "tests/theme/semantic-colors.test.tsx"
+  ],
+  "PLRNUI-329": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-331": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-332": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-334": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-340": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-287": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
+  ],
+  "PLRNUI-407": [
+   "docs/maturity.md",
+   "tests/helpers/fixtures.tsx"
   ]
  }
 }
