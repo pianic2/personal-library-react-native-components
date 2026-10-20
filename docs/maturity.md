@@ -2,13 +2,13 @@
 
 # Component maturity
 
-Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 53 components. What each level promises is described in [Stability](policies/stability.md).
+Every component declares its level in its `<Name>.meta.ts`. This page is generated from those files and lists all 54 components. What each level promises is described in [Stability](policies/stability.md).
 
 ## Levels
 
 | Level | Components | Meaning |
 | --- | --- | --- |
-| `prototype` | 26 | Stability label `experimental`: the API can change without notice. |
+| `prototype` | 27 | Stability label `experimental`: the API can change without notice. |
 | `demo` | 27 | Label `experimental`, or `beta` once publicly exported and documented. Must pass the demo bar (`npm run maturity:check`). |
 | `stable` | 0 | Label `stable`: covered by semantic versioning. |
 | `production-ready` | 0 | Label `stable`: covered by semantic versioning; the highest level. |
@@ -63,6 +63,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Collapsible | surfaces | `prototype` | Disclosure region: a trigger shows or hides content with an animated height, controlled or uncontrolled. |
 | [B](components/typography/b.md) | typography | `prototype` | Bold text wrapper: Text with weight bold. |
 | [CodeInline](components/typography/code-inline.md) | typography | `prototype` | Inline monospace code fragment. |
+| ExpandableText | typography | `prototype` | Text clamped to a number of lines with a read more / show less toggle that appears only when the text is truncated. |
 | [Heading](components/typography/heading.md) | typography | `demo` | Heading text with six levels mapped to theme sizes. |
 | Icon | typography | `prototype` | Draws an icon by name from pluggable icon sets, decorative by default and an image when labelled. |
 | IconGlyphs | typography | `prototype` | A built-in set of about 30 own-drawn UI glyphs (check, close, chevrons, search, eye ...) for Icon, drawn through react-native-svg. |

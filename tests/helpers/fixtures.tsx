@@ -56,6 +56,7 @@ import { AsyncBoundary, EmptyState, ErrorState, LoadingState, Result } from "../
 import { Icon, IconProvider, createIconSet } from "../../src/components/Icon/index.js";
 import { IconGlyphs } from "../../src/components/IconGlyphs/index.js";
 import { Chip } from "../../src/components/Chip/index.js";
+import { ExpandableText } from "../../src/components/ExpandableText/index.js";
 import { View } from "react-native";
 
 const noop = () => undefined;
@@ -124,6 +125,7 @@ export const fixtures: Record<string, () => React.ReactElement> = {
   ),
   Checkbox: () => <Checkbox label="Accept" checked onChange={noop} />,
   Chip: () => <Chip label="Fixture chip" selected onSelectedChange={noop} onRemove={noop} />,
+  ExpandableText: () => <ExpandableText numberOfLines={2}>A short fixture sentence.</ExpandableText>,
   CodeInline: () => <CodeInline>const ok = true;</CodeInline>,
   Collapsible: () => (
     <Collapsible defaultOpen>
