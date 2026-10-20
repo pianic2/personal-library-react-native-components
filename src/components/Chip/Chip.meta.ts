@@ -65,7 +65,7 @@ export const meta: ComponentMeta = {
   "examples": [
     {
       "title": "Chip example",
-      "path": "examples/chip.tsx"
+      "path": "docs/components/buttons/Chip.md"
     }
   ]
 };

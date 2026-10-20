@@ -19,7 +19,7 @@ Every component declares its level in its `<Name>.meta.ts`. This page is generat
 | Component | Category | Level | Summary |
 | --- | --- | --- | --- |
 | [Button](components/buttons/button.md) | buttons | `demo` | Pressable button with variants, sizes, an optional icon and a disabled state. |
-| [Chip](components/buttons/chip.md) | buttons | `demo` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
+| Chip | buttons | `demo` | Compact selectable, removable token for filters, multi-select values and tags, with an optional icon or avatar. |
 | [Touchable](components/buttons/touchable.md) | buttons | `demo` | Pressable primitive with press feedback, a 44pt minimum target, hit slop, loading and disabled states and a web focus ring. |
 | DataTable | data-display | `prototype` | Headless data table model: column definitions, stable sorting with a three-step cycle, and single, multiple or all-row selection. |
 | [Pager](components/data-display/pager.md) | data-display | `demo` | Horizontal paging with a controlled index, a Carousel with peek and optional autoplay, and a dot PageIndicator. |
