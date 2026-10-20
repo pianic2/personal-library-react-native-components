@@ -298,3 +298,4 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-407 (CircularProgress with pure-View default) | #256 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-287 (DescriptionList key-value pairs) | #255 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-334 (ExpandableText with read more/less toggle) | #254 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-247 (useStagger and Stagger) | #259 | PR open (row committed pre-merge, see ADR 0020 Branching) |
