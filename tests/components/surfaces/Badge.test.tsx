@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import TestRenderer, { act } from "react-test-renderer";
 import { Platform } from "react-native";
 import { ThemeProvider, useTheme, Badge, type BadgeProps } from "../../../src";
+import { contrastRatio } from "../../../src/theme/contrast";
 
 // The react-native test shim exposes a mutable Platform and host components that are plain strings ("View", "Text").
 const platform = Platform as { OS: string };
@@ -73,7 +74,11 @@ describe("PLRNUI-104 Badge", () => {
       for (const variant of Object.keys(expected) as Array<keyof typeof expected>) {
         const r = render(<Badge variant={variant}>x</Badge>, mode);
         assert.equal(chipOf(r).backgroundColor, expected[variant], `${mode} ${variant}`);
-        assert.equal(flatten(textOf(r).props.style).color, variant === "primary" ? colors.textInverted : colors.textPrimary, `${mode} ${variant}`);
+        // PLRNUI-304: the text token with the higher contrast on the background (4.5:1 is asserted in tests/components/surfaces.test.tsx)
+        const color = flatten(textOf(r).props.style).color;
+        const other = color === colors.textInverted ? colors.textPrimary : colors.textInverted;
+        assert.ok([colors.textInverted, colors.textPrimary].includes(color), `${mode} ${variant}`);
+        assert.ok(contrastRatio(color, expected[variant]) >= contrastRatio(other, expected[variant]), `${mode} ${variant}`);
       }
     }
   });

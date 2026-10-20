@@ -26,7 +26,9 @@ export const meta: ComponentMeta = {
       "Row"
     ]
   },
-  "a11y": [],
+  "a11y": [
+    "Card is a plain container with no role; put the meaning in its content"
+  ],
   "variants": {
     "variant": [
       "default",
@@ -53,12 +55,16 @@ export const meta: ComponentMeta = {
     "default"
   ],
   "platformNotes": [
-    "Android renders elevation only (no shadow color)"
+    "Android renders elevation and forwards the token shadowColor (tint on API 28+)"
   ],
   "examples": [
     {
       "title": "Card with text",
       "code": "<Card><Text>Content</Text></Card>"
+    },
+    {
+      "title": "Surfaces example",
+      "path": "examples/surfaces.tsx"
     }
   ]
 };

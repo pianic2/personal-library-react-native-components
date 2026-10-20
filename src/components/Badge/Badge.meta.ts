@@ -23,7 +23,8 @@ export const meta: ComponentMeta = {
     ]
   },
   "a11y": [
-    "Contrast of text on info, success and warning backgrounds is not verified yet"
+    "Text uses the textPrimary or textInverted token with the higher contrast on the variant background (4.5:1 or better in light and dark, tested)",
+    "A count-only badge gets an accessibilityLabel equal to the count; the accessibilityLabel prop overrides it"
   ],
   "variants": {},
   "states": [
@@ -34,6 +35,10 @@ export const meta: ComponentMeta = {
     {
       "title": "Feedback examples",
       "path": "examples/feedback.tsx"
+    },
+    {
+      "title": "Surfaces example",
+      "path": "examples/surfaces.tsx"
     }
   ]
 };
