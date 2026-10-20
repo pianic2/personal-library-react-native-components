@@ -286,5 +286,6 @@ One row per closed wave, added by the closing ticket (docs/policies/checkpoint.m
 | PLRNUI-474 (ownership extensions amendment: docs/maturity.md and fixtures for 329, 331, 332, 334, 340, 287, 407) | #242 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-475 (ownership extensions amendment: shim type-parity generator and type-tests tsconfig for 150) | #243 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-332 (List and ListItemText: BulletList bulleted, numbered and checklist) | #248 | PR open (row committed pre-merge, see ADR 0020 Branching) |
+| PLRNUI-331 (Chip: selectable, removable, icon-capable filter/input chip) | #247 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-340 (Collapsible animated expand/collapse region) | #246 | PR open (row committed pre-merge, see ADR 0020 Branching) |
 | PLRNUI-142 (fix: parity CLI test counts follow the snapshot) | #250 | PR open (row committed pre-merge, see ADR 0020 Branching) |
