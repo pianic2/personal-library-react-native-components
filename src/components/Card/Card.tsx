@@ -13,6 +13,7 @@ import { Shadow } from "../../tokens/shadows.base.js";
 export interface CardProps {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  /** A colour token key of the theme (for example `"surface"`, `"primary"`) or any colour string. */
   bgColor?: string;
   radius?: number;
   margin?: keyof ReturnType<typeof useTheme>["theme"]["space"];
@@ -48,8 +49,9 @@ export function Card({
       ? "md"
       : "sm");
 
+  const tokenColor = bgColor !== undefined ? (colors as Record<string, unknown>)[bgColor] : undefined;
   const cardBackground =
-    bgColor ||
+    (typeof tokenColor === "string" ? tokenColor : bgColor) ||
     (variant === "outline" ? "transparent" : colors.surface);
 
   return (
@@ -95,8 +97,10 @@ function applyShadow(theme: Theme, shadow: Shadow): ViewStyle {
   }
 
   if (Platform.OS === "android") {
+    // elevation alone drops the shadow colour: forward it (API 28+ tints the elevation shadow with it).
     return {
       elevation: s.elevation,
+      shadowColor: s.shadowColor,
     };
   }
 
